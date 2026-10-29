@@ -1,0 +1,35 @@
+import SymplecticPacking.Effective.Integral
+import SymplecticPacking.Effective.OracleCertificates
+import SymplecticPacking.Explicit
+import SymplecticPacking.Effective.NameArithmetic
+import SymplecticPacking.General.CompileOutput
+import verification.AxiomCheck
+
+/-!
+# Rational certificates and names
+
+Axiom gates for the rational-certificate search, the oracle reductions, the quadrature and the
+arithmetic of names, and explicitness of the certificate search.
+-/
+
+#assert_publication_axioms SymplecticPacking.Effective.ltCertificate_sound
+#assert_publication_axioms SymplecticPacking.Effective.eventually_ltCertificate
+#assert_publication_axioms SymplecticPacking.Effective.names_sub
+#assert_publication_axioms SymplecticPacking.Effective.CertificateFamily.exists_stage
+#assert_publication_axioms SymplecticPacking.Effective.CertificateFamily.search_sound
+#assert_publication_axioms SymplecticPacking.Effective.searchFuel_find
+#assert_publication_axioms SymplecticPacking.Effective.computable_first_stage
+#assert_publication_axioms SymplecticPacking.Effective.RationalCode.value_ofRat
+#assert_publication_axioms SymplecticPacking.Effective.RationalCode.primitive_allPositive
+#assert_publication_axioms SymplecticPacking.Effective.RationalCode.allPositive_familyValues
+#assert_publication_axioms SymplecticPacking.Effective.RationalCode.computable_search
+#assert_publication_axioms SymplecticPacking.Effective.Oracle.search_reduction
+#assert_publication_axioms SymplecticPacking.Effective.Oracle.exists_stage_from_names
+#assert_publication_axioms SymplecticPacking.Effective.Oracle.search_sound_from_names
+#assert_publication_axioms SymplecticPacking.Effective.Quadrature.realSum_error
+#assert_publication_axioms SymplecticPacking.Effective.Quadrature.integralName_spec
+#assert_publication_axioms SymplecticPacking.Effective.CodeName.mul_recursive
+#assert_publication_axioms SymplecticPacking.Effective.CodeName.mul_spec
+
+#check_explicit SymplecticPacking.Effective.CertificateFamily.search
+#check_explicit SymplecticPacking.Effective.RationalCode.ofRat

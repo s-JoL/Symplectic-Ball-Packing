@@ -1,0 +1,126 @@
+\section{The algorithm and its termination}\label{sec:alg}
+
+The verifier of Section~\ref{sec:certificate} reads finitely many approximations of the input and performs
+rational arithmetic. This section fixes the encoding, describes the machine and proves that it halts. The
+dimension and the number of balls are runtime inputs of one machine.
+
+\subsection{Input and output}\label{sec:alg-input}
+
+\begin{definition}[Input]\label{def:alg-input}
+An input consists of integers $n\ge2$, $k\ge1$ and names (Definition~\ref{def:efd-interface}) of $C,c_1,\ldots,c_k$
+and of the $2nk$ coordinates of $s_1,\ldots,s_k$. They are supplied as two oracle streams: the capacity stream,
+whose value at $\langle i,p\rangle$ is the precision-$p$ approximation of $c_i$ for $1\le i\le k$ and of $C$ for $i=0$ and for $i>k$;
+and the centre stream, whose value at $\langle\langle i,p\rangle,l\rangle$ is the precision-$p$ approximation of the
+$l$-th coordinate of the $(i+1)$-st centre. A rational input is given by its constant name. The promises are that
+$(n,k,C,c)$ is admissible and the closed balls $B(s_i,c_i)$ are pairwise disjoint (\Mref{Theorem}{thm:main}); they are
+hypotheses of the termination theorem and are not tested.
+
+The output is a natural number $\langle B,\ulcorner e\urcorner\rangle$, where $B\ge1$ and $e$ is a polynomial program
+(Definition~\ref{def:certificate-program}). It denotes $\Hfin=\beta_BP_e$; expanding the sums and products of $e$
+gives the rational coefficients of $P_e$.
+
+An Epoch input is an integer $k\ge9$ and a name of $\eps\in(0,1)$. It stands for
+\begin{equation}\label{eq:alg-epoch-data}
+ n=2,\quad R=\left(\frac{k}{1-\eps/2}\right)^{1/4},\quad
+ C=\pi R^2,\quad c_i=\pi,\quad s_i=(3i-3,0,0,0).
+\end{equation}
+\end{definition}
+
+\subsection{Finite encoding}\label{sec:alg-searches}
+
+Tuples and finite lists of natural numbers are coded by iterated pairing. Rationals have the triple code of
+Definition~\ref{def:certificate-program}. Addition, multiplication, negation, absolute value, maximum, the inverse of a
+nonzero rational and strict comparison are integer operations on codes; comparison is cross multiplication by the
+positive denominators, and no reduction to lowest terms is needed.
+
+A polynomial program is coded as a list of instructions $\langle\tau,v\rangle$. The list is read from right to left with
+a stack of expressions: tag $\tau=0$ pushes the constant with code $v$, tag $1$ pushes the variable $x_v$, tag $2$
+replaces the top two entries by their sum, and any other tag replaces them by their product; a missing entry counts
+as $0$. The program is the top of the final stack, or $0$ if the stack is empty. This reading is total, and every
+expression has a code. The budget $h_B(e)$ and the derivative programs $\partial_je$ are computed by the same stack
+recursion.
+
+A vector of runtime dimension $d$ is coded as a list of $d$ rational codes; a code that is not such a list is read
+as the zero vector. Evaluation of $F_e$ at a rational point clips the arguments and interprets $\partial_je$; an Euler
+step is one such evaluation and $d$ rational operations, and the table is computed by primitive recursion on $N$.
+The grid node with index $g<(2^m+1)^d$ has coordinates $-Q+2Q\nu_l/2^m$, where $\nu_1,\dots,\nu_d$ are the base-$(2^m+1)$
+digits of $g$. Table~\ref{tab:alg-deps} lists the data of the finite verifier and where each is defined.
+
+The radius names $r_i=\sqrt{c_i/\pi}$ and $R=\sqrt{C/\pi}$ are computed from the capacity stream by the total programs
+of Corollary~\ref{thm:efd-radii}. For an Epoch input the source radius name is the constant $1$, the centres are
+rational constants, and the target radius name is obtained from the name of $\eps$: the name of $1-\eps/2$ is formed
+by Proposition~\ref{prop:efd-closure}, its reciprocal uses the lower bound $1-\eps/2>2^{-1}$, the product with $k$
+gives a name of $k/(1-\eps/2)$, and two applications of Lemma~\ref{lem:efd-roots-direct} give a name of $R$. This
+machine never forms names of $C$ or $c_i$.
+
+\begin{table}[ht]
+\centering\footnotesize
+\begin{tabular}{@{}p{.19\textwidth}p{.25\textwidth}p{.33\textwidth}p{.15\textwidth}@{}}
+\toprule
+Object & Defining rule & Effective data & Reference\\
+\midrule
+Input enclosures & \eqref{eq:certificate-enclosures} & error $2^{-p}$; outer source radius, inner target radius & Def.~\ref{def:certificate-checks}\\
+Polynomial field & $F_e=J_0\nabla P_e$ at clipped arguments & exact rational interpreter; speed and both Lipschitz bounds $\Theta=h_B(e)$ & Lem.~\ref{lem:certificate-field}\\
+Spatial grid & $-Q+2Q\nu/2^m$ & $(2^m+1)^d$ nodes; covering radius $\rho=2Q2^{-m}$ & Def.~\ref{def:certificate-checks}\\
+Euler table & $x_{j+1}=x_j+F_e(j/N,x_j)/N$ & tube radius $E$ of \eqref{eq:certificate-error} on $[0,1]$ & Lem.~\ref{lem:certificate-euler}\\
+Tests & plateau and terminal tests & margins $B/2-|x_{j,l}|-E$ and $R^-_p-|x_N|-dE$ & Thm.~\ref{thm:certificate-sound}\\
+Existence & smaller-target packing and Bernstein compilation & neighbourhood radius $\nu$, plateau margin $\frac12$, terminal margin $\mu$ & Thm.~\ref{thm:certificate-exists}\\
+\bottomrule
+\end{tabular}
+\caption{Data of the finite verifier. Every quantity used by a test is rational.}
+\label{tab:alg-deps}
+\end{table}
+
+\subsection{The machine}
+
+\begin{construction}[Algorithm]\label{cons:alg-main}
+On input $(n,k)$ and the oracle streams, put $d=2n$. For $\mathrm{st}=0,1,2,\dots$ decode $\mathrm{st}$ as a candidate
+$(p,B,Q,m,N,e)$ and compute its failure count $\Phi(n,k,\mathrm{st})\in\N$, a sum of failure indicators: one for the condition
+$B,Q,N\ge1$, one for each source-box test, and one for each node-source pair that passes neither the discard test nor
+both trajectory tests of Definition~\ref{def:certificate-checks}, all evaluated with the names at precision $p$. Thus
+$\Phi=0$ exactly when the candidate passes. Stop at the first $\mathrm{st}$ with $\Phi(n,k,\mathrm{st})=0$ and output $\langle B,\ulcorner e\urcorner\rangle$.
+The Epoch machine is the same search with $n=2$ and the names described above; its runtime input is $k$ and its only
+oracle is the name of $\eps$.
+\end{construction}
+
+\begin{lemma}[Totality of the checker]\label{lem:alg-searches}
+For fixed oracle streams, $(n,k,\mathrm{st})\mapsto\Phi(n,k,\mathrm{st})$ is a total function, recursive in the
+oracles. Each value uses finitely many oracle queries.
+\end{lemma}
+
+\begin{proof}
+Decoding is primitive recursive, and every natural number decodes to a candidate. The radius names are total programs
+(Corollary~\ref{thm:efd-radii}), each value of which makes finitely many queries; the centre approximations are single
+queries. The checker then performs: $kd$ source-box tests; for each of the $k(2^m+1)^d$ node-source pairs, one discard
+test and, if it fails, an Euler table of $N$ steps with $N+1$ plateau rows and one terminal test. The budget $\Theta$,
+the radius $\rho$ and the tube radius $E$ are computed from the candidate by rational arithmetic and powers. All loop
+bounds are computed from $(n,k,\mathrm{st})$, every elementary step is an integer operation on codes, and the
+interpretation of programs is total. Hence $\Phi$ is obtained from the oracles by composition and bounded recursion.
+\end{proof}
+
+\begin{theorem}[Termination and correctness]\label{thm:alg-main}
+For every input satisfying the promises of Definition~\ref{def:alg-input}, Construction~\ref{cons:alg-main} halts,
+and its output $\langle B,\ulcorner e\urcorner\rangle$ satisfies: $\beta_BP_e$ is $C^\infty$, vanishes for
+$z\notin(-3B/4,3B/4)^{2n}$, and satisfies $\Pack(n,k,C,c,s)$. The machine is partial recursive relative to the oracle
+streams, uniformly in $(n,k)$. For an Epoch input it halts with $\beta_BP_e$ satisfying $\Pack(2,k,\pi R^2,\pi,s)$ for
+the data \eqref{eq:alg-epoch-data}, and $k/R^4=1-\eps/2>1-\eps$.
+\end{theorem}
+
+\begin{proof}
+The machine is an unbounded minimisation of the total oracle-recursive function $\Phi$ of
+Lemma~\ref{lem:alg-searches}, followed by a primitive recursive output map; hence it is partial recursive in the
+oracles, with $(n,k)$ as inputs. By Theorem~\ref{thm:certificate-exists} there is a passing candidate; its code
+$\mathrm{st}_0$ satisfies $\Phi(n,k,\mathrm{st}_0)=0$, since decoding inverts encoding. The minimisation therefore stops at
+some $\mathrm{st}\le\mathrm{st}_0$, after finitely many evaluations of $\Phi$, each of which halts. The candidate at
+which it stops passes all tests, so its output is correct by Theorem~\ref{thm:certificate-sound}.
+
+For an Epoch input, the data \eqref{eq:alg-epoch-data} are admissible with disjoint closed source balls by
+\Mref{Corollary}{thm:main-epoch}. The names formed by the machine name the centres, the source radius
+$\sqrt{\pi/\pi}=1$ and the target radius $\sqrt{C/\pi}=R$, so the argument above applies with $n=2$. Finally
+$R^4=k/(1-\eps/2)$ and $\eps>0$.
+\end{proof}
+
+\begin{remark}[Epoch form]\label{rem:alg-epoch}
+The same verifier serves the Epoch input and all four cases of the construction (\Mref{Table}{tab:ver-levels}):
+the cases enter only the proof that a passing certificate exists.
+\end{remark}

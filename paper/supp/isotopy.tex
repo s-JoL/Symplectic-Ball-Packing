@@ -1,0 +1,621 @@
+\section{The common isotopy and the pushforward of the source primitive}\label{sec:iso}
+
+We construct, for $k$ disjoint balls of arbitrary radii and centres in $\R^{2n}$, a single smooth family $F_{i,t}$ of
+symplectic embeddings from the translations $s_i+u$ to the given embeddings $f_i$, keeping the images disjoint at all
+times (Proposition~\ref{prop:iso-common}). The balls are first translated to far centres along a route on which they
+never meet; there each is deformed linearly to $A_i=Df_i(0)$, then to the rescaled embedding $u\mapsto\tau^{-1}f_i(\tau u)$,
+and finally one dilation parameter common to all balls runs from $\tau$ to $1$. Every stage is symplectic: translations
+and the maps $M_{i,\sigma}\in\operatorname{Sp}(2n)$ trivially, and the shape and tail stages because their derivatives are
+values of $Df_i$. Disjointness comes from separation during the route, linear and shape stages and from the common
+dilation during the tail. Every ingredient of $F_{i,t}$ is an explicit function of the input: the maxima defining $L$,
+the minimum defining $\delta_c$, the positive square root and the least admissible angle in the linear path, and the ranks
+in the route. We then show that the pushforward of a cut-off source primitive along $F$ is smooth with compact support
+(Lemma~\ref{lem:iso-pushforward}) and give the primitive in closed form on each stage
+(Lemma~\ref{lem:iso-stage-primitives}).
+
+\emph{Conventions.} We use the conventions of \S\ref{sec:pre-conventions}: $\omega_0(\xi,\xi')=\langle\xi,J_0\xi'\rangle$ with
+$J_0=\bigl(\begin{smallmatrix}0&I\\-I&0\end{smallmatrix}\bigr)$ in the coordinates $(x,y)$, and $\operatorname{Sp}(2n)$ is
+the group of real $2n\times2n$ matrices with $A^{\mathsf T}J_0A=J_0$. Multiplication by $i$ on $\C^n$ is
+$J_\C=-J_0=\bigl(\begin{smallmatrix}0&-I\\I&0\end{smallmatrix}\bigr)$. Matrices are written in $n\times n$ blocks with
+respect to $(x,y)$. Vector norms are Euclidean, $\|\cdot\|$ is the operator norm, and a linear map is identified with
+its matrix. $\EB(y,r)$ and $\EB^\circ(y,r)$ are the closed and open Euclidean balls of radius $r$ about $y$, and
+$\EB(r)=\EB(0,r)$. $S$ is the flat step of Definition~\ref{def:pre-flat}. For a matrix-valued function of $\sigma\in\R$,
+\emph{smooth entries} means that every entry is a $C^\infty$ function of $\sigma$. A symplectic matrix is invertible
+($A^{-1}=J_0^{-1}A^{\mathsf T}J_0$), so a map with symplectic derivative is a local diffeomorphism.
+
+\subsection{The input}\label{sec:iso-input}
+
+The isotopy uses the following properties of the embeddings and nothing else.
+
+\begin{definition}[Isotopy input]\label{def:iso-hyp}
+\lean{SymplecticPacking.General.Ham.Isotopy.TargetIsoInput}
+\uses{M-def:ham-datum}
+Let $n\ge1$ and $k\ge1$. An \emph{isotopy input} consists of centres $s_1,\dots,s_k\in\R^{2n}$, radii
+$0<r_{1,i}<r_{2,i}<r_{3,i}<r_{4,i}<\bar r_i$ for $1\le i\le k$, a number $R_0>0$, and maps
+$f_i\colon\EB^\circ(\bar r_i)\to\R^{2n}$ such that
+\begin{enumerate}[label=(\roman*)]
+\item $f_i$ is $C^\infty$ and $Df_i(u)\in\operatorname{Sp}(2n)$ for every $u\in\EB^\circ(\bar r_i)$;
+\item $f_i$ is injective on $\EB(r_{4,i})$;
+\item the sets $f_i(\EB(r_{4,i}))$, $1\le i\le k$, are pairwise disjoint and contained in $\EB^\circ(R_0)$;
+\item $|s_i-s_j|>r_{3,i}+r_{3,j}$ for $i\ne j$.
+\end{enumerate}
+We write $y_i=f_i(0)$ and $A_i=Df_i(0)\in\operatorname{Sp}(2n)$.
+\end{definition}
+
+By \Mref{Lemma}{lem:ham-radii}, an embedding datum together with the radii $r_{\ell,i}$ of \Mref{Definition}{def:ham-radii}
+and $R_0=\sqrt{C/\pi}$ is an isotopy input. From now on we fix an isotopy input. The open ball $\EB^\circ(r_{4,i})$ is the
+domain of every stage, the closed ball $\EB(r_{3,i})$ is the set whose images are kept disjoint, and the cutoff of the
+Hamiltonian interpolates between $r_{1,i}$ and $r_{2,i}$.
+
+\subsection{An explicit path in $\operatorname{Sp}(2n)$}\label{sec:iso-linear}
+
+The linear stage needs, for every $A\in\operatorname{Sp}(2n)$, an explicit smooth path in $\operatorname{Sp}(2n)$
+from $I$ to $A$. We factor $A$ as a unitary matrix times a block upper triangular symplectic matrix and deform
+each factor separately; the unitary factor is deformed by a Cayley transform after a rotation by one of $n+1$ fixed
+angles. Apart from one positive square root and the choice of one of $n+1$ angles, every entry of the path is a rational
+function of $\sigma$, $\sin^2(\pi\sigma/2)$, $\cos(\sigma\theta_A)$, $\sin(\sigma\theta_A)$, $\cos\theta_A$, $\sin\theta_A$ and the
+entries of $A$ and of the square root; no branch of a matrix logarithm has to be chosen.
+
+\begin{definition}[The linear path]\label{def:iso-linear-path}
+\lean{SymplecticPacking.General.Ham.Linear.Up, SymplecticPacking.General.Ham.Linear.Dg, SymplecticPacking.General.Ham.Linear.rot, SymplecticPacking.General.Ham.Linear.cayley, SymplecticPacking.General.Ham.Linear.cayleyOf, SymplecticPacking.General.Ham.Linear.gram, SymplecticPacking.General.Ham.Linear.posSqrt, SymplecticPacking.General.Ham.Linear.polarP, SymplecticPacking.General.Ham.Linear.polarU, SymplecticPacking.General.Ham.Linear.polarS, SymplecticPacking.General.Ham.Linear.posPath, SymplecticPacking.General.Ham.Linear.angle, SymplecticPacking.General.Ham.Linear.angleIndex, SymplecticPacking.General.Ham.Linear.goodAngle, SymplecticPacking.General.Ham.Linear.spPath}
+For $n\times n$ matrices $T,a,e$ and $\theta,\sigma\in\R$ let
+\[
+ \operatorname{Up}(T)=\begin{pmatrix}I&T\\0&I\end{pmatrix},\qquad
+ \operatorname{Dg}(a,e)=\begin{pmatrix}a&0\\0&e\end{pmatrix},\qquad
+ \operatorname{rot}(\theta)=\cos\theta\,I+\sin\theta\,J_\C ,
+\]
+and, for a $2n\times2n$ matrix $X$ with $X^{\mathsf T}=-X$,
+$\operatorname{Cay}(X,\sigma)=(I+\sigma X)(I-\sigma X)^{-1}$. Let $A=\bigl(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\bigr)
+\in\operatorname{Sp}(2n)$. Put
+\[
+ G_A=a^{\mathsf T}a+c^{\mathsf T}c,\qquad P_A=\defdesc\{P:\ P\text{ symmetric positive semidefinite},\ P^2=G_A\},
+\]
+\[
+ U_A=\begin{pmatrix}aP_A^{-1}&-cP_A^{-1}\\cP_A^{-1}&aP_A^{-1}\end{pmatrix},\qquad
+ T_A=P_A^{-1}\,\big(U_A^{\mathsf T}A\big)_{12},
+\]
+where $(\cdot)_{12}$ is the upper right block. Let $\theta_m=\pi m/(n+1)$ for $m=0,\dots,n$, let $m_A$ be the least
+$m\in\{0,\dots,n\}$ with $\det\big(\operatorname{rot}(\theta_m)U_A+I\big)\ne0$, $\theta_A=\theta_{m_A}$,
+$V_A=\operatorname{rot}(\theta_A)U_A$, and $X_A=(V_A-I)(V_A+I)^{-1}$. Finally, for $\sigma\in\R$,
+\[
+ P_{A,\sigma}=I+\sin^2\!\big(\tfrac{\pi\sigma}2\big)\,(P_A-I),\qquad
+ M_{A,\sigma}=\operatorname{rot}(-\sigma\theta_A)\,\operatorname{Cay}(X_A,\sigma)\,
+ \operatorname{Dg}\big(P_{A,\sigma},P_{A,\sigma}^{-1}\big)\,\operatorname{Up}(\sigma T_A),
+\]
+and $M_{i,\sigma}=M_{A_i,\sigma}$. By Lemma~\ref{lem:iso-linear-path}(a),(b), $P_A$ is invertible, $m_A$ exists and $V_A+I$
+is invertible, so these formulas make sense.
+\end{definition}
+
+The index $m_A$ is obtained by $n+1$ case distinctions on propositions about the input, an operation of level L1
+(\Mref{Definition}{def:intro-levels}).
+
+We say that a $2n\times2n$ matrix $Q$ is of \emph{unitary type} if $Q^{\mathsf T}Q=I$ and $QJ_\C=J_\C Q$. A matrix
+commutes with $J_\C$ exactly when it has the block form $\bigl(\begin{smallmatrix}\mathfrak w_1&-\mathfrak w_2\\
+\mathfrak w_2&\mathfrak w_1\end{smallmatrix}\bigr)$, and then it is the realification of the complex $n\times n$ matrix
+$\mathfrak w=\mathfrak w_1+i\mathfrak w_2$; realification is an injective ring homomorphism which takes $\mathfrak w^*$ to the
+transpose. So the matrices of unitary type are the realifications of the unitary matrices, and $\operatorname{rot}(\theta)$ is
+the realification of $e^{i\theta}I$. Moreover
+\begin{equation}\label{eq:iso-realdet}
+ \det\begin{pmatrix}\mathfrak w_1&-\mathfrak w_2\\\mathfrak w_2&\mathfrak w_1\end{pmatrix}=\big|\det(\mathfrak w_1+i\mathfrak w_2)\big|^2 ,
+\end{equation}
+because, over $\C$,
+$\bigl(\begin{smallmatrix}I&0\\iI&I\end{smallmatrix}\bigr)\bigl(\begin{smallmatrix}\mathfrak w_1&-\mathfrak w_2\\\mathfrak w_2&\mathfrak w_1\end{smallmatrix}\bigr)
+\bigl(\begin{smallmatrix}I&0\\-iI&I\end{smallmatrix}\bigr)=\bigl(\begin{smallmatrix}\mathfrak w_1+i\mathfrak w_2&-\mathfrak w_2\\0&\mathfrak w_1-i\mathfrak w_2\end{smallmatrix}\bigr)$.
+
+\begin{lemma}[The linear path]\label{lem:iso-linear-path}
+\lean{SymplecticPacking.General.Ham.Linear.mem_Sp_fromBlocks, SymplecticPacking.General.Ham.Linear.Up_mem, SymplecticPacking.General.Ham.Linear.Dg_mem, SymplecticPacking.General.Ham.Linear.IsUnitaryType.mem_Sp, SymplecticPacking.General.Ham.Linear.polarP_posDef, SymplecticPacking.General.Ham.Linear.polarU_isUnitaryType, SymplecticPacking.General.Ham.Linear.polarS_transpose, SymplecticPacking.General.Ham.Linear.polar_decomp, SymplecticPacking.General.Ham.Linear.exists_good_angle, SymplecticPacking.General.Ham.Linear.goodAngle_spec, SymplecticPacking.General.Ham.Linear.cayleyOf_skew, SymplecticPacking.General.Ham.Linear.cayleyOf_comm_J, SymplecticPacking.General.Ham.Linear.det_one_sub_smul_ne_zero, SymplecticPacking.General.Ham.Linear.cayley_isUnitaryType, SymplecticPacking.General.Ham.Linear.cayley_cayleyOf_one, SymplecticPacking.General.Ham.Linear.posPath_posDef, SymplecticPacking.General.Ham.Linear.spPath_zero, SymplecticPacking.General.Ham.Linear.spPath_one, SymplecticPacking.General.Ham.Linear.spPath_mem, SymplecticPacking.General.Ham.Linear.smoothEntries_spPath}
+\uses{def:iso-linear-path}
+Let $A=\bigl(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\bigr)\in\operatorname{Sp}(2n)$.
+\begin{enumerate}[label=(\alph*)]
+\item $G_A$ is positive definite, $P_A$ is well defined, symmetric and positive definite, $U_A$ is of unitary type,
+ $T_A$ is symmetric, and $A=U_A\operatorname{Dg}(P_A,P_A^{-1})\operatorname{Up}(T_A)$.
+\item $m_A$ exists. $X_A$ is skew-symmetric and commutes with $J_\C$; for every $\sigma\in\R$ the matrix
+ $I-\sigma X_A$ is invertible and $\operatorname{Cay}(X_A,\sigma)$ is of unitary type; and
+ $\operatorname{Cay}(X_A,1)=V_A$.
+\item $M_{A,\sigma}\in\operatorname{Sp}(2n)$ for every $\sigma\in\R$, $M_{A,0}=I$, $M_{A,1}=A$, and $M_{A,\sigma}$ has
+ smooth entries; hence $(\sigma,u)\mapsto M_{A,\sigma}u$ is $C^\infty$ on $\R\times\R^{2n}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\emph{Block criterion.} Writing out $A^{\mathsf T}J_0A$ in blocks shows that $A\in\operatorname{Sp}(2n)$ if and only if
+\begin{equation}\label{eq:iso-block}
+ a^{\mathsf T}c=c^{\mathsf T}a,\qquad b^{\mathsf T}d=d^{\mathsf T}b,\qquad a^{\mathsf T}d-c^{\mathsf T}b=I .
+\end{equation}
+In particular $\operatorname{Up}(T)\in\operatorname{Sp}(2n)$ if $T$ is symmetric, and
+$\operatorname{Dg}(P,P^{-1})\in\operatorname{Sp}(2n)$ if $P$ is symmetric and invertible. A matrix $Q$ of unitary type is
+symplectic: $Q^{\mathsf T}J_0Q=-Q^{\mathsf T}J_\C Q=-Q^{\mathsf T}QJ_\C=-J_\C=J_0$. Products of matrices of unitary type
+are of unitary type.
+
+(a) $G_A=\iota^{\mathsf T}A^{\mathsf T}A\iota$ with $\iota=\bigl(\begin{smallmatrix}I\\0\end{smallmatrix}\bigr)$, and $A\iota$ has
+trivial kernel because $A$ is invertible; so $\xi^{\mathsf T}G_A\xi=|A\iota\xi|^2>0$ for $0\ne\xi\in\R^n$. A positive definite
+symmetric matrix has a unique positive semidefinite symmetric square root, and it is positive definite (diagonalise
+orthogonally and take square roots of the eigenvalues; uniqueness because a positive semidefinite square root commutes with
+$G_A$ and hence preserves its eigenspaces, on each of which it is the positive multiple of the identity determined by the
+eigenvalue). So $P_A$ is well defined, symmetric and positive definite. Put $\hat a=aP_A^{-1}$ and $\hat c=cP_A^{-1}$. Then
+$\hat a^{\mathsf T}\hat a+\hat c^{\mathsf T}\hat c=P_A^{-1}G_AP_A^{-1}=I$, and $\hat a^{\mathsf T}\hat c=P_A^{-1}a^{\mathsf T}cP_A^{-1}$
+is symmetric by \eqref{eq:iso-block}, so $\hat c^{\mathsf T}\hat a=\hat a^{\mathsf T}\hat c$. Hence
+\[
+ U_A^{\mathsf T}U_A=\begin{pmatrix}\hat a^{\mathsf T}\hat a+\hat c^{\mathsf T}\hat c&\hat c^{\mathsf T}\hat a-\hat a^{\mathsf T}\hat c\\
+ \hat a^{\mathsf T}\hat c-\hat c^{\mathsf T}\hat a&\hat a^{\mathsf T}\hat a+\hat c^{\mathsf T}\hat c\end{pmatrix}=I ,
+\]
+and $U_A=\bigl(\begin{smallmatrix}\hat a&-\hat c\\\hat c&\hat a\end{smallmatrix}\bigr)$ commutes with $J_\C$; so $U_A$ is of
+unitary type. The first block column of $U_A^{\mathsf T}A$ is
+$\bigl(\begin{smallmatrix}\hat a^{\mathsf T}a+\hat c^{\mathsf T}c\\-\hat c^{\mathsf T}a+\hat a^{\mathsf T}c\end{smallmatrix}\bigr)
+=\bigl(\begin{smallmatrix}P_A^{-1}G_A\\P_A^{-1}(a^{\mathsf T}c-c^{\mathsf T}a)\end{smallmatrix}\bigr)
+=\bigl(\begin{smallmatrix}P_A\\0\end{smallmatrix}\bigr)$. So $U_A^{\mathsf T}A=\bigl(\begin{smallmatrix}P_A&B'\\0&D'\end{smallmatrix}\bigr)$,
+and this matrix is symplectic. By \eqref{eq:iso-block}, $P_AD'=I$, so $D'=P_A^{-1}$, and $B'^{\mathsf T}P_A^{-1}=P_A^{-1}B'$,
+which says that $T_A=P_A^{-1}B'$ satisfies $T_A^{\mathsf T}=B'^{\mathsf T}P_A^{-1}=T_A$. Since
+$\operatorname{Dg}(P_A,P_A^{-1})\operatorname{Up}(T_A)=\bigl(\begin{smallmatrix}P_A&P_AT_A\\0&P_A^{-1}\end{smallmatrix}\bigr)
+=U_A^{\mathsf T}A$ and $U_A$ is orthogonal, $A=U_A\operatorname{Dg}(P_A,P_A^{-1})\operatorname{Up}(T_A)$.
+
+(b) Let $\mathfrak u$ be the unitary $n\times n$ matrix whose realification is $U_A$. Then $\operatorname{rot}(\theta)U_A+I$ is the
+realification of $e^{i\theta}\mathfrak u+I$, and by \eqref{eq:iso-realdet} its determinant is $|\det(e^{i\theta}\mathfrak u+I)|^2$,
+which vanishes exactly when $-e^{-i\theta}$ is an eigenvalue of $\mathfrak u$. The numbers $-e^{-i\theta_m}$, $m=0,\dots,n$, are
+pairwise distinct because $0\le\theta_m<\pi$, and $\mathfrak u$ has at most $n$ eigenvalues; so some $m\le n$ is admissible and
+$m_A$ exists. $V=V_A$ is of unitary type and $V+I$ is invertible. The matrices $V$, $V^{\mathsf T}=V^{-1}$ and $(V+I)^{-1}$
+commute with each other and with $J_\C$. Hence $X_A$ commutes with $J_\C$, and
+\[
+ X_A^{\mathsf T}=(V^{-1}+I)^{-1}(V^{-1}-I)=\big(V^{-1}(I+V)\big)^{-1}V^{-1}(I-V)=(I+V)^{-1}(I-V)=-X_A .
+\]
+For skew-symmetric $X$ and $\xi\in\R^{2n}$, $\langle\xi,(I-\sigma X)\xi\rangle=|\xi|^2$, so $I-\sigma X$ is invertible. The
+matrices $I\pm\sigma X_A$ commute, so $Q_\sigma=\operatorname{Cay}(X_A,\sigma)$ satisfies
+$Q_\sigma^{\mathsf T}Q_\sigma=(I+\sigma X_A)^{-1}(I-\sigma X_A)(I+\sigma X_A)(I-\sigma X_A)^{-1}=I$, and $Q_\sigma$
+commutes with $J_\C$; so it is of unitary type. Finally $I+X_A=2V(V+I)^{-1}$ and $I-X_A=2(V+I)^{-1}$, so
+$\operatorname{Cay}(X_A,1)=2V(V+I)^{-1}\cdot\tfrac12(V+I)=V$.
+
+(c) $\operatorname{rot}(\theta)$ is of unitary type for every $\theta$, and $\operatorname{rot}(\alpha)\operatorname{rot}(\beta)
+=\operatorname{rot}(\alpha+\beta)$ because $J_\C^2=-I$. The matrix $P_{A,\sigma}=(1-\beta_\sigma)I+\beta_\sigma P_A$,
+$\beta_\sigma=\sin^2(\pi\sigma/2)\in[0,1]$, is symmetric with eigenvalues $(1-\beta_\sigma)+\beta_\sigma\mu$, $\mu$ an eigenvalue of
+$P_A$, which lie between $1$ and $\mu$; so it is positive definite. By the block criterion, (a) and (b), each of the four factors
+of $M_{A,\sigma}$ is symplectic, hence so is $M_{A,\sigma}$. At $\sigma=0$ all four factors are $I$. At $\sigma=1$,
+$M_{A,1}=\operatorname{rot}(-\theta_A)V_A\operatorname{Dg}(P_A,P_A^{-1})\operatorname{Up}(T_A)
+=U_A\operatorname{Dg}(P_A,P_A^{-1})\operatorname{Up}(T_A)=A$ by (a). The entries of $\operatorname{rot}(\pm\sigma\theta_A)$,
+$I\pm\sigma X_A$, $P_{A,\sigma}$ and $\sigma T_A$ are $C^\infty$ in $\sigma$, and the inverses of $I-\sigma X_A$ and
+$P_{A,\sigma}$ have smooth entries by the adjugate formula, their determinants being nonzero for every $\sigma$. Products of
+matrices with smooth entries have smooth entries, and $(\sigma,u)\mapsto M_{A,\sigma}u$ is bilinear in the entries and $u$.
+
+\end{proof}
+
+
+
+\subsection{Parameters and the stage maps}\label{sec:iso-parameters}
+
+\begin{definition}[Parameters]\label{def:iso-parameters}
+\lean{SymplecticPacking.General.Ham.Isotopy.cen, SymplecticPacking.General.Ham.Isotopy.lin, SymplecticPacking.General.Ham.Isotopy.linPath, SymplecticPacking.General.Ham.Isotopy.bigL, SymplecticPacking.General.Ham.Isotopy.rsum, SymplecticPacking.General.Ham.Isotopy.deltaC, SymplecticPacking.General.Ham.Isotopy.tau, SymplecticPacking.General.Ham.Isotopy.farC}
+\uses{def:iso-hyp, def:iso-linear-path}
+Put
+\[
+ L=1+\sum_{i=1}^k\Big(\max_{u\in\EB(r_{3,i})}\|Df_i(u)\|+\max_{(\sigma,u)\in[0,1]\times\EB(r_{3,i})}|M_{i,\sigma}u|\Big),
+ \qquad r_{\rm tot}=1+\sum_{i=1}^kr_{3,i} ,
+\]
+$\delta_c=\frac12\min_{i\ne j}|y_i-y_j|$ if $k\ge2$ and $\delta_c=1$ if $k=1$, and
+\[
+ \tau=\min\Big(\frac12,\ \frac{\delta_c}{2Lr_{\rm tot}}\Big),\qquad Y_i=\frac{y_i}{\tau}.
+\]
+\end{definition}
+
+The maxima exist: $Df_i$ is continuous on $\EB^\circ(\bar r_i)\supset\EB(r_{3,i})$, and $(\sigma,u)\mapsto M_{i,\sigma}u$ is
+continuous by Lemma~\ref{lem:iso-linear-path}(c); both are maximised over compact sets.
+
+\begin{lemma}[Parameters]\label{lem:iso-parameters}
+\lean{SymplecticPacking.General.Ham.Isotopy.IsoInput.one_le_L, SymplecticPacking.General.Ham.Isotopy.IsoInput.norm_fderiv_le, SymplecticPacking.General.Ham.Isotopy.IsoInput.norm_linPath_le, SymplecticPacking.General.Ham.Isotopy.IsoInput.rsum_pos, SymplecticPacking.General.Ham.Isotopy.IsoInput.r3_add_r3_lt, SymplecticPacking.General.Ham.Isotopy.IsoInput.cen_ne, SymplecticPacking.General.Ham.Isotopy.IsoInput.deltaC_pos, SymplecticPacking.General.Ham.Isotopy.IsoInput.two_deltaC_le, SymplecticPacking.General.Ham.Isotopy.IsoInput.tau_pos, SymplecticPacking.General.Ham.Isotopy.tau_le_half, SymplecticPacking.General.Ham.Isotopy.IsoInput.farC_sep}
+\uses{def:iso-parameters, lem:iso-linear-path}
+\begin{enumerate}[label=(\alph*)]
+\item $L\ge1$ and $r_{\rm tot}\ge1$.
+\item $\|Df_i(u)\|\le L$ and $|M_{i,\sigma}u|\le L$ for $\sigma\in[0,1]$ and $u\in\EB(r_{3,i})$.
+\item $r_{3,i}+r_{3,j}<r_{\rm tot}$ for $i\ne j$.
+\item The $y_i$ are pairwise distinct, $\delta_c>0$, and $\delta_c\le\frac12|y_i-y_j|$ for $i\ne j$.
+\item $0<\tau\le\frac12$, and $|Y_i-Y_j|\ge4Lr_{\rm tot}>r_{3,i}+r_{3,j}$ for $i\ne j$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+All summands of $L$ and $r_{\rm tot}$ are nonnegative; this gives (a), (b) and $r_{\rm tot}\ge1+r_{3,i}+r_{3,j}$, hence (c).
+Since $0\in\EB(r_{4,i})$ and the sets $f_i(\EB(r_{4,i}))$ are pairwise disjoint, $y_i\ne y_j$ for $i\ne j$; so $\delta_c$ is half the
+minimum of finitely many positive numbers (or $1$), which gives (d). Therefore $0<\tau\le\frac12$, and
+$\tau\le\delta_c/(2Lr_{\rm tot})$ gives $|Y_i-Y_j|=|y_i-y_j|/\tau\ge2\delta_c\cdot2Lr_{\rm tot}/\delta_c=4Lr_{\rm tot}$. Finally
+$4Lr_{\rm tot}>r_{\rm tot}>r_{3,i}+r_{3,j}$ by (a) and (c).
+\end{proof}
+
+\begin{definition}[The stage maps]\label{def:iso-stages}
+\lean{SymplecticPacking.General.Ham.Isotopy.linPath, SymplecticPacking.General.Ham.Isotopy.shape, SymplecticPacking.General.Ham.Isotopy.tailMap}
+\uses{def:iso-parameters}
+For $1\le i\le k$ define:
+\begin{enumerate}[label=(\roman*)]
+\item the \emph{linear stage} $G^{\rm lin}_{i,\sigma}(u)=Y_i+M_{i,\sigma}u$ for $\sigma\in\R$, $u\in\R^{2n}$;
+\item the \emph{shape family} $\kappa_{i,\rho}(u)=\int_0^1Df_i(\phi\rho u)\,u\,d\phi$ for
+ $(\rho,u)\in\Omega_i=(-1,1)\times\EB^\circ(r_{4,i})$, and the \emph{shape stage}
+ $G^{\rm sh}_{i,\sigma}(u)=Y_i+\kappa_{i,\tau\sigma}(u)$ for $\sigma\in(-2,2)$, $u\in\EB^\circ(r_{4,i})$;
+\item the \emph{tail} $T_{i,v}(u)=v^{-1}f_i(vu)$ for $v>0$ and $u\in\R^{2n}$ with $vu\in\EB^\circ(\bar r_i)$.
+\end{enumerate}
+\end{definition}
+
+The shape stage is defined because $|\tau\sigma|<1$ for $|\sigma|<2$, and the integrand of $\kappa_{i,\rho}$ is defined because
+$|\phi\rho u|<r_{4,i}<\bar r_i$.
+
+\begin{lemma}[The linear stage]\label{lem:iso-linear-disjoint}
+\lean{SymplecticPacking.General.Ham.Isotopy.IsoInput.linPath_sympl, SymplecticPacking.General.Ham.Isotopy.linPath_zero, SymplecticPacking.General.Ham.Isotopy.IsoInput.linPath_one, SymplecticPacking.General.Ham.Isotopy.IsoInput.contDiff_linPath_apply, SymplecticPacking.General.Ham.Isotopy.IsoInput.norm_linPath_le, SymplecticPacking.General.Ham.Isotopy.IsoInput.farC_sep}
+\uses{lem:iso-linear-path, lem:iso-parameters, def:iso-stages}
+$(\sigma,u)\mapsto G^{\rm lin}_{i,\sigma}(u)$ is $C^\infty$, $G^{\rm lin}_{i,0}(u)=Y_i+u$ and $G^{\rm lin}_{i,1}(u)=Y_i+A_iu$. For
+$\sigma\in[0,1]$, $G^{\rm lin}_{i,\sigma}$ is an affine symplectic isomorphism of $\R^{2n}$ which maps $\EB(r_{3,i})$ into
+$\EB(Y_i,L)\subset\EB(Y_i,Lr_{\rm tot})$, and the balls $\EB(Y_i,Lr_{\rm tot})$, $1\le i\le k$, are pairwise disjoint.
+\end{lemma}
+
+\begin{proof}
+Smoothness and the endpoints are Lemma~\ref{lem:iso-linear-path}(c); the linear part $M_{i,\sigma}$ is symplectic, hence
+invertible. The inclusion is $|M_{i,\sigma}u|\le L\le Lr_{\rm tot}$ (Lemma~\ref{lem:iso-parameters}(a),(b)). Two closed balls of
+radius $Lr_{\rm tot}$ whose centres are at least $4Lr_{\rm tot}>2Lr_{\rm tot}$ apart are disjoint
+(Lemma~\ref{lem:iso-parameters}(e)).
+\end{proof}
+
+\subsection{The shape stage and the tail}\label{sec:iso-shape}
+
+The shape stage deforms $Y_i+A_iu$ into $\tau^{-1}f_i(\tau u)$ with the far centre fixed. The difference quotient
+$\rho^{-1}(f_i(\rho u)-y_i)$ is written as an average of derivatives, so that it is visibly smooth through $\rho=0$.
+
+\begin{lemma}[The shape stage]\label{lem:iso-shape}
+\lean{SymplecticPacking.General.Ham.Isotopy.shape, SymplecticPacking.General.Ham.Isotopy.shape_zero, SymplecticPacking.General.Ham.Isotopy.smul_shape, SymplecticPacking.General.Ham.Isotopy.shape_eq, SymplecticPacking.General.Ham.Isotopy.hasFDerivAt_shape, SymplecticPacking.General.Ham.Isotopy.norm_shape_le, SymplecticPacking.General.Ham.Isotopy.contDiffOn_shape, SymplecticPacking.General.Ham.Isotopy.tailMap_tau_sub}
+\uses{def:iso-hyp, lem:iso-parameters, def:iso-stages}
+\begin{enumerate}[label=(\alph*)]
+\item $(\rho,u)\mapsto\kappa_{i,\rho}(u)$ is $C^\infty$ on $\Omega_i$.
+\item $\kappa_{i,0}(u)=A_iu$, and $\rho\,\kappa_{i,\rho}(u)=f_i(\rho u)-y_i$; in particular
+ $\kappa_{i,\rho}(u)=\rho^{-1}(f_i(\rho u)-y_i)$ for $\rho\ne0$.
+\item $D_u\kappa_{i,\rho}(u)=Df_i(\rho u)$; in particular it is symplectic.
+\item $|\kappa_{i,\rho}(u)|\le L|u|$ for $|\rho|<1$ and $u\in\EB(r_{3,i})$.
+\item $\partial_\rho\kappa_{i,\rho}(u)=\int_0^1\phi\,D^2f_i(\phi\rho u)[u,u]\,d\phi$.
+\item For $\sigma\in[0,1]$, $G^{\rm sh}_{i,\sigma}$ is injective on $\EB(r_{3,i})$ and maps it into $\EB(Y_i,Lr_{\rm tot})$;
+ $G^{\rm sh}_{i,0}=G^{\rm lin}_{i,1}$ and $G^{\rm sh}_{i,1}=T_{i,\tau}$ on $\EB^\circ(r_{4,i})$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+For $(\phi,\rho,u)\in[0,1]\times\Omega_i$ we have $|\phi\rho u|<r_{4,i}$, so the integrand $g(\phi,\rho,u)=Df_i(\phi\rho u)u$ is
+defined and $C^\infty$ on the open set $\{(\phi,\rho,u):|\phi\rho u|<\bar r_i\}$, which contains $[0,1]\times\Omega_i$. For a
+compact neighbourhood $N\subset\Omega_i$ of a point of $\Omega_i$, every partial derivative of $g$ in $(\rho,u)$ is bounded on
+the compact set $[0,1]\times N$; hence the integral over $[0,1]$ may be differentiated under the integral sign any number of
+times, which proves (a), and (e) is the derivative of the integrand,
+$\partial_\rho\big(Df_i(\phi\rho u)u\big)=D^2f_i(\phi\rho u)[\phi u,u]$.
+(b) At $\rho=0$ the integrand is $A_iu$. For general $\rho$, $\phi\mapsto f_i(\phi\rho u)$ is $C^1$ on $[0,1]$ with derivative
+$Df_i(\phi\rho u)(\rho u)=\rho\,Df_i(\phi\rho u)u$, and the fundamental theorem of calculus gives
+$f_i(\rho u)-f_i(0)=\rho\kappa_{i,\rho}(u)$.
+(c) For $\rho=0$, $\kappa_{i,0}=A_i$ is linear. For $\rho\ne0$, (b) holds on the open set $\EB^\circ(r_{4,i})$, so
+$D_u\kappa_{i,\rho}(u)=\rho^{-1}Df_i(\rho u)\,\rho=Df_i(\rho u)$, which is symplectic by Definition~\ref{def:iso-hyp}(i).
+(d) $|\phi\rho u|\le|u|\le r_{3,i}$, and $\|Df_i\|\le L$ on $\EB(r_{3,i})$ (Lemma~\ref{lem:iso-parameters}(b)); so the integrand
+has norm at most $L|u|$.
+(f) If $\sigma=0$, $G^{\rm sh}_{i,0}(u)=Y_i+A_iu=G^{\rm lin}_{i,1}(u)$, which is injective. If $\sigma\in(0,1]$, put
+$\rho=\tau\sigma\in(0,\frac12]$; by (b), $G^{\rm sh}_{i,\sigma}(u)=Y_i+\rho^{-1}(f_i(\rho u)-y_i)$, which is injective on
+$\EB(r_{3,i})$ because $\rho\EB(r_{3,i})\subset\EB(r_{4,i})$ and $f_i$ is injective there. For every $\sigma\in[0,1]$ and
+$u\in\EB(r_{3,i})$, (d) with $\rho=\tau\sigma$ gives $|G^{\rm sh}_{i,\sigma}(u)-Y_i|\le Lr_{3,i}\le Lr_{\rm tot}$. At $\sigma=1$, (b) gives
+$G^{\rm sh}_{i,1}(u)=Y_i+\tau^{-1}(f_i(\tau u)-y_i)=\tau^{-1}f_i(\tau u)=T_{i,\tau}(u)$, as $Y_i=\tau^{-1}y_i$.
+\end{proof}
+
+\begin{lemma}[The tail stage]\label{lem:iso-tail}
+\lean{SymplecticPacking.tail_image, SymplecticPacking.tail_injOn, SymplecticPacking.hasFDerivAt_tail, SymplecticPacking.hasDerivAt_tail_param, SymplecticPacking.tail_one, SymplecticPacking.General.Ham.Isotopy.tailMap, SymplecticPacking.General.Ham.Isotopy.tailMap_tau_sub, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_disj}
+\uses{def:iso-hyp, lem:iso-shape, def:iso-stages}
+The map $(v,u)\mapsto T_{i,v}(u)$ is $C^\infty$ on the open set $\{(v,u):v>0,\ |vu|<\bar r_i\}$, which contains
+$(0,1]\times\EB^\circ(r_{4,i})$. For $v\in(0,1]$:
+\begin{enumerate}[label=(\alph*)]
+\item $D_uT_{i,v}(u)=Df_i(vu)$ is symplectic, and
+ $\partial_vT_{i,v}(u)=v^{-2}\big(v\,Df_i(vu)u-f_i(vu)\big)$;
+\item $T_{i,v}$ is injective on $\EB(r_{3,i})$, and the sets $T_{i,v}(\EB(r_{3,i}))$, $1\le i\le k$, are pairwise
+ disjoint;
+\item $|T_{i,v}(u)|<R_0/v$ for $u\in\EB(r_{3,i})$;
+\item $T_{i,1}=f_i$, and $T_{i,\tau}(u)=G^{\rm sh}_{i,1}(u)=Y_i+\kappa_{i,\tau}(u)$ for $u\in\EB^\circ(r_{4,i})$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Smoothness: $(v,u)\mapsto v^{-1}$ and $(v,u)\mapsto vu$ are smooth, and $f_i$ is smooth on $\EB^\circ(\bar r_i)$; if $0<v\le1$
+and $|u|<r_{4,i}$ then $|vu|<r_{4,i}<\bar r_i$. (a) is the chain and product rules. (b) Since
+$v\EB(r_{3,i})\subset\EB(r_{4,i})$, injectivity follows from Definition~\ref{def:iso-hyp}(ii), and the sets
+$T_{i,v}(\EB(r_{3,i}))=v^{-1}f_i(v\EB(r_{3,i}))$ are the images of the pairwise disjoint sets
+$f_i(v\EB(r_{3,i}))\subset f_i(\EB(r_{4,i}))$ (Definition~\ref{def:iso-hyp}(iii)) under the one injective map $y\mapsto v^{-1}y$.
+(c) holds because $vu\in\EB(r_{4,i})$, so $|f_i(vu)|<R_0$ by Definition~\ref{def:iso-hyp}(iii). (d) is
+Lemma~\ref{lem:iso-shape}(b),(f).
+\end{proof}
+
+This is why all balls share one dilation parameter $v$: disjointness of the sets $f_i(\EB(r_{4,i}))$ passes through a
+single dilation $y\mapsto v^{-1}y$, whereas a ball-by-ball comparison would need the sets $f_i(\EB(r_{3,i}))-y_i$ to be
+star-shaped, which the isotopy input does not provide.
+
+\subsection{The translation route}\label{sec:iso-route}
+
+The route moves the round balls from the centres $s_i$ to the far centres $Y_i$. Translations are symplectic, so only
+collisions matter. Every ball is first lifted in the $x_1$-direction to a level given by its rank, then in the
+$y_1$-direction; at these levels any two balls are separated by one of the two offsets, so all balls can move in a
+straight line to their targets at once; then the offsets are removed in the reverse order. Ranks are chosen so that
+lifting and lowering never decrease distances.
+
+Let $e_1$ and $e_{n+1}$ be the unit vectors in the $x_1$- and $y_1$-directions; they are orthonormal. For real numbers
+$\gamma_1,\dots,\gamma_k$ let
+\[
+ \operatorname{rk}_\gamma(i)=\#\{j:\ \gamma_j<\gamma_i\ \text{or}\ (\gamma_j=\gamma_i\ \text{and}\ j<i)\}\in\{0,\dots,k-1\},
+\]
+the rank of $i$ in the lexicographic order of $(\gamma_j,j)$. It is defined by finitely many case distinctions on
+propositions about the input (\Mref{Definition}{def:intro-levels}).
+
+\begin{definition}[The route]\label{def:iso-route}
+\lean{SymplecticPacking.General.Ham.Isotopy.dirQ, SymplecticPacking.General.Ham.Isotopy.dirP, SymplecticPacking.General.Ham.Isotopy.rank, SymplecticPacking.General.Ham.Isotopy.height, SymplecticPacking.General.Ham.Isotopy.routeConst, SymplecticPacking.General.Ham.Isotopy.routePos}
+\uses{def:iso-parameters}
+Let $\nu_i=\operatorname{rk}_\gamma(i)$ for $\gamma_j=\langle s_j,e_1\rangle$, and $\nu'_i=\operatorname{rk}_{\gamma'}(i)$ for
+$\gamma'_j=\langle Y_j,e_{n+1}\rangle$. Put
+\[
+ \Lambda_{\rm rt}=1+\sum_{j=1}^k2\big(r_{3,j}+|s_j|+|Y_j|\big),
+\]
+and, for $\boldsymbol\sigma=(\sigma_0,\dots,\sigma_4)\in\R^5$,
+\[
+ z_i(\boldsymbol\sigma)=s_i+\sigma_2(Y_i-s_i)+(\sigma_0-\sigma_3)\Lambda_{\rm rt}\nu_i\,e_1+(\sigma_1-\sigma_4)\Lambda_{\rm rt}\nu'_i\,e_{n+1} .
+\]
+A vector $\boldsymbol\sigma$ is \emph{on the route} if there is $m\in\{0,\dots,4\}$ with $\sigma_l=1$ for $l<m$, $\sigma_l=0$ for
+$l>m$, and $\sigma_m\in[0,1]$ (\emph{phase} $m$).
+\end{definition}
+
+\begin{lemma}[The route]\label{lem:iso-route}
+\lean{SymplecticPacking.General.Ham.Isotopy.rank_sign, SymplecticPacking.General.Ham.Isotopy.norm_le_norm_add_smul, SymplecticPacking.General.Ham.Isotopy.routePos_zero, SymplecticPacking.General.Ham.Isotopy.routePos_one, SymplecticPacking.General.Ham.Isotopy.contDiff_routePos, SymplecticPacking.General.Ham.Isotopy.route_sep, SymplecticPacking.General.Ham.Isotopy.IsoInput.pos_sep, SymplecticPacking.General.Ham.Isotopy.rank_lt, SymplecticPacking.General.Ham.Isotopy.routePos_norm_le}
+\uses{def:iso-route, lem:iso-parameters}
+\begin{enumerate}[label=(\alph*)]
+\item For $\gamma\in\R^k$ and $i\ne j$: $\operatorname{rk}_\gamma(i)\ne\operatorname{rk}_\gamma(j)$, so
+ $|\operatorname{rk}_\gamma(i)-\operatorname{rk}_\gamma(j)|\ge1$, and
+ $(\gamma_i-\gamma_j)\big(\operatorname{rk}_\gamma(i)-\operatorname{rk}_\gamma(j)\big)\ge0$.
+\item $\boldsymbol\sigma\mapsto z_i(\boldsymbol\sigma)$ is affine, $z_i(0,\dots,0)=s_i$ and $z_i(1,\dots,1)=Y_i$.
+\item If $\boldsymbol\sigma$ is on the route, then $|z_i(\boldsymbol\sigma)-z_j(\boldsymbol\sigma)|>r_{3,i}+r_{3,j}$ for all $i\ne j$.
+\item If $\boldsymbol\sigma\in[0,1]^5$, then $|z_i(\boldsymbol\sigma)|\le\max(|s_i|,|Y_i|)+2(k-1)\Lambda_{\rm rt}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) Write $j\prec i$ if $\gamma_j<\gamma_i$, or $\gamma_j=\gamma_i$ and $j<i$. This is a strict total order on
+$\{1,\dots,k\}$, and $\operatorname{rk}_\gamma(i)$ is the number of $j$ with $j\prec i$. If $j\prec i$, then every $l\prec j$
+satisfies $l\prec i$, and $j\prec i$ but not $j\prec j$; so $\operatorname{rk}_\gamma(j)<\operatorname{rk}_\gamma(i)$, and
+$\gamma_j\le\gamma_i$. Exchanging the roles gives the other case.
+
+(b) $z_i$ is affine in $\boldsymbol\sigma$ by its formula; at $\boldsymbol\sigma=0$ all terms but $s_i$ vanish, and at
+$\boldsymbol\sigma=(1,\dots,1)$ both offsets cancel and $s_i+(Y_i-s_i)=Y_i$.
+
+(c) We use two elementary facts. For $\xi\in\R^{2n}$, a unit vector $e$ and $x\in\R$ with $x\langle\xi,e\rangle\ge0$,
+\begin{equation}\label{eq:iso-push-away}
+ |\xi+xe|^2=|\xi|^2+2x\langle\xi,e\rangle+x^2\ge|\xi|^2 ;
+\end{equation}
+and $|\xi|\ge|\langle\xi,e\rangle|$. Fix $i\ne j$, put $d=r_{3,i}+r_{3,j}$, $\Delta s=s_i-s_j$, $\Delta Y=Y_i-Y_j$,
+$\Delta\nu=\nu_i-\nu_j$, $\Delta\nu'=\nu'_i-\nu'_j$ and $\Sigma=|s_i|+|s_j|+|Y_i|+|Y_j|$. By
+Definition~\ref{def:iso-hyp}(iv) and Lemma~\ref{lem:iso-parameters}(e), $|\Delta s|>d$ and $|\Delta Y|>d$. By (a),
+$|\Delta\nu|,|\Delta\nu'|\ge1$, $\langle\Delta s,e_1\rangle\Delta\nu\ge0$ and $\langle\Delta Y,e_{n+1}\rangle\Delta\nu'\ge0$. Also
+$\Lambda_{\rm rt}\ge1+2d+2\Sigma$, so $\Lambda_{\rm rt}>d$ and $\Lambda_{\rm rt}-\Sigma>d$. Let $\boldsymbol\sigma$ be in phase $m$, and
+$w=z_i(\boldsymbol\sigma)-z_j(\boldsymbol\sigma)$.
+
+\emph{Phase $0$.} $w=\Delta s+\sigma_0\Lambda_{\rm rt}\Delta\nu\,e_1$ with $\sigma_0\ge0$; by \eqref{eq:iso-push-away},
+$|w|\ge|\Delta s|>d$.
+
+\emph{Phase $1$.} $w=\Delta s+\Lambda_{\rm rt}\Delta\nu\,e_1+\sigma_1\Lambda_{\rm rt}\Delta\nu'\,e_{n+1}$, and $e_{n+1}\perp e_1$, so
+$\langle w,e_1\rangle=\langle\Delta s,e_1\rangle+\Lambda_{\rm rt}\Delta\nu$. The two terms do not have opposite signs, so
+$|w|\ge|\langle w,e_1\rangle|\ge\Lambda_{\rm rt}|\Delta\nu|\ge\Lambda_{\rm rt}>d$.
+
+\emph{Phase $2$.} $\langle w,e_1\rangle=(1-\sigma_2)\langle\Delta s,e_1\rangle+\sigma_2\langle\Delta Y,e_1\rangle+\Lambda_{\rm rt}\Delta\nu$
+with $\sigma_2\in[0,1]$. The sum of the first two terms is a convex combination of $\langle\Delta s,e_1\rangle$ and
+$\langle\Delta Y,e_1\rangle$, so its absolute value is at most $\Sigma$. Since $|\Delta\nu|\ge1$,
+$|w|\ge|\langle w,e_1\rangle|\ge\Lambda_{\rm rt}-\Sigma>d$.
+
+\emph{Phase $3$.} $w=\Delta Y+(1-\sigma_3)\Lambda_{\rm rt}\Delta\nu\,e_1+\Lambda_{\rm rt}\Delta\nu'\,e_{n+1}$, so
+$\langle w,e_{n+1}\rangle=\langle\Delta Y,e_{n+1}\rangle+\Lambda_{\rm rt}\Delta\nu'$, and as in phase $1$, $|w|\ge\Lambda_{\rm rt}>d$.
+
+\emph{Phase $4$.} $w=\Delta Y+(1-\sigma_4)\Lambda_{\rm rt}\Delta\nu'\,e_{n+1}$ with $1-\sigma_4\ge0$; by \eqref{eq:iso-push-away},
+$|w|\ge|\Delta Y|>d$.
+
+(d) $s_i+\sigma_2(Y_i-s_i)$ is a convex combination of $s_i$ and $Y_i$; $|\sigma_0-\sigma_3|,|\sigma_1-\sigma_4|\le1$ and
+$\nu_i,\nu'_i\le k-1$.
+\end{proof}
+
+\subsection{Concatenation and the common isotopy}\label{sec:iso-concat}
+
+The stages run in eight time slots of length $\frac18$: the five route phases, the linear stage, the shape stage and the tail.
+Each is driven by its own flat clock $\sigma_m(t)=S(8t-m)$, $m=0,\dots,7$, which is $0$ for $t\le m/8$ and $1$ for
+$t\ge(m+1)/8$. We write $\boldsymbol\sigma(t)=(\sigma_0(t),\dots,\sigma_4(t))$ and $v(t)=\tau+(1-\tau)\sigma_7(t)$.
+
+\begin{construction}[The common isotopy]\label{cons:iso-isotopy}
+\lean{SymplecticPacking.General.Ham.Isotopy.clk, SymplecticPacking.General.Ham.Isotopy.routeClocks, SymplecticPacking.General.Ham.Isotopy.tailMap, SymplecticPacking.General.Ham.Isotopy.isoF}
+\uses{def:iso-route, def:iso-linear-path, def:iso-stages, def:pre-flat}
+Each bracket in \eqref{eq:iso-F} below vanishes while its clock is $0$, and once its clock is $1$ its first term cancels the
+subtracted term of the next bracket. So on slot $m$ only the $m$-th stage moves. For $t\in\R$ and $u\in\EB^\circ(r_{4,i})$ let
+\begin{equation}\label{eq:iso-F}
+ F_{i,t}(u)=z_i(\boldsymbol\sigma(t))+u+\big(M_{i,\sigma_5(t)}u-u\big)+\big(\kappa_{i,\tau\sigma_6(t)}(u)-A_iu\big)
+ +\big(T_{i,v(t)}(u)-T_{i,\tau}(u)\big).
+\end{equation}
+The stage maps are $G_{i,m}(\sigma,u)=z_i(1,\dots,1,\sigma,0,\dots,0)+u$ ($\sigma$ in position $m$) for $m\le4$,
+$G_{i,5}(\sigma,u)=G^{\rm lin}_{i,\sigma}(u)$, $G_{i,6}(\sigma,u)=G^{\rm sh}_{i,\sigma}(u)$ and
+$G_{i,7}(\sigma,u)=T_{i,\tau+(1-\tau)\sigma}(u)$.
+\end{construction}
+
+Each term of \eqref{eq:iso-F} is defined: $\tau\sigma_6(t)\in[0,\frac12]$ and $v(t)\in[\tau,1]$.
+
+\begin{lemma}[Flat concatenation]\label{lem:iso-concat}
+\lean{SymplecticPacking.General.Ham.Isotopy.clk_mem, SymplecticPacking.General.Ham.Isotopy.contDiff_clk, SymplecticPacking.General.Ham.Isotopy.clk_eq_one_of_lt, SymplecticPacking.General.Ham.Isotopy.clk_eq_zero_of_gt, SymplecticPacking.General.Ham.Isotopy.clk_of_nonpos, SymplecticPacking.General.Ham.Isotopy.clk_of_one_le, SymplecticPacking.General.Ham.Isotopy.routeClocks_valid, SymplecticPacking.General.Ham.Isotopy.isoF_route', SymplecticPacking.General.Ham.Isotopy.isoF_linear', SymplecticPacking.General.Ham.Isotopy.isoF_shape', SymplecticPacking.General.Ham.Isotopy.isoF_tail', SymplecticPacking.General.Ham.Isotopy.tailParam_mem, SymplecticPacking.General.Ham.Isotopy.IsoInput.shapeParam_mem, SymplecticPacking.General.Ham.Isotopy.IsoInput.contDiffOn_isoF, SymplecticPacking.General.Ham.Isotopy.isoF_const_left, SymplecticPacking.General.Ham.Isotopy.isoF_const_right, SymplecticPacking.General.Ham.Isotopy.isoF_start, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_end}
+\uses{cons:iso-isotopy, lem:pre-flat, lem:iso-linear-disjoint, lem:iso-shape, lem:iso-tail, lem:iso-route}
+\begin{enumerate}[label=(\alph*)]
+\item Each $\sigma_m$ is $C^\infty$ with values in $[0,1]$. If $t\in[m/8,(m+1)/8]$, then $\sigma_l(t)=1$ and
+ $\dot\sigma_l(t)=0$ for $l<m$, $\sigma_l(t)=0$ and $\dot\sigma_l(t)=0$ for $l>m$, and $\boldsymbol\sigma(t)$ is on the route if
+ $m\le4$. All clocks and their derivatives vanish for $t\le0$; all clocks equal $1$ and their derivatives vanish for $t\ge1$.
+\item For $t\in[m/8,(m+1)/8]$ and $u\in\EB^\circ(r_{4,i})$, $F_{i,t}(u)=G_{i,m}(\sigma_m(t),u)$. Explicitly:
+ $F_{i,t}(u)=z_i(\boldsymbol\sigma(t))+u$ if $m\le4$; $Y_i+M_{i,\sigma_5(t)}u$ if $m=5$; $Y_i+\kappa_{i,\tau\sigma_6(t)}(u)$ if $m=6$;
+ $T_{i,v(t)}(u)$ if $m=7$. Moreover $G_{i,m}(1,\cdot)=G_{i,m+1}(0,\cdot)$ for $m<7$.
+\item $(t,u)\mapsto F_{i,t}(u)$ is $C^\infty$ on $\R\times\EB^\circ(r_{4,i})$.
+\item $F_{i,t}=F_{i,0}$ for $t\le0$, $F_{i,t}=F_{i,1}$ for $t\ge1$, $F_{i,0}(u)=s_i+u$ and $F_{i,1}=f_i$ on $\EB^\circ(r_{4,i})$.
+\item For $t\in[m/8,(m+1)/8]$,
+ \begin{align*}
+  \partial_tF_{i,t}(u)&=\dot\sigma_m(t)\,\partial_\sigma G_{i,m}(\sigma_m(t),u),\\
+  D_uF_{i,t}(u)&=D_uG_{i,m}(\sigma_m(t),u).
+ \end{align*}
+ In particular $\partial_tF_{i,t}=0$ for $t\notin(0,1)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) By Lemma~\ref{lem:pre-flat}, $S$ is $C^\infty$ with values in $[0,1]$, $S=0$ on $(-\infty,0]$, $S=1$ on $[1,\infty)$, and $S'=0$
+on both half-lines. For $t\in[m/8,(m+1)/8]$ and $l<m$, $8t-l\ge1$; for $l>m$, $8t-l\le0$. For $t\le0$ and $l\ge0$, $8t-l\le0$; for
+$t\ge1$ and $l\le7$, $8t-l\ge1$.
+
+(b) Insert the clock values of (a) into \eqref{eq:iso-F}, and use $M_{i,0}=I$, $M_{i,1}=A_i$ (Lemma~\ref{lem:iso-linear-path}(c)),
+$\kappa_{i,0}=A_i$ (Lemma~\ref{lem:iso-shape}(b)) and $z_i(1,\dots,1)=Y_i$ (Lemma~\ref{lem:iso-route}(b)). If $m\le4$, then
+$\sigma_5=\sigma_6=\sigma_7=0$ and the last three brackets vanish. If $m\ge5$, then $z_i(\boldsymbol\sigma(t))=Y_i$. If $m=5$, the last two
+brackets vanish. If $m=6$, $\sigma_5=1$ and $u+(A_iu-u)+(\kappa_{i,\tau\sigma_6}(u)-A_iu)=\kappa_{i,\tau\sigma_6}(u)$. If $m=7$,
+$\sigma_5=\sigma_6=1$ and $F_{i,t}(u)=Y_i+\kappa_{i,\tau}(u)+T_{i,v(t)}(u)-T_{i,\tau}(u)=T_{i,v(t)}(u)$ by
+Lemma~\ref{lem:iso-tail}(d). In each case the result is $G_{i,m}(\sigma_m(t),u)$. The matching conditions are
+$z_i(1,\dots,1)=Y_i=G^{\rm lin}_{i,0}(u)-u$ for $m=4$, Lemma~\ref{lem:iso-shape}(f) for $m=5$ and Lemma~\ref{lem:iso-tail}(d) for
+$m=6$; for $m<4$ both sides are $z_i$ at the same point.
+
+(c) The clocks are smooth, and each term of \eqref{eq:iso-F} is a smooth map composed with $(t,u)\mapsto(\text{clock values},u)$:
+$z_i$ is affine; $(\sigma,u)\mapsto M_{i,\sigma}u$ is smooth on $\R\times\R^{2n}$ (Lemma~\ref{lem:iso-linear-path}(c));
+$(\rho,u)\mapsto\kappa_{i,\rho}(u)$ is smooth on $\Omega_i$, which contains $(\tau\sigma_6(t),u)$ (Lemma~\ref{lem:iso-shape}(a)); and
+$(v,u)\mapsto T_{i,v}(u)$ is smooth on an open set containing $(v(t),u)$ and $(\tau,u)$ (Lemma~\ref{lem:iso-tail}).
+
+(d) For $t\le0$ all clocks are $0$ and for $t\ge1$ all are $1$, so $F_{i,t}$ depends on $t$ only through constant clock values.
+At $t=0$, $F_{i,0}(u)=z_i(0)+u=s_i+u$ by (b). At $t=1$, $F_{i,1}=T_{i,1}=f_i$ by (b) with $m=7$ and Lemma~\ref{lem:iso-tail}(d).
+
+(e) By the chain rule, $\partial_tF_{i,t}(u)$ is the sum over $l$ of $\dot\sigma_l(t)$ times the partial derivative of the $l$-th term of
+\eqref{eq:iso-F} with respect to its clock; by (a) only $l=m$ contributes on the closed slot $[m/8,(m+1)/8]$, and that partial
+derivative is $\partial_\sigma G_{i,m}(\sigma_m(t),u)$. The identity of (b) holds for all $u$ in the open ball, so $D_u$ may be computed
+from it. For $t\notin(0,1)$ all $\dot\sigma_l(t)$ vanish.
+\end{proof}
+
+\begin{proposition}[The common symplectic isotopy]\label{prop:iso-common}
+\lean{SymplecticPacking.General.Ham.Isotopy.IsoInput.commonIsotopy, SymplecticPacking.General.Ham.Isotopy.IsoInput.contDiffOn_isoF, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_sympl, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_injOn, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_disj, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_bounded, SymplecticPacking.General.Ham.Isotopy.isotopyRadius, SymplecticPacking.General.Ham.Isotopy.TargetIsoInput.isoF_norm_le}
+\uses{lem:iso-concat, lem:iso-route, lem:iso-linear-disjoint, lem:iso-shape, lem:iso-tail, lem:iso-parameters}
+For every isotopy input, the maps $F_{i,t}$ of Construction~\ref{cons:iso-isotopy} satisfy:
+\begin{enumerate}[label=(\alph*)]
+\item $(t,u)\mapsto F_{i,t}(u)$ is $C^\infty$ on $\R\times\EB^\circ(r_{4,i})$; $F_{i,0}(u)=s_i+u$, $F_{i,1}=f_i$;
+ $F_{i,t}=F_{i,0}$ for $t\le0$ and $F_{i,t}=F_{i,1}$ for $t\ge1$;
+\item $D_uF_{i,t}(u)\in\operatorname{Sp}(2n)$ for all $t\in\R$ and $u\in\EB^\circ(r_{4,i})$;
+\item each $F_{i,t}$ is injective on $\EB(r_{3,i})$, and for every $t$ the sets $F_{i,t}(\EB(r_{3,i}))$, $1\le i\le k$, are
+ pairwise disjoint;
+\item $F_{i,t}(\EB(r_{3,i}))\subset\EB(R_F)$ for all $i$ and $t$, where $R_F=2k\Lambda_{\rm rt}+Lr_{\rm tot}+R_0/\tau$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a) is Lemma~\ref{lem:iso-concat}(c),(d). Every $t\in\R$ lies in a closed slot $[m/8,(m+1)/8]$, $0\le m\le7$, or in
+$(-\infty,0]$ or $[1,\infty)$, where $F_{i,t}$ equals $F_{i,0}$ (slot $0$ at $\sigma_0=0$) or $F_{i,1}$ (slot $7$ at
+$\sigma_7=1$). By Lemma~\ref{lem:iso-concat}(b),(e) it suffices to check (b)--(d) for $F_{i,t}=G_{i,m}(\sigma,\cdot)$ with
+$\sigma=\sigma_m(t)\in[0,1]$, and for $u\in\EB(r_{3,i})$ in (c), (d).
+
+\emph{Route slots, $m\le4$.} $F_{i,t}(u)=z_i+u$ with $z_i=z_i(\boldsymbol\sigma(t))$ and $\boldsymbol\sigma(t)$ on the route. The
+derivative is $I$; a translation is injective; the images are the balls $\EB(z_i,r_{3,i})$, which are pairwise disjoint because
+$|z_i-z_j|>r_{3,i}+r_{3,j}$ (Lemma~\ref{lem:iso-route}(c)). By Lemma~\ref{lem:iso-route}(d) and
+$\max(|s_i|,|Y_i|)+r_{3,i}\le\Lambda_{\rm rt}$, $|F_{i,t}(u)|\le\Lambda_{\rm rt}+2(k-1)\Lambda_{\rm rt}\le2k\Lambda_{\rm rt}$.
+
+\emph{Linear slot, $m=5$.} Lemma~\ref{lem:iso-linear-disjoint}: the derivative $M_{i,\sigma}$ is symplectic, the map is injective,
+the images lie in the pairwise disjoint balls $\EB(Y_i,Lr_{\rm tot})$, and $|F_{i,t}(u)|\le|Y_i|+L\le\Lambda_{\rm rt}+Lr_{\rm tot}$.
+
+\emph{Shape slot, $m=6$.} Lemma~\ref{lem:iso-shape}(c),(f): the derivative $Df_i(\tau\sigma u)$ is symplectic, the map is injective
+on $\EB(r_{3,i})$, the images lie in the pairwise disjoint balls $\EB(Y_i,Lr_{\rm tot})$, and
+$|F_{i,t}(u)|\le\Lambda_{\rm rt}+Lr_{\rm tot}$.
+
+\emph{Tail slot, $m=7$.} Lemma~\ref{lem:iso-tail} with $v=v(t)\in[\tau,1]$: symplectic derivative, injectivity, disjointness, and
+$|F_{i,t}(u)|<R_0/v\le R_0/\tau$.
+
+Since $k\ge1$ and all terms of $R_F$ are positive, each bound is at most $R_F$.
+\end{proof}
+
+\subsection{The source primitive on each stage and the pushforward}\label{sec:iso-hamiltonian}
+
+Let $\mathfrak a_{i,t}$ and $\mathfrak h_{i,t}$ be the source one-form and primitive of \Mref{Definition}{def:ham-source-primitive}
+for the isotopy of Construction~\ref{cons:iso-isotopy}:
+$\mathfrak a_{i,t}(u)[\xi]=\omega_0(\partial_tF_{i,t}(u),D_uF_{i,t}(u)\xi)$ and
+$\mathfrak h_{i,t}(u)=\int_0^1\mathfrak a_{i,t}(\vartheta u)[u]\,d\vartheta$. On each slot they have a closed form.
+
+\begin{lemma}[The primitive on each stage]\label{lem:iso-stage-primitives}
+\uses{lem:iso-concat, lem:iso-shape, lem:iso-tail, lem:iso-route, M-def:ham-source-primitive}
+Let $t\in[m/8,(m+1)/8]$, $\sigma=\sigma_m(t)$ and $u\in\EB^\circ(r_{4,i})$. Then
+$\mathfrak h_{i,t}(u)=\dot\sigma_m(t)\,\hat h_{i,m,\sigma}(u)$, where:
+\begin{enumerate}[label=(\alph*)]
+\item for $m\le4$, $\hat h_{i,m,\sigma}(u)=\omega_0(w_{i,m},u)$ with the constant vectors
+ $w_{i,0}=-w_{i,3}=\Lambda_{\rm rt}\nu_ie_1$, $w_{i,1}=-w_{i,4}=\Lambda_{\rm rt}\nu'_ie_{n+1}$ and $w_{i,2}=Y_i-s_i$;
+\item for $m=5$, $\hat h_{i,5,\sigma}(u)=\tfrac12\,\omega_0\big(\dot M_{i,\sigma}u,M_{i,\sigma}u\big)$, $\dot M_{i,\sigma}=\frac{d}{d\sigma}M_{i,\sigma}$;
+\item for $m=6$, $\hat h_{i,6,\sigma}=\tau\,h^{\rm sh}_{i,\tau\sigma}$, where for $|\rho|<1$
+ \[
+  h^{\rm sh}_{i,\rho}(u)=\int_0^1\!\!\int_0^1\vartheta^2\phi\;
+  \omega_0\big(D^2f_i(\phi\rho\vartheta u)[u,u],\ Df_i(\rho\vartheta u)u\big)\,d\phi\,d\vartheta ;
+ \]
+\item for $m=7$, $\hat h_{i,7,\sigma}=(1-\tau)\,h^{\rm tl}_{i,v}$ with $v=\tau+(1-\tau)\sigma$, where for $0<v\le1$
+ \[
+  h^{\rm tl}_{i,v}(u)=\frac1{v^2}\int_0^1\omega_0\big(Df_i(v\vartheta u)u,\ f_i(v\vartheta u)\big)\,d\vartheta .
+ \]
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:iso-concat}(e), on the slot $\partial_tF_{i,t}=\dot\sigma_m(t)\,\partial_\sigma G_{i,m}(\sigma,\cdot)$ and
+$D_uF_{i,t}=D_uG_{i,m}(\sigma,\cdot)$; $\mathfrak a$ and $\mathfrak h$ are linear in $\partial_tF$, so
+$\mathfrak h_{i,t}=\dot\sigma_m(t)\hat h$ with $\hat h(u)=\int_0^1\omega_0\big(\partial_\sigma G_{i,m}(\sigma,\vartheta u),D_uG_{i,m}(\sigma,\vartheta u)u\big)d\vartheta$.
+(a) $\partial_\sigma G_{i,m}=\partial_{\sigma_m}z_i=w_{i,m}$ by Definition~\ref{def:iso-route}, and $D_uG=I$.
+(b) $\partial_\sigma G(\vartheta u)=\vartheta\dot M_{i,\sigma}u$ and $D_uG=M_{i,\sigma}$, so
+$\hat h(u)=\int_0^1\vartheta\,d\vartheta\cdot\omega_0(\dot M_{i,\sigma}u,M_{i,\sigma}u)$.
+(c) With $\rho=\tau\sigma$, $\partial_\sigma G(x)=\tau\partial_\rho\kappa_{i,\rho}(x)=\tau\int_0^1\phi D^2f_i(\phi\rho x)[x,x]\,d\phi$
+(Lemma~\ref{lem:iso-shape}(e)); at $x=\vartheta u$ the bilinear term contributes the factor $\vartheta^2$, and
+$D_uG(\vartheta u)u=Df_i(\rho\vartheta u)u$ (Lemma~\ref{lem:iso-shape}(c)).
+(d) $\partial_\sigma G=(1-\tau)\partial_vT_{i,v}$, and by Lemma~\ref{lem:iso-tail}(a), at $x=\vartheta u$ with $\xi=Df_i(v\vartheta u)u$,
+$\partial_vT_{i,v}(\vartheta u)=v^{-2}\big(v\vartheta\xi-f_i(v\vartheta u)\big)$ and $D_uT_{i,v}(\vartheta u)u=\xi$. Since $\omega_0(\xi,\xi)=0$,
+$\omega_0\big(v^{-2}(v\vartheta\xi-f_i(v\vartheta u)),\xi\big)=v^{-2}\omega_0\big(\xi,f_i(v\vartheta u)\big)$.
+\end{proof}
+
+In (c) the difference quotient of Lemma~\ref{lem:iso-shape}(b) has disappeared, so $h^{\rm sh}_{i,\rho}$ is smooth through
+$\rho=0$.
+
+The Hamiltonian of \Mref{Definition}{def:ham-H} is a sum of pushforwards of cut-off source functions. The following lemma, stated for one
+ball, gives their smoothness and support.
+
+\begin{lemma}[The pushforward of a cut-off source function]\label{lem:iso-pushforward}
+\lean[needed]{SymplecticPacking.General.Ham.graphMap, SymplecticPacking.General.Ham.pushforward, SymplecticPacking.General.Ham.pushforward_apply_image, SymplecticPacking.General.Ham.pushforward_eq_zero_of_notMem, SymplecticPacking.General.Ham.eventually_no_preimage, SymplecticPacking.General.Ham.contDiffAt_pushforward, SymplecticPacking.General.Ham.ofIsotopy_smooth, SymplecticPacking.General.Ham.ofIsotopy_compactSupport, SymplecticPacking.General.Ham.ofIsotopy_eq_zero_of_time}
+\uses{M-def:ham-H, M-lem:ham-poincare, lem:pre-cutoff}
+Let $0<r_2<r_3<r_4$, and let $F\colon\R\times\EB^\circ(r_4)\to\R^{2n}$, $(t,u)\mapsto F_t(u)$, be $C^\infty$ with
+$D_uF_t(u)\in\operatorname{Sp}(2n)$, $F_t$ injective on $\EB(r_3)$ for every $t$, $F_t=F_0$ for $t\le0$ and $F_t=F_1$ for $t\ge1$.
+Let $g\colon\R\times\EB^\circ(r_4)\to\R$ be $C^\infty$ with $g(t,u)=0$ whenever $|u|\ge r_2$, and define
+\[
+ \operatorname{Push}(g)(t,y)=\begin{cases}g(t,u),&\text{if $u$ is the unique point of $\EB(r_3)$ with $F_t(u)=y$,}\\
+ 0,&\text{if there is no such unique point.}\end{cases}
+\]
+Let $\Gamma(t,u)=(t,F_t(u))$, $W=\R\times\EB^\circ(r_3)$ and $Z=\Gamma(\R\times\EB(r_2))$.
+\begin{enumerate}[label=(\alph*)]
+\item $O=\Gamma(W)$ is open in $\R\times\R^{2n}$, and $\Gamma$ restricts to a $C^\infty$ diffeomorphism $W\to O$.
+\item $Z$ is closed, $Z\subset O$, $\operatorname{Push}(g)=g\circ(\Gamma|_W)^{-1}$ on $O$, and $\operatorname{Push}(g)=0$ outside $Z$.
+\item $\operatorname{Push}(g)$ is $C^\infty$ on $\R\times\R^{2n}$.
+\item For $t\in\R$, $|u|<r_3$ and $\xi\in\R^{2n}$:
+ $d_y\operatorname{Push}(g)(t,F_t(u))\big[D_uF_t(u)\xi\big]=d_ug(t,u)[\xi]$.
+\item $\operatorname{Push}(g)(t,\cdot)$ vanishes outside $F_t(\EB(r_2))$, a subset of the compact set
+ \[
+  K=\bigcup_{t\in[0,1]}F_t(\EB(r_2)).
+ \]
+ If $g(t,\cdot)=0$ for $t\notin(0,1)$, then $\operatorname{Push}(g)(t,\cdot)=0$ for
+ $t\notin(0,1)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $\Gamma$ is $C^\infty$ on $\R\times\EB^\circ(r_4)$ with derivative
+$\bigl(\begin{smallmatrix}1&0\\\partial_tF&D_uF\end{smallmatrix}\bigr)$, which is invertible because $D_uF$ is symplectic. By the inverse
+function theorem $\Gamma$ is a local $C^\infty$ diffeomorphism at every point. It is injective on $\R\times\EB(r_3)$: $\Gamma(t,u)=\Gamma(t',u')$
+gives $t=t'$ and $F_t(u)=F_t(u')$, so $u=u'$. An injective local diffeomorphism of the open set $W$ is an open map and a
+diffeomorphism onto its open image, its inverse being given near each point by a local inverse.
+
+(b) $Z$ is the union of $(-\infty,0]\times F_0(\EB(r_2))$, $\Gamma([0,1]\times\EB(r_2))$ and $[1,\infty)\times F_1(\EB(r_2))$,
+because $F_t$ is constant in $t$ outside $[0,1]$. The middle set and the sets $F_0(\EB(r_2))$, $F_1(\EB(r_2))$ are compact as
+continuous images of compact sets, so all three sets are closed and $Z$ is closed. $Z\subset O$ because $r_2<r_3$. If
+$(t,y)\in O$, then $y=F_t(u)$ with $(t,u)=(\Gamma|_W)^{-1}(t,y)$, and $u\in\EB(r_3)$ is the unique such point by injectivity; so
+$\operatorname{Push}(g)(t,y)=g((\Gamma|_W)^{-1}(t,y))$. If $(t,y)\notin Z$ and $u\in\EB(r_3)$ satisfies $F_t(u)=y$, then $|u|>r_2$
+and $g(t,u)=0$; otherwise $\operatorname{Push}(g)(t,y)=0$ by definition.
+
+(c) On the open set $O$, $\operatorname{Push}(g)$ is the composition of the smooth maps $(\Gamma|_W)^{-1}$ and $g$; on the open set
+$(\R\times\R^{2n})\setminus Z$ it vanishes. The two open sets cover $\R\times\R^{2n}$ because $Z\subset O$.
+
+(d) On $W$, $\operatorname{Push}(g)\circ\Gamma=g$ by (b). Differentiate at $(t,u)$ in the direction $(0,\xi)$, using
+$D\Gamma(t,u)(0,\xi)=(0,D_uF_t(u)\xi)$.
+
+(e) The first statement is (b) at fixed $t$; for $t\notin[0,1]$, $F_t(\EB(r_2))$ equals $F_0(\EB(r_2))$ or $F_1(\EB(r_2))$,
+both contained in $K$. $K$ is the image of the compact set $[0,1]\times\EB(r_2)$ under the continuous map $(t,u)\mapsto F_t(u)$. The
+last statement is immediate from the definition.
+\end{proof}
+
+For ball $i$ take $r_\ell=r_{\ell,i}$, $F=F_i$ (Proposition~\ref{prop:iso-common}(a)--(c)) and $g=\chi_i\,\mathfrak h_i$ with the
+cutoff $\chi_i=\chi_{r_{1,i},r_{2,i}}$ of \Mref{Definition}{def:ham-H}. By \Mref{Lemma}{lem:ham-poincare}, $\mathfrak h_i$ is $C^\infty$ on
+$\R\times\EB^\circ(r_{4,i})$ and vanishes for $t\notin(0,1)$; by Lemma~\ref{lem:pre-cutoff}, $\chi_i$ is $C^\infty$ and vanishes for
+$|u|\ge r_{2,i}$. Then $\operatorname{Push}(g)$ is the function $H_i$ of \Mref{Definition}{def:ham-H}, and
+Lemma~\ref{lem:iso-pushforward} together with Proposition~\ref{prop:iso-common}(d) gives \Mref{Lemma}{lem:ham-smooth}.

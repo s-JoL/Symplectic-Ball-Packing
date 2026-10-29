@@ -1,0 +1,21 @@
+import SymplecticPacking.General.MainFlow
+import SymplecticPacking.General.CompileSupport
+import verification.AxiomCheck
+
+/-!
+# The time-one flow
+
+Axiom gates for the global flow of the explicit Hamiltonian and explicitness of `packingFlow`.
+-/
+
+#assert_publication_axioms SymplecticPacking.General.Ham.omega0L_isInvertible
+#assert_publication_axioms SymplecticPacking.General.Ham.problemField_eq_negative_hamiltonianField
+#assert_publication_axioms SymplecticPacking.General.Ham.compact_hamiltonian_csField
+#assert_publication_axioms SymplecticPacking.General.Ham.compact_hamiltonian_flow
+#assert_publication_axioms SymplecticPacking.General.Ham.ofIsotopy_flow_global
+#assert_publication_axioms SymplecticPacking.General.packingHamiltonian_compact
+#assert_publication_axioms SymplecticPacking.General.packingFlow_diffeomorphism
+#assert_publication_axioms SymplecticPacking.General.packingFlow_into
+#assert_publication_axioms SymplecticPacking.General.packingFlow_disjoint
+
+#check_explicit SymplecticPacking.General.packingFlow

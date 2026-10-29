@@ -1,0 +1,14 @@
+# Independent project-source elaboration: the optional project cache is never restored.
+name: full-build
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: full-build-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    uses: ./.github/workflows/_verify.yml
+    with:
+      from-source: true

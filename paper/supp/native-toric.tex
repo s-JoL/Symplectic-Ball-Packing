@@ -1,0 +1,216 @@
+\section{The finite-atlas toric construction}\label{sec:native-toric}
+
+This section fixes the choices behind the higher-dimensional model maps of \Msec{sec:hdl}: the finite primitive operator,
+the normalised primitive $\Gamma_n$, the three Moser fields and the maps $\psi_i$. The data are those of a higher-dimensional
+model input with handle data (\Mref{Definition}{def:mech-model} and \Mref{Definition}{def:hdl-handle-data}): the physical primitive
+$\Gamma_{\rm phys}(p)$ with curvature $\kappa(p)=d_\Sigma\Gamma_{\rm phys}(p)$, the reference primitive $\Gamma_{\rm ref}$ with
+positive curvature $\Lambda$, the annular coordinate $s_{\rm a}$ of half-width $w$ with working half-width $b<w$, the closed
+one-form $\beta$, the clock $f(s)=S(s)$, $s=(s_{\rm a}+b)/(2b)$, and the collar cutoff $\chi_\partial$. All forms are evaluated
+in the explicit coordinates of the model curve. The \emph{correction atlas} is the finite family of rational coordinate boxes of
+Definition~\ref{def:shd-presentation}; its inner boxes cover a compact subset of $\operatorname{int}\Sigma_\ell$, the
+\emph{correction core}. These data satisfy: the support of $1-\chi_\partial$ in $\Sigma_\ell$ and the handle are contained
+in the correction core, and the correction core is contained in the correction region of
+\Mref{Definition}{def:hdl-handle-data}(d), on which $\kappa(p)\ge\kappa_-\Lambda$ for $p\in\Delta$. Its overlap tree has root
+the box $0$, and every other box $i$ has a parent $j<i$. A second, larger finite atlas, the \emph{flow atlas}, covers the
+whole closed model base.
+
+\subsection{A fixed finite primitive operator}
+
+Let $\zeta_i$ be the partition weights of the correction atlas ($\sum_i\zeta_i=1$ on the correction core, $\zeta_i$ supported in
+box $i$), $\eta_i$ a unit-mass bump in box $i$, and $\eta_{ij}$ a unit-mass bump in the overlap of a child $i$ and its parent $j$.
+Write $P_i$ for the rectangular primitive \eqref{eq:shd-Ploc} in box $i$; thus $dP_i\alpha=\alpha$ for every two-form $\alpha$
+supported in box $i$ with zero coordinate mass, and $P_i\alpha$ is supported in box $i$ (Lemma~\ref{lem:shd-primitive}). Set
+\[
+ e_i=P_i(\eta_i-\eta_{ij})+P_j(\eta_{ij}-\eta_j),\qquad
+ T_0=0,\qquad T_i=e_i+T_j .
+\]
+For a two-form $\omega$ supported in the correction core put
+\[
+ m_i(\omega)=\int\zeta_i\omega,\quad m(\omega)=\sum_i m_i(\omega),\qquad
+ \mathcal P\omega=\sum_i\bigl[P_i(\zeta_i\omega-m_i(\omega)\eta_i)+m_i(\omega)T_i\bigr],
+\]
+where $\int\zeta_i\omega$ is the coordinate integral in box $i$. Each argument of $P_i$ has zero coordinate mass, and
+$de_i=\eta_i-\eta_j$; by induction along the tree, $dT_i=\eta_i-\eta_0$. Hence
+\[
+ d\mathcal P\omega=\sum_i\bigl[\zeta_i\omega-m_i(\omega)\eta_i+m_i(\omega)(\eta_i-\eta_0)\bigr]=\omega-m(\omega)\eta_0 ,
+\]
+so $d\mathcal P\omega=\omega$ when $m(\omega)=0$. Every sum is finite and every integral has a fixed coordinate domain, so a
+smooth family $\omega(p)$ gives a smooth family $\mathcal P\omega(p)$ with fixed compact support in $\operatorname{int}\Sigma_\ell$.
+
+\begin{lemma}[Intrinsic calibration]\label{lem:native-calibration}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.calibratedMass_eq_partition,
+SymplecticPacking.HighDim.ToricPackingStages.quadricRawDensity_formMass,
+SymplecticPacking.HighDim.ToricPackingStages.quadricModelRawPresentation_calibration_ne_zero,
+SymplecticPacking.HighDim.ToricPackingStages.quadricModelRawPresentation_mass_eq}
+Let $\eta=df\wedge\beta$. Then $\int_{\Sigma_\ell}\eta=1$, $m(\eta)\ne0$, and for every smooth two-form $\omega$ supported in the
+correction core,
+\[
+ \frac{m(\omega)}{m(\eta)}=\int_{\Sigma_\ell}\omega ,
+\]
+where the right side is the intrinsic surface integral.
+\end{lemma}
+
+\begin{proof}
+If $\alpha$ is supported in the correction core and $m(\alpha)=0$, then $\alpha=d\mathcal P\alpha$ with $\mathcal P\alpha$ compactly
+supported in $\operatorname{int}\Sigma_\ell$, so $\int_{\Sigma_\ell}\alpha=0$ by Stokes' theorem. The bump $\eta_0$ has intrinsic
+integral $1$ (change of variables in the oriented root chart); hence $m(\eta_0)\ne0$. For $\omega$ as in the statement the form
+$\alpha=m(\omega)\eta_0-m(\eta_0)\omega$ has $m(\alpha)=0$, so $m(\omega)=m(\eta_0)\int\omega$. The form $\eta=f'(s)b(v)\,ds\wedge dv$
+is supported in the handle, and $\int\eta=(f(1)-f(0))\int_0^1b=1$; so $m(\eta)=m(\eta_0)\ne0$, and dividing gives the identity.
+\end{proof}
+
+\begin{construction}[The normalised primitive]\label{cons:native-normalization}
+\lean{SymplecticPacking.HighDim.RawToricModel.handleMass, SymplecticPacking.HighDim.RawToricModel.normalPrimitive}
+Let $\gamma_*$ be the reserve of the comparison datum, $A_{\rm ref}$ the reference-area bound and $\kappa_->0$ the density floor
+of \Mref{Definition}{def:hdl-handle-data}, and $e_\Lambda=\min\bigl(\gamma_*/(32A_{\rm ref}),\kappa_-/2\bigr)$ as in
+(\Mnum{eq:hdl-eh}). Put
+\[
+ \omega_p=(1-\chi_\partial)\bigl(\kappa(p)-e_\Lambda\Lambda\bigr),\qquad
+ H(p)=\frac{m(\omega_p)}{m(\eta)},\qquad
+ \Gamma_r(p)=\Gamma_{\rm phys}(p)+\mathcal P\bigl(H(p)\eta-\omega_p\bigr),
+\]
+and, on the annulus $|s_{\rm a}|<w$, $N_p=e_\Lambda\Gamma_{\rm ref}+H(p)f(s)\beta$. In the annular coordinates $(s_{\rm a},v)$,
+$v\in\R/\Z$, write $\Gamma_r(p)-N_p=A_p\,ds_{\rm a}+B_p\,dv$, and set
+\[
+ c_p=\int_0^1B_p(0,v)\,dv,\qquad
+ u_p(s_{\rm a},v)=\int_0^{s_{\rm a}}A_p(\sigma,0)\,d\sigma+\int_0^v\bigl(B_p(s_{\rm a},\nu)-c_pb(\nu)\bigr)\,d\nu .
+\]
+With $b_1=(b+w)/2$ and $b_2=(b_1+w)/2$ let $\zeta=\chi^{\rm I}_{-b_2,b_2,b_2-b_1}(s_{\rm a})$ (Definition~\ref{def:pre-cutoff}),
+which equals $1$ for $|s_{\rm a}|\le b_1$ and $0$ for $|s_{\rm a}|\ge b_2$, and put
+\[
+ \Gamma_n(p)=\Gamma_r(p)-c_p\beta-d_\Sigma\bigl(\zeta u_p\bigr),
+\]
+where $\zeta u_p$ is extended by zero outside the annulus and $d_\Sigma$ differentiates in the base variables at fixed $p$. The first
+variation primitive is $\alpha_1=\Gamma_n-\Gamma_{\rm phys}$.
+\end{construction}
+
+\begin{proposition}[Normalisation identities]\label{prop:native-normalization}
+\lean{SymplecticPacking.HighDim.RawNormalizationSpec, SymplecticPacking.HighDim.RawModelAgreement.normalization_target}
+$H(p)$, $c_p$, $u_p$ and $\Gamma_n(p)$ are smooth in $p$ and the base variables, and for $p$ in a neighbourhood of $\Delta$:
+\begin{enumerate}[label=(\roman*)]
+\item $H(p)=\Hb(p)-\epsilon_{\rm sm}(p)=H^*(p)$ in the notation of (\Mnum{eq:hdl-ksm}), and
+ $0\le H(p)$ and $H(p)\ge\Hb(p)-\gamma_*/16$ on $\Delta$;
+\item $d_\Sigma\Gamma_n(p)=\kappa_{\rm sm}(p)+H(p)\eta$ with $\kappa_{\rm sm}=\chi_\partial\kappa+(1-\chi_\partial)e_\Lambda\Lambda$; in particular
+ $d_\Sigma\Gamma_n(p)=\kappa(p)$ where $\chi_\partial=1$ outside the handle, and $d_\Sigma\Gamma_n(p)$ is positive on $\Sigma_\ell$ for
+ $p\in\Delta$;
+\item $\Gamma_n(p)=N_p=e_\Lambda\Gamma_{\rm ref}+H(p)f(s)\beta$ on $\{|s_{\rm a}|<b_1\}=\mathcal A^+$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Smoothness: $\kappa(p)$ is smooth in $p$ (\Mref{Definition}{def:mech-model}), and $m$, $\mathcal P$, $c_p$ and $u_p$ are finite sums of
+integrals of smooth integrands over fixed compact domains.
+
+(i) By Lemma~\ref{lem:native-calibration}, $H(p)=\int_{\Sigma_\ell}(1-\chi_\partial)(\kappa(p)-e_\Lambda\Lambda)=\Hb(p)-\int_{\Sigma_\ell}\kappa_{\rm sm}(p)$.
+The lower bound is $\epsilon_{\rm sm}\le\int\chi_\partial\kappa+e_\Lambda\int_{\Sigma_\ell}\Lambda\le\gamma_*/16$ by (\Mnum{eq:hdl-collar}). For $H\ge0$: where $1-\chi_\partial\ne0$ we are in the correction region, so for $p\in\Delta$,
+$\kappa(p)-e_\Lambda\Lambda\ge(\kappa_--e_\Lambda)\Lambda\ge\frac{\kappa_-}2\Lambda\ge0$ because $e_\Lambda\le\kappa_-/2$; thus $\omega_p\ge0$ and
+$H(p)=\int\omega_p\ge0$.
+
+(ii) $H\eta-\omega_p$ is supported in the correction core and has $m(H\eta-\omega_p)=0$ by the choice of $H$; so
+$d_\Sigma\Gamma_r=\kappa+H\eta-\omega_p=\kappa_{\rm sm}+H\eta$. The terms $c_p\beta$ and $d_\Sigma(\zeta u_p)$ are closed. On
+$\Delta$, $\kappa_{\rm sm}$ is a convex combination of the positive forms $\kappa(p)$ and $e_\Lambda\Lambda$, and $H\eta=Hf'b\,ds\wedge dv\ge0$
+by (i).
+
+(iii) The cutoff $\chi_\partial$ vanishes on the annulus (\Mref{Definition}{def:hdl-handle-data}(g)), so there
+$d_\Sigma\Gamma_r=e_\Lambda\Lambda+H\,df\wedge\beta=d_\Sigma N_p$, and $\Gamma_r-N_p$ is closed: $\partial_vA_p=\partial_{s_{\rm a}}B_p$. By Stokes'
+theorem its period $\int_0^1B_p(s_{\rm a},v)\,dv$ does not depend on $s_{\rm a}$ and equals $c_p$. Hence
+$\partial_vu_p=B_p-c_pb$ and $\partial_{s_{\rm a}}u_p=A_p(s_{\rm a},0)+\int_0^v\partial_\nu A_p(s_{\rm a},\nu)\,d\nu=A_p$, and
+$u_p(s_{\rm a},v+1)-u_p(s_{\rm a},v)=c_p-c_p\int_0^1b=0$; so $u_p$ is a smooth function on the annulus with
+$d_\Sigma u_p=\Gamma_r-N_p-c_p\beta$. Where $\zeta=1$ this gives $\Gamma_n=N_p$.
+\end{proof}
+
+\subsection{The three Moser fields}
+
+For given closed source capacities $\rho_i<a_i$ put $\rho_i^\sharp=(3a_i+\rho_i)/4$. Take the caps $h_i$ and clocks
+$\varsigma_j$ of (\Mnum{eq:hdl-caps}) with this $\rho_i^\sharp$, and the strip parameter
+$\varepsilon_i=(a_i-\rho_i^\sharp)/4$; these are the constants $\hat\rho_i=\rho_i^\sharp$ and $\varepsilon_i$ of
+Definition~\ref{def:str-enlarged}. The three primitive families, without the vertical Liouville form $\lambda_V$, are
+\[
+ Q_{0,t}=(1-t)\Gamma_{\rm phys}+t\Gamma_n,\qquad
+ Q_{1,t}=\Gamma_n+\eta_t,\qquad
+ Q_{2,t}=\Gamma_n+\eta_1+t\xi ,
+\]
+with $\eta_t$ the suspension primitive of \Mref{Lemma}{lem:hdl-suspension} (built from the twist (\Mnum{eq:hdl-twist})) and $\xi$
+the one-form (\Mnum{eq:hdl-xi}), formed with these caps and clocks and with $H^*=H$. Put
+$\lambda_{j,t}=\lambda_V+Q_{j,t}$ and $\Omega_{j,t}=d\lambda_{j,t}$; then $\Omega_{0,0}=\Omega$, $\Omega_{0,1}=\Omega_{1,0}=\Omega_1$,
+$\Omega_{1,1}=\Omega_{2,0}$ and $\Omega_{2,1}=\Omega_{\rm final}$, and $\partial_t\Omega_{j,t}=d(\partial_tQ_{j,t})$. By \Msec{sec:hdl} each
+$\Omega_{j,t}$, $t\in[0,1]$, is symplectic on a neighbourhood of the closed model region $K=V_\Delta(E)$.
+
+Let $w_i$ be the bumps of the flow atlas ($w_i=1$ on the inner box of chart $i$, compactly supported in chart $i$; the inner boxes
+cover the model base) and put
+\[
+ g_j(t,z)=\sum_iw_i(z)\det\bigl(\Omega_{j,t}\text{ in chart }i\bigr)^2,\qquad
+ \mu_j=\min\Bigl(1,\min_{[0,1]\times K}g_j\Bigr).
+\]
+At each point of $K$ some $w_i$ equals $1$ and the corresponding determinant is nonzero, so $g_j>0$ on the compact set
+$[0,1]\times K$ and $\mu_j>0$. Conversely, $g_j(t,z)>0$ implies that $\Omega_{j,t}$ is nondegenerate at $z$. With
+$|w|^2$ the sum of squares of the real fibre coordinates and $R=\max_K|w|^2$, set
+\[
+ \chi_j(t,z)=S\bigl(4g_j(t,z)/\mu_j-1\bigr)\,S\bigl(2(R+1-|w|^2)\bigr)\qquad(t\in[0,1]).
+\]
+Then $\chi_j=1$ on the open set $\{g_j>\mu_j/2,\ |w|^2<R+\frac12\}\supset[0,1]\times K$; and $\chi_j(t,\cdot)$ is supported in the
+compact set $\{g_j(t,\cdot)\ge\mu_j/4,\ |w|^2\le R+1\}$, on which $\Omega_{j,t}$ is nondegenerate (the base part is compact because
+the $w_i$ have compact support). Define $Y_{j,t}$ by $\iota_{Y_{j,t}}\Omega_{j,t}=-\chi_j\,\partial_tQ_{j,t}$ on the nondegenerate locus
+and $Y_{j,t}=0$ off the support of $\chi_j$; the two definitions agree on the overlap, so $Y_j$ is smooth on $[0,1]\times E$ with
+compact spatial support. Let $\Phi_j$ be its time-one map, a diffeomorphism of $E$ whose inverse is the backward flow.
+
+\begin{construction}[The canonical toric map]\label{cons:native-packing}
+\lean{SymplecticPacking.HighDim.RawToricModel.packing}
+Let $E_i$ be the layer map of Construction~\ref{cons:str-layer-map} for the constants above, and $\mathcal D^{-1}(s,v,w)=(s,v,q_{f(s)}^{-1}(w))$
+the inverse twist. The canonical map is
+\[
+ \psi_i=\Phi_0^{-1}\circ\Phi_1^{-1}\circ\Phi_2^{-1}\circ\mathcal D^{-1}\circ E_i\colon\Bo(\rho_i^\sharp)\to E .
+\]
+This formula defines the maps of the quadric, mixed and six-dimensional models.
+\end{construction}
+
+\begin{lemma}[Invariance of the model region]\label{lem:native-collar}
+\uses{lem:pre-moser, M-def:mech-datum, M-lem:hdl-suspension}
+For $j=0,1,2$, every integral curve $\gamma\colon J\to E$ of $Y_j$, $J\subset[0,1]$ an interval, which meets $K$ (resp.\
+$\operatorname{int}K$) stays in $K$ (resp.\ $\operatorname{int}K$).
+\end{lemma}
+
+\begin{proof}
+Write $K=\Sigma_\ell\times V_\Delta$ with $V_\Delta=\{\mu_\nu\le\ell_\nu\text{ for all }\nu\}$, $\mu_\nu=\langle b_\nu,p\rangle$; the conditions
+$p_j\ge0$ hold everywhere.
+
+\emph{Base boundary.} The variation primitives vanish over a neighbourhood $N$ of $\partial\Sigma_\ell$ in the base:
+$\partial_tQ_{0,t}=\alpha_1=\mathcal P(H\eta-\omega_p)-c_p\beta-d_\Sigma(\zeta u_p)$ is supported in the union of the correction core,
+the support of $\beta$ and the annulus; $\partial_tQ_{1,t}=\partial_t\eta_t$ is supported over the annulus
+(\Mref{Lemma}{lem:hdl-suspension}(iii)); and $\partial_tQ_{2,t}=\xi$ is supported in the support of $\beta$ and over the annulus
+(equation~\Mnum{eq:hdl-xi}). These are compact subsets of $\operatorname{int}\Sigma_\ell$. By Lemma~\ref{lem:pre-moser}(c),
+$Y_j$ vanishes over $N$, so every point over $N$ is stationary, and by uniqueness an integral curve meeting a point over $N$ is
+constant. Hence no integral curve crosses $\partial\Sigma_\ell$ in either time direction.
+
+\emph{Outer fibre faces.} Fix $\nu$ and let $X_\nu=\sum_jb_{\nu,j}\partial_{\theta_j}$, so that $\iota_{X_\nu}\omega_V=-d\mu_\nu$; its flow
+$\phi_r$ is a torus rotation of the fibre, preserves $p$, and commutes with every map that depends on $w$ only through $p$. By
+\Mref{Definition}{def:mech-datum}(1), $Q_t$ Poisson-commutes with $\mu_\nu$ on the collar $C_\nu=\{\mu_\nu>\ell_\nu-\varsigma\}$. Hence
+$\mu_\nu$ is constant along trajectories of $X_{Q_t}$ while they stay in $C_\nu$; since $C_\nu$ is a superlevel set of $\mu_\nu$, a
+trajectory starting in $C_\nu$ never leaves it, so $q_t$ and $q_t^{-1}$ map $C_\nu$ into itself and preserve $\mu_\nu$ there. Also $Q_t$ is
+constant along $\phi_r$ in $C_\nu$, so $\phi_r^*X_{Q_t}=X_{Q_t}$ there (the form $\omega_V$ is $\phi_r$-invariant). The curves
+$t\mapsto\phi_r(q_t(w))$ and $t\mapsto q_t(\phi_r(w))$, $w\in C_\nu$, solve the same ODE with the same initial value; hence
+$\phi_r\circ q_t=q_t\circ\phi_r$ on $C_\nu$, and likewise for $q_t^{-1}$.
+
+Each $Q_{j,t}$ is a horizontal one-form whose coefficients are built from the toric forms $\Gamma_{\rm phys}(p)$, $\Gamma_n(p)$, $J(p)\beta$,
+from the functions $Q_{\lambda f(s)}\circ q_{\lambda f(s)}$ and $H^*(p(q_\lambda^{-1}q_{\lambda f(s)}w))$ of \Mref{Lemma}{lem:hdl-suspension}, and
+from $G_{\rm f}\circ\mathcal D$ and $G_1\circ\mathcal D$, where $G_{\rm f}$ involves $R^*(w)=K(p(q^{-1}w))-J(p)-\sum_ih_i(p)$. By the
+commutation just proved, each of these is invariant under $\phi_r$ over $C_\nu$; for instance
+$Q_t(q_t(\phi_rw))=Q_t(\phi_r(q_tw))=Q_t(q_tw)$. Hence, over $C_\nu$: (a) $\partial_tQ_{j,t}(X_\nu)=0$, since $Q_{j,t}$ is horizontal and
+$X_\nu$ is vertical; (b) $\mathcal L_{X_\nu}Q_{j,t}=0$, so $\iota_{X_\nu}dQ_{j,t}=\mathcal L_{X_\nu}Q_{j,t}-d\bigl(Q_{j,t}(X_\nu)\bigr)=0$ and
+$\iota_{X_\nu}\Omega_{j,t}=\iota_{X_\nu}\omega_V=-d\mu_\nu$. Lemma~\ref{lem:pre-moser}(d), with $\mathfrak v_t=\chi_j\partial_tQ_{j,t}$, $V=X_\nu$
+and $\mu=\mu_\nu$, shows that $\mu_\nu$ is constant along every integral curve of $Y_j$ while the curve stays in $C_\nu$. An integral
+curve therefore cannot pass from $\{\mu_\nu\le\ell_\nu\}$ to $\{\mu_\nu>\ell_\nu\}$, nor from $\{\mu_\nu<\ell_\nu\}$ to $\{\mu_\nu\ge\ell_\nu\}$, in
+either time direction: near a time at which it is on the level $\ell_\nu$ it lies in $C_\nu$, where $\mu_\nu$ is constant along it.
+Applying this to every $\nu$ and combining with the base boundary gives the claim for $K$ and for
+$\operatorname{int}K=\operatorname{int}\Sigma_\ell\times\{\mu_\nu<\ell_\nu\text{ for all }\nu\}$ (Lemma~\ref{lem:str-int}).
+\end{proof}
+
+\begin{proof}[Correctness of the construction]
+Since $\chi_j=1$ near $[0,1]\times K$, Lemma~\ref{lem:native-collar} and
+Lemma~\ref{lem:pre-moser}(b),(e) with $\mathfrak v_t=\partial_tQ_{j,t}$ give
+$\Phi_j(K)=K$, $\Phi_j(\operatorname{int}K)=\operatorname{int}K$ and $\Phi_j^*\Omega_{j,1}=\Omega_{j,0}$ on $K$. Hence
+$\Phi=\Phi_2\circ\Phi_1\circ\Phi_0$ satisfies $\Phi^*\Omega_{\rm final}=\Omega$ on $K$ (Lemma~\ref{lem:str-DPhi}), and
+Proposition~\ref{prop:str-embeddings} shows that the $\psi_i$ are smooth symplectic embeddings of $\Bo(\rho_i^\sharp)$ into
+$(\operatorname{int}K,\Omega)$ with pairwise disjoint images. Since $\rho_i<\rho_i^\sharp$, $\Bo(\rho_i^\sharp)$ is a neighbourhood of
+$B(\rho_i)$. By Lemma~\ref{lem:pre-moser}(f), running the three fields consecutively with flat clocks gives one Moser isotopy
+with time-one map $\Phi$ and the same variation primitives.
+\end{proof}

@@ -1,0 +1,47 @@
+\begin{proposition}[Affine mixed-model budget]\label{prop:two-affine-budget}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.mixedRawModel_spec,SymplecticPacking.HighDim.ToricPackingStages.quadricBackgroundCoefficient_budget,SymplecticPacking.HighDim.ToricPackingStages.cutoff_background_positive,SymplecticPacking.HighDim.ToricPackingStages.quadricNormalizationMass_loss,SymplecticPacking.HighDim.ToricPackingStages.quadricRedistributedPrimitive_smooth}
+\uses{lem:vtr-tail, lem:shd-primitive, lem:two-parameters}
+Let $m=n-2\ge2$, and take $\Delta,d$ from Lemma~\ref{lem:two-parameters}.
+Put $A_m=2^m(m+2)$, $\ell=\lceil64A_m/d\rceil$,
+$R=2+\sum_{j=1}^m j+\ell$, $\Sigma_R=\{|t|\le R\}$ and $A_R=\int_{\Sigma_R}\sigma$. Set
+\[
+ \gamma_*=\frac{11d}{64},\qquad
+ \kappa_{\min}=(1-h_1)(1-2h_2),\qquad
+ c_{\rm bg}=\min\left(\frac{\gamma_*}{32\,2^m},\frac{\kappa_{\min}}2\right).
+\]
+Use the flat cutoff $\chi_R=\chi_{R-2,R-1}(t)$ of Definition~\ref{def:pre-cutoff},
+$\chi_R(t)=1-S\bigl((|t|^2-(R-2)^2)/((R-1)^2-(R-2)^2)\bigr)$, which equals one for $|t|\le R-2$ and zero for $|t|\ge R-1$.
+Set $c(p)=1-u-2w$, $\Hb^R(p)=\int_{\Sigma_R}c(p)\sigma=A_Rc(p)$ and
+\[
+ \Omega_{\rm rem}(p)=\chi_R(c(p)-c_{\rm bg})\sigma,\quad
+ H_R(p)=\int_{\Sigma_R}\Omega_{\rm rem}(p),\quad
+ \kappa_{\rm bg}(p)=c(p)\sigma-\Omega_{\rm rem}(p).
+\]
+For every $p\in\Delta$, $\kappa_{\rm bg}(p)>0$, it equals $c(p)\sigma$ near $\partial\Sigma_R$ and
+$c_{\rm bg}\sigma$ on the handle, and
+\[
+ 0<\int_{\Sigma_R}\kappa_{\rm bg}(p)<\gamma_*/16,\qquad
+ H_R(p)>\Hb^R(p)-\gamma_*/16.
+\]
+If $\eta_{\rm h}=df\wedge\beta$ is the unit-integral handle density, the form $H_R(p)\eta_{\rm h}-\Omega_{\rm rem}(p)$ has integral
+zero and is supported in $\Sigma_{R-1}\subset\operatorname{int}\Sigma_R$, and the finite coordinate primitive of
+Lemma~\ref{lem:shd-primitive} applied to it depends smoothly on $p$.
+\end{proposition}
+
+\begin{proof}
+On $\Delta=\{u\le h_1,\ w\le h_2(1-u)\}$ we have $c(p)\ge(1-u)(1-2h_2)\ge(1-h_1)(1-2h_2)=\kappa_{\min}>0$ and $c(p)\le1$. Hence
+$\kappa_{\rm bg}=[c(p)(1-\chi_R)+c_{\rm bg}\chi_R]\sigma$ is positive, equals $c(p)\sigma$ for $|t|\ge R-1$, and equals $c_{\rm bg}\sigma$ for
+$|t|\le R-2$, which contains the handle supports ($|t|\le3$, Lemma~\ref{lem:vtr-tail}). Since $R-2=R_{\ell-2}$ in the notation
+of Lemma~\ref{lem:vtr-tail} and $\int_\Sigma\sigma=2^m$, that lemma and $c\le1$ give
+\[
+ \int_{\Sigma_R\setminus\Sigma_{R-2}}c(p)\sigma\le2^m-A_{\ell-2}
+ \le\frac{2^m(m+2)}{(R-2)^2}\le\frac{d^2}{4096\cdot2^m(m+2)}\le\frac d{65536}<\frac{\gamma_*}{32},
+\]
+because $R-2\ge\ell\ge64\cdot2^m(m+2)/d$, $2^m(m+2)\ge16$, and $d\le1$: indeed
+$d\le J(h_1,h_2)/4\le J_m(h_2)/4\le1/4$, as $2^mh_2^m\le1$. Also $A_R\le2^m$, so $c_{\rm bg}A_R\le\gamma_*/32$. Adding,
+$\int_{\Sigma_R}\kappa_{\rm bg}\le\int_{\Sigma_R\setminus\Sigma_{R-2}}c\sigma+c_{\rm bg}A_R<\gamma_*/16$, and the integral is positive because
+$\kappa_{\rm bg}>0$. Integrating $c(p)\sigma=\kappa_{\rm bg}+\Omega_{\rm rem}$ gives $H_R=\Hb^R-\int\kappa_{\rm bg}>\Hb^R-\gamma_*/16$.
+Both $\eta_{\rm h}$ and $\Omega_{\rm rem}$ are supported in $\Sigma_{R-1}$, and $\int(H_R\eta_{\rm h}-\Omega_{\rm rem})=H_R-H_R=0$. The
+primitive is a finite sum of coordinate integrals over fixed compact boxes of smooth functions of $(p,x)$, hence smooth in $p$
+(Lemma~\ref{lem:shd-primitive}).
+\end{proof}

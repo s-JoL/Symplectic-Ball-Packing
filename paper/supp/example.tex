@@ -1,0 +1,165 @@
+%======================================================================
+\section{A worked instance: ten balls in dimension four}\label{sec:example}
+
+This section substitutes $k=10$ and $\eps=\frac1{10}$ into \Mref{Theorem}{thm:intro-4d} and follows the data through
+every stage of the construction. It is a substitution of parameters into the closed formulas of the paper and of this
+supplement, together with a check of the inequalities that the proofs require. No numerical evaluation of the
+Hamiltonian, of the flows or of the maps $f_i$ is reported, and the quantities that the construction defines as maxima
+of continuous functions over compact sets are not evaluated; they are listed at the end.
+
+\emph{Conventions.} The tables give exact expressions in radicals and $\pi$, followed by decimal approximations
+rounded to seven significant digits. The displayed decimals are for orientation; the inequalities use the exact
+expressions. The smallest gap in the displayed chains exceeds $4\cdot10^{-5}$.
+
+\subsection{Input, normalisation and branch}
+
+The input is $n=2$, $k=10$, $c_i=\pi$, $s_i=(3i-3,0,0,0)$ $(1\le i\le10)$ and
+\[
+ R^4=\frac k{1-\eps/4}=\frac{400}{39},\qquad R\approx1.789571,\qquad C=\pi R^2=\frac{20\pi}{\sqrt{39}}\approx10.06115 .
+\]
+The closed balls $B(s_i,\pi)$ are the Euclidean unit balls about the $s_i$; distinct centres are at distance at least
+$3>2$, so they are pairwise disjoint. The normalised capacity (\Mref{Definition}{def:ham-normalise}) is
+\[
+ \rho=\frac{\pi}{C}=\frac1{R^2}=\frac{\sqrt{39}}{20}\approx0.3122499,\qquad k\rho^2=\frac{39}{40}=1-\frac\eps4,\qquad
+ \rho\sqrt k=\sqrt{\frac{39}{40}}\approx0.9874209 .
+\]
+Admissibility: $k\rho^2<1$ and $3\rho\approx0.9367497<1$. Since $n=2$, $k\ge10$, the capacities are equal and
+$\frac34<\rho\sqrt k<1$, Construction~\ref{cons:ham-branch}(i) takes the equal-capacity maps of Remark~\ref{rem:rtc-equal},
+that is, case (a) of Construction~\ref{cons:rtc-data} with the linear comparison datum of
+\Mref{Proposition}{prop:cmp-linear}. The same holds for every $k\ge10$ and $\eps\in(0,1)$, because then
+$\rho\sqrt k=\sqrt{1-\eps/4}\in(\frac{\sqrt3}2,1)$.
+
+The defect is $\eta_\star=1-\rho\sqrt k=1-\sqrt{39/40}\approx0.01257912$ (Remark~\ref{rem:rtc-equal}).
+
+\subsection{Model parameters}
+
+Table~\ref{tab:example-model} lists the parameters of the model, the comparison datum, the handle and the transfer. The
+sources are Remarks~\ref{rem:rtc-recorded} and~\ref{rem:rtc-equal}, \Msec{sec:cmp-linear}, Definition~\ref{def:fcp-eq},
+Definitions~\ref{def:shd4-scalars} and~\ref{def:shd4-frame}, Construction~\ref{cons:shd4-moser},
+Lemma~\ref{lem:rtc-denominator}, Lemma~\ref{lem:rtc-graph} and Remark~\ref{rem:shd-four}.
+
+\begin{table}[ht]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}p{0.27\textwidth}p{0.36\textwidth}p{0.31\textwidth}@{}}
+\toprule
+Quantity & Closed form & Value\\
+\midrule
+$t_0=\frac12(1+\rho\sqrt k)$ & $1-\frac{\eta_\star}2$ & $0.9937104$\\
+auxiliary capacity $a$ & $t_0/\sqrt{10}$ & $0.3142388$\\
+height $h$ & $t_0/3$ & $0.3312368$\\
+$d_n=\frac12(h+\frac13)$ & $(1+t_0)/6=\frac13-\frac{\eta_\star}{12}$ & $0.3322851$\\
+$a-\rho$ & $\eta_\star/(2\sqrt{10})$ & $1.988933\cdot10^{-3}$\\
+$1-3h$ & $\eta_\star/2$ & $6.289559\cdot10^{-3}$\\
+$d_n-h$, $1-3d_n$ & $\eta_\star/12$, $\eta_\star/4$ & $1.048260\cdot10^{-3}$, $3.144779\cdot10^{-3}$\\
+\midrule
+profile $\Pb(p)$ & $3(1-3p)-10(a-p)_+$ on $[0,h]$ & $\Pb(0)\approx-0.1423883$, $\Pb(h)=g$\\
+$\int_0^h\Pb$ & $t_0(1-t_0)=\frac14(1-k\rho^2)=\frac\eps{16}$ & $0.00625$\\
+comparison function $K(p)=c_sp$ & $c_s=3\sqrt{10}-9$ & $c_s\approx0.4868330$\\
+slopes of the tent $\Lambda$ & $A=\sqrt{10}/3$, $B=10+3\sqrt{10}$ & $1.054093$, $19.48683$\\
+$g=3(1-t_0)=\Hb(h)$ & $3\eta_\star/2$ & $0.01886868$\\
+$e_q=\min(\frac h{100},\frac g{128c_s})$ & $g/(128c_s)$ (as $\frac h{100}\approx3.312368\cdot10^{-3}$) & $3.027969\cdot10^{-4}$\\
+planar cost $4c_se_q$ & $g/32$ & $5.896461\cdot10^{-4}$\\
+comparison gap $\gamma$ & $\frac{31}{32}g$ & $0.01827903$\\
+planar support $P_{\rm supp}$ & $h-\frac{31}8e_q<P_{\rm supp}<h$ (Lemmas~\ref{lem:pll-cutoff}, \ref{lem:pln-data}) & $\in(0.3300635,\,0.3312368)$\\
+\midrule
+background $e_h$, cap scale $\mu_h$ & $g/16$, $g/160$ & $1.179292\cdot10^{-3}$, $1.179292\cdot10^{-4}$\\
+cap excess $k\mu_h/2$; residual & $g/32$; $\frac78g$ & $5.896461\cdot10^{-4}$; $0.01651009$\\
+$\delta_m=\min(\frac{d_n-h}4,\frac g{100})$ & $g/100=3\eta_\star/200$ (as $\frac{d_n-h}4=\frac{\eta_\star}{48}$) & $1.886868\cdot10^{-4}$\\
+moment cutoff $\mathfrak c$ & $1$ for $p\le h+\frac32\delta_m$, $0$ for $p\ge h+\frac74\delta_m$ & $0.3315198$, $0.3315670$\\
+safe region bound $h+2\delta_m$ & $h+3\eta_\star/100$ & $0.3316142$\\
+$\frac{15}{16}g-18\delta_m$ & lower bound for $H^*$ on the safe region & $0.01429302$\\
+nondegeneracy of $\Omega_\lambda$ & $p<\frac13-\frac{e_h}9$ & $0.3332023$\\
+clock, layers & $u_0=\frac7{48}$, $u_1=\frac3{16}$, $N_\ell=11$, $\ell_s=\frac1{264}$ & $\ell_s\approx3.787879\cdot10^{-3}$\\
+layer $i$ & $l_i=\frac7{48}+\frac{i-1}{264}+\frac1{1056}$, $r_i=l_i+\frac1{528}$ & $l_1\approx0.1467803$, $r_{10}\approx0.1827652$\\
+\midrule
+strip slack $\delta=\frac12(a-\rho)$ & $\eta_\star/(4\sqrt{10})$ & $9.944665\cdot10^{-4}$\\
+Morse parameter of $\Psi_\delta$ & $\delta/\pi$ & $3.165485\cdot10^{-4}$\\
+$\bar\rho=\frac12(\rho+a)$ & $\rho+\delta$ & $0.3132444$\\
+$\hat\rho=a-\frac34\delta$ & $\rho+\frac54\delta$ & $0.3134930$\\
+$r_4^2=\bar\rho/\rho$, $r_3=\frac12(1+r_4)$ & $r_4^2=\frac{4-3\eta_\star}{4(1-\eta_\star)}$ & $r_4\approx1.001591$, $r_3\approx1.000796$\\
+enlarged capacity $\rho^+=\rho r_3^2$ & $\frac\rho4(1+r_4)^2$ & $0.3127469$\\
+\midrule
+transport: $w_*=\frac h{d_n-h}$ & $4t_0/\eta_\star$ & $315.9873$\\
+$T_0$, $c_*=\min(\frac32,\frac{T_0^2}{d_n})$ & $T_0=(6w_*)^{-1/2}$, $c_*=\frac{\eta_\star}{4t_0(1+t_0)}$ & $0.02296622$, $1.587334\cdot10^{-3}$\\
+return: $1-\frac32d_n$ & $(3-t_0)/4$ & $0.5015724$\\
+\bottomrule
+\end{tabular}
+\caption{Model parameters for $k=10$, $\eps=\frac1{10}$; $\eta_\star=1-\sqrt{39/40}$.}
+\label{tab:example-model}
+\end{table}
+
+\emph{Checks.} The chain required by Definition~\ref{def:shd4-data}(a) and Proposition~\ref{prop:shd4-maps} reads
+\begin{multline*}
+ \rho\approx0.3122499<\rho^+\approx0.3127469<\bar\rho\approx0.3132444<\hat\rho\approx0.3134930\\
+ <a\approx0.3142388<h\approx0.3312368<d_n\approx0.3322851<\tfrac13,
+\end{multline*}
+and $0<g\le\Hb(h)$ holds with equality. The comparison identity $F=K-\Pb=-g+c_s\Lambda$ of
+\Mref{Proposition}{prop:cmp-linear} uses $c_sA=k-3\sqrt k$, $c_sB=3\sqrt k$ and $3\sqrt k\,a=3-g$; numerically
+$c_sA=10-3\sqrt{10}\approx0.5131670$ and $c_sB=3\sqrt{10}\approx9.486833$. The safe region lies below $d_n$ and below the
+nondegeneracy bound: $h+2\delta_m\approx0.3316142<d_n<\frac13-\frac{e_h}9$. The volume of $\Bo(1)$ not filled by the ten
+balls is $\frac12(1-k\rho^2)=\frac\eps8$. Half of it, $\int_0^h\Pb=\frac\eps{16}$, remains as the integral of the profile,
+from which the gap is paid; the other half, $\frac12k(a^2-\rho^2)+\frac12(1-3h)^2$, is taken by the capacity slack and the
+height defect (Remark~\ref{rem:rtc-equal}).
+
+\subsection{The common isotopy and the Hamiltonian}
+
+The physical maps are $f_i(u)=\sqrt C\,f^\natural_i(u/\sqrt C)$ with $\sqrt C\approx3.171931$ (\Mref{Proposition}{prop:ham-embeddings}). The embedding datum has $c'_i=\pi r_3^2$ and
+$\bar c_i=\pi r_4^2$. Table~\ref{tab:example-ham} lists the radii of \Mref{Definition}{def:ham-radii}; here the source radius is
+$r_i=1$ and the centre gap is $\min_{i\ne j}(|s_i-s_j|-2)=1$.
+
+\begin{table}[ht]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}p{0.3\textwidth}p{0.3\textwidth}p{0.34\textwidth}@{}}
+\toprule
+Quantity & Closed form & Value\\
+\midrule
+$c'_i$, $\bar c_i$ & $\pi r_3^2$, $\pi r_4^2$ & $3.146593$, $3.151598$\\
+$r'_i$, $\bar r_i$ & $r_3$, $r_4$ & $1.000796$, $1.001591$\\
+step $\min(\frac14,\,r'_i-r_i)$ & $r_3-1$ & $7.955775\cdot10^{-4}$\\
+$r_{1,i},r_{2,i},r_{3,i},r_{4,i}$ & $1+\frac\ell5(r_3-1)$ & $1.000159$, $1.000318$, $1.000477$, $1.000636$\\
+target radius $R_C=\sqrt{C/\pi}$ & $R$ & $1.789571$\\
+\bottomrule
+\end{tabular}
+\caption{Radii of the common isotopy for $k=10$, $\eps=\frac1{10}$.}
+\label{tab:example-ham}
+\end{table}
+
+The Hamiltonian $H=H[2,10,C,(\pi,\dots,\pi),s]$ of \Mref{Definition}{def:ham-H-final} is assembled as follows.
+\begin{enumerate}[label=(\arabic*)]
+\item \emph{Model embeddings.} For $1\le i\le10$,
+\[
+ f^\natural_i=b_{\rm ball}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota\circ\mathsf N\circ\Phi^{-1}\circ\chi_{\mathcal A}
+ \circ\mathcal D^{-1}\circ E_i
+\]
+on $\Bo(\hat\rho)$, with the parameters of Table~\ref{tab:example-model}: the layer map $E_i$ uses $\Psi_\delta$, the shear
+with $A_i'(p)$ and the root in $(l_i,r_i)$; the twist $\mathcal D$ uses the planar isotopy $q_t$ of
+\Mref{Proposition}{prop:cmp-linear} with $e_q$ above; $\Phi$ is the time-one map of the cut field of
+Construction~\ref{cons:shd4-moser} with $\delta_m$ above; the transfer uses $d_n$ and $w_*$ above. Only $E_i$ depends on $i$
+(Theorem~\ref{thm:cub-packing}(iv)).
+\item \emph{Route translations} (slots $[\frac m8,\frac{m+1}8]$, $0\le m\le4$): the balls $s_i+u$ are moved, by translations
+with ranks fixed by their starting and target heights, to the centres $Y_i=y_i/\tau$, $y_i=f_i(0)$
+(Definition~\ref{def:iso-route}).
+\item \emph{Linear symplectic stage} (slot $5$): $Y_i+M_{i,\sigma}u$, with $M_{i,\sigma}$ the path of
+Definition~\ref{def:iso-linear-path} from $I$ to $A_i=Df_i(0)$.
+\item \emph{Shape stage} (slot $6$): $Y_i+\kappa_{i,\tau\sigma}(u)$, from $Y_i+A_iu$ to $\tau^{-1}f_i(\tau u)$.
+\item \emph{Tail} (slot $7$): $v^{-1}f_i(vu)$ for $v$ from $\tau$ to $1$, ending at $f_i$; the slots are joined by flat
+clocks (Construction~\ref{cons:iso-isotopy}).
+\item \emph{Radial primitive and cutoff}: $\mathfrak h_{i,t}(u)=\int_0^1\omega_0(\dot F_{i,t}(\vartheta u),D_uF_{i,t}(\vartheta u)u)\,d\vartheta$,
+the radial cutoff $\chi_i$ equal to one on $\EB(r_{1,i})$ and zero outside $\EB^\circ(r_{2,i})$, and
+$H(t,y)=\sum_i\chi_i(u)\mathfrak h_{i,t}(u)$ with $u$ the unique preimage of $y$ under $F_{i,t}$ in $\EB(r_{3,i})$, and $0$
+where there is none (\Mref{Definition}{def:ham-H}).
+\end{enumerate}
+By \Mref{Theorem}{thm:ham-flow}, $\phi^1_H(B(s_i,\pi))=f_i(B(\pi))$; these ten sets are pairwise disjoint and lie in the
+compact set $\bigcup_if_i(B(c'_i))\subset\Bo(\pi R^2)$, so in the Euclidean ball of radius $R\approx1.789571$, and
+$k/R^4=\frac{39}{40}>1-\eps$.
+
+\emph{Not evaluated.} The following numbers enter the definition but are maxima or minima of continuous functions over
+compact sets, or depend on such numbers, and the proofs show only that they are positive or finite: the base speed $C_b$
+of the handle flow (Proposition~\ref{prop:shd4-moser}); the target margin $m=\frac12\min_{\mathcal K}(1-\pi|z|^2)$ of
+Construction~\ref{cons:rtc-data}; the points $y_i=f_i(0)$ and matrices $A_i=Df_i(0)$; the bound $L$, the scale $\tau$, the
+separation $\delta_c$ and the support radius $R_F$ of Definition~\ref{def:iso-parameters} and Proposition~\ref{prop:iso-common};
+and, for the finite form, $C_0$, $R_*$, $b_R$, $L_X$ and the Bernstein degree of \Msec{sec:eff-finite}. The planar support
+area $P_{\rm supp}$ is a closed expression in the constants of Definitions~\ref{def:pll-source-constants}
+and~\ref{def:pll-path-constants}; only the bracket of Table~\ref{tab:example-model} is recorded.

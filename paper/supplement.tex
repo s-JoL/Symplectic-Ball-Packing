@@ -1,0 +1,73 @@
+\documentclass[11pt]{amsart}
+\input{macros}
+\hypersetup{
+  pdftitle={Supplement to Explicit Hamiltonian ball packings in every dimension},
+  pdfauthor={Liang Song},
+  pdfsubject={Explicit symplectic ball packings and Lean 4 formal verification},
+  pdfkeywords={symplectic geometry, Hamiltonian dynamics, ball packing, Lean 4},
+  pdflang={en-US}
+}
+\usepackage{tikz}
+\usepackage{array}
+\externaldocument[M-]{build/main}[main.pdf]
+
+\title[Supplement: explicit Hamiltonian ball packings]{Supplementary material to\\
+``Explicit Hamiltonian ball packings in every dimension''}
+\author{Liang Song}
+\email{sl12160010@gmail.com}
+\thanks{Final version 1.0.0, 29 October 2026. DOI:
+\href{https://doi.org/10.5281/zenodo.23756576}{10.5281/zenodo.23756576}.}
+\date{}
+
+\begin{document}
+\begin{abstract}
+This supplement contains the complete construction and every proof that the main text states without proof or
+proves only in outline: the finite comparator and the explicit planar rearrangements, the handle construction on
+closed and bordered bases, the strip and layer maps, the four model families and their transfers to the target,
+the common isotopy and the global Hamiltonian in every dimension, the input-name programs,
+the finite compilation, and the termination of the algorithm. The source records the names of the corresponding Lean
+declarations; the appendix describes the Lean explicitness check and the formal statements that differ in form from
+the text.
+\end{abstract}
+\maketitle
+
+\noindent\emph{Authorship and the role of AI.} See the corresponding section at the end of the main text.
+Lean declaration names in \S\ref{sec:guide} and in the source tags (indexed in \texttt{verification/PAPER-INDEX.md})
+locate the formal proofs.
+
+\tableofcontents
+
+\input{supp/guide}
+\input{supp/preliminaries}
+\input{supp/comparator}
+\input{supp/planar-machine}
+\input{supp/planar-linear}
+\input{supp/scalar-comparator}
+\input{supp/planar-convex}
+\input{supp/model-cubic}
+\input{supp/cubic-bundle}
+\input{supp/handle}
+\input{supp/strip}
+\input{supp/native-toric}
+\input{supp/cubic-return}
+\input{supp/model-quadric}
+\input{supp/quadric-transfer}
+\input{supp/model-large}
+\input{supp/large-shell}
+\input{supp/six-model}
+\input{supp/six-return}
+\input{supp/branch-data}
+\input{supp/isotopy}
+\input{supp/example}
+\input{supp/effective}
+\input{supp/compile}
+\input{supp/certificate}
+\input{supp/algorithm}
+
+\appendix
+\input{supp/explicit}
+
+\bibliographystyle{amsalpha}
+\bibliography{refs}
+
+\end{document}

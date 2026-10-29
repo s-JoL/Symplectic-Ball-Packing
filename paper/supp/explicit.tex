@@ -1,0 +1,162 @@
+\section{The explicitness check}\label{sec:xpl}
+
+This appendix describes the Lean command \texttt{\#check\_explicit}, which checks the syntactic form of level L1
+(\Mref{Definition}{def:intro-levels}) on the actual construction terms. It complements the kernel's axiom report: the
+kernel checks that a theorem proves its stated proposition, while the command audits the data dependencies of a
+definition. It is not used in any proof of this supplement. Its implementation is in
+\texttt{SymplecticPacking/Explicit.lean}.
+
+\subsection{Data dependencies}\label{sec:xpl-traversal}
+
+Starting at the named definition, the command follows constants appearing in
+data positions, including the bodies of lambda expressions and local values.
+It skips theorem bodies and arguments whose types are propositions, so a
+classical existence proof that justifies a formula does not make the formula
+an unspecified choice; a choice that supplies a value is inspected.
+
+Project and vendored definitions are traversed. The audit rejects direct witness
+selection by \texttt{Classical.choose}, \texttt{Function.invFun} and the other
+recorded choice operators unless it belongs to an accepted case below.
+A missing proof or value represented by \texttt{sorryAx} is rejected.
+The source scan separately excludes new axioms and unchecked implementation
+mechanisms. The kernel audit of the main results permits only
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}.
+
+\subsection{Definite operations and searches}\label{sec:xpl-accept}
+
+\texttt{Explicit.the} supplies definite descriptions with proofs of uniqueness.
+Its uses in the construction specify integral
+curves, inverse images, scalar roots and linear solves. Each defining predicate
+and its domain are part of the mathematical construction. Classical decisions
+on propositions are allowed as case distinctions at level L1; they do not
+establish computability from real names.
+
+For a search over naturals, rationals or finite encoded data, the command checks
+both the search type and genuine decidability of its predicate. A decidability
+argument reaching classical propositional decision is rejected. Requirements
+on a wrapper's arguments are propagated to its call sites, so wrapping a search
+in another definition does not remove the requirement. Search predicates on
+function spaces are rejected. The implementation also checks natural infima,
+filtered finite sets and definite descriptions over search types.
+
+Mathlib uses classical choice to define limits, integrals and other definite
+mathematical operations. The audit accepts only the exact reviewed declarations
+listed in \texttt{Explicit/}\allowbreak\texttt{Whitelist.lean}; it records their dependency paths
+in its output. These entries are library foundations. They do not permit witness
+selection in a project or vendored construction. The finite charts, primitives,
+cutoffs and flows of the construction are therefore audited through their actual
+data dependencies.
+
+\begingroup\sloppy
+\subsection{Definite descriptions in the construction}\label{sec:xpl-descriptions}
+
+The descriptions over continuous types that the command accepts are reviewed by hand (\Msec{sec:ver}). The report of
+\texttt{\#check\_explicit} on \texttt{General.packingHamiltonian} lists $26$ declarations containing
+\texttt{Explicit.the}. Each describes one of the following objects; in every case the defining property is an
+explicit equation or inequality in the data of the construction, uniqueness is proved, and none refers to a packing
+specification.
+\begin{itemize}
+\item \emph{Inverses of injective maps} (the unique preimage, with a fixed fallback value off the image):
+ \texttt{Inner.invR}, \texttt{Inner.TrotInv}, \texttt{Qhat.ordInv}, \texttt{Qhat.qhatInv},
+ \texttt{HighDim.ToricPackingStages.circleClockInv}, \texttt{layerChartInv} and \texttt{nativeInverse},
+ \texttt{BranchLarge3.CubicBridge.expInv} (inverse of a radial moment map), and \texttt{General.Ham.pushforward}
+ (the unique source point $u\in\EB(r)$ with $F_t(u)=y$, Definition~\Mnum{def:ham-H}).
+\item \emph{Unique roots and critical points}: \texttt{Strip.layerRoot} and \texttt{Strip.Cubic.layerRoot} (the layer roots
+ of Lemma~\ref{lem:str-layer-root} and of the four-dimensional layer maps of \S\ref{sec:shd-four}), \texttt{Strip.vOfT}, \texttt{BranchLarge3.PrimExt.rootExt} (the
+ root closest to an explicit centre), \texttt{Branch2.Planar.PlanarInput.pstar} and
+ \texttt{HighDim.PlanarGen.Input.vstar} (the unique critical point of a strictly convex potential).
+\item \emph{Solutions of linear equations}: \texttt{BranchLarge3.TargetMoser.solveL} (an invertible bilinear form),
+ \texttt{BranchSmall.VT.transportField} and \texttt{returnField} (the Moser fields defined by nondegenerate linear
+ systems, \S\ref{sec:vtr}), and \texttt{General.Ham.Linear.posSqrt} (the positive square root of a positive
+ semidefinite matrix).
+\item \emph{Solutions of ordinary differential equations} (the unique integral curve of a Lipschitz field):
+ \texttt{Qhat.flowOf}, \texttt{Return.flowFrom}, \texttt{BranchSmall.VT.flowI}, \texttt{BranchLarge3.UMoser.curve},
+ \texttt{HighDim.ToricPackingStages.nativeAmbientFlow}.
+\item \emph{Extrema and measures}: \texttt{HighDim.ToricPackingStages.finiteMinimumOrZero} (the least value of finitely
+ many continuous functions on compact sets, $0$ if there is none) and \texttt{Explicit.planeVolume} (Lebesgue measure
+ on $\R^2$, characterised by its values on rectangles).
+\end{itemize}
+
+\subsection{Vendored declarations used}\label{sec:xpl-vendored}
+
+The $3810$ declarations of the vendored library in the dependency closure of the statement and algorithm theorems
+(\Msec{sec:ver}) are listed by module in \texttt{verification/Audit/VendoredUsage.lean}. They are explicit charts and
+coordinates on the diagonal quadrics and the Fermat cubic, Fubini--Study and Liouville primitives, toric and Hopf
+coordinates, Moser fields and their naturality under pullback, planar area and rearrangement bounds, and the moment
+polynomials of the models. The closure contains nothing from the curve-analysis directories \texttt{Compactness}, \texttt{Continuation},
+\texttt{Degree}, \texttt{Cauchy} and \texttt{Campanato}.
+
+\endgroup
+
+\subsection{Formal statements that differ in form from the text}\label{sec:xpl-interface}
+
+Table~\ref{tab:xpl-interface} records the statements of the paper and of this supplement whose Lean counterparts have a
+different form. The complete printed statements are proved in the text; where Lean records only the consequence
+needed by the construction, the statement carries the visible label \emph{needed consequence verified}.
+The label \emph{full statement verified} is reserved for full mathematical counterparts, up to the stated
+presentation differences. Unqualified source tags give references without a full-coverage claim. The scope labels
+record a human comparison, not a kernel check of the prose. Lean names are relative to \texttt{SymplecticPacking}.
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}p{0.22\textwidth}p{0.74\textwidth}@{}}
+\caption{Formal statements that differ in form from the text.}\label{tab:xpl-interface}\\
+\toprule
+statement & formal form\\\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ (continued)}\\
+\toprule
+statement & formal form\\\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{Continued on the next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+flat step $S$ (Def.~\ref{def:pre-flat}) & Mathlib's \texttt{Real.smoothTransition}, built from \texttt{expNegInvGlue}${}=a_\flat$; the
+ definite description $\defdesc(h)$ is \texttt{Explicit.the}\\
+real coordinates & the coordinate $\zeta_l$ of $\R^{2n}$ (Table~\ref{tab:pre-interfaces}) is the coordinate of index $l-1$ of
+ \texttt{Problem.E}~$n$; the coordinates are called $(q,p)$ there, with $p$ a coordinate and not a moment\\
+Thm.~\Mnum{thm:cmp-realisation} (Thm.~\ref{thm:plc-lift}) & the formal statement records (c) with real data, that every
+ $q^{(j)}_t$ maps $V_\Delta$ into itself, and, in place of (b), one collar width on which $Q^{(j)}_t$ Poisson-commutes with
+ every face moment; the remaining assertions of (a) and (b) are proved in Theorem~\ref{thm:plc-lift} only\\
+Thm.~\ref{thm:pln-isotopy} & stated for a single ordinary path, without the parameter $y$, as used in dimension four; the
+ smooth dependence of the planar flow on a finite-dimensional parameter is a separate statement,
+ \texttt{HighDim.PlanarGen.compact\_param\_flow\_smooth}\\
+Cor.~\ref{thm:pln-full-disc} & the case of Theorem~\ref{thm:pll-inner}(e): $g(I)=I+4e$, $\eps=0$, $\Upsilon\le h$ on $[0,h]$, and the
+ core hypothesis $\Upsilon(\pi|\mathfrak e_1(z)|^2)<\pi|z|^2+\frac{13}{24}e$ on $\bar D(h-4e)$\\
+Def.~\ref{def:shd4-data} & valid cubic data admit for $(q_t)$ only the whole-disc isotopy $\hat q$ of an ordinary path of disc
+ area $h$, which both four-dimensional branches use\\
+Prop.~\ref{prop:shd4-moser} & items (a)--(d) and the smoothness of $\Phi$ and $\Phi^{-1}$; the decomposition
+ $\Phi=\Phi_2\circ\Phi_1\circ\Phi_0$ is not formalised\\
+Prop.~\ref{prop:shd4-maps}(c) & in the form used in Theorem~\ref{thm:cub-packing}: if $\mathcal Tf^N_i(X)=\mathcal Tf^N_j(X')$ for the
+ transfer $\mathcal T$ of Theorem~\ref{thm:rtc-transfer}, then $f^N_i(X)=f^N_j(X')$\\
+Prop.~\ref{prop:rtc-return}, Lem.~\ref{lem:rtc-ball-chart}, Thm.~\ref{thm:rtc-transfer} & there is no single statement about $\mathcal T$ on its whole domain; the
+ theorem is formalised along each embedding $\mathcal T\circ f^N_i$. The pullback identities are stated along smooth families
+ of unit vectors (return and ball chart) and for $\mathcal T_{\rm u}$ composed with smooth families with values in $\mathcal N_h$,
+ together with Proposition~\ref{prop:rtc-central}; injectivity is stated as in the previous row\\
+Thm.~\ref{thm:cub-packing} & for the physical maps $u\mapsto\sqrt C\,f_i(u/\sqrt C)$: smoothness with symplectic derivative on the
+ open domain $\Bo(C\rho_i^{\rm dom})$, injectivity on $B(C\rho_i^+)$, pairwise disjoint images of these closed balls, and images in
+ $\Bo(C)$; the margin $m$ is not stated, and (iv) is structural. Injectivity, disjointness and $\pi|f_i|^2<1$ on all of
+ $\Bo(\hat\rho_i)$ are proved for the capacity-scale maps in both cases\\
+Rem.~\ref{rem:rtc-equal} & the equal-capacity data form the structure \texttt{Params}, whose field \texttt{Params.}$\varepsilon$ is $4\eta_\star$ (not the
+ $\eps$ of \Mref{Theorem}{thm:intro-4d}) and whose \texttt{Params.rho}${}=(1-\eta_\star)/\sqrt k$ is $\rho$; \texttt{Branch2.CubicData.ofParams} turns them into
+ cubic data, so both cases pass through \texttt{Branch2.cubicEmbeddings\_spec}, the map $u\mapsto\sqrt C\,f_i(u/\sqrt C)$. The data of
+ \Mref{Theorem}{thm:intro-4d} are those of \texttt{General.epochHamiltonianQ}, and \texttt{General.epochQ\_equalCase} proves
+ \texttt{Branch2.EqualCase} for them\\
+support of $H$ (\Msec{sec:ham}) & the Lean counterparts state less: by \texttt{General.Ham.ofIsotopy\_compactSupport}, and by
+ \texttt{main\_support\_radius} for $H[n,k,C,c,s]$, the Hamiltonian vanishes outside $\R\times K$ for a closed Euclidean ball $K$,
+ of radius \texttt{General.packingSupportRadius} in the latter. The finer descriptions of the support by the sets
+ $F_{i,t}(B(r_{2,i}))$ and by $K_H\subset B(R_F)$ are proved in the text and not formalised\\
+\end{longtable}
+}
+
+\subsection{Reproduction}\label{sec:xpl-searches}
+
+The statement file runs the check on the Hamiltonian of \Mref{Theorem}{thm:main} and on the Hamiltonian of the Epoch
+problem (\Mref{Remark}{rem:eff-epoch-interface}); further checks inspect each embedding constructor and, for the finite
+output, the polynomial interpreter, the rational verifier and the output construction. A nonempty violation list fails
+the build. Besides the rejected searches listed in \Msec{sec:ver}, the regression file \texttt{test/ExplicitTest.lean}
+contains genuine finite rational searches that must be accepted, a natural infimum, filtering and a definite
+description. These tests exercise the search rule; the soundness and termination of the finite packing search are
+proved in \S\S\ref{sec:certificate} and~\ref{sec:alg}.

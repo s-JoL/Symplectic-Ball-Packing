@@ -1,0 +1,410 @@
+\section{The affine quadric transfer}\label{sec:vtr}
+
+We use the affine locus $\Sigma\subset\C^{m+1}$, the forms $\lambda,\sigma$ and the exhaustion $\Sigma_\ell$ of
+Definition~\ref{def:qdr-curve}, and write $F(z)=(y_j^2-t^2+j)_{j=1}^m$. In \S\ref{sec:vtr-curve}
+$m=n-1\ge2$; the transfer of \S\S\ref{sec:vtr-bundle}--\ref{sec:vtr-return} is valid for every $m\ge1$.
+
+\subsection{Sheets and explicit coordinates}\label{sec:vtr-curve}
+
+\begin{lemma}[The affine sheets]\label{lem:vtr-square}
+The projection $t:\Sigma\to\C$ has $2^m$ points in every fibre away from $\{\pm\sqrt j:1\le j\le m\}$.
+Over $t=\pm\sqrt i$ it has $2^{m-1}$ points, with simple branching in coordinate $y_i$.
+Outside a sufficiently large disc its $2^m$ ends are indexed by signs $\epsilon_j\in\{\pm1\}$ and have coordinates
+\[
+ t=s^{-1},\qquad y_j=\epsilon_j s^{-1}\sqrt{1-js^2},\qquad 0<|s|<1/R_0,
+\]
+where $R_0=2+\sum_jj$. Each root is the branch equal to one at zero; the inverse is $s=1/t$.
+\end{lemma}
+
+\begin{proof}
+The independent root signs count the fibres. At a branch value only one root vanishes, and the local equation is
+$y_i^2=t^2-i$, with derivative $2t\ne0$ in $t$. The formula at the ends follows by factoring $t^2$ from every
+radicand. On $|s|<1/R_0$ all perturbations have modulus less than one, so the roots above and their finite signs
+are unambiguous and account for every point.
+\end{proof}
+
+\begin{lemma}[Explicit coordinate boxes]\label{lem:vtr-atlas}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.ordinaryLocalLift_target,SymplecticPacking.HighDim.ToricPackingStages.ordinaryLocalLift_left,SymplecticPacking.HighDim.ToricPackingStages.ordinaryLocalLift_smooth,SymplecticPacking.HighDim.ToricPackingStages.branchLocalLift_target,SymplecticPacking.HighDim.ToricPackingStages.branchLocalLift_left,SymplecticPacking.HighDim.ToricPackingStages.branchLocalLift_smooth}
+\uses{lem:vtr-square}
+Let $c=(t_c,y_c)\in\Sigma$.
+\begin{enumerate}[label=(\roman*)]
+\item If every $y_{c,j}\ne0$, a coordinate near $c$ is $u=t$, with inverse
+\[
+ t=u,\qquad y_j=y_{c,j}\sqrt{1+(u^2-t_c^2)/y_{c,j}^2}.
+\]
+\item If $y_{c,i}=0$, a coordinate near $c$ is $v=y_i$, with inverse
+\[
+ t=t_c\sqrt{1+v^2/t_c^2},\qquad y_i=v,\qquad
+ y_j=y_{c,j}\sqrt{1+v^2/y_{c,j}^2}\quad(j\ne i).
+\]
+Here $t_c^2=i$, and $y_{c,j}^2=i-j\ne0$ for $j\ne i$.
+\end{enumerate}
+The square roots in (i)--(ii) are the branches equal to one at zero. Restricting a chart to a coordinate square on
+which every perturbation of its radicand has modulus less than one gives an injective holomorphic chart.
+The inverse coordinates are ambient coordinate projections. Transition functions are compositions of
+these projections with the roots above.
+\end{lemma}
+
+\begin{proof}
+Squaring the coordinates verifies all equations. In (i), at the centre the ratios $y_j/y_{c,j}$ equal one; in (ii)
+the same holds for $t/t_c$ and $y_j/y_{c,j}$, $j\ne i$. Requiring positive real part selects these branches uniquely.
+The indicated coordinate projection composed with the inverse chart is the identity, while the branch conditions give
+the reverse identity. Holomorphicity follows from the binomial series on the prescribed radicand domains.
+\end{proof}
+
+\begin{lemma}[A finite rational family on a compact projection domain]\label{lem:vtr-cells}
+\uses{lem:vtr-atlas}
+Let $R\ge0$ be rational and put
+\[
+ \eta=\frac1{64},\quad r=\frac1{262144(R+1)},\quad h=\frac r{32},\quad
+ N=\lceil R/h\rceil+2.
+\]
+Consider the grid $q=h(a+ib)$ with $-N\le a,b\le N$. Retain the ordinary centres
+\[
+ c(q,\epsilon)=\bigl(q,(\epsilon_j\sqrt{q^2-j})_{j=1}^m\bigr)
+\]
+that pass the rational tests
+\[
+ |q|^2<(R+\tfrac12)^2,\qquad |q^2-j|^2>(\eta^2/2)^2\quad(1\le j\le m).
+\]
+Use all signs, ordinary coordinate squares of outer half-width $r$ and inner half-width $r/4$, and the branch charts
+centred at every $t_c=\pm\sqrt i$, $y_{c,i}=0$, $y_{c,j}=\pm\sqrt{i-j}$, with outer half-width $1/8$ and inner half-width
+$1/32$. The inner open squares cover $\{|t|\le R\}\subset\Sigma$.
+Every ordinary closed outer square lies in $\{|t|<R+1\}$. The same holds for the branch squares provided
+$i+1/16<(R+1)^2$ for all $i$.
+All index tests are comparisons of rational polynomials in $\operatorname{Re}q$, $\operatorname{Im}q$.
+\end{lemma}
+
+\begin{proof}
+The chosen constants satisfy
+\[
+ 2r\bigl(2(R+1)+2r\bigr)<\eta^2/2,\qquad
+ 4r(2R+4r)<\eta^2,\qquad 2h\le r/8,\qquad R+h<Nh.
+\]
+If every $|y_j|\ge\eta$, choose a grid point with $|q-t|<2h\le r/8$. Then
+\[
+ |q^2-t^2|\le |q-t|(|q|+|t|)<\eta^2/2,
+\]
+so $|q^2-j|>\eta^2/2$ for each $j$, and the centre passes the tests.
+Among its finite root signs there is one for which all ratios to the coordinates of the point have positive real part.
+The ordinary chart formula then puts the point in the inner square. The first displayed inequality bounds every
+radicand perturbation on the outer square strictly below one; also $|q|+2r<R+1$.
+If some $|y_i|<\eta=(1/8)/8$, the separated parameters give $|t|^2$ close to $i$ and $|y_j|^2$ close to $|i-j|$.
+The branch formula with the corresponding finite root signs applies. Its perturbations have modulus at most
+$4(1/8)^2<1$, and the point is in the inner square. On its closed outer square,
+$|t|^2=|i+y_i^2|\le i+1/16<(R+1)^2$.
+\end{proof}
+
+\begin{proposition}[Fixed handle data]\label{prop:vtr-handle}
+\uses{lem:vtr-atlas, lem:vtr-cells, M-def:hdl-handle-data, def:qdr-model, lem:pre-fs}
+On each compact truncation containing the fixed supports, the quadric model has the annular data below. Its primitive operator acts on zero-mass forms with compact support in the affine interior. The annular charts and closed dual form can be
+chosen independently of $h$ by the following root formulas.
+Put $P(z)=(z+z^{-1})/2$ and $M(z)=(z-z^{-1})/2$. Two annuli, initially defined near $|z|=1$, are
+\[
+ \begin{split}
+ A(z)&=\bigl(\sqrt{1+P(z)^2},\ P(z),\ M(z),\ (i\sqrt{j-1-P(z)^2})_{j=3}^m\bigr),\\
+ C(z)&=\bigl(P(z),\ M(z),\ (i\sqrt{j-P(z)^2})_{j=2}^m\bigr).
+ \end{split}
+\]
+Their inverses are respectively $z=y_1+y_2$ and $z=t+y_1$. The transverse cylinder is
+$e(s,\theta)=C(\exp(s+2\pi i\theta))$.
+Fix $\varepsilon=1/8$ and $w=1/4$, and let
+\[
+ T_\varepsilon(z)=S\!\left(\frac{|z|^2-(1-\varepsilon)^2}{(1+\varepsilon)^2-(1-\varepsilon)^2}\right),
+ \qquad \beta_0=A_*dT_\varepsilon,
+\]
+with zero extension outside $A$. Then $\beta_0$ is smooth, closed, compactly supported and has period one on the core
+of $C$. With $b(\theta)=2S'(2\theta-1/2)$ on $[0,1]$, extended periodically, the fixed smooth circle clock supported in
+$[1/4,3/4]$ with integral one, write
+\[
+ e^*\beta_0=A_0(s,\theta)\,ds+B_0(s,\theta)\,d\theta.
+\]
+The periodic function
+\[
+ F(s,\theta)=\int_0^s A_0(v,0)\,dv+\int_0^\theta(B_0(s,v)-b(v))\,dv
+\]
+satisfies $dF=e^*\beta_0-b(\theta)d\theta$. With
+\[
+ \chi(s)=S\bigl((7w/8-s)4/w\bigr)S\bigl((7w/8+s)4/w\bigr),\qquad
+ \beta=\beta_0-d\bigl(e_*(\chi F)\bigr),
+\]
+the function $e_*(\chi F)$ is extended by zero. The form $\beta$ equals $b(\theta)d\theta$ on $|s|<5w/8$.
+The annular handle has width $w/2=1/8$. The normalization and layer paths use the smaller working half-width
+$b_H=w/4=1/16$ and the radial clock $S((s+b_H)/(2b_H))$; $w=1/4$ is the outer cylinder width.
+
+In the product fibre coordinates,
+\[
+ \Omega_0=\omega_V+d\Gamma_{\mathcal A},\qquad
+ \Gamma_{\mathcal A}=(2|p|-1)\vartheta,\qquad
+ \vartheta=-d^c\log(1+|t|^2+\textstyle\sum_j|y_j|^2).
+\]
+The auxiliary area form and the zero-mass primitive operator are obtained from the fixed finite coordinate families
+of Lemma~\ref{lem:vtr-cells}, the chart bump partition and local integral primitive of
+Construction~\ref{cons:shd-primitive}; their annular correction is the same two-segment formula for $F$.
+\end{proposition}
+
+\begin{proof}
+The identity $P^2-M^2=1$ verifies the two annulus formulas. On $|z|=1$, $P(z)$ is real in $[-1,1]$ and $M(z)$ is purely
+imaginary. Every remaining square-root radicand is positive, including $1+P^2$ and $j-1-P^2$ for $j\ge3$.
+Thus the formulas extend to annuli of positive width. The displayed inverses prove injectivity there.
+The two core circles meet once: $y_1$ is real on the first and imaginary on the second, hence zero at an intersection;
+the positive choice of $t$ then gives $t=1$, $y_2=i$. The radial coordinate crosses the transition in $T_\varepsilon$
+with positive orientation at this point. Integrating its derivative gives one, so $\int_{C(|z|=1)}\beta_0=1$.
+The derivative of $T_\varepsilon$ vanishes near both boundary circles; extension by zero is smooth and closed.
+Closedness gives $\partial_\theta A_0=\partial_s B_0$. Differentiating the two integrals proves the formula for $dF$.
+The period-one identity makes $F$ periodic. The cutoff equals one on $|s|\le5w/8$ and vanishes for $|s|\ge7w/8$,
+which proves the assertions about $\beta$ and smooth zero extension. All these supports are compact in the affine curve.
+
+The fixed widths are admissible uniformly in the number of quadrics. On $3/4\le|z|\le5/4$ one has
+$|P(z)|\le4/3$ and $|\operatorname{Im}P(z)|\le7/24$. Hence $\operatorname{Re}(1+P(z)^2)>0$ and
+$\operatorname{Re}(j-1-P(z)^2)>0$ for $j\ge3$, so $A$ is defined on the whole closed annulus $\frac34\le|z|\le\frac54$, which contains the support
+$\frac78\le|z|\le\frac98$ of $dT_\varepsilon$.
+For $|s|\le1/2$, the inequality $e^{1/2}<7/4$ gives $|P(e^{s+2\pi i\theta})|\le11/8<\sqrt2$;
+thus every $j-P^2$, $j\ge2$, has positive real part, and $C$ is defined on that whole closed cylinder.
+The chosen widths leave a neighbourhood of the supports inside both coordinate domains.
+The finite chart partition and zero-mass local primitives give the remaining scalar handle data by the construction of
+Construction~\ref{cons:shd-primitive}. The initial boxes cover the required compact support.
+Additional rational subboxes in the connected open affine base connect their overlap graph: an open cover of a connected
+space has finite overlap chains between any two nonempty members. Each nonempty overlap contains a rational subbox
+with compact closure in both charts. Enumerating these subboxes and their strict inclusion certificates therefore
+finds finite chains. The normalized chart bump weights give the partition; the chains give the remaining finite
+data of that construction.
+Finally $\vartheta=-\lambda$, so $(2|p|-1)\vartheta=(1-2|p|)\lambda$ gives the stated horizontal primitive directly.
+\end{proof}
+
+\begin{lemma}[Explicit truncation error]\label{lem:vtr-tail}
+\uses{lem:vtr-square, lem:vtr-atlas, lem:qdr-curve}
+Put $R_l=2+\sum_{j=1}^m j+l$, $\Sigma_l=\{|t|\le R_l\}\subset\Sigma$, and
+$A_l=\int_{\Sigma_l}\sigma$. Then $\Sigma_l$ is a compact connected surface with smooth boundary, and
+\[
+ 0\le2^m-A_l\le\frac{2^m(m+2)}{R_l^2}
+ \le\frac{2^m(m+2)}{l+2}.
+\]
+In particular, for $d>0$ and
+\[
+ l=\left\lceil\frac{2^{m+6}(m+2)}d\right\rceil,
+ \qquad H_l(p)=A_l(1-2|p|),
+\]
+one has $0\le\Hb(p)-H_l(p)\le d/64$ on $\Delta_h$.
+The handle and dual supports of Proposition~\ref{prop:vtr-handle} lie in the interior of $\Sigma_l$.
+\end{lemma}
+
+\begin{proof}
+The projection $t$ is proper on $\Sigma$, since $|y_j|^2=|t^2-j|\le|t|^2+j$. Its critical points have some $y_j=0$, i.e.\ $t^2=j$,
+so the circle $|t|=R_l$ contains no critical value and $\Sigma_l$ has smooth boundary. The interior is connected: analytic
+continuation around a small circle about $\sqrt j$ changes the sign of $y_j$ and of no other coordinate, so the monodromy acts
+transitively on the $2^m$ sheets over a regular point of the disc. The handle supports lie in $|t|\le\frac53$
+(proof of Proposition~\ref{prop:vtr-handle}: $|P|\le\frac43$ on $A$ and $|P|\le\frac{11}8$ on $C$), inside $\Sigma_0$ since $R_l\ge5$.
+
+Let $R\ge R_0=2+\frac{m(m+1)}2$. By Lemma~\ref{lem:vtr-square}, $\{|t|>R\}$ is the disjoint union of $2^m$ punctured discs
+$0<|s|<1/R$, on each of which $[1:t:y]=[s:1:v]$ with $F(s)=(s,1,v_1(s),\dots,v_m(s))$, $v_j(s)=\epsilon_j\sqrt{1-js^2}$. Since
+$\lambda=d^c\log D$ and $\log D=\log|F(s)|^2-\log|s|^2$ with $\log|s|^2$ harmonic, $\sigma=dd^c\log|F(s)|^2$ there, and its density
+with respect to Lebesgue measure in $s$ is $\pi^{-1}(|F|^2|F'|^2-|F^\dagger F'|^2)/|F|^4\le|F'|^2/(\pi|F|^2)$. For $|s|\le1/R$ we have
+$|v_j|^2=|1-js^2|\ge1-j/R^2\ge\frac12$ and $|v_j'|^2=j^2|s|^2/|v_j|^2\le2j^2/R^2$, and $\sum_jj^2\le R_0^2\le R^2$, so $|F'|^2\le3$; with
+$|F|\ge1$ the density is at most $3/\pi$, and each end contributes at most $3/R^2$. Hence
+$\int_{|t|>R}\sigma\le2^m\cdot3/R^2\le2^m(m+2)/R^2$.
+
+On the other hand, by Stokes' theorem $A_{R'}=\int_{|t|=R'}\lambda$ for $\Sigma_{R'}=\{|t|\le R'\}$. On each end,
+$\lambda=d^c\log|t|^2+d^c\log|F(s)|^2=\frac{d\arg t}{2\pi}+d^c\log|F(s)|^2$, and $|\partial\log|F|^2|=|F^\dagger F'|/|F|^2=O(|s|)$, so the
+second term contributes $O(R'^{-2})$ on the circle of length $2\pi/R'$ in $s$. Thus $A_{R'}\to2^m$, and since $\sigma>0$,
+$2^m-A_R=\int_{|t|>R}\sigma\in[0,2^m(m+2)/R^2]$. For $R=R_l\ge l+2\ge2$ we get $R_l^2\ge l+2$, which is the second bound. The ceiling
+choice of $l$ gives $2^m-A_l\le d/64$, and $0<1-2|p|\le1$ on $\Delta_h$ gives the profile estimate.
+\end{proof}
+
+\subsection{The affine potentials}\label{sec:vtr-bundle}
+
+Write $D=1+|z|^2$ and $u=|W|^2/D^2$. On $\C^{m+1}\times\C^m$ put
+\[
+ \Phi_b=\log D+b\log(1+u),\qquad \Omega_b=dd^c\Phi_b.
+\]
+
+\begin{lemma}[Positivity and the graph forms]\label{lem:vtr-form}
+\lean{SymplecticPacking.BranchSmall.VT.bundleForm_pos, SymplecticPacking.BranchSmall.VT.returnForm_pos}
+For $0<b<1/2$, $\Omega_b$ is a smooth Kähler form. For $T>0$, its restriction to the graph
+$j_T(z)=(z,F(z)/T)$ is
+\[
+ \omega_T=dd^c\!\left[\log D+b\log\left(1+\frac{|F|^2}{T^2D^2}\right)\right].
+\]
+The path $\omega_s^{\rm ret}=dd^c[\log D+sb\log(1+|F|^2/D^2)]$, $0\le s\le1$, is also Kähler.
+\end{lemma}
+
+\begin{proof}
+The identity
+\[
+ \Phi_b=(1-2b)\log D+b\log(D^2+|W|^2)
+\]
+exhibits its Hessian as a positive combination of Fubini--Study Hessians.
+Indeed $D^2+|W|^2$ is the squared norm of the vector consisting of the ordered quadratic monomials
+of $(1,z)$ and the coordinates $W$. Its constant entry is one; its linear $z$ entries and its $W$ entries
+separate tangent vectors. The first summand is positive on nonzero base vectors, and the second is positive
+on nonzero pure fibre vectors, so the sum is positive definite. The graph identity is pullback by the holomorphic
+map $j_T$. The same decomposition with $sb$ proves positivity of the return path.
+\end{proof}
+
+\begin{construction}[Radial injection]\label{cons:vtr-injection}
+For $0<b<1/2$, let
+\[
+ \iota_b(z,U)=\left(z,\frac{D(z)\sqrt\pi\,U}{\sqrt{b-|p|}}\right),\qquad
+ \iota_b^{-1}(z,W)=\left(z,\sqrt{\frac b\pi}\frac{W}{\sqrt{D(z)^2+|W|^2}}\right).
+\]
+The first map has domain $|p|<b$ over $\Sigma$, and the second is defined on $\Sigma\times\C^m$.
+\end{construction}
+
+\begin{lemma}[The radial pullback]\label{lem:vtr-injection}
+\lean{SymplecticPacking.BranchSmall.radial_form}
+These maps are mutually inverse smooth maps, and $\iota_b^*\Omega_b=\Omega_0$ on the tube $|p|<b$.
+Moreover $u\circ\iota_b=|p|/(b-|p|)$.
+\end{lemma}
+
+\begin{proof}
+With $|W|^2=D^2\pi|U|^2/(b-|p|)$ we get $u=|p|/(b-|p|)$, $1+u=b/(b-|p|)$ and $|p|=bu/(1+u)$, which verifies the inverse
+formulas; both denominators are positive on their domains. On $\{W\ne0\}$, $d^c\log(1+u)=\frac u{1+u}(d^c\log|W|^2-2\lambda)$ and
+$d^c\log|W|^2=\operatorname{Im}(W^\dagger dW)/(2\pi|W|^2)$. Along $\iota_b$, $W=c\,U$ with $c>0$ a function of $(z,|p|)$, so
+$\operatorname{Im}(W^\dagger dW)=c^2\operatorname{Im}(U^\dagger dU)$ and $b\frac u{1+u}d^c\log|W|^2=|p|\frac{\operatorname{Im}(U^\dagger dU)}{2\pi|U|^2}
+=\frac12\operatorname{Im}(U^\dagger dU)=\sum_jp_jd\theta_j$. Hence
+\[
+ \iota_b^*d^c\Phi_b=\lambda+\sum_jp_jd\theta_j-2|p|\lambda=\sum_jp_jd\theta_j+(1-2|p|)\lambda ,
+\]
+which is smooth on the axes. Its exterior derivative is $\omega_V+d[(1-2|p|)\lambda]=\Omega_0$.
+\end{proof}
+
+\subsection{Complete transport in affine coordinates}\label{sec:vtr-transport}
+
+Let $J_z=dF_z$. At $(z,W)\in X_T=\{F(z)=TW\}$ define $V_T=(\dot z,\dot W)$ by
+\begin{equation}\label{eq:vtr-transport}
+ J_z\dot z-T\dot W=W,\qquad
+ \Omega_b(V_T,k)=0\quad(k\in\ker(J_z,-T)).
+\end{equation}
+Here $\ell=(J_z,-T)$ is complex linear and onto: at $T=0$ because $J_z$ is onto at points of $\Sigma$ (Lemma~\ref{lem:qdr-curve}),
+for $T\ne0$ because of the fibre term. The $\Omega_b$-orthogonal complement of the complex subspace $\ker\ell$ is its orthogonal
+complement for the Kähler metric, on which $\ell$ is an isomorphism; so $V_T$ exists, is unique, and depends smoothly on
+$(z,W,T)$ on the set $\mathcal X=\{F(z)=TW\}$, which is a smooth submanifold of $\C^{m+1}\times\C^m\times\R$ near $T=0$ and the
+graph of $W=F(z)/T$ for $T>0$.
+
+\begin{lemma}[Extension to projective space]\label{lem:vtr-affine-growth}
+Let $\overline{\C^{m+1}}=\CP^{m+1}$ with homogeneous coordinates $Z=(Z_*,Z')$, $z=Z'/Z_*$, and hyperplane at infinity
+$H_\infty=\{Z_*=0\}$. For $T>0$ and $0\le s\le1$ the forms
+\[
+ \omega_T=dd^c\Bigl[\log D+b\log\Bigl(1+\frac{|F|^2}{T^2D^2}\Bigr)\Bigr],\qquad
+ \omega^{\rm ret}_s=dd^c\Bigl[\log D+sb\log\Bigl(1+\frac{|F|^2}{D^2}\Bigr)\Bigr]
+\]
+extend to Kähler forms on $\CP^{m+1}$, and the functions $g_T=\frac{|F|^2}{T^2D^2+|F|^2}$ and $\log(1+|F|^2/D^2)$ extend smoothly.
+Hence the Moser fields $N^{\rm gr}_T$, $\iota_{N^{\rm gr}_T}\omega_T=\frac{2b}T\,d^cg_T$, and $Y_s$,
+$\iota_{Y_s}\omega^{\rm ret}_s=-b\,d^c\log(1+|F|^2/D^2)$, extend to smooth vector fields on $\CP^{m+1}$, smooth in $T>0$ and $s$, and
+tangent to $H_\infty$. Their flows over any compact parameter interval are complete on $\CP^{m+1}$ and preserve $\C^{m+1}$.
+\end{lemma}
+
+\begin{proof}
+Let $F^{\rm hom}_j(Z)=Z_{y_j}^2-Z_t^2+jZ_*^2$ and let $V_2(Z)$ be the vector of ordered quadratic monomials $Z_aZ_b$, so
+$|V_2(Z)|^2=|Z|^4$. Put $P_T(Z)=(V_2(Z),F^{\rm hom}(Z)/T)$, a homogeneous quadratic map without nontrivial zero. At $Z=(1,z)$,
+$D^2+|F|^2/T^2=|P_T(Z)|^2$, so
+\[
+ \omega_T=dd^c\bigl[(1-2b)\log|Z|^2+b\log|P_T(Z)|^2\bigr]=(1-2b)\,\omega_{\rm FS}+b\,P_T^*\omega_{\rm FS},
+\]
+which is a Kähler form on $\CP^{m+1}$ because $1-2b>0$ and the second term is semipositive; likewise
+$\omega^{\rm ret}_s=(1-2sb)\omega_{\rm FS}+sb\,P_1^*\omega_{\rm FS}$ with $1-2sb\ge1-2b>0$. The functions
+$g_T=|F^{\rm hom}/T|^2/|P_T|^2$ and $\log(1+|F|^2/D^2)=\log(|P_1|^2/|Z|^4)$ are quotients of homogeneous functions of equal
+degree with nonvanishing denominators, hence smooth on $\CP^{m+1}$. The Moser fields are therefore smooth on the compact
+manifold $\CP^{m+1}$, and their flows are complete.
+
+The involution $\iota(Z_*,Z')=(-Z_*,Z')$ is unitary, $F^{\rm hom}\circ\iota=F^{\rm hom}$ and $|V_2\circ\iota|=|V_2|$, so it preserves all the forms
+and functions above, hence the fields (Lemma~\ref{lem:pre-moser}(g)). At a point $x\in H_\infty$, which is fixed by $\iota$, a
+$\iota$-invariant vector lies in the $+1$ eigenspace of $d\iota_x$, which is $T_xH_\infty$, since $d\iota_x$ acts by $-1$ on the normal
+direction. So the fields are tangent to $H_\infty$, their flows preserve $H_\infty$, and hence its complement $\C^{m+1}$.
+\end{proof}
+
+\begin{proposition}[Complete horizontal transport]\label{prop:vtr-transport}
+\lean{SymplecticPacking.BranchSmall.VT.transport_trajectory_complete,
+SymplecticPacking.BranchSmall.transport_form}
+For every point of $X_0=\Sigma\times\C^m$ the field \eqref{eq:vtr-transport} has a unique trajectory to $T=1$.
+Its time-one map $\tau$ is smooth and injective and satisfies
+$\tau^*(\Omega_b|_{X_1})=\Omega_b|_{X_0}$.
+Along each trajectory the normalized fibre norm $u=|W|^2/D^2$ is nonincreasing for $T\ge0$; more precisely,
+\[
+ \frac{du}{dT}=-\frac{2\pi T}{b}(1+u)^2\Omega_b(V_T,iV_T)\le0.
+\]
+\end{proposition}
+
+\begin{proof}
+\emph{Constraint.} Along a trajectory, $\frac d{dT}(F(z)-TW)=J_z\dot z-W-T\dot W=0$, so the trajectory stays in $X_T$.
+
+\emph{The graph equation.} For $T>0$ identify $X_T$ with $\C^{m+1}$ by $j_T(z)=(z,F(z)/T)$; then $j_T^*\Omega_b=\omega_T$
+(Lemma~\ref{lem:vtr-form}). Write $V_T=dj_T(\dot z)-(0,W/T)$, using $\dot W=(J_z\dot z-W)/T$. For $v\in\C^{m+1}$, $dj_T(v)\in\ker\ell$, so
+$\omega_T(\dot z,v)=\Omega_b((0,W/T),dj_T(v))$. The fibre circle action is generated by $X=2\pi i(0,W)$ and preserves $\Phi_b$, and
+$d^c\Phi_b(X)=bu/(1+u)$; hence $\iota_X\Omega_b=-d(bu/(1+u))$. Using $J$-invariance of $\Omega_b$ and holomorphy of $j_T$,
+$\Omega_b((0,W),dj_T(v))=\Omega_b(i(0,W),dj_T(iv))=-\frac1{2\pi}d\bigl(b\tfrac u{1+u}\bigr)(dj_T(iv))$, and for real $\phi$,
+$d\phi(iv)=-4\pi\,d^c\phi(v)$. Since $u\circ j_T=|F|^2/(T^2D^2)$, so that $\frac u{1+u}\circ j_T=g_T$,
+\[
+ \iota_{\dot z}\omega_T=\frac{2b}T\,d^cg_T ,
+\]
+that is, $\dot z=N^{\rm gr}_T(z)$ is the field of Lemma~\ref{lem:vtr-affine-growth}. (Equivalently $\dot z=-r_TN_T/T$ with
+$\iota_{N_T}\omega_T=-b\,d^c\log(1+u\circ j_T)$ and $r_T=2/(1+u\circ j_T)$.)
+
+\emph{Completeness.} Let $x\in X_0$. Since $V_T$ is smooth on $\mathcal X$, the trajectory exists on $[0,\delta]$ for some
+$\delta\in(0,1)$. For $T\in[\delta,1]$ it is, in the graph coordinate, an integral curve of $N^{\rm gr}_T$, whose flow is complete in
+$\C^{m+1}$ by Lemma~\ref{lem:vtr-affine-growth}; so it extends to $[0,1]$, and it is unique. The time-$T$ maps are restrictions of
+the flow of the smooth field $V_T+\partial_T$ on $\mathcal X$, hence smooth and injective (backward uniqueness).
+
+\emph{Norm.} By the circle identity above, $\frac d{dT}\frac{bu}{2\pi(1+u)}=\Omega_b(V_T,i(0,W))$. Since $\ell(i(0,W))=-iTW$ and
+$\ell(iV_T)=iW$, the vector $i(0,W)+T\,iV_T$ lies in $\ker\ell$, so $\Omega_b(V_T,i(0,W))=-T\,\Omega_b(V_T,iV_T)$. This gives the
+displayed derivative, which is $\le0$ for $T\ge0$ because $\Omega_b(V,iV)$ is the Kähler norm of $V$.
+
+\emph{Pullback.} Let $\Phi(\sigma,T)$ be the transported image of a smooth family of initial points. Its tangent vectors are
+$(\kappa,t)$ with $\ell(\kappa)=tW$, and $\partial_T\Phi=(V_T,1)$. Writing $\kappa=tV_T+(\kappa-tV_T)$ with $\kappa-tV_T\in\ker\ell$
+gives $\Omega_b(V_T,\kappa)=0$, so $\iota_{\partial_T}\Phi^*\Omega_b=0$. As $\Phi^*\Omega_b$ is closed, Cartan's formula gives
+$\partial_T(\Phi_T^*\Omega_b)=0$, which is the pullback identity.
+\end{proof}
+
+\subsection{Moser return and the ball chart}\label{sec:vtr-return}
+
+\begin{proposition}[Affine return]\label{prop:vtr-return}
+\lean{SymplecticPacking.BranchSmall.VT.return_control_all, SymplecticPacking.BranchSmall.returnInv_form}
+Let
+\[
+ \omega_s^{\rm ret}=dd^c\!\left[\log D+sb\log\left(1+\frac{|F|^2}{D^2}\right)\right],\qquad
+ \iota_{Y_s}\omega_s^{\rm ret}=-b\,d^c\log\left(1+\frac{|F|^2}{D^2}\right).
+\]
+The smooth field $Y_s$ has a flow through every affine point for all $s\in[0,1]$, in both directions.
+If $\psi_s$ starts at $s=0$, then $\psi_s^*\omega_s^{\rm ret}=dd^c\log D$.
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:vtr-affine-growth}, $Y_s$ is a smooth field on $\CP^{m+1}$ tangent to $H_\infty$, so its flow is defined for all
+$s$ in both directions and preserves $\C^{m+1}$. Since
+$\partial_s\omega^{\rm ret}_s=d\bigl(b\,d^c\log(1+|F|^2/D^2)\bigr)$, Cartan's formula gives
+$\frac d{ds}\psi_s^*\omega^{\rm ret}_s=\psi_s^*d\bigl(\iota_{Y_s}\omega^{\rm ret}_s+b\,d^c\log(1+|F|^2/D^2)\bigr)=0$, so
+$\psi_s^*\omega_s^{\rm ret}=\omega^{\rm ret}_0=dd^c\log D$. Finally $j_1^*\Omega_b=\omega^{\rm ret}_1$ by Lemma~\ref{lem:vtr-form}.
+\end{proof}
+
+\begin{theorem}[The affine quadric transfer]\label{thm:vtr-transfer}\label{thm:qdr-transfer}
+\lean{SymplecticPacking.BranchSmall.vectorTransfer_spec}
+\uses{lem:vtr-injection, prop:vtr-transport, prop:vtr-return}
+For $0<b<1/2$, the map
+\[
+ \mathcal T_b(z,U)=\mathrm{ch}\bigl(\psi_1^{-1}(\mathrm{pr}(\tau(\iota_b(z,U))))\bigr),\qquad
+ \mathrm{ch}(z)=\frac{z}{\sqrt{\pi(1+|z|^2)}},
+\]
+is defined on the whole tube $U_b=\{(z,U)\in\Sigma\times\C^m:|p(U)|<b\}$ and is a smooth symplectic embedding of
+$(U_b,\Omega_0)$ into $(\Bo(1),\omega_0)$, for every $m\ge1$. It agrees with $\mathrm{ch}$ on the zero section. For every compact
+$\mathcal K\subset U_b$ there is $m_{\mathcal K}>0$ with $\mathcal T_b(\mathcal K)\subset B(1-m_{\mathcal K})$. For $0<h<b$ the map is
+defined on a neighbourhood of every finite model $V_{\Delta_h}(E_\ell)$; it depends on $b$ and the fixed curve, and not on
+$h$, $\ell$ or $\mathcal K$.
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:vtr-injection}, Proposition~\ref{prop:vtr-transport} and Proposition~\ref{prop:vtr-return},
+\begin{align*}
+ \mathcal T_b^*\omega_0&=\iota_b^*\tau^*\mathrm{pr}^*(\psi_1^{-1})^*\mathrm{ch}^*\omega_0
+ =\iota_b^*\tau^*\mathrm{pr}^*\omega^{\rm ret}_1\\
+ &=\iota_b^*\tau^*(\Omega_b|_{X_1})=\iota_b^*\Omega_b=\Omega_0 ,
+\end{align*}
+using $\mathrm{ch}^*\omega_0=dd^c\log D$ (Lemma~\ref{lem:pre-fs}),
+$(\psi_1^{-1})^*dd^c\log D=\omega^{\rm ret}_1$, and $\mathrm{pr}^*\omega^{\rm ret}_1=\mathrm{pr}^*j_1^*\Omega_b=\Omega_b|_{X_1}$ since
+$j_1\circ\mathrm{pr}=\mathrm{id}$ on $X_1$. Each factor is injective: $\iota_b$ has an inverse, $\tau$ and $\psi_1^{-1}$ are time maps of flows,
+$\mathrm{pr}$ is injective on the graph $X_1$, and $\mathrm{ch}$ is a bijection onto $\Bo(1)$ (Lemma~\ref{lem:pre-fs}(b)). A
+symplectic map between manifolds of equal dimension $2n$ is an immersion, so $\mathcal T_b$ is an injective local
+diffeomorphism, hence an open embedding, with values in $\Bo(1)$ because $\pi|\mathrm{ch}(z)|^2=1-D^{-1}<1$. At $U=0$, $W=0$ and
+$V_T=0$, so $\tau(z,0)=(z,0)$; and $Y_s$ vanishes on $\Sigma=\{F=0\}$, where $d|F|^2=0$; so $\mathcal T_b(z,0)=\mathrm{ch}(z)$. A compact
+source has compact image in the open ball, at positive distance from its boundary sphere. For $0<h<b$ the closed set
+$V_{\Delta_h}(E_\ell)$ lies in the open tube $U_b$, and no choice in the construction involves $h$, $\ell$ or $\mathcal K$.
+\end{proof}

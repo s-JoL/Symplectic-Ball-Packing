@@ -1,0 +1,9 @@
+Explicit Hamiltonian ball packings
+Copyright 2026 Liang Song
+
+This project is distributed under the Apache License, Version 2.0.
+
+The vendor directory contains the OpenAI BallPacking library accompanying
+"Symplectic Ball Packings in Higher Dimensions". Its original copyright notices,
+Apache-2.0 license and provenance are retained in vendor/LICENSE and vendor/NOTICE.
+Adaptations and additional constructions are kept outside vendor/.

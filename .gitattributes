@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.pdf binary
+*.part?? binary
+cache/lean/** linguist-generated=true
+vendor/** linguist-vendored=true
+verification/Audit/PaperTags.lean linguist-generated=true
+verification/PAPER-INDEX.md linguist-generated=true

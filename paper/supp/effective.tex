@@ -1,0 +1,122 @@
+\section{Input names and elementary programs}\label{sec:efd}
+
+The finite verifier reads the capacity and centre names, the radius names derived from them, and performs integer
+arithmetic. This section gives the programs for the derived names. None of them evaluates the geometric
+construction of level L1.
+
+\begin{definition}[Names]\label{def:efd-interface}
+\lean{SymplecticPacking.Effective.Names,SymplecticPacking.Effective.CodeName.Names}
+Put $\varepsilon_p=2^{-p}$. A rational stream $q$ \emph{names} $x\in\R$ if $|q(p)-x|\le\varepsilon_p$ for every
+$p\in\N$. Rationals are coded by the natural triples of Definition~\ref{def:certificate-program}, so a name is a
+function $\N\to\N$. A family $(x_c)_{c\in\N}$ is named by one stream $q(\langle c,p\rangle)$, where
+$\langle\cdot,\cdot\rangle$ is the pairing bijection $\N^2\to\N$. A program \emph{computes relative to} given names if
+it is a partial recursive function relative to those streams as oracles ($\mathtt{Nat.RecursiveIn}$); an
+oracle-free program results when the streams are themselves computable.
+\end{definition}
+
+\begin{lemma}[Strict certification]\label{lem:efd-search}
+\lean{SymplecticPacking.Effective.ltCertificate_sound,
+SymplecticPacking.Effective.eventually_ltCertificate,
+SymplecticPacking.Effective.CertificateFamily.exists_stage,
+SymplecticPacking.Effective.CertificateFamily.search_sound}
+If $q,r$ name $x,y$, the rational test $q(p)+\varepsilon_p<r(p)-\varepsilon_p$ implies $x<y$, and if $x<y$ it holds
+for every $p$ with $4\varepsilon_p<y-x$. Consequently, for a family of finite conjunctions of strict inequalities
+between named reals, given uniformly in the candidate index, a search over pairs (candidate, precision) halts if
+some conjunction is true, and every pair it accepts has a true conjunction.
+\end{lemma}
+
+\begin{proof}
+The first assertion follows from the two name bounds. If $4\varepsilon_p<y-x$, then
+$q(p)+\varepsilon_p\le x+2\varepsilon_p<y-2\varepsilon_p\le r(p)-\varepsilon_p$. For a true conjunction one precision
+suffices for all its finitely many inequalities, so the search reaches an accepted pair.
+\end{proof}
+
+\begin{proposition}[Arithmetic on names]\label{prop:efd-closure}
+\lean{SymplecticPacking.Effective.CodeName.add_spec,
+SymplecticPacking.Effective.CodeName.neg_spec,
+SymplecticPacking.Effective.CodeName.abs_spec,
+SymplecticPacking.Effective.CodeName.mul_spec,
+SymplecticPacking.Effective.CodeName.max_spec,
+SymplecticPacking.Effective.Matrix.reciprocal_names}
+Sums, negatives, products, absolute values and maxima have uniform total name programs. If an integer $a\ge0$
+with $2^{-a}\le|x|$ is supplied, $1/x$ has one as well: at precision $p$ it inverts the approximation of $x$ at
+precision $p+2a+2$. Each program makes finitely many oracle queries, at indices computed from $p$ and earlier
+answers, and is total.
+\end{proposition}
+
+\begin{proof}
+Addition reads both inputs at precision $p+1$; negation changes sign. Absolute value and maximum are
+$1$-Lipschitz, so they read at precision $p$. For multiplication let $q,r$ name $x,y$ and put
+$M_q=\lfloor|q(0)|\rfloor+2$, $M_r=\lfloor|r(0)|\rfloor+2$, so $|x|\le M_q$ and $|y|\le M_r$, and $K=M_q+M_r+1$.
+The program returns $u'v'$ with $u'=q(p+K)$, $v'=r(p+K)$; since $|v'|\le M_r+1$,
+\[
+ |xy-u'v'|\le|x|\,|y-v'|+|v'|\,|x-u'|\le K2^{-(p+K)}\le2^{-p}.
+\]
+For the reciprocal, the queried rational $u$ satisfies $|u|\ge2^{-a}-2^{-a-2}\ge2^{-a-1}$, so
+\[
+ |u^{-1}-x^{-1}|=\frac{|u-x|}{|ux|}\le2^{2a+1}2^{-(p+2a+2)}<2^{-p}.
+\]
+All operations on rationals are integer operations on their codes.
+\end{proof}
+
+\begin{lemma}[Quadrature]\label{lem:efd-quadrature}
+\lean{SymplecticPacking.Effective.Quadrature.realSum_error,
+SymplecticPacking.Effective.Quadrature.rationalSum_sample_error}
+Let $f$ be $L$-Lipschitz on $[0,1]$ and let $N\ge1$. Then the left Riemann sum
+$N^{-1}\sum_{j<N}f(j/N)$ differs from $\int_0^1f$ by at most $L/N$. If every sample is replaced by a rational within $\theta$, the error is at most
+$L/N+\theta$.
+\end{lemma}
+
+\begin{proof}
+On $[j/N,(j+1)/N]$ the integrand differs from $f(j/N)$ by at most $L/N$, so the integral differs from $f(j/N)/N$ by
+at most $L/N^2$. Sum over $j$. The average of the sample errors is at most $\theta$.
+\end{proof}
+
+\begin{lemma}[A name of $\pi$]\label{lem:efd-pi}
+\lean{SymplecticPacking.Effective.Pi.integral_integrand,
+SymplecticPacking.Effective.Pi.name_spec,
+SymplecticPacking.Effective.Pi.name_recursive}
+The identity $\pi=\int_0^14/(1+t^2)\,dt$ gives a computable rational name of $\pi$, and the lower bound $1\le\pi$
+gives a computable name of $1/\pi$.
+\end{lemma}
+
+\begin{proof}
+The identity holds because $4/(1+t^2)$ is the derivative of $4\arctan t$. On $[0,1]$ the integrand is
+$8$-Lipschitz:
+\[
+ \left|\frac4{1+x^2}-\frac4{1+y^2}\right|
+ =\frac{4|x-y|(x+y)}{(1+x^2)(1+y^2)}\le8|x-y|.
+\]
+Its values at rational points are rational and are computed exactly, so Lemma~\ref{lem:efd-quadrature} with
+$\theta=0$ and any $N\ge2^{p+3}$ gives error at most $2^{-p}$. Proposition~\ref{prop:efd-closure} with $a=0$ gives the reciprocal.
+\end{proof}
+
+Square roots of names are computed by the following direct program, which is total.
+
+\begin{lemma}[Square root]\label{lem:efd-roots-direct}
+\lean{SymplecticPacking.Effective.SqrtName.code_names}
+Let $q$ name $x\ge0$. For $p\in\N$ put $S=2^{p+2}$, $u=q(2p+4)$, $v=\max(u,0)$, $c=\lceil vS^2\rceil\in\N$, and
+let the output be $\lfloor\sqrt c\rfloor/S$, where $\lfloor\sqrt c\rfloor$ is the integer square root. This is a name
+of $\sqrt x$.
+\end{lemma}
+
+\begin{proof}
+Since $x\ge0$, $|v-x|\le|u-x|\le2^{-2p-4}=S^{-2}$, hence $|\sqrt v-\sqrt x|\le\sqrt{|v-x|}\le S^{-1}$. Put
+$w=\lfloor\sqrt c\rfloor/S$. From $\sqrt c-1<\lfloor\sqrt c\rfloor\le\sqrt c$ and $vS^2\le c<vS^2+1$,
+\[
+ \sqrt v-S^{-1}<w\le\sqrt{v+S^{-2}}\le\sqrt v+S^{-1}.
+\]
+Hence $|w-\sqrt x|\le2S^{-1}=2^{-p-1}$.
+\end{proof}
+
+\begin{corollary}[Radius names]\label{thm:efd-radii}
+\lean{SymplecticPacking.Effective.PackingCertificate.capacityRadiusEvaluator,
+SymplecticPacking.Effective.PackingCertificate.inversePiEvaluator}
+Names of positive capacities $c_i$ and $C$ yield, by total programs with no further oracle, names of
+$r_i=\sqrt{c_i/\pi}$ and $R=\sqrt{C/\pi}$.
+\end{corollary}
+
+\begin{proof}
+Multiply each capacity name by the name of $1/\pi$ of Lemma~\ref{lem:efd-pi} (Proposition~\ref{prop:efd-closure})
+and apply Lemma~\ref{lem:efd-roots-direct}.
+\end{proof}

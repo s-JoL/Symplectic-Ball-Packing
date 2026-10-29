@@ -1,0 +1,81 @@
+\section{The normalised embeddings}\label{sec:brd}
+
+This section gives the case distinction of \Msec{sec:ham-embeddings} in full.
+
+\begin{construction}[The normalised embeddings]\label{cons:ham-branch}
+\uses{thm:cub-packing, thm:qdr-packing, thm:lrg-high, thm:lrg-six, lem:qdr-auxiliary, lem:lrg-auxiliary}
+Let $(n,k,1,\rho)$ be admissible. The \emph{normalised embeddings} $f^\natural_i$, enlarged capacities $\rho_i^+$ and domain capacities
+$\rho_i^{\rm dom}$ are defined as follows.
+\begin{enumerate}[label=(\roman*)]
+\item If $n=2$, they are those of Theorem~\ref{thm:cub-packing}: for $k\ge10$, equal $\rho_i=\rho$ and
+ $\frac34<\rho\sqrt k<1$ it uses the equal-capacity maps of Remark~\ref{rem:rtc-equal}; otherwise it uses the explicit
+ scalar data and maps of Proposition~\ref{prop:scalar-cubic-data} and \eqref{eq:scalar-enlargement}.
+\item If $n\ge3$ and $\rho_i<\frac12$ for all $i$, put
+ \[
+  \varepsilon_i=\min\left(\frac{1/2-\rho_i}{2},
+             \frac{1-\sum_j\rho_j^n}{2nk}\right),\qquad a_i=\rho_i+\varepsilon_i.
+ \]
+ Use the quadric construction of Theorem~\ref{thm:qdr-packing} with these auxiliary capacities.
+ Its enlarged closed capacity and open domain capacity are, respectively,
+ $\rho_i^+=\rho_i+\varepsilon_i/3$ and $\rho_i^{\rm dom}=\rho_i+2\varepsilon_i/3$.
+\item If $n\ge4$ and $\rho_j\ge\frac12$, the index $j$ is unique, since $\rho_i+\rho_j<1$ for $i\ne j$. Write $A=\rho_j$,
+ $r_*=\max(\{0\}\cup\{\rho_i:i\ne j\})$, $V=1-\sum_i\rho_i^n$, and put
+ \[
+ t=\min\left(\frac{1-A-r_*}{4},\,1,\,\frac{V}{2nk2^n}\right),\qquad
+ a=A+t,\qquad r_i=\rho_i+t\quad(i\ne j).
+ \]
+ Use the construction of Theorem~\ref{thm:lrg-high}. For the distinguished ball set
+ $(\rho_j^+,\rho_j^{\rm dom})=(A+t/2,A+t)$. For $i\ne j$, set
+ $(\rho_i^+,\rho_i^{\rm dom})=((11\rho_i+5r_i)/16,(3\rho_i+5r_i)/8)$.
+\item If $n=3$ and $\rho_j\ge\frac12$, put $A=\rho_j$ and
+ \[
+ \gamma_0=\min\left(1-\sum_i\rho_i^3,\,1-A,\,
+                    \min_{i\ne j}(1-A-\rho_i)\right),\qquad
+ \eta=\frac{\gamma_0}{100(k+1)}.
+ \]
+ The minimum over an empty set is omitted. Set
+ \[
+ M=\lceil1/\eta\rceil+1,\qquad
+ a=\frac{\lfloor(A+4\eta)M\rfloor+1}{M}.
+ \]
+ Use the polynomial construction of Theorem~\ref{thm:lrg-six}, with distinguished capacity
+ $r_0=A+2\eta$. The auxiliary small family retains all $k$ indices: for $i\ne j$ its outer and
+ inner capacities are $r_i=\rho_i+3\eta$ and $r'_i=\rho_i+2\eta$, while the $j$-th auxiliary
+ ball has input capacity $\eta/4$ and capacities $r_j=\eta$, $r'_j=\eta/2$, so that the small family is nonempty and
+ indexed like the input. The comparison, the weights and the transfer are those of this auxiliary family of $k$ balls,
+ including the $j$-th ball in every parameter and compact union. The final $j$-th map is the bubble map of the
+ distinguished ball; the map of the auxiliary $j$-th ball is not used.
+ Set $(\rho_i^+,\rho_i^{\rm dom})=(\rho_i+\eta,\rho_i+2\eta)$ for every final ball.
+\end{enumerate}
+For the toric maps in (ii)--(iv), use the finite-atlas normalization and three inverse Moser endpoints of
+Construction~\ref{cons:native-packing}, applied to the closed source balls $B(\rho_i^{\rm dom})$.
+In particular the cap smoothing and layer strip use its internal capacity
+$(3a_i+\rho_i^{\rm dom})/4$, with $a_i$ replaced by $r_i$ in cases (iii) and (iv); the distinguished ball, placed by
+inclusion or by the bubble, is exempt.
+In case (i) the pairs $(\rho_i^+,\rho_i^{\rm dom})$ are those of Remark~\ref{rem:rtc-recorded}.
+\end{construction}
+\emph{Verification of the hypotheses.} All increments $\varepsilon_i$, $t$, $\eta$ are positive: admissibility gives
+$\sum_i\rho_i^n<1$, $\rho_i<\frac12$ in case (ii), and $A+\rho_i<1$ for $i\ne j$ together with $A<1$ in cases (iii) and (iv). We use
+$(x+u)^n-x^n=n\xi^{n-1}u$ for some $\xi\in[x,x+u]$.
+
+\emph{Case (ii).} $a_i\le\rho_i+(\frac12-\rho_i)/2<\frac12$, and, since $0\le\rho_i<a_i<1$,
+$\sum_ia_i^n\le\sum_i\rho_i^n+n\sum_i\varepsilon_i\le\sum_i\rho_i^n+(1-\sum_j\rho_j^n)/2<1$; these are the hypotheses of
+Theorem~\ref{thm:qdr-packing}, and $\rho_i^+=(2\rho_i+a_i)/3$, $\rho_i^{\rm dom}=(\rho_i+2a_i)/3$ are the capacities named there.
+
+\emph{Case (iii).} $(a;r)$ is valid auxiliary data (Lemma~\ref{lem:lrg-auxiliary}): $a=A+t>A\ge\frac12$; $a<1$ because
+$t<1-A$; $r_i+a=\rho_i+A+2t\le r_*+A+\frac12(1-A-r_*)<1$, i.e.\ $r_i<1-a$; and with $0\le x,t\le1$,
+$(x+t)^n\le x^n+n2^{n-1}t$, so $a^n+\sum_{i\ne j}r_i^n\le\sum_i\rho_i^n+kn2^nt\le\sum_i\rho_i^n+V/2<1$. Theorem~\ref{thm:lrg-high}
+gives $\rho_i^{\rm dom}=(3\rho_i+5r_i)/8$ and $\rho_i<(11\rho_i+5r_i)/16<\rho_i^{\rm dom}<r_i$; for the distinguished ball, the inclusion
+is injective on all of $\C^n$ and $B(A+t/2)\subset\Bo(a)$, which is disjoint from the shell $S_a$ containing the other images.
+
+\emph{Case (iv).} First $1/M<\eta$, so $A+4\eta<a\le A+4\eta+1/M<A+5\eta$, and $a\in\Q$. With $\gamma_0\le1-A$,
+$\gamma_0\le1-A-\rho_i$ and $\eta\le\gamma_0/200$: $a<1$; $r_0=A+2\eta\in(A,a)$; $\rho_i<r'_i<r_i$ and
+$r_i+a<\rho_i+A+8\eta<1$ for $i\ne j$; and for the auxiliary ball $\eta/4<\eta/2<\eta$ and $\eta+a<A+6\eta<1$. By the mean value
+bound with $n=3$ and $x,u\le1$, $a^3\le A^3+60\eta$, $r_i^3\le\rho_i^3+36\eta$ and $\eta^3\le\eta$, so
+$a^3+\sum_{i\ne j}r_i^3+\eta^3\le\sum_i\rho_i^3+(36k+25)\eta<\sum_i\rho_i^3+\gamma_0\le1$. Thus $(a;r)$, with the auxiliary $j$-th
+entry, is valid auxiliary data with $a$ rational, and Theorem~\ref{thm:lrg-six} applies with $r_0$ and the $r'_i$. Its
+domains are $B(r_0)=B(\rho_j^{\rm dom})$ and $B(r'_i)=B(\rho_i^{\rm dom})$.
+
+The data may have real coefficients, which is allowed at level L1. The polyhedral construction applies over real
+coefficients by the observation following \Mref{Proposition}{prop:cmp-fixed-point}; the finite-output algorithm certifies
+its polynomial directly.

@@ -1,0 +1,7 @@
+.lake/
+.DS_Store
+paper/build/
+__pycache__/
+release/
+output/
+tmp/

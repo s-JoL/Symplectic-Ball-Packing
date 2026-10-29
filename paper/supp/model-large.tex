@@ -1,0 +1,290 @@
+\section{One large ball: the models}\label{sec:lrg}
+
+Throughout this section $n\ge3$, the target is $\Bo(1)$, and the normalised input consists of one
+\emph{distinguished} capacity $A$ and further capacities $\rho_1,\dots,\rho_k$ ($k\ge0$) with
+\begin{equation}\label{eq:lrg-input}
+ A\ge\tfrac12,\qquad A^n+\sum_{i=1}^k\rho_i^n<1,\qquad A+\rho_i<1\quad(1\le i\le k).
+\end{equation}
+We write $\rho_0=A$ when all balls are treated alike.
+
+The quadric model of Section~\ref{sec:qdr} stacks every ball as a toric ball $\{|p|\le a_i\}$ inside
+$\{|p|\le h\}$, and its form degenerates at $|p|=\frac12$; so it accepts only capacities below one half. The
+two-ball inequality allows at most one capacity $\rho_j\ge\frac12$, and then every other capacity is smaller than
+$1-\rho_j\le\frac12$. For $n\ge4$ we reserve the central ball $B(a)$, $a>A$, for the distinguished ball, place it by
+inclusion, and pack the other balls into the shell
+\[
+ S_a=\{y\in\C^n:\ a<\pi|y|^2<1\},\qquad \vol S_a=\frac{1-a^n}{n!}.
+\]
+Write $s=1-a$. The return to the shell (Lemma~\ref{lem:lrg-slit}) uses coupled coordinates and the slit coordinate
+$x=1-\pi|y|^2$. A toric ball stacked in the normal direction needs capacity below $s$; the two-ball condition
+$A+\rho_i<1$ is what makes $\rho_i<s$ possible with $a>A$. The volume condition then gives a positive
+integrated-profile budget for the smaller balls, which tends to $(1-a^n)/n!$.
+
+The two-stage mechanism follows \cite{OpenAI2026}. For $n\ge4$ we use a finite bordered part of the explicit
+affine quadric curve, a product mixed model and a radial-integral phase lift, followed by the slit-shell map. For
+$n=3$ we use the polynomial cubic model and insert the distinguished ball by a polynomial bubble before the final
+return to the ball.
+
+\begin{definition}[Shell and reserved ball]\label{def:lrg-shell}
+For $0<a<1$ put $s=1-a$, $S_a=\{a<\pi|y|^2<1\}\subset\C^n$, and call $B(a)$ the \emph{reserved ball}.
+\end{definition}
+
+In this section the auxiliary capacities $r_i$ below play the role of the capacities $a_i$ of
+\Mref{Theorem}{thm:mech-packing}; the letter $a$ is kept for the reserved capacity.
+
+\begin{lemma}[Auxiliary capacities]\label{lem:lrg-auxiliary}
+\uses{def:lrg-shell}
+Let $n\ge3$ and let $A,\rho_1,\dots,\rho_k>0$. Call a tuple $(a;r_1,\dots,r_k)\in\R^{k+1}$
+\emph{valid auxiliary data} for $(A;\rho_1,\dots,\rho_k)$ if
+\begin{equation}\label{eq:lrg-certificate}
+ \max(A,\tfrac12)<a<1,\qquad \rho_i<r_i<s=1-a\quad(1\le i\le k),\qquad a^n+\sum_{i=1}^kr_i^n<1 .
+\end{equation}
+If the input satisfies \eqref{eq:lrg-input}, the valid tuples form a nonempty open subset of $\R^{k+1}$; in
+particular rational valid tuples exist. For a rational tuple, validity is a finite conjunction of strict inequalities,
+decided by rational arithmetic for rational input and semi-decided from names otherwise
+(Lemma~\ref{lem:efd-search}).
+\end{lemma}
+
+\begin{proof}
+Under \eqref{eq:lrg-input} the point $(a,r)=(A,\rho)$ satisfies the strict
+inequalities $a^n+\sum r_i^n<1$ and $a+r_i<1$, and $A\ge\frac12$. These inequalities persist on a
+neighbourhood $U$ of $(A,\rho)$, and the set of rational points of $U$ with $a>\max(A,\frac12)$ and $r_i>\rho_i$
+is a nonempty open set (if $A=\frac12$ both lower bounds on $a$ coincide), so it contains rational points. Every
+point of it is a valid tuple, because $a+r_i<1$ is $r_i<s$. The last assertion is Lemma~\ref{lem:efd-search}.
+\end{proof}
+
+The theorems below take valid auxiliary data as input. In dimension six the reserved capacity $a$ must also be
+rational, so that the polynomial construction has integer weights; the remaining auxiliary capacities may be real.
+Construction~\ref{cons:ham-branch} fixes these data by explicit formulas.
+
+\subsection{Dimension at least eight}\label{sec:lrg-high}
+
+Let $n\ge4$ and $m=n-2$. Use the affine curve $\Sigma$ of Definition~\ref{def:qdr-curve}, with $m$ equations,
+its positive form $\sigma=d\lambda$ and the compact domains $\Sigma_\ell$.
+The second-stage transfer $\varphi$ is Theorem~\ref{thm:qdr-transfer} in dimension $2(n-1)$.
+It maps a tube in $\Sigma\times\C^m$ into $\Bo(1)\subset\C^{n-1}$ and agrees with the affine ball chart on the zero section.
+
+\begin{definition}[The affine mixed model]\label{def:lrg-mixed-model}
+Take $E_0=\Sigma\times\C^{m+1}$, with fibre coordinates $(z_1,\dots,z_{n-1})$,
+\[
+ p_j=\pi|z_j|^2,\qquad u=p_1,\qquad w=\sum_{j=2}^{n-1}p_j,\qquad
+ \Omega_{\rm mix}=\omega_V+d[(1-u-2w)\lambda].
+\]
+For $0<h_1<1$ and $0<h_2<1/2$ put
+\[
+ \Delta(h_1,h_2)=\{p\ge0:u\le h_1,\ w+h_2u\le h_2\},\qquad
+ \Hb(p)=2^m(1-u-2w).
+\]
+The finite model is the restriction to $\Sigma_R\times\{p\in\Delta\}$, where $\Sigma_R$ and $A_R=\int_{\Sigma_R}\sigma$
+are as in Proposition~\ref{prop:lrg-affine-budget}; it has empty marked set and base profile $H_b^R(p)=A_R(1-u-2w)$.
+\end{definition}
+
+The full moment-dependent form has horizontal coefficient $1-u-2w$ and mixed terms
+$-du\wedge\lambda-2\sum_{j\ge2}dp_j\wedge\lambda$. On $\Delta$,
+\begin{equation}\label{eq:lrg-mixed-positive}
+ 1-u-2w\ge(1-u)(1-2h_2)\ge(1-h_1)(1-2h_2)>0.
+\end{equation}
+The finite product is therefore a bordered toric model. The annuli and primitive operator are those of
+Proposition~\ref{prop:two-handle}, and the finite mass budget is Proposition~\ref{prop:lrg-affine-budget}.
+
+The return target has coordinates $(z,\xi)\in\C\times\Bo_{n-1}(1)$ and the coupled form
+\[
+ \Omega_c=d[\lambda_{\rm fib}+(1-u)\lambda_{\rm std}],\qquad
+ \lambda_{\rm std}(\xi)=\tfrac12\operatorname{Im}(\bar\xi^{\mathsf T}d\xi),\quad u=\pi|z|^2.
+\]
+All line coordinates are product coordinates. The phase required to preserve this form is given by a radial integral,
+as a smooth function of the affine base and fibre coordinates.
+
+\begin{lemma}[Integrated mixed profile]\label{lem:lrg-mixed-volume}
+\uses{def:lrg-mixed-model, lem:qdr-volume}
+For $0<h_1<1$ and $0<h_2\le\frac12$,
+\[
+ \int_{\Delta(h_1,h_2)}\Hb\,dp=J(h_1,h_2):=J_m(h_2)\,\frac{1-(1-h_1)^n}{n},\qquad
+ J_m(h)=\frac{2^mh^m}{m!}\Bigl[1-\frac{2mh}{m+1}\Bigr],
+\]
+and $J(h_1,h_2)\to J(s,\frac12)=(1-a^n)/n!$ as $(h_1,h_2)\to(s,\frac12)$, $s=1-a$. For $r>0$,
+$\int_{\R^{n-1}_{\ge0}}(r-|p|)_+\,dp=r^n/n!$.
+\end{lemma}
+
+\begin{proof}
+Fix $u\in[0,h_1]$. The remaining variables $p'=(p_2,\dots,p_{n-1})$ range over $\{p'\ge0,\ w\le h_2(1-u)\}$. With
+the simplex formula of Lemma~\ref{lem:qdr-volume}(a) and the substitution $w=(1-u)t$,
+\begin{align*}
+ \int 2^m(1-u-2w)\,dp'&=\frac{2^m}{(m-1)!}\int_0^{h_2(1-u)}(1-u-2w)w^{m-1}\,dw\\
+ &=(1-u)^{m+1}\frac{2^m}{(m-1)!}\int_0^{h_2}(1-2t)t^{m-1}\,dt,
+\end{align*}
+and the last integral times $2^m/(m-1)!$ is $J_m(h_2)$.
+Integrating in $u$ gives $\int_0^{h_1}(1-u)^{m+1}du=\frac{1-(1-h_1)^{m+2}}{m+2}$ and $m+2=n$. By
+Lemma~\ref{lem:qdr-volume}(b), $J_m(\frac12)=1/(m+1)!=1/(n-1)!$, so $J(s,\frac12)=(1-a^n)/n!$; $J$ is continuous. The cap
+integral is Lemma~\ref{lem:qdr-volume}(a) in dimension $n-1$ with $f(t)=(r-t)_+$.
+\end{proof}
+
+\begin{proposition}[The affine model and its area budget]\label{prop:lrg-affine-budget}
+\uses{lem:vtr-tail, prop:two-affine-budget}
+Let $n\ge4$, $m=n-2$, and let $(a;r)$ be a valid auxiliary tuple. Take $h_1,h_2,d,P$ from
+Lemma~\ref{lem:two-parameters} and $(K,q)$ from \Mref{Theorem}{thm:cmp-main} for this profile.
+Put $A_m=2^m(m+2)$, $\ell=\lceil64A_m/d\rceil$ and
+$R=2+\sum_{j=1}^m j+\ell$. In the affine quadric coordinate $t$, let $\Sigma_R=\{|t|\le R\}$ and
+$A_R=\int_{\Sigma_R}\sigma$. The restricted mixed model has base area
+$H_b^R(p)=A_R(1-u-2w)$ and satisfies
+\[
+ 0\le\Hb(p)-H_b^R(p)\le d/64\quad(p\in\Delta).
+\]
+The same comparison datum works for $P_R=P-11d/32$, with gap $11d/32$ and reserve $11d/64$;
+moreover $P_R\le H_b^R-\sum_i(r_i-|p|)_+$. The boundary cutoff and primitive operator on $\Sigma_R$
+satisfy the handle hypotheses with this reserve.
+\end{proposition}
+
+\begin{proof}
+The quadric tail bound gives $2^m-A_R\le A_m/R^2\le d/64$, and $0<1-u-2w\le1$ on $\Delta$.
+Subtracting $11d/32$ from the comparison profile subtracts the same amount from its gap, and
+$d/64<11d/32$. The boundary and background estimates are Proposition~\ref{prop:two-affine-budget}.
+\end{proof}
+
+The integral of the finite base profile is $\int_\Delta H_b^R=(A_R/2^m)J(h_1,h_2)$; its difference from
+$J(h_1,h_2)$ is absorbed by the reserve of Proposition~\ref{prop:lrg-affine-budget}.
+The packing for $n\ge4$ is Theorem~\ref{thm:lrg-high} in \S\ref{sec:two}: the comparison datum of
+\Mref{Theorem}{thm:cmp-main} for this profile, the packing over $\Sigma_R$, the affine mixed return
+(Lemma~\ref{lem:two-mixed}) and the slit-shell map (Lemma~\ref{lem:lrg-slit}) into the shell $S_a$, while the
+distinguished ball is placed by inclusion in $\Bo(a)$.
+
+\subsection{Dimension six}\label{sec:lrg-six}
+
+For $n=3$ the second stage of \S\ref{sec:lrg-high} would have a conic as its base.
+Instead we use the polynomial cubic model of \cite{OpenAI2026}.
+Its area profile still approaches the volume of the shell, but the final placement of the
+large ball uses a polynomial bubble. All the sections used below are given by explicit formulas.
+
+\begin{definition}[The cubic model]\label{def:lrg-six-model}
+Put $s=1-a$ and $b=(2-a)/3$, where $(a;r)$ is a valid auxiliary tuple with $a\in\Q$, and let $A<r_0<a$.
+Use the homogeneous polynomial $F(u,v,w)=vw(v-w)+u^2(w-2v)$ and its affine restriction
+$f(v,w)=vw(v-w)+w-2v$. The model base is $C=\{vw\ne0,f(v,w)=0\}$. Its four ends have homogeneous limits
+$[0:1:0],[0:0:1],[0:1:1],[1:0:0]$.
+The same affine curve is parametrised by
+\[
+ t\in\C,\quad y_1^2=t^2-1,\quad y_2^2=t^2-2,
+ \qquad (v,w)=(y_1-t,y_2-t).
+\]
+Take the rational parameters $h_1,e,d_1,h_2,d_2$ of Lemma~\ref{lem:sxm-parameters}; they satisfy
+\begin{equation}\label{eq:lrg-six-parameters}
+ \max_i r_i<h_1<e<s<d_1<h_2<d_2<b,
+ \qquad \Delta=\{p\ge0:p_1\le h_1,\ p_1+p_2\le h_2\}.
+\end{equation}
+Put $Q=\lfloor3/(a-r_0)\rfloor+1$ and
+\[
+ L=(Q+1)\operatorname{den}(a)\operatorname{den}(e)\operatorname{den}(d_2),\qquad
+ A_*=Le,\quad B_*=Ld_2,\quad S_*=L(1-a),\quad D=L+S_*,
+\]
+where $\operatorname{den}$ is the reduced denominator; these are integers and $L>Q$.
+Here $A_*,B_*$ are integer weights; the distinguished input capacity remains $A$.
+Let $\Lambda=\{(j_1,j_2)\in\Z_{\ge0}^2:j_1\le A_*,\ j_1+j_2\le B_*\}$ and put
+\[
+ d_j=D-3(j_1+j_2),\qquad m_j=(S_*-j_1-j_2)_+,
+\]
+\[
+ q_{d,m}(v,w)=(1,v^{d-m},w^{d-m},v^{d-m}w^m,v^mw^{d-m}),
+ \qquad a_j=\|q_{d_j,m_j}\|^2.
+\]
+The central potential is
+\begin{equation}\label{eq:lrg-six-potential}
+ \phi_L(y,z)=\frac1L\log\sum_{j\in\Lambda}a_j(y)|z_1|^{2j_1}|z_2|^{2j_2}.
+\end{equation}
+Its radial moment coordinates identify a neighbourhood of $\Delta$ with a toric normal model
+on $C\times\C^2$; the primitive and the identification are given in
+Definition~\ref{def:sxm-data}.
+\end{definition}
+
+The integer inequalities are
+\[
+ 0<A_*<S_*\le B_*,\qquad 3B_*<D,\qquad 2S_*<L.
+\]
+They follow from \eqref{eq:lrg-six-parameters} and $a>1/2$.
+The five entries of $q_{d,m}$ are fixed before the transport parameters.
+
+\begin{lemma}[Limiting profile and its integral]\label{lem:lrg-six-profile}
+\lean{SymplecticPacking.BranchLarge3.sixModelMean_shift}
+The limiting base area at physical moment $p$ is
+\[
+ H_0(p)=9(b-|p|)-2(s-|p|)_+,\qquad |p|=p_1+p_2.
+\]
+For $0<h_1\le s\le h_2\le b$,
+\[
+ \int_\Delta H_0\,dp=
+ \frac32[b^3-(b-h_1)^3]-\frac92h_1(b-h_2)^2
+ -\frac13[s^3-(s-h_1)^3].
+\]
+As $(h_1,h_2)\to(s,b)$ this tends to $(1-a^3)/6$.
+Moreover $H_0\ge9(b-h_2)$ on $\Delta$ and
+$\int_{p\ge0}(r-|p|)_+\,dp=r^3/6$.
+\end{lemma}
+
+\begin{proof}
+Put $d(p)=D-3L|p|$ and $h(p)=(S_*-L|p|)_+$. By Proposition~\ref{prop:sxm-bordered} (the four end limits in its
+Step~1 and the marked-height estimate of its Step~4), the limiting pole orders at $[0:1:0],[0:0:1],[0:1:1],[1:0:0]$ are
+$d(p)-h(p)$, $d(p)-h(p)$, $d(p)$ and $0$, and Stokes' theorem gives $H_0=L^{-1}(3d(p)-2h(p))$.
+For fixed $p_1=t$, integration in $|p|\in[t,h_2]$ gives
+$\frac92[(b-t)^2-(b-h_2)^2]-(s-t)^2$.
+Integrate in $t\in[0,h_1]$ and use $3b=1+s$.
+The lower bound follows because $H_0$ decreases with $|p|$ and $h_2\ge s$;
+the cap integral is $\int_0^r(r-t)t\,dt$.
+\end{proof}
+
+\begin{proposition}[Polynomial lifts]\label{prop:lrg-six-polynomials}
+For every $j\in\Lambda$ the five polynomials
+$f^{j_2}q_{d_j,m_j,i}$ have explicit homogeneous lifts to the quadric
+$\mathcal Q(X)=X_0X_1-X_2X_3=0$, described by the homogeneous substitution
+\[
+ (u,v,w)\longmapsto(vw,u^2,uv,uw).
+\]
+Multiplication by $\mathcal Q^{j_1}$ gives homogeneous polynomials $P_{j,i}$ of degree $L$,
+each vanishing to order at least $L-S_*$ at $[1:0:0:0]$.
+For $t,\delta>0$ set
+\[
+ P_{t,\delta}(X)_{j,i}=\delta^{-j_1}t^{-j_2}P_{j,i}(X).
+\]
+On the tube $(v,w,z)\mapsto(v,w,vw+\delta z)$ in the chart $X_1=1$,
+the factors $\delta^{-j_1}$ cancel exactly, and the resulting polynomial family extends
+smoothly to $\delta=0$. Its value there is
+\[
+ z^{j_1}(f(v,w)/t)^{j_2}q_{d_j,m_j,i}(v,w).
+\]
+\end{proposition}
+
+\begin{proof}
+For a monomial $v^Jw^K$ and $\bar n=L-2j_1$ put
+$\alpha_0=(J+K-\bar n)_+$, $\alpha_1=\bar n+\alpha_0-J-K$,
+$\alpha_2=J-\alpha_0$, $\alpha_3=K-\alpha_0$.
+Then $X_0^{\alpha_0}X_1^{\alpha_1}X_2^{\alpha_2}X_3^{\alpha_3}$ pulls back to
+$u^{2\bar n-J-K}v^Jw^K$.
+The inequalities $J,K\le\bar n$ and the required order at the distinguished point follow
+from $j_1<S_*$, $3(j_1+j_2)<L+S_*$ and the degree bounds
+$\deg_v,\deg_w(f^{j_2}q_i)\le2j_2+d_j-m_j$,
+$\deg(f^{j_2}q_i)\le3j_2+d_j$.
+Finally $\mathcal Q(vw+\delta z,1,v,w)=\delta z$.
+The complete inequalities are Lemma~\ref{lem:sxm-lift}.
+\end{proof}
+
+\emph{Packing the smaller balls.} By Lemma~\ref{lem:sxm-parameters} the parameters \eqref{eq:lrg-six-parameters} satisfy
+$\int_\Delta H_0>\sum_i r_i^3/6$. The function $G=H_0-\sum_i(r_i-|p|)_+$ is concave, has positive integral, and is
+positive off a smaller homothetic copy of $\Delta$ containing all the cap supports. The comparison datum of
+\Mref{Theorem}{thm:cmp-main} for a lowered copy of $G$ and the handle construction over a compact piece $\Sigma_l$ of $C$
+give the inner packing (Proposition~\ref{prop:sxr-minorant}).
+
+The remaining maps are applied to the compact union of these ball images.
+A short exact cubic transfer gives the cubic ambient form, and a second exact transfer
+along the tube gives the form defined by $P_{t,\delta}$.
+After changing to $X_0=1$, this compact set avoids the origin.
+A polynomial bubble inserts the distinguished ball near the origin while moving the
+smaller images within a disjoint open set. A common global Moser map and the
+Fubini--Study ball chart then put all the images into $\Bo(1)$.
+The formulas, the two compact transfer estimates and the packing theorem (Theorem~\ref{thm:lrg-six}) are in
+\S\ref{sec:sxr}.
+
+In Construction~\ref{cons:ham-branch}(iv) these data are $r_0=A+2\eta$, $\rho_0^+=A+\eta$, and $r_i=\rho_i+3\eta$,
+$r'_i=\rho_i+2\eta$, $\rho_i^+=\rho_i+\eta$ for the smaller balls; the auxiliary ball with index $j$ has $r_j=\eta$,
+$r'_j=\eta/2$, and its map is replaced by $f_0$.
+
+\emph{Example.}
+For $A=59/100$ and eighteen smaller capacities $7/20>1/3$,
+$A^3+18(7/20)^3=0.977129$ and $A+7/20=0.94$.
+Thus Theorem~\ref{thm:lrg-six} applies beyond the range of a cubic used directly as a second stage.

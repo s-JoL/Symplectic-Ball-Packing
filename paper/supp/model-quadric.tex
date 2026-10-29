@@ -1,0 +1,250 @@
+\section{Dimension at least six: capacities below one half}\label{sec:qdr}
+
+Let $n\ge3$, $m=n-1$, and $\rho_i=c_i/C$. We use a fixed affine curve and a product with $m$ complex fibre planes.
+The horizontal curvature has coefficient $1-2|p|$, so the fibre simplex must stop below $|p|=1/2$.
+An explicit compact exhaustion of the curve has area tending to $2^m$; the integrated profiles tend to $1/n!$.
+The finite truncation loses a controlled amount of area, which is subtracted from the comparison profile.
+The transfer is a single map from the affine model into $\Bo(1)$: a radial injection, horizontal transport, an inverse
+Moser return and an affine ball chart. This realises the normal-transfer mechanism of \cite{OpenAI2026} in affine
+coordinates.
+
+\subsection{The affine curve and the finite model}
+
+\begin{definition}[The diagonal affine curve]\label{def:qdr-curve}
+Let $z=(t,y_1,\dots,y_m)\in\C^{m+1}$ and put
+\[
+ F_j(z)=y_j^2-t^2+j,\qquad
+ \Sigma=\{z:F_1(z)=\dots=F_m(z)=0\},\qquad
+ D(z)=1+|z|^2.
+\]
+On $\Sigma$ set $\lambda=d^c\log D$ and $\sigma=d\lambda$, using
+$d^c=i(\bar\partial-\partial)/(4\pi)$. For an integer $\ell\ge0$ put
+\[
+ R_\ell=2+\sum_{j=1}^m j+\ell,\qquad \Sigma_\ell=\{z\in\Sigma:|t|\le R_\ell\},\qquad
+ A_\ell=\int_{\Sigma_\ell}\sigma.
+\]
+\end{definition}
+
+\begin{lemma}[Regularity and exhaustion]\label{lem:qdr-curve}
+The affine locus $\Sigma$ is a smooth complex curve, $\sigma$ is positive, and $t:\Sigma\to\C$ is proper.
+Each $\Sigma_\ell$ is a compact connected surface with smooth boundary and connected nonempty interior.
+The fixed annular supports of Proposition~\ref{prop:vtr-handle} lie in its interior, and
+\[
+ 0\le2^m-A_\ell\le\frac{2^m(m+2)}{R_\ell^2}\le\frac{2^m(m+2)}{\ell+2}.
+\]
+\end{lemma}
+
+\begin{proof}
+At most one $y_j$ vanishes. If none vanishes, the $y$-columns of $dF$ are invertible.
+If $y_i=0$, then $t^2=i\ne0$ and the columns $t,(y_j)_{j\ne i}$ are invertible.
+The implicit coordinate formulas are given in Lemma~\ref{lem:vtr-atlas}.
+Positivity follows by restricting the affine Fubini--Study form.
+The estimate $|y_j|^2\le|t|^2+j$ proves properness. All critical values of $t$ lie at $\pm\sqrt j$,
+strictly inside $|t|<R_\ell$, so the boundary is smooth.
+Loops about these branch values independently reverse the root signs and connect the sheets over the disc;
+thus the interior is connected. The area estimate, including its limiting constant $2^m$, is proved from the
+explicit affine ends in Lemma~\ref{lem:vtr-tail}.
+\end{proof}
+
+\begin{definition}[The finite quadric model]\label{def:qdr-model}
+For $0<h<1/2$ take the product $E_\ell=\Sigma_\ell\times\C^m$, with $p_j=\pi|U_j|^2$, $|p|=\sum_jp_j$,
+\[
+ \Delta_h=\{p\ge0:|p|\le h\},\qquad
+ \Omega_0=\omega_V+d[(1-2|p|)\lambda],\qquad
+ H_\ell(p)=A_\ell(1-2|p|).
+\]
+The differential includes the fibre variables. The marked set is empty.
+We use $\Hb(p)=2^m(1-2|p|)$ for the limiting profile, which is a numerical comparison budget rather than the area
+of a finite base. All forms and maps are defined on the surrounding affine product $\Sigma\times\C^m$.
+\end{definition}
+
+\begin{lemma}[The bordered toric model]\label{lem:qdr-is-model}
+For $0<h<1/2$, this is a bordered toric model of rank $m$. Its horizontal form at fixed moment is
+$(1-2|p|)\sigma>0$, its base area is exactly $H_\ell$, and its fixed handle data are those of
+Proposition~\ref{prop:vtr-handle}. The finite primitive operator is applied to forms supported away from the outer collar.
+\end{lemma}
+
+\begin{proof}
+The form is closed and torus invariant, and restricts to $\omega_V$ on each fibre.
+In product coordinates it is
+\[
+ \Omega_0=\omega_V+(1-2|p|)\sigma-2\sum_jdp_j\wedge\lambda.
+\]
+Its horizontal coefficient is positive on a neighbourhood of $\Delta_h$.
+The compact base and its boundary have the properties of Lemma~\ref{lem:qdr-curve}.
+The annuli, closed dual, collar cutoff and finite coordinate primitive are supplied by
+Proposition~\ref{prop:vtr-handle}; the mass budget used for packing is checked below.
+\end{proof}
+
+\begin{lemma}[Simplex integrals]\label{lem:qdr-volume}
+\lean{OAI.PackingSufficiencySupport.integral_small_model,OAI.PackingSufficiencySupport.smallModelMean_half}
+\uses{def:qdr-model}
+Let $m\ge1$ be an integer and $\Delta_h=\{p\in\R^m_{\ge0}:|p|\le h\}$.
+\begin{enumerate}[label=(\alph*)]
+\item For $0<h<\infty$ and continuous $f\colon[0,h]\to\R$,
+$\int_{\Delta_h}f(|p|)\,dp=\frac1{(m-1)!}\int_0^hf(t)\,t^{m-1}\,dt$.
+\item For $0<h\le\frac12$,
+\[
+ \int_{\Delta_h}2^m(1-2|p|)\,dp=J_m(h):=\frac{2^mh^m}{m!}\Bigl[1-\frac{2mh}{m+1}\Bigr],\qquad J_m(\tfrac12)=\frac1{(m+1)!}.
+\]
+\item For $h=\frac12-\delta$ with $0<\delta<\frac12$, $\ \frac1{(m+1)!}-J_m(h)\le\frac{2\delta^2}{(m-1)!}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) The simplex $\{p\in\R^m_{\ge0}:|p|\le t\}$ has volume $t^m/m!$, so the distribution of $|p|$ on $\Delta_h$ has density
+$t^{m-1}/(m-1)!$. (b) With $f(t)=2^m(1-2t)$, (a) gives
+$\frac{2^m}{(m-1)!}\bigl(\frac{h^m}m-\frac{2h^{m+1}}{m+1}\bigr)=J_m(h)$, and $J_m(\frac12)=\frac1{m!}(1-\frac m{m+1})=\frac1{(m+1)!}$.
+(c) Using $t^{m-1}\le2^{-(m-1)}$ on $[h,\frac12]$,
+\[
+ \frac1{(m+1)!}-J_m(h)=\frac{2^m}{(m-1)!}\int_h^{1/2}(1-2t)t^{m-1}\,dt\le\frac{2}{(m-1)!}\int_h^{1/2}(1-2t)\,dt=\frac{2\delta^2}{(m-1)!}.
+ \qedhere
+\]
+\end{proof}
+
+
+For the finite model the integrated profile is $(A_\ell/2^m)J_m(h)$. Thus the limits $\ell\to\infty$ and $h\uparrow1/2$
+recover $1/n!$. A finite packing uses one explicit $\ell$ and the corresponding finite area estimate.
+
+\subsection{The affine transfer}
+
+Put $u(z,W)=|W|^2/D(z)^2$ and use the Kähler potential
+\[
+ \Phi_b(z,W)=\log D(z)+b\log(1+u(z,W)),\qquad 0<b<1/2.
+\]
+The graph family is $X_T=\{F(z)=TW\}$ in $\C^{m+1}\times\C^m$.
+At $T=0$ its base is $\Sigma$; for $T>0$ it is the graph $W=F(z)/T$.
+The injection is
+\[
+ \iota_b(z,U)=\left(z,\frac{D(z)\sqrt\pi\,U}{\sqrt{b-|p|}}\right).
+\]
+The horizontal field is the unique solution of the linear equations
+\[
+ dF_z\dot z-T\dot W=W,\qquad
+ dd^c\Phi_b\big((\dot z,\dot W),(v,w)\big)=0\quad\text{if }dF_zv-Tw=0.
+\]
+Let $\tau$ be its flow from $T=0$ to $T=1$. On $\C^{m+1}$ put
+\[
+ \omega_s=dd^c\!\left[\log D+sb\log\left(1+\frac{|F|^2}{D^2}\right)\right],\qquad
+ \iota_{Y_s}\omega_s=-b\,d^c\log\left(1+\frac{|F|^2}{D^2}\right),
+\]
+and let $\psi_1^{-1}$ be its flow from $s=1$ back to zero.
+Finally define $\mathrm{ch}(z)=z/\sqrt{\pi D(z)}$.
+
+The transfer $\mathcal T_b=\mathrm{ch}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau\circ\iota_b$ is a symplectic embedding of the tube
+$\{|p|<b\}$ into $\Bo(1)$ (Theorem~\ref{thm:qdr-transfer} in \S\ref{sec:vtr-return}).
+
+\subsection{Parameters and packing}
+
+\begin{lemma}[Parameters for the quadric branch]\label{lem:qdr-auxiliary}
+\uses{lem:qdr-volume, lem:qdr-is-model, M-lem:mech-toric-volume}
+Let $n\ge3$ and let $a_1,\dots,a_k$ be real numbers with $0<a_i<\frac12$ and $\sum_ia_i^n<1$. Put
+$a_{\max}=\max_ia_i$ and
+\[
+ \varsigma=1-\sum_ia_i^n,\quad
+ \delta=\min\Bigl(\frac{1/2-a_{\max}}2,\ \frac{\varsigma}{4n(n-1)}\Bigr),
+\]
+\[
+ h=\tfrac12-\delta,\quad b=\frac{h+1/2}2,\quad \tau_\Delta=\frac{a_{\max}+h}{2h}.
+\]
+These numbers are real (rational for rational $a$), and:
+\begin{enumerate}[label=(\roman*)]
+\item $a_{\max}<h<b<\frac12$, $\tau_\Delta<1$, and $\{|p|\le a_i\}\subset\tau_\Delta\Delta_h$ for every $i$;
+\item $\Pb(p)=\Hb(p)-\sum_i(a_i-|p|)_+$ is a continuous, concave piecewise affine function (rational when $a$ is rational) on $\Delta_h$;
+\item $\int_{\Delta_h}\Pb\,dp>7\varsigma/(8\,n!)$, and the mean $\mu$ of $\Pb$ on $\Delta_h$ satisfies $\mu>7\varsigma/(8\,n!)$;
+\item $\Pb\ge P_{\min}:=2^m(1-2h)=2^{m+1}\delta>0$ on $\Delta_h\setminus\tau_\Delta\Delta_h$;
+\item the number $d=\frac12\min\bigl(\varsigma/(2\,n!),\,2^{m+1}\delta\bigr)$ satisfies $0<d<\min(\mu,P_{\min})$.
+\end{enumerate}
+The factor $\frac78$ leaves room for the profile-budget defect $\frac1{n!}-J_m(h)<\varsigma/(8\,n!)$ of the proof of (iii). If
+$0<\rho_i<\frac12$ and $\sum_i\rho_i^n<1$, rational numbers $a_i>\rho_i$ with $a_i<\frac12$ and $\sum_ia_i^n<1$ exist, and any
+enumeration of $\Q^k$ reaches one after finitely many steps.
+\end{lemma}
+
+\begin{proof}
+(i) $\delta>0$, so $h<b<\frac12$; and $h\ge\frac12-\frac{1/2-a_{\max}}2=\frac{1/2+a_{\max}}2>a_{\max}$. Hence
+$\tau_\Delta h=\frac{a_{\max}+h}2\in(a_{\max},h)$, which gives $\tau_\Delta<1$ and $\{|p|\le a_i\}\subset\{|p|\le\tau_\Delta h\}$.
+(ii) $\Hb$ is affine with integer coefficients and each $(a_i-|p|)_+$ is convex and piecewise affine (rational for rational $a_i$).
+(iii) Since $a_i<h$, the support of $(a_i-|p|)_+$ in $\R^m_{\ge0}$ lies in $\Delta_h$, so by \Mref{Lemma}{lem:mech-toric-volume}
+its integral over $\Delta_h$ is $a_i^n/n!$. With Lemma~\ref{lem:qdr-volume}(b),(c) for $m=n-1$,
+\[
+ \int_{\Delta_h}\Pb\,dp=J_m(h)-\frac{1-\varsigma}{n!}=\frac{\varsigma}{n!}-\Bigl(\frac1{n!}-J_m(h)\Bigr)
+ \ge\frac\varsigma{n!}-\frac{2\delta^2}{(n-2)!}.
+\]
+As $\frac1{(n-2)!}=\frac{n(n-1)}{n!}$ and $\delta\le\varsigma/(4n(n-1))$,
+$\frac{2\delta^2}{(n-2)!}\le\frac{\varsigma^2}{8n(n-1)\,n!}<\frac{\varsigma}{8\,n!}$, because $0<\varsigma<1$ and $n(n-1)\ge6$.
+This gives the bound on the integral. Since $\vol\Delta_h=h^m/m!<1$ and the integral is positive, $\mu$ exceeds the
+integral. (iv) On $\Delta_h\setminus\tau_\Delta\Delta_h$ we have $|p|>\tau_\Delta h>a_{\max}$, so all caps vanish and
+$\Pb=\Hb\ge2^m(1-2h)$. (v) follows from (iii) and (iv).
+
+For the last assertion, the set $\{a\in\R^k:\ a_i>\rho_i,\ a_i<\frac12,\ \sum_ia_i^n<1\}$ is open. It is nonempty, since it
+contains $\rho+t(1,\dots,1)$ for all sufficiently small $t>0$. Hence it contains rational points. A complete enumeration of $\Q^k$ therefore contains a valid tuple.
+\end{proof}
+
+\begin{theorem}[Packing by small balls in dimension $2n\ge6$]\label{thm:qdr-packing}
+\uses{lem:qdr-auxiliary, lem:qdr-is-model, M-thm:cmp-main, M-thm:mech-packing, thm:qdr-transfer, M-prop:mech-assembly, prop:vtr-handle, thm:vtr-transfer}
+Let $n\ge3$ and $0<\rho_1,\dots,\rho_k<\frac12$ with $\sum_i\rho_i^n<1$, and let $a_1,\dots,a_k$ be real numbers with
+$\rho_i<a_i<\frac12$ and $\sum_ia_i^n<1$. Put $\rho_i^+=(2\rho_i+a_i)/3$ and $\rho_i^{\rm dom}=(\rho_i+2a_i)/3$. The
+comparator construction with real coefficients, with closed source capacities $\rho_i^{\rm dom}$
+(Construction~\ref{cons:native-packing}), defines from these data smooth symplectic embeddings $f_i$ of open
+neighbourhoods of the closed balls $B(\rho_i^{\rm dom})\subset\C^n$ into $\Bo(1)$ and a rational $\zeta>0$, such that the
+sets $f_i(B(\rho_i^{\rm dom}))$ are pairwise disjoint and contained in $B(1-\zeta)$.
+\end{theorem}
+
+\begin{proof}[Proof of Theorem~\ref{thm:qdr-packing}]
+\emph{Parameters and comparison.} Let $\delta,h,b,\tau_\Delta,d$ be given by Lemma~\ref{lem:qdr-auxiliary} for $a$, put
+$P=\Pb$. By parts (i)--(v) of that lemma, $\Delta_h$, $\tau_\Delta$ and $P$ satisfy the hypotheses of
+\Mref{Proposition}{prop:cmp-fixed-point} with $\beta=P_{\min}$ and with this $d$, and \Mref{Theorem}{thm:cmp-main} provides a
+comparison datum $(K,q)$ for $(\Delta_h,\Pb)$ with gap $\gamma=11d/16>0$.
+
+\emph{Truncation and packing.} Put $m=n-1$ and
+\[
+ l=\left\lceil\frac{2^{m+6}(m+2)}d\right\rceil,\qquad
+ R_l=2+\frac{m(m+1)}2+l,\qquad \Sigma_l=\{|t|\le R_l\}\subset\Sigma.
+\]
+By Lemma~\ref{lem:vtr-tail}, its exact profile is $H_l(p)=A_l(1-2|p|)$, with
+$0\le\Hb-H_l\le d/64$. Lower the comparison profile to
+$P_l=\Pb-11d/32$. The same comparison datum has gap $\gamma_l=11d/32$, because replacing $P$ by $P-c$
+reduces its gap by $c$. Also
+\[
+ P_l\le H_l-\sum_i(a_i-|p|)_+.
+\]
+The handle data are those of Construction~\ref{cons:shd-handle-data} on $\Sigma_l$: by Lemma~\ref{lem:shd-handle-data} the
+inner boxes of the correction atlas cover $\{|t|\le R_l-1\}$, which contains the handle and the support of
+$1-\zeta_\partial$, and the correction region is all of $\Sigma_l$ with $\kappa_-=1-2h$, as required in
+\S\ref{sec:native-toric}. Set $\gamma_*=11d/64$, $\kappa_-=1-2h$, and
+\[
+ c_{\rm bg}=\min\left(\frac{\gamma_*}{32\,2^m},\frac{\kappa_-}{2}\right),\qquad
+ \zeta_\partial(t)=S\left(\frac{|t|^2-(R_l-2)^2}{(R_l-1)^2-(R_l-2)^2}\right).
+\]
+The background form is $\big[\zeta_\partial(1-2|p|)+(1-\zeta_\partial)c_{\rm bg}\big]\sigma$.
+It agrees with the original curvature near the boundary, and it is positive, since $c_{\rm bg}\le\kappa_-/2$. The removed density
+$(1-\zeta_\partial)(1-2|p|-c_{\rm bg})\sigma$ has compact support in $\{|t|\le R_l-1\}$;
+its integral is the handle mass. The same end estimate as in Lemma~\ref{lem:vtr-tail}, at radius $R_l-2$, gives
+\[
+ \int_{|t|>R_l-2}\sigma\le\frac{2^m(m+2)}{(R_l-2)^2}
+ \le\frac{d}{65536}<\frac{\gamma_*}{32}.
+\]
+Here $d<1$, $m\ge2$ and $R_l-2\ge l\ge64\,2^m(m+2)/d$.
+Since $c_{\rm bg}\int_{\Sigma_l}\sigma\le\gamma_*/32$, the whole background mass is less than
+$\gamma_*/16$. Also $\min H_l>d$, so $\epsilon_0=\gamma_*/16$ in (\Mnum{eq:hdl-eh}).
+This proves the collar and background budgets used in the handle construction.
+Put $\rho_i^+=(2\rho_i+a_i)/3$ and $\rho_i^{\rm dom}=(\rho_i+2a_i)/3$.
+Apply the layer construction with the further interior source capacity
+$u_i=(3a_i+\rho_i^{\rm dom})/4<a_i$. \Mref{Theorem}{thm:mech-packing}, with the exact truncated profile
+and its positive remaining gap, gives smooth symplectic embeddings $\psi_i$ on a neighbourhood of
+$B(\rho_i^{\rm dom})$ into
+$\operatorname{int}V_{\Delta_h}(E|_{\Sigma_l})$, with pairwise disjoint images. The images lie in the interior of the finite affine model.
+
+\emph{Transfer.} By Theorem~\ref{thm:qdr-transfer}, $\mathcal T_b$ is a symplectic embedding of a neighbourhood of
+$V_{\Delta_h}(E_l)$ into $\Bo(1)$. \Mref{Proposition}{prop:mech-assembly} gives
+$f_i=\mathcal T_b\circ\psi_i$, smooth and symplectic on $\Bo(\rho_i^{\rm dom})$,
+with pairwise disjoint images of $B(\rho_i^{\rm dom})$, since $\mathcal T_b$ is one injective map.
+
+\emph{Margin.} Let $\mathcal K=\bigcup_i\psi_i(B(\rho_i^{\rm dom}))$ and
+$m_{\mathcal K}=\min_{\mathcal K}(1-\pi|\mathcal T_b|^2)>0$.
+Choose the positive rational $\zeta=(2+\lceil1/m_{\mathcal K}\rceil)^{-1}<m_{\mathcal K}$.
+All images then lie in $B(1-\zeta)$.
+\end{proof}
+
+If some normalised capacity is at least $\frac12$, the cap $\{|p|\le a_i\}$ does not fit in $\Delta_h$ for any
+$h<\frac12$. This case is treated in Section~\ref{sec:lrg}.

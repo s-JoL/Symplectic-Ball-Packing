@@ -1,0 +1,262 @@
+\section{Computability and the finite form}\label{sec:eff}
+
+This section proves Theorem~\ref{thm:main}(iii). The output is a rational polynomial multiplied by a fixed
+smooth spatial cutoff, and it is found by a search over finite certificates of trajectory containment: a
+candidate polynomial is accepted when Euler trajectories from a grid covering the source balls, with an error
+bound valid on the whole time interval, stay in the region where the cutoff equals one and end inside the target. Every
+accepted candidate is correct (\Sref{Theorem}{thm:certificate-sound}). Termination needs one smooth compactly
+supported Hamiltonian satisfying the packing specification with a positive margin. We take
+$H[n,k,C,c,s]$ and compile it by Bernstein approximation (\S\ref{sec:eff-finite}); any packing Hamiltonian with
+a margin would serve equally.
+
+For the Epoch family the termination witness is Corollary~\ref{thm:main-epoch}, at density $1-\eps/2$; the
+finite verifier is the same in every case.
+
+A name for a real $x$ is a rational stream $q(p)$ with $|q(p)-x|\le2^{-p}$; a rational is named by its constant
+stream. The finite verifier requires names for the source radii $r_i=\sqrt{c_i/\pi}$ and
+target radius $R=\sqrt{C/\pi}$; these are computed from the supplied capacity
+names by the programs in \Ssec{sec:efd}.
+The symbol $|\cdot|$ denotes Euclidean norm, and $S$ is the flat step of
+\Sref{Definition}{def:pre-flat}.
+
+\begin{table}[ht]
+\centering\footnotesize
+\begin{tabular}{@{}L{.18\textwidth}L{.25\textwidth}L{.33\textwidth}L{.16\textwidth}@{}}
+\toprule
+Object & Definition & Effective data & Reference\\
+\midrule
+Input radii & $r_i=\sqrt{c_i/\pi}$, $R=\sqrt{C/\pi}$ & names with error $2^{-p}$; lower bound $1<\pi$ & \Ssec{sec:efd}\\
+Source enclosures & $s_i^p$, $r^+_{i,p}$ & whole closed source covered; retained nodes within $(2d+3)2^{-p}+d\rho$ of a source & \Sref{Eq.}{eq:certificate-enclosures}\\
+Polynomial field & $J_0\nabla P_e$, arguments clamped to $[0,1]\times[-\frac B2,\frac B2]^d$ & exact rational evaluation; integer $\Theta=h_B(e)$ bounding speed and Lipschitz constants & \Sref{Lem.}{lem:certificate-field}\\
+Covering grid & mesh $\rho=2Q2^{-m}$ in $[-Q,Q]^d$ & $(2^m+1)^d$ nodes; maximum-norm radius $\rho$ & \Sref{Def.}{def:certificate-checks}\\
+Euler table & $x_{j+1}=x_j+F_e(j/N,x_j)/N$ & error $E=(\rho+(\Theta+\Theta^2)/N)4^\Theta+\Theta/N$ on $[0,1]$ & \Sref{Lem.}{lem:certificate-euler}\\
+Finite output & $\beta_BP_e$ & margins $B/2-|x_{j,l}|-E$ to the region where $\beta_B=1$ and $R^-_p-|x_N|-dE$ to the target boundary & \Sref{Thm.}{thm:certificate-sound}\\
+Bernstein witness & compilation datum (C1)--(C7) & derivative envelope $M_0$; field error $\eta$; Gr\"onwall factor $(e^{L_X}-1)/L_X$ & Thm.~\ref{thm:eff-finite}\\
+\bottomrule
+\end{tabular}
+\caption{Data for the finite verifier and its nonemptiness proof; $d=2n$.}
+\label{tab:eff-data}
+\end{table}
+
+\begin{table}[ht]
+\centering\footnotesize
+\begin{tabular}{@{}L{.26\textwidth}L{.34\textwidth}L{.31\textwidth}@{}}
+\toprule
+Search & Nonempty because & Checkable condition\\
+\midrule
+Square-root names & none: a direct total program (integer square root at doubled precision, \Sref{Lemma}{lem:efd-roots-direct}) & ---\\
+Candidate $(B,e,Q,p,m,N)$ & smaller-target geometric packing, compilation and source-neighbourhood margins & finite strict rational tests\\
+First passing candidate & \Sref{Thm.}{thm:certificate-exists} & zero natural failure count\\
+\bottomrule
+\end{tabular}
+\caption{Searches of the finite algorithm. The model parameters and their margins are given in the geometric sections.}
+\label{tab:eff-searches}
+\end{table}
+
+\subsection{The finite form}\label{sec:eff-finite}
+
+One estimate on the vector fields controls the time-one maps at all starting points at once.
+
+\begin{lemma}[Gr\"onwall]\label{lem:eff-gronwall}
+\uses{S-lem:cpl-gronwall-abstract}
+Let $G,H\colon\R\times\R^{2n}\to\R$ be $C^\infty$, let $\eta>0$ and $L_X>0$, and suppose that
+\begin{enumerate}[label=(\roman*)]
+\item $|X_G(t,z)-X_H(t,z)|\le\eta$ for all $t\in[0,1]$ and all $z\in\R^{2n}$;
+\item $X_H(t,\cdot)$ is $L_X$-Lipschitz on all of $\R^{2n}$ for every $t\in[0,1]$.
+\end{enumerate}
+If $\gamma_G,\gamma_H\colon[0,1]\to\R^{2n}$ are integral curves of $X_G$ and $X_H$ with
+$\gamma_G(0)=\gamma_H(0)$, then $|\gamma_G(1)-\gamma_H(1)|\le\eta(e^{L_X}-1)/L_X$. If moreover
+$\eta=b_Re^{-L_X}/2$ with $b_R>0$, then $\eta(e^{L_X}-1)/L_X<b_R$.
+\end{lemma}
+
+\begin{proof}
+The difference $u=\gamma_G-\gamma_H$ satisfies $u(0)=0$ and
+$|\dot u|\le|X_G(\gamma_G)-X_H(\gamma_G)|+|X_H(\gamma_G)-X_H(\gamma_H)|\le\eta+L_X|u|$, and Gr\"onwall's
+inequality gives the first bound. With $\eta=b_Re^{-L_X}/2$ it equals $\tfrac{b_R}2(1-e^{-L_X})/L_X<b_R/2$, since
+$1-e^{-x}<x$ for $x>0$. (\Sref{Lemma}{lem:cpl-gronwall} gives the same argument with all constants.)
+\end{proof}
+
+Both hypotheses must hold on the whole space: before the estimate is proved, the approximate trajectory is not
+known to stay near the exact one, so a bound valid only near the exact trajectories could not be applied to it.
+For smooth compactly supported $H$ such global bounds are finite: since $X_H=J_0\nabla_zH$ with $J_0$ orthogonal,
+(ii) holds for every $L_X>0$ with $L_X\ge\max_{[0,1]\times\R^{2n}}\|D^2_zH\|$.
+
+We now fix the compilation. Let $n\ge2$, $k\ge1$, $C>0$, $c\in(0,\infty)^k$ and $s\in(\R^{2n})^k$, and let $H$
+satisfy $\Pack(n,k,C,c,s)$ (Definition~\ref{def:intro-spec}); thus $H$ is $C^\infty$ and vanishes outside
+$\R\times K_H$ for a compact set $K_H\subset\R^{2n}$, its flow $\phi^t_H$ is global, and
+$\phi^1_H(B(s_i,c_i))\subset\Bo(C)$ for every $i$. Write $\zeta_1,\dots,\zeta_{2n}$ for the real coordinates of
+$z\in\R^{2n}$. A \emph{compilation datum} for $H$ consists of the following numbers.
+\begin{enumerate}[label=(C\arabic*)]
+\item A capacity $C_0\in(0,C)$ with $\phi^1_H(B(s_i,c_i))\subset B(C_0)$ for all $i$. Put
+ $R_*=\sqrt{C_0/\pi}<R_C=\sqrt{C/\pi}$.
+\item A rational $a_{\rm box}>0$ with $H(t,z)=0$ whenever $\max_l|\zeta_l|\ge a_{\rm box}$, and an integer
+ $B>\max(2n,2a_{\rm box})$. The box cutoff is
+ \[
+ \beta_B(z)=\prod_{l=1}^{2n}\beta_{B,1}(\zeta_l),\qquad
+ \beta_{B,1}(x)=1-S\Bigl(\frac{x^2-(B/2)^2}{(3B/4)^2-(B/2)^2}\Bigr),
+ \]
+ where $S$ is the flat step, so that $0\le\beta_B\le1$, $\beta_B=1$ on $[-B/2,B/2]^{2n}$, $\beta_B=0$ outside
+ $(-3B/4,3B/4)^{2n}$, and $\beta_BH=H$.
+\item Reals $L_X\ge1+\sup_{[0,1]\times\R^{2n}}\|D^2_zH\|$ and $C_\beta\ge1+\sup_{\R^{2n}}|\nabla\beta_B|$.
+\item A rational $b_R$ with $0<b_R<(R_C-R_*)/4$; put $\eta=b_Re^{-L_X}/2$.
+\item A real $M_0\ge1$ bounding all first and second partial derivatives on $[0,1]^{2n+1}$ of
+ $\tilde H(\xi)=H(\xi_0,2B\xi_1-B,\dots,2B\xi_{2n}-B)$.
+\item A rational $\delta$ with $0<\delta<\min\bigl(\tfrac12,\eta/(16(1+C_\beta))\bigr)$ and an integer
+ $N_{\rm B}>\max\bigl(1,((2n+1)M_0/\delta)^2,4M_0/\delta\bigr)$.
+\item For every $m\in\{0,\dots,N_{\rm B}\}^{2n+1}$ a rational $\tilde H_m$ with
+ $|\tilde H_m-\tilde H(m/N_{\rm B})|<\delta/(2N_{\rm B}+1)$.
+\end{enumerate}
+With $b_{N,j}(x)=\binom Njx^j(1-x)^{N-j}$ put
+\[
+ P(t,z)=\sum_{m\in\{0,\dots,N_{\rm B}\}^{2n+1}}\tilde H_m\,b_{N_{\rm B},m_0}(t)\prod_{l=1}^{2n}b_{N_{\rm B},m_l}\Bigl(\frac{\zeta_l+B}{2B}\Bigr),
+ \qquad \Hfin=\beta_B\cdot P.
+\]
+Since $B\in\N$ and $\tilde H_m\in\Q$, $P\in\Q[t,z]$, of degree at most $N_{\rm B}$ in each variable. Compilation
+data exist: $C_0$ because $\bigcup_i\phi^1_H(B(s_i,c_i))$ is a compact subset of $\Bo(C)$, $a_{\rm box}$ because $H$
+vanishes outside $\R\times K_H$, the bounds of (C3) and (C5) because they are maxima of continuous functions on
+compact sets, and the rest because each is a strict lower or upper bound on a single number.
+
+\begin{theorem}[Finite output]\label{thm:eff-finite}
+\uses{lem:eff-gronwall, def:intro-spec, S-thm:cpl-final, S-prop:cpl-bernstein, S-lem:cpl-cutoff}
+Let $H$ satisfy $\Pack(n,k,C,c,s)$. For every compilation datum (C1)--(C7) for $H$, the function
+$\Hfin=\beta_B\cdot P$ satisfies $\Pack(n,k,C,c,s)$. More precisely: $\Hfin$ is $C^\infty$ and $\Hfin(t,z)=0$ for
+all $t$ whenever $z\notin(-3B/4,3B/4)^{2n}$; $|X_{\Hfin}-X_H|<\eta$ on $[0,1]\times\R^{2n}$; and for every
+$z\in\bigcup_iB(s_i,c_i)$,
+\[
+ |\phi^1_{\Hfin}(z)-\phi^1_H(z)|<b_R,\qquad |\phi^1_{\Hfin}(z)|<R_*+b_R<R_C,
+\]
+so that $\phi^1_{\Hfin}$ maps every $B(s_i,c_i)$ into $\Bo(C)$. If the source balls are pairwise disjoint,
+their images are pairwise disjoint.
+\end{theorem}
+
+\begin{proof}[Proof (complete version: \Sref{Theorem}{thm:cpl-final})]
+Write $\mathcal B_{N_{\rm B}}$ for the tensor Bernstein operator on $[0,1]^{2n+1}$. It satisfies
+$\|\mathcal B_{N_{\rm B}}\tilde H-\tilde H\|_\infty\le(2n+1)M_0/(2\sqrt{N_{\rm B}})<\delta/2$ and
+$\|\partial_j\mathcal B_{N_{\rm B}}\tilde H-\partial_j\tilde H\|_\infty\le
+M_0\bigl((2n+1)/(2\sqrt{N_{\rm B}})+2/N_{\rm B}\bigr)<\delta$, by the binomial variance identity and summation by
+parts (\Sref{Proposition}{prop:cpl-bernstein}). Because the Bernstein weights are nonnegative with sum $1$,
+rounding changes values by less than $\delta/(2N_{\rm B}+1)$ and first derivatives by less than
+$2N_{\rm B}\delta/(2N_{\rm B}+1)<\delta$. Hence on $[0,1]\times[-B,B]^{2n}$ we have $|P-H|<\delta$ and, since
+$\partial_{\zeta_l}=(2B)^{-1}\partial_{\xi_l}$ and $B>2n$, $|\nabla_zP-\nabla_zH|\le\sqrt{2n}\,\delta/B<\delta$
+(\Sref{Lemma}{lem:cpl-poly}). There, differentiating $\beta_BH=H$ gives
+\[
+ \nabla_z\Hfin-\nabla_zH=\beta_B\nabla_z(P-H)+(P-H)\nabla\beta_B ,
+\]
+whose norm is less than $\delta(1+C_\beta)<\eta/16$ by (C6); outside $(-B,B)^{2n}$ both $\Hfin$ and $H$ vanish on a
+neighbourhood. As $X_G=J_0\nabla_zG$ with $J_0$ orthogonal, $|X_{\Hfin}-X_H|<\eta$ everywhere on
+$[0,1]\times\R^{2n}$, and $X_H(t,\cdot)$ is $L_X$-Lipschitz by (C3). The field $X_{\Hfin}$ is smooth and
+vanishes outside $\R\times[-3B/4,3B/4]^{2n}$, so its integral curves exist on $\R$ and are unique; the same
+holds for $X_H$, which vanishes outside $\R\times K_H$. Lemma~\ref{lem:eff-gronwall} gives
+$|\phi^1_{\Hfin}(z)-\phi^1_H(z)|<b_R$ for every $z$. For $z\in B(s_i,c_i)$ we have $|\phi^1_H(z)|\le R_*$ by
+(C1), hence $|\phi^1_{\Hfin}(z)|<R_*+b_R<R_C$, that is $\pi|\phi^1_{\Hfin}(z)|^2<C$. Hence $\Hfin$ satisfies both
+conditions of Definition~\ref{def:intro-spec}: it is $C^\infty$ and vanishes for $z\notin(-3B/4,3B/4)^{2n}$ and
+all $t$, because $\beta_B$ does not depend on $t$; and every integral curve of $X_{\Hfin}$ on $[0,1]$ starting at
+$z\in B(s_i,c_i)$ is the flow line, which ends in $\Bo(C)$. The images are disjoint because $\phi^1_{\Hfin}$ is
+injective.
+\end{proof}
+
+The theorem applies to every compilation datum; the existence of one is used in the proof that the search
+below terminates.
+
+\subsection{The algorithm}\label{sec:eff-algorithm}
+
+\begin{remark}[Accepted outputs]\label{rem:eff-certified}
+The polynomial returned by the algorithm below need not be the Bernstein approximation of
+$H[n,k,C,c,s]$ for any compilation datum. Bernstein compilation shows that some candidate is
+accepted; every accepted candidate is correct by the soundness theorem.
+\end{remark}
+
+Put $d=2n$. A candidate consists of integers $B,Q,N\ge1$, precisions $p,m\ge0$,
+and a finite rational arithmetic expression $e$ for a polynomial $P_e(t,z)$.
+Let $\Theta=h_B(e)$ be the integer of \Sref{Definition}{def:certificate-program}.
+It bounds the speed and the temporal and spatial Lipschitz constants, in maximum
+norm, of the field with clamped arguments
+\[
+ F_e(t,z)=J_0\nabla_zP_e(\operatorname{clip}_{[0,1]}t,
+                  \operatorname{clip}_{[-B/2,B/2]^d}z),
+\]
+where $\operatorname{clip}_X$ is the nearest-point projection to the box $X$.
+Read the input names to error $2^{-p}$. From them form rational outer balls
+$B(s_i^p,r^+_{i,p})$ containing the original closed sources, and a rational
+$R^-_p\le\sqrt{C/\pi}$, as in \Sref{Equation}{eq:certificate-enclosures}.
+First test $|s^p_{i,l}|+r^+_{i,p}<Q$ for every $i,l$.
+
+Use the grid of mesh $\rho=2Q2^{-m}$ in $[-Q,Q]^d$. For each node $a$ and source
+$i$, discard the node if $|a-s_i^p|^2>(r^+_{i,p}+d\rho)^2$.
+Otherwise compute the exact rational Euler table
+\[
+ x_0=a,\quad x_{j+1}=x_j+N^{-1}F_e(j/N,x_j),\quad
+ E=\left(\rho+\frac{\Theta+\Theta^2}{N}\right)4^\Theta+\frac{\Theta}{N}.
+\]
+Require $|x_{j,l}|+E<B/2$ for every $j\le N,l$, and
+\[
+ R^-_p-dE>0,\qquad |x_N|^2<(R^-_p-dE)^2.
+\]
+These are finite strict rational tests. Enumerate all candidate tuples and return
+the first one passing every test; the output is $B$ and the program $e$, which determines $P_e\in\Q[t,z]$.
+
+The real inputs are supplied as oracles and $n,k$ as ordinary input; \Ssec{sec:alg} gives the encoding.
+
+\begin{theorem}[Termination and correctness]\label{thm:eff-algorithm}
+There is one oracle machine with the following property. Let $n\ge2$, $k\ge1$, $C$, $c$ and $s$ satisfy the
+hypotheses of Theorem~\ref{thm:main}, and supply as oracles names of $C,c_1,\dots,c_k$ and of the $2nk$ coordinates
+of $s_1,\dots,s_k$. On input $(n,k)$ the machine halts and outputs an integer $B$ and a polynomial
+$P\in\Q[t,z_1,\ldots,z_{2n}]$ such that $\beta_BP$ satisfies $\Pack(n,k,C,c,s)$. The output may depend on the names,
+not only on the numbers they name. If the names are computable, for instance the constant names of rational
+inputs, replacing the oracles by programs for them gives an ordinary algorithm.
+
+There is also one oracle machine which, given a name of $\eps\in(0,1)$ as oracle and an integer $k\ge9$ as input,
+computes names of the source radius $1$ and of the target radius $R=(k/(1-\eps/2))^{1/4}$ for the data
+\[
+ n=2,\quad C=\pi R^2,\quad c_i=\pi,\quad s_i=(3i-3,0,0,0),
+\]
+runs the same certificate search on them, and halts with $(B,P)$ such that $\beta_BP$ satisfies $\Pack(2,k,C,c,s)$;
+here $k/R^4=1-\eps/2>1-\eps$.
+\leanmark{original\_name\_algorithm, epoch\_name\_algorithm, epoch\_name\_algorithm\_packing}
+\end{theorem}
+
+\begin{proof}
+For an accepted candidate, each source point lies within $\rho$ in maximum norm
+of a grid node that cannot be discarded. The Euler error is at most $E$ throughout
+$[0,1]$. The plateau tests therefore keep the trajectory of $F_e$ from that point in the open
+box where $F_e=X_{\beta_BP_e}$, and the terminal test places its endpoint in the
+open target. Smoothness, spatial compact support and uniqueness of integral curves give the
+packing specification (\Sref{Theorem}{thm:certificate-sound}).
+
+For termination, $H=H[n,k,C,c,s]$ maps the compact source balls into $\Bo(C)$, so their images lie in $\Bo(C_0)$
+for some $C_0<C$; put $C_1=(C_0+C)/2$. Then $H$ satisfies $\Pack(n,k,C_1,c,s)$, and Theorem~\ref{thm:eff-finite} with
+target $C_1$ and $B$ large gives a rational polynomial whose trajectories from the sources stay a positive distance
+inside the region where $\beta_B=1$ and end in $\Bo(C_1)$, at a positive distance from the boundary of $\Bo(C)$.
+These margins persist for starting points in a neighbourhood of the sources.
+A node not discarded lies at maximum-norm distance at most
+$(2d+3)2^{-p}+d\rho$ from an original source ball. Taking $p,m,N$ sufficiently
+large therefore makes all tests pass (\Sref{Theorem}{thm:certificate-exists}). Each candidate needs finitely many
+oracle queries and rational operations, so the enumeration reaches an accepted candidate in finite time. The
+encodings of \Ssec{sec:alg} treat $n$ and $k$ as inputs of the same machine. The Epoch input is
+admissible with disjoint source balls by Corollary~\ref{thm:main-epoch}; the Epoch machine forms the radius names
+from the name of $\eps$ by total programs (the reciprocal of $1-\eps/2>\frac12$ and two square roots,
+\Sref{Lemma}{lem:efd-roots-direct}) and runs the same search.
+\end{proof}
+
+\begin{remark}[The four cases]\label{rem:eff-branches}
+The exact construction distinguishes the four cases of
+\Sref{Construction}{cons:ham-branch}. The finite verifier has the same form in every
+case: it tests rational trajectories of the proposed output. No equality test
+between named capacities or decision at the threshold $c_i=C/2$ is needed.
+\end{remark}
+
+\begin{remark}[Size]\label{rem:eff-size}
+A certificate with parameters $(B,e,Q,p,m,N)$ inspects $k(2^m+1)^{2n}$ node-source pairs and up to $N+1$ Euler
+rows for each retained pair. The factor $4^\Theta$ in the Euler bound can require very large spatial grids and
+time tables; the theorem concerns computability, not running time.
+\end{remark}
+
+\begin{remark}[The Epoch submission format]\label{rem:eff-epoch-interface}
+The Epoch problem \cite{Epoch} asks for submissions as a Python function returning a PyTorch implementation of the
+Hamiltonian, which a numerical verifier integrates from sampled boundary points of the source balls within fixed time
+limits. We read its variables as $(Q,P)=(x,y)$, with $X_H=(\partial_PH,-\partial_QH)$, and its target as the
+time-one map. The results here answer the mathematical part of the problem: Theorem~\ref{thm:intro-4d} gives the
+Hamiltonian, Proposition~\ref{thm:intro-stability} the vector-field tolerance that a numerical implementation must
+meet, and Theorem~\ref{thm:eff-algorithm} a uniform algorithm with finite output. A program within the verifier's
+limits of ten minutes per solution and ten seconds per evaluation is not part of this paper.
+\end{remark}

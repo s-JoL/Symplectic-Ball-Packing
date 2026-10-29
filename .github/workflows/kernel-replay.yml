@@ -1,0 +1,12 @@
+# Stronger binary-proof check, separate from the short source-review CI.
+name: kernel-replay
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    uses: ./.github/workflows/_verify.yml
+    with:
+      from-source: false
+      kernel-replay: true

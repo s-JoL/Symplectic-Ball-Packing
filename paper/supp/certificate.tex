@@ -1,0 +1,205 @@
+\section{Finite trajectory certificates}\label{sec:certificate}
+
+The algorithm searches finite rational data. Its verifier uses the input names, symbolic differentiation of a
+rational polynomial and exact rational Euler iteration; the geometric construction enters only the proof that an
+accepted certificate exists (Theorem~\ref{thm:certificate-exists}). Put $d=2n$. In this section
+$\|\cdot\|_\infty$ is the maximum norm and $|\cdot|$ the Euclidean norm, so that
+$\|x\|_\infty\le|x|\le\sqrt d\,\|x\|_\infty\le d\|x\|_\infty$.
+
+\begin{definition}[Polynomial programs]\label{def:certificate-program}
+\lean{SymplecticPacking.Effective.PackingPolynomial.Expr}
+A polynomial program is a finite expression formed from rational constants, the variables
+$x_0=t,x_1=z_1,\ldots,x_d=z_d$, addition and multiplication; a variable $x_j$ with $j>d$ denotes zero. A rational
+constant is coded by a triple $(a,b,c)\in\N^3$, with value $(a-b)/(c+1)$. Every rational polynomial in $(t,z)$ is
+$P_e$ for some program $e$. For an integer $B\ge1$ the \emph{budget} of a program is the integer
+\begin{align*}
+ h_B(a,b,c)&=a+b+2,& h_B(x_j)&=B+2,\\
+ h_B(e+f)&=h_B(e)+h_B(f),& h_B(ef)&=4h_B(e)h_B(f).
+\end{align*}
+Write $P_e$ for the polynomial of $e$ and $\Theta=h_B(e)$. Symbolic differentiation $\partial_je$ is defined by
+$\partial_jx_i=\delta_{ij}$, $\partial_j(\text{constant})=0$ and the sum and product rules.
+\end{definition}
+
+\begin{lemma}[Field bounds]\label{lem:certificate-field}
+\lean{SymplecticPacking.Effective.PackingPolynomial.budget_bounds,
+SymplecticPacking.Effective.PackingPolynomial.derivative_correct,
+SymplecticPacking.Effective.PackingPolynomial.exists_curve_bounds}
+Let $\operatorname{clip}(t,z)\in[0,1]\times[-B/2,B/2]^d$ be the point obtained by clipping $t$ to $[0,1]$ and each
+$z_l$ to $[-B/2,B/2]$, and put
+\[
+ F_e(t,z)=J_0\nabla_zP_e\bigl(\operatorname{clip}(t,z)\bigr).
+\]
+Then, in the maximum norm, $\|F_e\|_\infty\le\Theta$,
+$\|F_e(t,z)-F_e(t,z')\|_\infty\le\Theta\|z-z'\|_\infty$ and $\|F_e(t,z)-F_e(t',z)\|_\infty\le\Theta|t-t'|$. Through every
+point $F_e$ has a unique integral curve on $[0,1]$. At rational arguments $F_e$ is evaluated exactly by rational
+arithmetic on the programs $\partial_je$.
+\end{lemma}
+
+\begin{proof}
+Let $X=[-B,B]^{d+1}$ with the maximum norm. Define integers $\operatorname{bd}(e)$ and $\operatorname{lip}(e)$
+recursively: $\operatorname{bd}=a+b+1$ and $\operatorname{lip}=0$ for a constant $(a,b,c)$; $\operatorname{bd}=B$,
+$\operatorname{lip}=1$ for a variable; both are additive under sums; and for products
+$\operatorname{bd}(ef)=\operatorname{bd}(e)\operatorname{bd}(f)$,
+$\operatorname{lip}(ef)=\operatorname{bd}(e)\operatorname{lip}(f)+\operatorname{bd}(f)\operatorname{lip}(e)$. By
+induction, $|P_e|\le\operatorname{bd}(e)$ on $X$ and $P_e$ is $\operatorname{lip}(e)$-Lipschitz on $X$; for products
+use $P_eP_f(x)-P_eP_f(y)=P_e(x)(P_f(x)-P_f(y))+P_f(y)(P_e(x)-P_e(y))$. A second induction shows that $h_B(e)$
+bounds the four numbers $\operatorname{bd}(e)$, $\operatorname{lip}(e)$, $\operatorname{bd}(\partial_je)$ and
+$\operatorname{lip}(\partial_je)$ for every $j$. Constants and variables are immediate (note
+$\operatorname{bd}(\partial_jx_i)\le2$). Sums are additive. For a product,
+$\partial_j(ef)=(\partial_je)f+e\,\partial_jf$, so each of the four numbers for $ef$ is a sum of at most four
+products of a number for $e$ and a number for $f$, each at most $h_B(e)h_B(f)$.
+
+Symbolic differentiation agrees with the partial derivative by the sum and product rules, so the components of $F_e$
+are $\pm P_{\partial_je}\circ\operatorname{clip}$. Clipping maps into $X$ (as $B\ge1$) and is $1$-Lipschitz in each
+coordinate. Hence the speed bound follows from $\operatorname{bd}(\partial_je)\le\Theta$, and both Lipschitz bounds
+from $\operatorname{lip}(\partial_je)\le\Theta$. The field $F_e$ is continuous and globally Lipschitz in $z$,
+uniformly in $t$, so the Picard--Lindel\"of theorem gives a unique integral curve on $[0,1]$ through every point.
+\end{proof}
+
+\begin{lemma}[Euler tubes]\label{lem:certificate-euler}
+\lean{SymplecticPacking.Effective.PackingCertificate.grid_error,
+SymplecticPacking.Effective.PackingCertificate.time_error,
+SymplecticPacking.Effective.PackingCertificate.error_bound}
+Let $N\ge1$, $a\in\Q^d$, and form the exact rational table
+\[
+ x_0=a,\qquad x_{j+1}=x_j+N^{-1}F_e(j/N,x_j)\quad(0\le j<N).
+\]
+Let $\gamma$ be an integral curve of $F_e$ on $[0,1]$ with $\|\gamma(0)-a\|_\infty\le\rho$, and put
+\begin{equation}\label{eq:certificate-error}
+ E=\left(\rho+\frac{\Theta+\Theta^2}{N}\right)4^\Theta+\frac{\Theta}{N}.
+\end{equation}
+Then $\|\gamma(j/N)-x_j\|_\infty\le E$ for $0\le j\le N$, and for every $t\in[0,1]$ some $j\le N$ satisfies
+$\|\gamma(t)-x_j\|_\infty\le E$.
+\end{lemma}
+
+\begin{proof}
+Put $t_j=j/N$ and $e_j=\|\gamma(t_j)-x_j\|_\infty$. For $s\in[t_j,t_{j+1}]$ the speed bound gives
+$\|\gamma(s)-\gamma(t_j)\|_\infty\le\Theta(s-t_j)$, so by the two Lipschitz bounds
+\[
+ \|F_e(s,\gamma(s))-F_e(t_j,x_j)\|_\infty\le(\Theta+\Theta^2)(s-t_j)+\Theta e_j .
+\]
+Integrating $\gamma(t_{j+1})-x_{j+1}=\gamma(t_j)-x_j+\int_{t_j}^{t_{j+1}}\bigl(F_e(s,\gamma(s))-F_e(t_j,x_j)\bigr)ds$
+gives $e_{j+1}\le(1+\Theta/N)e_j+(\Theta+\Theta^2)/N^2$. Since $e_0\le\rho$ and $(1+\Theta/N)^j\le e^\Theta$ for
+$j\le N$, induction gives $e_j\le(\rho+(\Theta+\Theta^2)/N)e^\Theta$. For $t\in[t_j,t_{j+1}]$ the curve moves by at most
+$\Theta/N$ from $\gamma(t_j)$. Finally $e^\Theta\le4^\Theta$.
+\end{proof}
+
+Let $q_{i,l}(p)$ name the coordinates of $s_i$, $q_i^r(p)$ name $r_i=\sqrt{c_i/\pi}$ and $q^R(p)$ name
+$R=\sqrt{C/\pi}$, all with error at most $2^{-p}$. The radius names are computed from the capacity names
+(Corollary~\ref{thm:efd-radii}); they are not additional input. Put
+\begin{equation}\label{eq:certificate-enclosures}
+ s^p_{i,l}=q_{i,l}(p),\qquad
+ r^+_{i,p}=q_i^r(p)+(d+2)2^{-p},\qquad
+ R^-_p=\max(0,q^R(p)-2^{-p}).
+\end{equation}
+Since $|s_i^p-s_i|\le\sqrt d\,2^{-p}$ and $r_i\le q_i^r(p)+2^{-p}$, the closed ball $\overline B(s_i^p,r^+_{i,p})$
+contains the closed source ball $\overline B(s_i,r_i)=B(s_i,c_i)$; and $0\le R^-_p\le R$.
+
+\begin{definition}[Finite checks]\label{def:certificate-checks}
+\lean{SymplecticPacking.Effective.PackingCertificate.cellCheck,
+SymplecticPacking.Effective.PackingCertificate.outerRadius,
+SymplecticPacking.Effective.PackingCertificate.innerRadius,
+SymplecticPacking.Effective.PackingCertificate.boxNode}
+A candidate is $(B,e,Q,p,m,N)$ with integers $B,Q,N\ge1$, $p,m\ge0$ and a polynomial program $e$. It passes if the
+following finitely many strict rational inequalities hold. First the source-box tests
+\[
+ |s^p_{i,l}|+r^+_{i,p}<Q\qquad(1\le i\le k,\ 1\le l\le d).
+\]
+Next, let the grid nodes be the $(2^m+1)^d$ points $-Q+2Q\nu/2^m$, $\nu\in\{0,\dots,2^m\}^d$; every point of
+$[-Q,Q]^d$ lies within maximum-norm distance $\rho=2Q2^{-m}$ of a node. For every node $a$ and every source $i$,
+either the discard test
+\begin{equation}\label{eq:certificate-discard}
+ \sum_l(a_l-s^p_{i,l})^2>(r^+_{i,p}+d\rho)^2
+\end{equation}
+holds, or the Euler table of $a$ (Lemma~\ref{lem:certificate-euler}, with $E$ computed from this $\rho$) satisfies
+\begin{align}
+ |x_{j,l}|+E&<B/2 &&(0\le j\le N,\ 1\le l\le d),\label{eq:certificate-plateau}\\
+ R^-_p-dE&>0,\qquad
+ \sum_l x_{N,l}^2<(R^-_p-dE)^2.\label{eq:certificate-target}
+\end{align}
+\end{definition}
+
+\begin{theorem}[Soundness]\label{thm:certificate-sound}
+\lean{SymplecticPacking.Effective.PackingCertificate.finite_cover_sound}
+If a candidate passes, $\beta_BP_e$ satisfies $\Pack(n,k,C,c,s)$.
+\end{theorem}
+
+\begin{proof}
+The function $\beta_BP_e$ is $C^\infty$ and vanishes for $z\notin(-3B/4,3B/4)^d$ (Lemma~\ref{lem:cpl-box}), which
+is condition (a) of \Mref{Definition}{def:intro-spec}. Its field is smooth and vanishes outside
+$\R\times[-3B/4,3B/4]^d$, so its integral curves exist on $\R$ and are unique, by the argument of
+Lemma~\ref{lem:cpl-gronwall}(a).
+
+Fix $y\in B(s_i,c_i)$. Then $|y-s_i^p|\le r^+_{i,p}$, so the source-box tests give $|y_l|<Q$, and some node $a$ has
+$\|a-y\|_\infty\le\rho$. Then $|a-s_i^p|\le r^+_{i,p}+\sqrt d\rho\le r^+_{i,p}+d\rho$, so \eqref{eq:certificate-discard}
+fails and \eqref{eq:certificate-plateau}, \eqref{eq:certificate-target} hold for $a$. Let $\gamma$ be the integral curve
+of $F_e$ on $[0,1]$ with $\gamma(0)=y$. By Lemma~\ref{lem:certificate-euler} and \eqref{eq:certificate-plateau},
+$|\gamma_l(t)|<B/2$ for all $t\in[0,1]$ and all $l$. On the open cube $(-B/2,B/2)^d$ clipping is the identity and
+$\beta_B\equiv1$ on a neighbourhood, so $F_e=X_{\beta_BP_e}$ along $\gamma$; thus $\gamma$ is the integral curve of the
+output Hamiltonian from $y$. By Lemma~\ref{lem:certificate-euler} and \eqref{eq:certificate-target},
+\[
+ |\gamma(1)|\le|x_N|+\sqrt d\,E\le|x_N|+dE<R^-_p\le\sqrt{C/\pi},
+\]
+that is $\gamma(1)\in\Bo(C)$. By uniqueness every integral curve on $[0,1]$ from $y$ is $\gamma$, which is condition (b).
+\end{proof}
+
+\begin{lemma}[Retained nodes]\label{lem:certificate-retained}
+\lean{SymplecticPacking.Effective.PackingCertificate.nonexcluded_near_source}
+If a node $a$ is not discarded for source $i$, its maximum-norm distance from $B(s_i,c_i)$ is at most
+\[
+ \delta_p=(2d+3)2^{-p}+d\rho.
+\]
+\end{lemma}
+
+\begin{proof}
+Failure of \eqref{eq:certificate-discard} gives $|a-s_i^p|\le r^+_{i,p}+d\rho$. Since $|s_i^p-s_i|\le d2^{-p}$ and
+$r^+_{i,p}\le r_i+(d+3)2^{-p}$, we get $|a-s_i|\le r_i+\delta_p$. Radial projection to $\overline B(s_i,r_i)$ moves $a$
+by at most $\delta_p$ in the Euclidean norm, hence also in the maximum norm.
+\end{proof}
+
+\begin{theorem}[Nonemptiness]\label{thm:certificate-exists}
+\lean{SymplecticPacking.Effective.PackingCertificate.exists_compiled_source_neighbourhood,
+SymplecticPacking.Effective.PackingCertificate.exists_finite_checks}
+Let $(n,k,C,c,s)$ satisfy the hypotheses of \Mref{Theorem}{thm:main}, and let names of the coordinates of the $s_i$
+and of the radii $r_i$, $R$ be given. Then some candidate passes the checks of
+Definition~\ref{def:certificate-checks}.
+\end{theorem}
+
+\begin{proof}
+\emph{A compiled packing with margins.} The Hamiltonian $H=H[n,k,C,c,s]$ of \Mref{Theorem}{thm:main} satisfies
+$\Pack(n,k,C,c,s)$. The set $\bigcup_i\phi^1_H(B(s_i,c_i))$ is compact and contained in $\Bo(C)$, hence in $\Bo(C_0)$ for
+some $C_0\in(0,C)$; put $C_1=(C_0+C)/2$, so $H$ satisfies $\Pack(n,k,C_1,c,s)$ with (C1) for $C_0$. The exact tube
+$\mathcal T=\{\phi^t_H(y):t\in[0,1],\ y\in\bigcup_iB(s_i,c_i)\}$ is compact. Choose a compilation datum (C1)--(C7) for
+$H$ with target $C_1$, with $b_R\le1$, and with $B>4+2\max_{\mathcal T}\|\cdot\|_\infty$; this is possible because
+each condition is a strict lower or upper bound. Let $\Hfin=\beta_BP$ be the compiled function and $e$ a program with
+$P_e=P$. By the proof of Lemma~\ref{lem:cpl-gronwall-abstract}, applied on $[0,t]$, the compiled and exact curves from
+the same point stay within Euclidean distance $\eta(e^{L_X}-1)/L_X<b_R\le1$ on $[0,1]$. Hence for every source point
+$y$ the compiled curve $\gamma_y$ satisfies $\|\gamma_y(t)\|_\infty<B/2-1$ on $[0,1]$. On this set $F_e=X_{\Hfin}$, so
+$\gamma_y$ is also the integral curve of $F_e$ from $y$. By \Mref{Theorem}{thm:eff-finite} with target $C_1$,
+$|\gamma_y(1)|<\sqrt{C_1/\pi}<R$.
+
+\emph{A source neighbourhood.} Let $\Theta=h_B(e)$. For integral curves of $F_e$, the spatial Lipschitz bound of
+Lemma~\ref{lem:certificate-field} and Gr\"onwall's inequality give
+$\|\gamma_a(t)-\gamma_y(t)\|_\infty\le e^\Theta\|a-y\|_\infty$. In particular $y\mapsto\gamma_y(1)$ is continuous, so
+$\mu=\frac12\bigl(R-\max_y|\gamma_y(1)|\bigr)>0$, the maximum being over the compact union of the sources. Choose
+$\nu>0$ with $e^\Theta\nu\le\frac12$ and $de^\Theta\nu\le\mu$. If $\|a-y\|_\infty\le\nu$ for a source point $y$, then
+\begin{equation}\label{eq:certificate-margins}
+ |\gamma_{a,l}(t)|<B/2-\tfrac12\quad(t\in[0,1],\ 1\le l\le d),\qquad |\gamma_a(1)|\le R-\mu .
+\end{equation}
+
+\emph{The finite parameters.} Since $|s^p_{i,l}|\le|s_{i,l}|+1$ and $r^+_{i,p}\le r_i+d+3$ for all $p$, an integer
+$Q>\max_{i,l}(|s_{i,l}|+r_i)+d+4$ passes the source-box tests at every precision. Now $\delta_p\to0$ as
+$p,m\to\infty$, and $E\to0$ as $m,N\to\infty$ with $\Theta$ fixed. Choose $p,m,N$ with
+\[
+ \delta_p\le\nu,\qquad E<\tfrac18,\qquad dE<\tfrac\mu8,\qquad 2^{1-p}<\tfrac\mu4 .
+\]
+Let $a$ be a node that is not discarded for source $i$. By Lemma~\ref{lem:certificate-retained} it lies within
+$\nu$ of a source point, so \eqref{eq:certificate-margins} holds for $\gamma_a$. Lemma~\ref{lem:certificate-euler} with
+initial error $0$ (whose bound is at most $E$) gives $|x_{j,l}|\le|\gamma_{a,l}(j/N)|+E$, hence
+$|x_{j,l}|+E<B/2-\frac12+\frac14<B/2$; and
+\[
+ |x_N|+dE\le|\gamma_a(1)|+2dE<R-\mu+\tfrac\mu4<R-2^{1-p}\le R^-_p,
+\]
+using $R^-_p\ge q^R(p)-2^{-p}\ge R-2^{1-p}$. Hence $R^-_p-dE>|x_N|\ge0$ and $|x_N|^2<(R^-_p-dE)^2$. Discarded pairs
+pass trivially, so the candidate $(B,e,Q,p,m,N)$ passes.
+\end{proof}

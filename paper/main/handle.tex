@@ -1,0 +1,454 @@
+\section{Packing over a handle}\label{sec:hdl}
+
+The handle construction turns the comparison inequality into ball embeddings by three exact
+symplectic paths. It is an explicit version of the surface packing lemma of \cite[\S3.2]{OpenAI2026}, in which the
+Moser argument \cite{Moser1965} is carried out with explicit vector fields. The first path puts the usable base mass
+on an annulus, the second inserts the comparator isotopy across it, and the third separates the caps into disjoint
+layers. The higher-dimensional models use the finite coordinate construction of \Ssec{sec:native-toric}; the
+four-dimensional periodic model uses the equivariant version of Remark~\ref{rem:hdl-four}. The suspension and layer
+identities below have the same form in both.
+
+In the higher-dimensional construction below, $n\ge3$ and $m=n-1$. Write $\Omega=\omega_V+d\Gamma_{\rm phys}$ on the explicit affine product, with compact model region
+$V_\Delta(E)=\Sigma_\ell\times V_\Delta$, physical base curvature $\kappa(p)$ and profile
+$\Hb(p)=\int_{\Sigma_\ell}\kappa(p)$. The comparison datum has gap $\gamma$ and reserve
+$0<\gamma_*\le\gamma$. A horizontal one-form annihilates fibre tangent vectors. A family of base
+one-forms depending smoothly on $p$ gives a toric horizontal form; its differential is
+$d_\Sigma\alpha(p)+\sum_jdp_j\wedge\partial_j\alpha(p)$. This expression is smooth across the
+coordinate axes because the moments $p_j=\pi|w_j|^2$ are smooth there.
+
+\subsection{Handle data}\label{sec:hdl-data}
+
+\begin{definition}[Handle data]\label{def:hdl-handle-data}
+\lean{SymplecticPacking.HighDim.RawAnnularHandle,
+SymplecticPacking.HighDim.ToricPackingStages.quadricRawHandle,
+SymplecticPacking.HighDim.ToricPackingStages.quadricModelRawPresentation}
+Each higher-dimensional model supplies the following data.
+\begin{enumerate}[label=(\alph*)]
+\item An explicit annular coordinate map on $|s_{\rm a}|<w$, with working band
+$|s_{\rm a}|\le b<w$. We use $s=(s_{\rm a}+b)/(2b)$, so the working band is $[0,1]$.
+For the diagonal-quadric presentation the model uses $w=1/8$ and $b=1/16$ inside a double cylinder of half-width $1/4$ on which the annular coordinate is defined.
+\item A fixed compact support set $\mathcal B\subset\operatorname{int}\Sigma_\ell$.
+\item A smooth closed one-form $\beta$, supported in $\mathcal B$, whose annular expression is
+$b(v)\,dv$, with $b\ge0$, $b>0$ on $(v_-,v_+)$ and $\int_0^1b(v)\,dv=1$.
+\item An explicit reference primitive $\Gamma_{\rm ref}$ with positive curvature
+$\Lambda=d_\Sigma\Gamma_{\rm ref}$, a reference-area upper bound $A_{\rm ref}>0$, and a positive
+physical density floor $\kappa_-$ relative to $\Lambda$ on the correction region:
+$\kappa(p)\ge\kappa_-\Lambda$ for $p\in\Delta$.
+\item A finite coordinate-box presentation of that region: explicit chart maps and inverses,
+partition weights, unit-mass coordinate bumps, and a rooted tree on the boxes in which every box other than the root has an overlapping parent of smaller index.
+Rectangular integration along this tree defines the operator $\mathcal P$ of \Ssec{sec:native-toric}.
+\item The product fibre coordinates of the affine model. In the four-dimensional instance these
+are the explicit equivariant coordinates on the cover.
+\item A collar cutoff $\chi_\partial$, equal to one near the boundary and zero on the inner region
+containing the annulus, together with the model's proved tail bound. A second, larger finite atlas
+covers the whole closed model region for the Moser flows.
+\end{enumerate}
+\end{definition}
+
+Every item is supplied by the model formulas. The fixed annulus and dual form are constructed in
+\Ssec{sec:vtr}; the finite atlas and tree are in \Ssec{sec:native-toric}.
+The annular gauge is identically one on $|s_{\rm a}|<b_1=(b+w)/2$.
+We write $\mathcal A^+$ for this open band and $\mathcal A$ for the smaller open band
+$|s_{\rm a}|<(b+b_1)/2$. Both contain the working band $0\le s\le1$ in their interior.
+Thus the clock $f(s)=S(s)$ is constant on collars of the boundary of $\mathcal A$.
+Put $\eta=df\wedge\beta$ and write
+$\Lambda=a_\Lambda(s,v)\,ds\wedge dv$, $a_\Lambda>0$.
+For the periodic four-dimensional instance the background $e_\Lambda\Lambda$ is $e_h\nu$ (Remark~\ref{rem:hdl-four}).
+
+\begin{lemma}[Top power]\label{lem:hdl-top-power}
+\lean{SymplecticPacking.Forms.pf_splitForm,
+SymplecticPacking.Handle.Cubic.OmegaPreG_split,
+OAI.PackingSufficiencySupport.Hamiltonian.toric_horizontalCoupling_isInvertible,
+OAI.PackingSufficiencySupport.Hamiltonian.oneCovectorForm_isInvertible}
+\uses{def:mech-model, def:hdl-handle-data}
+\begin{enumerate}[label=(\alph*)]
+\item In local product coordinates let $\kappa'$ be a base two-form and $a'_1,\dots,a'_m$ base one-forms, with
+coefficients depending on the base point and on $p$. Then
+$(\omega_V+\kappa'+\sum_jdp_j\wedge a'_j)^n=n\,\omega_V^m\wedge\kappa'$.
+\item On $E|_{\mathcal A^+}$, in the explicit product coordinates, let $\sigma_\Sigma=a_\Sigma(s,v)\,ds\wedge dv$ be positive, let $G(s,w)$ be smooth and
+independent of $v$, and $e>0$. Then
+$\big(\omega_V+e\sigma_\Sigma+d(G\beta)\big)^n=n\,(e a_\Sigma(s,v)+b(v)\,\partial_sG)\,\omega_V^m\wedge ds\wedge dv$.
+\end{enumerate}
+In particular the forms in (a) are nondegenerate where $\kappa'>0$; when closed, they are
+symplectic there. The forms in (b) are symplectic where $\partial_sG\ge0$.
+\end{lemma}
+
+\begin{proof}
+Write $x_j,y_j$ for the real fibre coordinate covectors and $s,t$ for the base
+covectors at a point. Every $dp_j$ has the form $u_jx_j+v_jy_j$ and every $a'_j$
+has the form $A_js+B_jt$. For $B=A_js+B_jt$, the identity
+\[
+ x_j\wedge y_j+(u_jx_j+v_jy_j)\wedge B
+ =(x_j-v_jB)\wedge(y_j+u_jB)
+\]
+factors each block as a decomposable two-form. These blocks commute and square
+to zero. Their sum therefore has zero $(m+1)$-st power, and its $m$-th power is
+$m!$ times their product. Against the base area, every base correction in that
+product vanishes. Adding $\kappa'$ now gives (a) by the binomial formula. This is a
+Cartesian identity, including points at which a moment differential vanishes.
+
+For (b), write $d(G\beta)=\partial_sG\,ds\wedge\beta+d_wG\wedge\beta$.
+Its mixed part has rank one: it is a fibre covector wedged with the single base
+covector $\beta$. Apply the same block factorization with a common base covector
+to obtain $n\omega_V^m\wedge(e\sigma_\Sigma+\partial_sG\,ds\wedge\beta)$.
+The displayed coefficient follows from $\beta=b(v)\,dv$. Positive coefficients
+make the top power nonzero. Thus a closed form of either displayed type is symplectic.
+\end{proof}
+
+\subsection{The first path}\label{sec:hdl-first}
+
+Set
+\begin{equation}\label{eq:hdl-eh}
+ e_\Lambda=\min\left(\frac{\gamma_*}{32A_{\rm ref}},\frac{\kappa_-}{2}\right)>0,
+ \qquad \epsilon_0=\frac{\gamma_*}{16}.
+\end{equation}
+The model tail estimate and the reference-area bound give
+\begin{equation}\label{eq:hdl-collar}
+ \int_{\Sigma_\ell}\chi_\partial\kappa(p)\le\frac{\gamma_*}{32},\qquad
+ e_\Lambda\int_{\Sigma_\ell}\Lambda\le\frac{\gamma_*}{32}\qquad(p\in\Delta).
+\end{equation}
+Apply the finite primitive operator $\mathcal P$ of \Ssec{sec:native-toric}, a finite sum of rectangular integrals over the boxes corrected along the tree so that $d\mathcal P\omega=\omega$ for every two-form $\omega$ of total mass zero, to
+$(1-\chi_\partial)(\kappa(p)-e_\Lambda\Lambda)$, then subtract its annular period and an exact annular gauge.
+The resulting primitive $\Gamma_n$ is the formula in \Sref{Construction}{cons:native-normalization}.
+It has
+\begin{equation}\label{eq:hdl-ksm}
+\begin{gathered}
+ \kappa_{\rm sm}(p)=\chi_\partial\kappa(p)+(1-\chi_\partial)e_\Lambda\Lambda,\qquad
+ \epsilon_{\rm sm}(p)=\int_{\Sigma_\ell}\kappa_{\rm sm}(p),\\
+ H^*(p)=\Hb(p)-\epsilon_{\rm sm}(p),\qquad
+ d_\Sigma\Gamma_n(p)=\kappa_{\rm sm}(p)+H^*(p)\eta .
+\end{gathered}
+\end{equation}
+The mass equality is proved by calibration with the root bump (\Sref{Lemma}{lem:native-calibration}); the
+construction itself uses the ratio of two finite coordinate integrals. Since
+$H^*(p)=\int_{\Sigma_\ell}(1-\chi_\partial)(\kappa(p)-e_\Lambda\Lambda)$, the support of $1-\chi_\partial$ lies in
+the correction region, and $\kappa(p)\ge\kappa_-\Lambda\ge2e_\Lambda\Lambda$ there, we have $H^*\ge0$ on $\Delta$;
+and by \eqref{eq:hdl-collar}
+\begin{equation}\label{eq:hdl-budget}
+ 0\le\epsilon_{\rm sm}\le\epsilon_0\le\gamma/16,\qquad
+ H^*\ge\Hb-\gamma_*/16.
+\end{equation}
+The background is positive, agrees with the physical curvature near the outer boundary, and equals
+$e_\Lambda\Lambda$ on the annulus. There the period and gauge corrections give
+$\Gamma_n=e_\Lambda\Gamma_{\rm ref}+f(s)H^*(p)\beta$ on an open neighbourhood of the working band.
+Define
+\begin{equation}\label{eq:hdl-alpha1}
+ \alpha_1=\Gamma_n-\Gamma_{\rm phys}.
+\end{equation}
+
+\begin{proposition}[First path]\label{prop:hdl-first-path}
+\lean{SymplecticPacking.HighDim.RawModelAgreement.normalization_target,
+SymplecticPacking.HighDim.RawModelAgreement.relativePath_semantic,
+SymplecticPacking.Bundle.alpha1_curvature, SymplecticPacking.Bundle.Cubic.alpha1_annulus}
+The form $\Omega_\lambda=\Omega+\lambda d\alpha_1$, $0\le\lambda\le1$, is symplectic on a
+neighbourhood of the model region. Its base curvature is the positive convex combination of
+$\kappa$ and $d_\Sigma\Gamma_n$, and on the annulus its endpoint is
+\[
+ \Omega_1=\omega_V+e_\Lambda\Lambda+d\big(f(s)H^*(p)\beta\big).
+\]
+The variation primitive is horizontal and toric, is smooth in the moment variables, and vanishes
+near the outer base boundary.
+\end{proposition}
+\begin{proof}
+The normalisation identities give the base curvature and the annular normal form. A toric mixed term
+does not affect the top power, so the positive convex combination is nondegenerate. The difference
+$\Gamma_n-\Gamma_{\rm phys}$ has compact support in the interior of the base, which gives the boundary
+statement. All moment derivatives are derivatives of the explicit primitive formulas.
+\end{proof}
+
+\subsection{The twist}\label{sec:hdl-twist}
+
+The generators $Q_t$ satisfy $\partial_tq_t=X_{Q_t}\circ q_t$. On a collar of each outer face the $Q_t$
+Poisson-commute with $\mu_\nu$, so $\mu_\nu$ is constant along the trajectories of the isotopy there. The inverse
+isotopy $q_t^{-1}$ is generated by $-Q_t\circ q_t$, which Poisson-commutes with $\mu_\nu$ on a slightly smaller collar
+because $q_t$ preserves $\mu_\nu$ there. Hence neither $q_t$ nor $q_t^{-1}$ moves a point across an outer face:
+$q_t(V_\Delta)=V_\Delta$, $q_t(\operatorname{int}V_\Delta)=\operatorname{int}V_\Delta$, and $q_t$ maps each outer face into
+itself. We write $q=q_1$.
+
+Over the annulus, in the explicit product coordinates, the coefficient of $\beta$ in $\Omega_1$
+rises from $0$ to $H^*(p)$. The twist changes the fibre identification across the annulus from the identity to $q$.
+For $\lambda\in[0,1]$ define on $E|_{\mathcal A}$
+\begin{equation}\label{eq:hdl-twist}
+ \mathcal D_\lambda(s,v,w)=\big(s,v,q_{\lambda f(s)}(w)\big),\qquad
+ Q^\lambda_s=\lambda f'(s)\,Q_{\lambda f(s)},\qquad
+ G_\lambda(s,w)=f(s)\,H^*\big(p(q_\lambda^{-1}(w))\big),
+\end{equation}
+and $\mathcal D=\mathcal D_1$. Since $\partial_s\big(q_{\lambda f(s)}(w)\big)=\lambda f'(s)\,(\partial_tq_t)_{t=\lambda f(s)}(w)$, the
+function $Q^\lambda_s$ generates the $s$-dependence: $\partial_sq_{\lambda f(s)}=X_{Q^\lambda_s}\circ q_{\lambda f(s)}$.
+
+\begin{lemma}[Suspension]\label{lem:hdl-suspension}
+\lean{SymplecticPacking.HighDim.RawModelAgreement.firstPath_semantic, SymplecticPacking.Handle.Cubic.suspension, SymplecticPacking.Handle.Cubic.eta_support}
+\uses{def:hdl-handle-data, def:mech-datum, prop:hdl-first-path}
+On $E|_{\mathcal A}$, for $\lambda\in[0,1]$:
+\begin{enumerate}[label=(\roman*)]
+\item $\mathcal D_\lambda^*\omega_V=\omega_V+d\big[(Q^\lambda_s\circ q_{\lambda f(s)})\,ds\big]$;
+\item with the horizontal one-form
+\[
+ \eta_\lambda=(Q^\lambda_s\circ q_{\lambda f(s)})\,ds
+ +f(s)\Big[H^*\big(p(q_\lambda^{-1}q_{\lambda f(s)}(w))\big)-H^*\big(p(w)\big)\Big]\beta ,
+\]
+one has
+$\mathcal D_\lambda^*\big(\omega_V+e_\Lambda\Lambda+d(G_\lambda\beta)\big)=\omega_V+e_\Lambda\Lambda+d\big(f(s)H^*(p)\beta\big)+d\eta_\lambda$;
+\item $\eta_0=0$, $\eta_\lambda$ is smooth in $(\lambda,s,v,w)$, and $\eta_\lambda=0$ for $s\notin(0,1)$.
+Hence $\eta_\lambda$ extends by zero to a horizontal one-form on a neighbourhood of $V_\Delta(E)$, supported over
+$\mathcal A$, and $\Omega_1+d\eta_\lambda=\mathcal D_\lambda^*\big(\omega_V+e_\Lambda\Lambda+d(G_\lambda\beta)\big)$ on $E|_{\mathcal A}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) Put $\Theta(s,w)=Q^\lambda_s(q_{\lambda f(s)}(w))$, independent of $v$; the right side is $\omega_V+d_w\Theta\wedge ds$. The
+differential of $\mathcal D_\lambda$ fixes $\partial_v$, maps a vertical vector $u$ to $Dq\,u$
+($q=q_{\lambda f(s)}$) and $\partial_s$ to $\partial_s+X_{Q^\lambda_s}(q(w))$; the form $\omega_V$ sees only vertical
+components. On two vertical vectors both sides give $\omega_V(u_1,u_2)$, because $q$ is symplectic. On
+$(\partial_s,u)$ the left side is $\omega_V(X_{Q^\lambda_s},Dq\,u)=-dQ^\lambda_s(Dq\,u)=-d_w\Theta(u)$, which is also
+$(d_w\Theta\wedge ds)(\partial_s,u)$. Pairs containing $\partial_v$, and $(\partial_s,\partial_v)$, give zero on both sides.
+(ii) $\mathcal D_\lambda$ fixes base points, so it preserves $\Lambda$ and $\beta$ and
+$\mathcal D_\lambda^*(G_\lambda\beta)=(G_\lambda\circ\mathcal D_\lambda)\beta$, with
+$G_\lambda\circ\mathcal D_\lambda=f(s)H^*(p(q_\lambda^{-1}q_{\lambda f(s)}w))$; add (i).
+(iii) For $s\le0$, $f=f'=0$ and both terms vanish. For $s\ge1$, $f=1$, $f'=0$ and
+$q_\lambda^{-1}q_{\lambda f(s)}=q_\lambda^{-1}q_\lambda=\mathrm{id}$, so the bracket vanishes exactly. The last identity is (ii)
+together with Proposition~\ref{prop:hdl-first-path}.
+\end{proof}
+
+Using the fixed map $q_\lambda^{-1}$ in $G_\lambda$, rather than $q_{\lambda f(s)}^{-1}$, makes the bracket vanish identically for
+$s\ge1$ and gives $\partial_sG_\lambda=f'(s)H^*(p(q_\lambda^{-1}w))$, with no derivative of the isotopy.
+
+\emph{The second path.} Put $\Omega^{(1)}_\lambda=\Omega_1+d\eta_\lambda$. Off $E|_{\mathcal A}$ it equals $\Omega_1$. On
+$E|_{\mathcal A}$ it is $\mathcal D_\lambda^*$ of a form whose top power is, by Lemma~\ref{lem:hdl-top-power}(b),
+$n(e_\Lambda a_\Lambda(s,v)+b\,f'H^*(p(q_\lambda^{-1}w)))\,\omega_V^m\wedge ds\wedge dv$. This is positive on a neighbourhood of $V_\Delta(E)$:
+the background $e_\Lambda\Lambda$ is positive and $H^*\ge0$ at every fibre moment in $\Delta$. Smoothness and compactness then give an open nondegenerate neighbourhood (\Sref{Lemma}{lem:shd-nbhd}); $\mathcal D_\lambda$ preserves orientation. So $\Omega^{(1)}_\lambda$, $\lambda\in[0,1]$, is an
+exact symplectic path (\Sref{Proposition}{prop:shd-second-path}). The map $\mathcal D_\lambda$ itself is defined only over
+$\mathcal A$; only the forms are glued to $E$.
+
+\subsection{Layers and the Moser map}\label{sec:hdl-layers}
+
+Fix source capacities $\rho_i^\sharp<a_i$ and put $\sigma_i=(a_i-\rho_i^\sharp)/2>0$.
+Define the smooth caps and the collar coefficient by
+\begin{equation}\label{eq:hdl-caps}
+ h_i(p)=(a_i-|p|)S\big((a_i-|p|)/\sigma_i\big)\quad(1\le i\le k),\qquad
+ J=K-H^*=K-\Hb+\epsilon_{\rm sm} .
+\end{equation}
+Put $N=k+1$ and $D_s=1/(3N+1)$. For $j=1,\dots,N$ set
+$l_j=(3j-2)D_s$, $r_j=(3j-1)D_s$, $I_j=[l_j,r_j]$ and
+$\varsigma_j(s)=S\big(2(s-l_j-D_s/4)/D_s\big)$; the last index $j=N$ is denoted by $*$.
+The intervals are ordered and disjoint in $(0,1)$, and each clock is constant on collars
+of its interval endpoints, with $\varsigma_j'\ge0$.
+
+The constants enter below only through \eqref{eq:hdl-budget} and the residual bound
+$\gamma_{\rm res}=\gamma-\sup_\Delta\epsilon_{\rm sm}\ge15\gamma/16$.
+
+\begin{proposition}[Layers]\label{prop:hdl-layers}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.smoothCap_smooth,
+SymplecticPacking.HighDim.ToricPackingStages.smoothCap_nonneg,
+SymplecticPacking.HighDim.ToricPackingStages.smoothCap_le,
+SymplecticPacking.HighDim.ToricPackingStages.smoothCap_ge}
+\uses{def:mech-datum, lem:hdl-suspension, S-lem:shd-nbhd}
+Under the hypotheses of Theorem~\ref{thm:mech-packing}, with $\epsilon_{\rm sm}$ from \eqref{eq:hdl-ksm} and $h_i,J$ from \eqref{eq:hdl-caps}:
+\begin{enumerate}[label=(\roman*)]
+\item each $h_i$ is smooth on $\R^m$ ($2n\ge6$; for $n=2$ see Remark~\ref{rem:hdl-four}), and
+$0\le h_i(p)\le(a_i-|p|)_+$ and $(a_i+\rho_i^\sharp)/2-|p|\le h_i(p)$;
+it vanishes for $|p|\ge a_i$ and equals $a_i-|p|$ for $|p|\le(a_i+\rho_i^\sharp)/2$;
+\item the residual $R^*(w)=K\big(p(q^{-1}w)\big)-J\big(p(w)\big)-\sum_{i=1}^kh_i\big(p(w)\big)$ satisfies, for $w\in V_\Delta$,
+\[
+ R^*(w)\ \ge\ \gamma-\sup_\Delta\epsilon_{\rm sm}\ \ge\ \frac{15\gamma}{16}>0 ;
+\]
+\item the final coefficient
+$G_{\rm f}(s,w)=J(p(w))+\sum_{i=1}^k\varsigma_i(s)h_i(p(w))+\varsigma_*(s)R^*(w)$ satisfies  $\partial_sG_{\rm f}\ge0$ on
+$\mathcal A\times V_\Delta$; $G_{\rm f}=J\circ p$ for $s\le l_1$; $G_{\rm f}=K\circ p\circ q^{-1}$ for
+$s\ge r_*$; and on $I_i\times V_\Delta$, $1\le i\le k$,
+\[
+ G_{\rm f}(s,w)=A_i(p(w))+\varsigma_i(s)h_i(p(w)),\qquad A_i=J+\sum_{j<i}h_j .
+\]
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) Write $x=a_i-|p|$. For $x\le0$ the cap is zero. For $0<x<\sigma_i$, the bounds
+$0\le S(x/\sigma_i)\le1$ give $0\le xS(x/\sigma_i)\le x$ and $x-\sigma_i\le0\le h_i$.
+For $x\ge \sigma_i$ the cap equals $x$. Thus $x-\sigma_i\le h_i\le x_+$ in all cases.
+(ii) Let $w\in V_\Delta$ and $z=q^{-1}(w)\in V_\Delta$, so that $w=q(z)$. Using $J=K-\Hb+\epsilon_{\rm sm}$, the hypothesis
+$\Hb-\sum_i(a_i-|p|)_+\ge P$ and (i),
+\begin{align*}
+R^*(w)&=K(p(z))-K(p(qz))+\Hb(p(qz))-\epsilon_{\rm sm}(p(qz))-\sum_ih_i(p(qz))\\
+&\ge K(p(z))-(K-P)(p(qz))-\sup_\Delta\epsilon_{\rm sm}
+\ \ge\ \gamma-\sup_\Delta\epsilon_{\rm sm},
+\end{align*}
+by Definition~\ref{def:mech-datum} at the point $z$. Finally $\epsilon_{\rm sm}\le\gamma/16$ by \eqref{eq:hdl-budget}.
+(iii) $\partial_sG_{\rm f}=\sum_i\varsigma_i'h_i+\varsigma_*'R^*\ge0$ by (i), and because $R^*>0$ on $V_\Delta$ by (ii). For $s\le l_1$ all $\varsigma_j$ vanish; for $s\ge r_*$
+all equal one and $J+\sum_ih_i+R^*=K\circ p\circ q^{-1}$. On $I_i$, $\varsigma_j=1$ for $j<i$ and $\varsigma_j=0$ for $j>i$,
+including $j=*$.
+\end{proof}
+
+The comparison is used at the source point $z=q^{-1}(w)$: the twist transports the budget $K$ of level $p(z)$ to the
+fibre point $w$ where it is spent. The residual layer comes last, so all non-toric dependence on $w$ is confined to
+$I_*$ and the ball layers see only functions of $p$.
+
+\emph{The third path.} Keep $\mathcal D$ fixed and interpolate the coefficient from $G_1=f(s)H^*\circ p\circ q^{-1}$ to
+$G_{\rm f}$. On $E|_{\mathcal A}$ put $\xi_{\mathcal A}=((G_{\rm f}-G_1)\circ\mathcal D)\,\beta$. On the lower collar
+$s\le0$, $\mathcal D=\mathrm{id}$, $G_1=0$ and $G_{\rm f}=J\circ p$; on the upper collar $s\ge1$,
+$G_1\circ\mathcal D=H^*\circ p$ and $G_{\rm f}\circ\mathcal D=K\circ p\circ q^{-1}\circ q=K\circ p$. So
+$\xi_{\mathcal A}=J(p)\beta$ on both collars, and
+\begin{equation}\label{eq:hdl-xi}
+ \xi=J(p)\,\mathrm{pr}^*\beta+\operatorname{ext}_0\big(\xi_{\mathcal A}-J(p)\beta\big),
+\end{equation}
+where $\operatorname{ext}_0$ denotes extension by zero (the form $\xi_{\mathcal A}-J(p)\beta$ vanishes over both collars of
+$\mathcal A$), is a horizontal one-form on a neighbourhood of $V_\Delta(E)$; the first term is a global toric form,
+since $p$ and $\beta$ are. Put $\Omega^{(2)}_\tau=\Omega^{(1)}_1+\tau\,d\xi$ and $\Omega_{\rm final}=\Omega^{(2)}_1$. On
+$E|_{\mathcal A}$,
+\begin{equation}\label{eq:hdl-final}
+\begin{aligned}
+ \Omega^{(2)}_\tau&=\mathcal D^*\big(\omega_V+e_\Lambda\Lambda+d(\hat G_\tau\beta)\big),&\hat G_\tau&=(1-\tau)G_1+\tau G_{\rm f},\\
+ \Omega_{\rm final}&=\mathcal D^*\Omega_{\rm pre},&\Omega_{\rm pre}&=\omega_V+e_\Lambda\Lambda+d(G_{\rm f}\beta);
+\end{aligned}
+\end{equation}
+off $E|_{\mathcal A}$, $\Omega^{(2)}_\tau=\Omega_1+\tau\,dJ\wedge\beta$ differs from $\Omega_1$ by a toric mixed term. By
+Lemma~\ref{lem:hdl-top-power}, Proposition~\ref{prop:hdl-layers}(iii) and \Sref{Lemma}{lem:shd-nbhd}, every $\Omega^{(2)}_\tau$ is
+symplectic on a neighbourhood of $V_\Delta(E)$ (\Sref{Proposition}{prop:shd-layer-path}). Two different toric coefficients at the two
+ends of $\mathcal A$ would have to be interpolated across the rest of $\Sigma$, changing its area; the single form
+$J(p)\mathrm{pr}^*\beta$ adds only the mixed term $dJ\wedge\beta$, which does not enter the top power.
+
+For each of the three paths write its primitive as $\lambda_{j,t}=\lambda_V+Q_{j,t}$ and its variation
+as $\nu_{j,t}=\partial_tQ_{j,t}$; these are $\alpha_1$, $\partial_t\eta_t$ and $\xi$, respectively.
+In the larger finite atlas use the whole-path Gram cutoff $\chi_j$ of
+\Sref{Construction}{cons:native-packing}. It is one near $[0,1]\times V_\Delta(E)$ and has compact spatial
+support in the nondegenerate locus. Define the cut field by
+$\iota_{Y_{j,t}}d\lambda_{j,t}=-\chi_j\nu_{j,t}$, computed in the charts of the finite atlas, and let $\Phi_j$ be
+its time-one map. Put $\Phi=\Phi_2\circ\Phi_1\circ\Phi_0$ and use the abbreviation
+$\Phi^{-1}=\Phi_0^{-1}\circ\Phi_1^{-1}\circ\Phi_2^{-1}$.
+
+\begin{proposition}[Moser maps]\label{prop:hdl-faces}
+\lean{SymplecticPacking.HighDim.RawFlowAtlasSpec.pathFlow_eq_horizontalMoserMap,
+SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.fullMoserFlow_diffeomorph,
+SymplecticPacking.HighDim.RawModelAgreement.native_packing_spec}
+The three cut fields are smooth with common compact spatial support. Their time-one maps are
+diffeomorphisms, preserve the model region and its interior in both directions, and satisfy
+$\Phi_j^*\Omega_{j,1}=\Omega_{j,0}$ there. Consequently
+\[
+ \Phi^*\Omega_{\rm final}=\Omega.
+\]
+\end{proposition}
+\begin{proof}
+Near each outer face the variation primitives annihilate the Hamiltonian field of the face moment. Every path form is
+invariant under the flow of that moment there: the toric terms are, and the comparator isotopy commutes with it
+because $Q_t$ Poisson-commutes with $\mu_\nu$ on the collar (Definition~\ref{def:mech-datum}\ref{it:mech-datum-collar}),
+so $\iota_{X_{\mu_\nu}}\Omega_{j,t}=-d\mu_\nu$ on the collar.
+The comparator's face-collar condition therefore gives $d\mu_\nu(Y_{j,t})=0$ whenever that moment is
+near its boundary value. A trajectory cannot cross the corresponding level in either direction;
+this argument applies to all faces, including their intersections. The variation primitives vanish
+near the outer base boundary. The fields have compact support, so their flows are complete and their
+inverse maps are the backward flows. On the model region $\chi_j=1$, and Cartan's identity gives
+\[
+ \frac d{dt}\Phi_{j,t}^*\Omega_{j,t}
+ =\Phi_{j,t}^*d\bigl(\iota_{Y_{j,t}}\Omega_{j,t}+\nu_{j,t}\bigr)=0.
+\]
+The finite coordinate ODEs and their inverse endpoints are exactly the maps used in the construction.
+\end{proof}
+
+\emph{Layer coordinates.} On the layer $\Lambda_i=\{l_i<s<r_i,\ v_-<v<v_+\}\times\operatorname{int}V_\Delta$ (product
+coordinates) let $T(v)=\int_{v_-}^vb$, a diffeomorphism $(v_-,v_+)\to(0,1)$ with $dT=\beta$, and
+\begin{equation}\label{eq:hdl-layer-x}
+ \ell(s,T)=\frac{e_\Lambda a_\Lambda(s,v(T))}{b(v(T))},\qquad
+ x_i(s,T,p)=\int_{l_i}^s\ell(u,T)\,du+\varsigma_i(s)h_i(p).
+\end{equation}
+Then $\partial_sx_i=\ell+\varsigma_i'h_i>0$, $x_i=0$ at $s=l_i$ and $x_i>h_i(p)$ at $s=r_i$, so for $0<x<h_i(p)$ and
+$0<T<1$ there is a unique root $s=s_i(x,T,p)\in(l_i,r_i)$, smooth by the implicit function theorem. Since
+$e_\Lambda\Lambda=\ell(s,T)\,ds\wedge dT$ and, by Proposition~\ref{prop:hdl-layers}(iii),
+$d(G_{\rm f}\beta)=(\varsigma_i'h_i\,ds+dA_i+\varsigma_i\,dh_i)\wedge dT$ on $\Lambda_i$,
+\begin{equation}\label{eq:hdl-layer-form}
+ \Omega_{\rm pre}=\omega_V+dx_i\wedge dT+dA_i(p)\wedge dT\qquad\text{on }\Lambda_i .
+\end{equation}
+
+Two explicit maps finish the layer. The \emph{multi-angle shear} $\mathrm{Sh}_A$, which rotates each fibre coordinate
+$w_j$ by the angle $-2\pi T\partial_jA(p(w))$, removes the term $dA_i(p)\wedge dT$ from~\eqref{eq:hdl-layer-form}
+(\Sref{Lemma}{lem:hdl-shear}). The \emph{disc-to-strip map} $\Psi_\delta\colon\C\to(0,\infty)\times(0,1)$ is an explicit
+symplectomorphism onto its image with $0<x<\pi|z|^2+\delta/2$ (\Sref{Proposition}{prop:hdl-strip}); the excess $\delta/2$
+is unavoidable, since a closed disc of area $a$ does not embed area-preservingly in $\{0<x<a\}\times(0,1)$, and it is paid
+once for all concentric discs.
+
+\subsection{Proof of Theorem~\ref{thm:mech-packing}}\label{sec:hdl-proof}
+
+For a higher-dimensional input, let the model, handle data, capacities $a_i$, function $P$ and comparison datum $(K,q)$ with gap $\gamma$ be as in
+Theorem~\ref{thm:mech-packing}, with the bounds \eqref{eq:hdl-collar}, and let
+$\rho_i<a_i$. Write $\C^n=\C\times\C^m\ni(z_{\rm b},z_{\rm f})$, $\varpi=\pi|z_{\rm b}|^2$, $p=p(z_{\rm f})$, so that
+$\omega_0=\omega_\C(z_{\rm b})+\omega_V(z_{\rm f})$ and $B(c)=\{\varpi+|p|\le c\}$.
+
+\emph{Parameters.} Put
+\[
+ \hat\rho_i=\frac{3a_i+\rho_i}4,\qquad \varepsilon_i=\frac{a_i-\hat\rho_i}4,
+\]
+so that $\rho_i<\hat\rho_i<a_i$ and $B(\rho_i)\subset\Bo(\hat\rho_i)$; the open ball $\Bo(\hat\rho_i)$ is the domain of
+the embedding. In \eqref{eq:hdl-caps} take $\rho_i^\sharp=\hat\rho_i$; these are the constants of
+\Sref{equation}{eq:shd-constants}.
+
+\emph{Forms and Moser map.} Construct $c$, $\kappa_{\rm sm}$, $\alpha_1$, the paths $\Omega_\lambda$, $\Omega^{(1)}_\lambda$,
+$\Omega^{(2)}_\tau$, the twist $\mathcal D$, the coefficient $G_{\rm f}$ and the Moser map $\Phi$ as above. By
+Proposition~\ref{prop:hdl-faces}, $\Phi^*\Omega_{\rm final}=\Omega$, and by \eqref{eq:hdl-final}
+$\Omega_{\rm final}=\mathcal D^*\Omega_{\rm pre}$ on $E|_{\mathcal A}$, where $\mathcal D$ is a diffeomorphism of
+$\mathcal A\times V_\Delta$ fixing base points, with inverse $(s,v,w)\mapsto(s,v,q_{f(s)}^{-1}(w))$ preserving
+$\operatorname{int}V_\Delta$.
+
+\emph{Layer maps.} For $(z_{\rm b},z_{\rm f})\in B^\circ(\hat\rho_i)$ let $(x,T)=\Psi_{\varepsilon_i}(z_{\rm b})$
+(\Sref{Proposition}{prop:hdl-strip}). Then $|p|<\hat\rho_i<a_i$, so $z_{\rm f}\in\operatorname{int}V_\Delta$ because
+$\{|p|\le a_i\}\subset\tau_\Delta\Delta$, and
+\[
+ 0<x<\varpi+\frac{\varepsilon_i}2
+ <\hat\rho_i-|p|+\frac{a_i-\hat\rho_i}{8}
+ <\frac{a_i+\hat\rho_i}{2}-|p|\le h_i(p)
+\]
+by Proposition~\ref{prop:hdl-layers}(i). Define
+\[
+ \mathcal E_i(z_{\rm b},z_{\rm f})=\Big(s_i\big(x,T,p\big),\ v(T),\ \mathrm{Sh}_{A_i,T}(z_{\rm f})\Big)\in\Lambda_i ,
+\]
+with the root $s_i$ of \eqref{eq:hdl-layer-x} and the shear of \Sref{Lemma}{lem:hdl-shear} ($\mathrm{Sh}_{A_i,T}$ preserves $p$).
+$\mathcal E_i$ is the composite of $\Psi_{\varepsilon_i}\times\mathrm{id}$, the shear $\mathrm{Sh}_{A_i}$ and the inverse of the layer
+coordinates $(s,v,w)\mapsto(x_i,T,w)$, each a diffeomorphism onto an open set; by \eqref{eq:hdl-layer-form},
+\Sref{Lemma}{lem:hdl-shear} and \Sref{Proposition}{prop:hdl-strip},
+\[
+ \mathcal E_i^*\Omega_{\rm pre}=(\Psi_{\varepsilon_i}\times\mathrm{id})^*\big(\omega_V+dx\wedge dT\big)=\omega_\C+\omega_V=\omega_0 .
+\]
+Put
+\[
+ \psi_i=\Phi_0^{-1}\circ\Phi_1^{-1}\circ\Phi_2^{-1}
+             \circ\mathcal D^{-1}\circ\mathcal E_i
+       =\Phi^{-1}\circ\mathcal D^{-1}\circ\mathcal E_i
+       \colon B^\circ(\hat\rho_i)\to E .
+\]
+
+In \Sref{Construction}{cons:native-packing} the map $\mathcal D^{-1}\circ\mathcal E_i$ is written as a composite whose factors are the planar map, the unique inverse layer chart, the inverse angular clock,
+the annular covering map and the inverse comparator shear. The endpoint factors are, in order,
+the inverse flows of $Q_0=(1-t)\Gamma_{\rm phys}+t\Gamma_n$,
+$Q_1=\Gamma_n+\eta_t$ and $Q_2=\Gamma_n+\eta_1+t\xi$.
+Thus $\psi_i$ is the map of \Sref{Construction}{cons:native-packing} with $\rho_i^\sharp=\hat\rho_i=(3a_i+\rho_i)/4$.
+
+\emph{Conclusions.} (a) $\psi_i^*\Omega=\mathcal E_i^*(\mathcal D^{-1})^*(\Phi^{-1})^*\Omega=\mathcal E_i^*(\mathcal D^{-1})^*\Omega_{\rm final}
+=\mathcal E_i^*\Omega_{\rm pre}=\omega_0$, and $\psi_i$ is an injective immersion of an open set, hence a smooth symplectic embedding of
+the neighbourhood $\Bo(\hat\rho_i)$ of $B(\rho_i)$. (b) The image of $\mathcal E_i$ lies in
+$\{l_i<s<r_i\}\times\operatorname{int}V_\Delta$, and $\mathcal D^{-1}$, $\Phi^{-1}$ map $\operatorname{int}V_\Delta(E)$ into itself
+(Proposition~\ref{prop:hdl-faces}), so $\psi_i$ takes values in $\operatorname{int}V_\Delta(E)$. (c) The intervals
+$(l_i,r_i)$ are pairwise disjoint, so the images of the $\mathcal E_i$ are pairwise disjoint.
+The maps $\mathcal D^{-1}$ and $\Phi^{-1}$ are common injective maps for all $i$, and therefore preserve this disjointness.
+
+
+Every ingredient is given by a formula, a fixed linear operator, a definite integral, the unique solution of an explicit ODE
+($\Phi$) or a unique root ($s_i$), so $\psi_i$ is explicit in the sense of Definition~\ref{def:intro-levels}.
+The verification of these maps is \Sref{Theorem}{thm:shd-packing}, with the strip and
+layer estimates in \Sref{Proposition}{prop:str-layer} and \Sref{Proposition}{prop:str-embeddings}. \qed
+
+The source margin $a_i-\rho_i$ pays for the strip excess and for an open neighbourhood of each given
+closed ball. For $2n\ge6$ the caps lie below the original tents and their deficit is retained in the final residual
+layer, while the background and collar consume at most $\gamma_*/16$; in dimension four the caps lie above the tents
+by a total of at most $g/32$, which the residual budget absorbs (\Sref{Lemma}{lem:shd4-budget}).
+
+\begin{remark}[Dimension four]\label{rem:hdl-four}
+For $n=2$ the base is the closed torus of \Sref{Section}{sec:cub}, with the handle data of
+\Sref{Proposition}{prop:cub-handle}; there is no collar and no atlas, and the construction is carried out on the cover
+$\R^2\times\C$, equivariantly under the deck maps (\Ssec{sec:shd-four}). The background is $e_h\nu$ with $e_h=g/16$,
+$\nu=du\wedge dv$, and the first path is $\Omega_0+t\,d\alpha_1$ with the closed-form primitive $\alpha_1$ of
+\Sref{Construction}{cons:fer-alpha1}. The twist uses the clock $f(u)=S((u-\frac7{48})/\frac1{24})$, which is
+$S(2s-\frac12)$ in the handle coordinate $s=12u-\frac32$, and the $k+1$ layer intervals lie inside its ramp. The caps are $h_i(p)=\frac12\bigl(a_i-p+\sqrt{(a_i-p)^2+\mu_h^2}\bigr)$ with
+$\mu_h=g/(16k)$; they lie above the tents and exceed them in total by at most $g/32$, so a comparison gap
+$\frac{31}{32}g$ leaves a residual of at least $\frac78g$. The three stages are concatenated into one flow, cut off
+only in the moment variable, on $\{p<h+2\delta_m\}$, $\delta_m=\min((d_n-h)/4,g/100)$. All three variation
+primitives vanish as covectors on the marked fibres, so the flow fixes them pointwise and the images avoid
+$\{Z_0=0\}$ (\Sref{Lemma}{lem:shd4-fibres}, \Sref{Propositions}{prop:shd4-moser} and~\Snum{prop:shd4-maps}).
+\end{remark}

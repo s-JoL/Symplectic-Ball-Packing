@@ -1,0 +1,615 @@
+%======================================================================
+\section{The finite comparator}\label{sec:fcp}
+
+This section proves the scalar part of the comparison theorem: the iterated coordinate rearrangement of a rational
+convex polyhedral function is again rational convex polyhedral, and after an explicit number of iterations it gives,
+once smoothed, a comparison function with an explicit gap. It proves \Mref{Lemma}{lem:cmp-rearrangement}, gives the
+detailed form of \Mref{Proposition}{prop:cmp-fixed-point} and the composition lemma used in the proof of
+\Mref{Theorem}{thm:cmp-main}, and records the scalar identities behind \Mref{Proposition}{prop:cmp-linear}.
+
+\subsection{Setting}\label{sec:fcp-setting}
+
+Throughout, $m\ge1$ and
+\[
+ \Delta=\{p\in\R^m_{\ge0}:\langle b_\nu,p\rangle\le\ell_\nu,\ \nu=1,\dots,N_\Delta\},\qquad
+ b_\nu\in\Q^m_{\ge0},\quad\ell_\nu\in\Q_{>0},
+\]
+is a compact full-dimensional polytope. It is \emph{downward closed}: if $p\in\Delta$ and $0\le p'\le p$ coordinatewise,
+then $p'\in\Delta$, because all $b_\nu$ are nonnegative. In particular $0\in\Delta$ and $\tau\Delta\subset\Delta$ for
+$0\le\tau\le1$. We use the moments $p$, $|p|=\sum_jp_j$ and the form $\omega_V$ of \S\ref{sec:pre}, put
+$V_\Delta=p^{-1}(\Delta)\subset\C^m$, write $\mathbf e_1,\dots,\mathbf e_m$ for the standard basis of $\R^m$, and
+write $\|\cdot\|$ for the uniform norm on $\Delta$. As in \Msec{sec:cmp}, the letter $P$ denotes an arbitrary concave
+function on $\Delta$, to be applied with $P=\Pb$ or with a concave minorant of $\Pb$; it is unrelated to the compiled
+polynomial. The letters $y$, $L$, $\lambda$, $\eta_\Delta$, $M_P$, $\beta_P$, and in \S\ref{sec:fcp-equal} the
+letters $s,a,c_s,g,A,B,\Lambda$, are local to this section and to \Msec{sec:cmp}, where they have the same meaning.
+
+Fix a coordinate $j$. We write $p=(y,x)$ with $x=p_j$ and $y=(p_i)_{i\ne j}\in\R^{m-1}$ (for $m=1$ the variable $y$
+is absent). If $b_{\nu j}=0$ for every $\nu$, then $t\mathbf e_j\in\Delta$ for all $t\ge0$, which contradicts
+compactness; so the set $\{\nu:b_{\nu j}>0\}$ is nonempty and
+\[
+ L(y)=\min_{\nu:\,b_{\nu j}>0}L_\nu(y),\qquad L_\nu(y)=\frac{\ell_\nu-\sum_{i\ne j}b_{\nu i}y_i}{b_{\nu j}},
+\]
+is a minimum of finitely many rational affine functions, hence concave, continuous and piecewise affine on
+$\R^{m-1}$. Let $\Delta_j=\{y:(y,0)\in\Delta\}$ be the projection of $\Delta$ along $\mathbf e_j$; it is a compact
+convex polytope (a point if $m=1$). For $y\in\Delta_j$ we have $L(y)\ge0$, and
+\begin{equation}\label{eq:fcp-slices}
+ \Delta=\{(y,x):y\in\Delta_j,\ 0\le x\le L(y)\}.
+\end{equation}
+Indeed, for $y\in\Delta_j$ the constraints with $b_{\nu j}=0$ do not involve $x$ and hold because $(y,0)\in\Delta$,
+while those with $b_{\nu j}>0$ say $x\le L_\nu(y)$; conversely $(y,x)\in\Delta$ implies $(y,0)\in\Delta$ by downward
+closure. The \emph{slice} through $y\in\Delta_j$ is $\{y\}\times[0,L(y)]$; it may have length zero.
+
+A function on $\Delta$ is \emph{rational convex polyhedral} if it is the restriction to $\Delta$ of
+$\max_{\iota\in I}\phi_\iota$ for a finite nonempty family of affine functions $\phi_\iota$ with rational coefficients,
+and \emph{rational concave piecewise affine} if it is the restriction of $\min_{u\in U}\psi_u$ for such a family. Sums,
+maxima and nonnegative rational multiples of rational convex polyhedral functions are rational convex polyhedral (for
+sums, $\max_\iota\phi_\iota+\max_{\iota'}\phi'_{\iota'}=\max_{\iota,\iota'}(\phi_\iota+\phi'_{\iota'})$), and $-P$ is
+rational convex polyhedral when $P$ is rational concave piecewise affine. A sum of rational concave piecewise affine
+functions is rational concave piecewise affine, and for rational $a$ so is $-(a-|p|)_+=\min(0,|p|-a)$. Hence each
+profile $\Pb=\Hb-\sum_i(a_i-|p|)_+$ with affine $\Hb$ is concave piecewise affine, and it is rational when $\Hb$ and the
+auxiliary capacities $a_i$ are rational. This applies to the cubic model (Lemma~\ref{lem:cub-auxiliary}), the quadric
+model (\S\ref{sec:qdr}) and the large-ball model in dimension at least eight (\S\ref{sec:lrg}). In dimension six the
+profile of the bordered model need not be concave, and the comparison is applied to the concave affine minorant of
+Proposition~\ref{prop:sxr-minorant}.
+
+Rationality is used only in Lemma~\ref{lem:fcp-polyhedral} and Proposition~\ref{prop:fcp-fixed-point}(a),(d), to
+conclude that the iterates have rational coefficients and that $\mu$, $\lambda$ and $N$ are rational. Every other
+statement of this section, and every inequality in Proposition~\ref{prop:fcp-fixed-point}, holds verbatim for real
+$b_\nu,\ell_\nu$ and real affine pieces; for real auxiliary data this real-coefficient version is the one used. The
+four-dimensional equal case, where $a=t_0/\sqrt k$ is irrational for non-square $k$, uses the closed-form datum of
+\Mref{Proposition}{prop:cmp-linear} (\S\ref{sec:fcp-equal}).
+
+\subsection{Coordinate rearrangement}\label{sec:fcp-rearrangement}
+
+For a convex function on an interval, the increasing rearrangement has the min--max form of
+Lemma~\ref{lem:fcp-interval}. We use this form throughout because it turns rearrangement into projection: the
+epigraph of $R_jF$ is the image of a rational polyhedron (Lemma~\ref{lem:fcp-polyhedral}). Rearranging a rational
+convex polyhedral function therefore takes one Fourier--Motzkin elimination, and the fixed-point iteration of
+\S\ref{sec:fcp-fixed} stays inside a class of finite rational objects. We first treat one variable. For $L\ge0$ and a
+continuous function $f$ on $[0,L]$ put
+\[
+ \mathcal L_f(b)=\bigl|\{v\in[0,L]:f(v)\le b\}\bigr|\qquad(b\in\R),
+\]
+where $|\cdot|$ is Lebesgue measure; $\mathcal L_f$ is the distribution function of $f$.
+
+\begin{lemma}[Increasing rearrangement on an interval]\label{lem:fcp-interval}
+Let $L\ge0$, let $f\colon[0,L]\to\R$ be continuous and convex, and for $0\le x\le L$ put
+\[
+ f^\sharp(x)=\min_{0\le a\le L-x}\max\bigl(f(a),f(a+x)\bigr).
+\]
+\begin{enumerate}[label=(\alph*)]
+\item For $b\in\R$ and $0\le x\le L$: $f^\sharp(x)\le b$ if and only if $\{f\le b\}\ne\emptyset$ and
+ $\mathcal L_f(b)\ge x$. Hence $f^\sharp(x)=\min\{b\ge\min f:\mathcal L_f(b)\ge x\}$, the increasing rearrangement of
+ $f$.
+\item $\mathcal L_{f^\sharp}=\mathcal L_f$; in particular $\int_0^Lf^\sharp=\int_0^Lf$.
+\item $f^\sharp$ is nondecreasing, $f^\sharp(0)=\min f$ and $f^\sharp(L)=\max f$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The minimum exists because the admissible $a$ form the compact interval $[0,L-x]$ and the function minimised is
+continuous. Since $f$ is convex, every sublevel set $\{f\le b\}$ is a closed interval, possibly empty, and on any
+interval $[a,a+x]$ we have $f\le\max(f(a),f(a+x))$.
+
+(a) If $f^\sharp(x)\le b$, choose $a$ with $\max(f(a),f(a+x))\le b$; then $[a,a+x]\subset\{f\le b\}$, so this set is
+nonempty and has length at least $x$. Conversely, if $\{f\le b\}=[u,v]$ with $v-u\ge x$, then $a=u$ is admissible
+and both endpoints of $[u,u+x]\subset[u,v]$ lie in $\{f\le b\}$, so $f^\sharp(x)\le b$. Thus
+$\{b:f^\sharp(x)\le b\}=\{b:\{f\le b\}\ne\emptyset,\ \mathcal L_f(b)\ge x\}$, and the minimum of the right-hand set is
+$f^\sharp(x)$.
+
+(b) If $b<\min f$, then $\{f^\sharp\le b\}=\emptyset$ by (a), and $\mathcal L_f(b)=0=\mathcal L_{f^\sharp}(b)$. If
+$b\ge\min f$, then by (a) $\{x\in[0,L]:f^\sharp(x)\le b\}=[0,\mathcal L_f(b)]$ (note $\mathcal L_f(b)\le L$), whose
+length is $\mathcal L_f(b)$. Two bounded measurable functions on $[0,L]$ with the same distribution function have the
+same integral, since for $c_0$ below both, $\int_0^L\varphi=c_0L+\int_{c_0}^\infty\bigl(L-\mathcal L_\varphi(b)\bigr)\,db$.
+
+(c) Let $x\le x'$ and let $[a,a+x']$ be a minimising interval for $x'$. Then $a$ is admissible for $x$, and both
+$a$ and $a+x$ lie in $[a,a+x']$, so $\max(f(a),f(a+x))\le\max(f(a),f(a+x'))=f^\sharp(x')$. For $x=0$ the admissible
+$a$ range over $[0,L]$ and $f^\sharp(0)=\min f$. For $x=L$ only $a=0$ is admissible, and
+$f^\sharp(L)=\max(f(0),f(L))=\max f$ by convexity.
+\end{proof}
+
+Let $R_j$ be the coordinate rearrangement of \Mref{Definition}{def:cmp-rearrangement}. For $F$ continuous on $\Delta$
+put
+\begin{gather*}
+ E=\{(y,x,a):(y,x)\in\Delta,\ a\ge0,\ a+x\le L(y)\},\\
+ \Phi_F(y,x,a)=\max\bigl(F(y,a),F(y,a+x)\bigr)\quad\text{on }E,
+\end{gather*}
+so that $(R_jF)(y,x)=\min_a\Phi_F(y,x,a)$, the minimum over the $a$ with $(y,x,a)\in E$. By \eqref{eq:fcp-slices} the
+points $(y,a)$ and $(y,a+x)$ lie in $\Delta$ for $(y,x,a)\in E$; the set $E$ is compact and $\Phi_F$ is continuous.
+
+\begin{lemma}[Properties of $R_j$]\label{lem:fcp-rearrangement}
+\uses{lem:fcp-interval, M-def:cmp-rearrangement}
+Let $F,G$ be continuous convex functions on $\Delta$ and $j\in\{1,\dots,m\}$.
+\begin{enumerate}[label=(\roman*)]
+\item For every $y\in\Delta_j$, $x\mapsto(R_jF)(y,x)$ is the function $f^\sharp$ of Lemma~\ref{lem:fcp-interval} for
+ $f=F(y,\cdot)$ on $[0,L(y)]$: the increasing rearrangement of $F$ on the slice through $y$. It is nondecreasing,
+ $(R_jF)(y,0)=\min_{[0,L(y)]}F(y,\cdot)$ and $(R_jF)(y,L(y))=\max_{[0,L(y)]}F(y,\cdot)$.
+\item $R_jF$ is continuous and convex on $\Delta$.
+\item $\int_\Delta R_jF=\int_\Delta F$.
+\item If $F\le G$ then $R_jF\le R_jG$. For $c\in\R$ and $\alpha\ge0$, $R_j(F+c)=R_jF+c$ and
+ $R_j(\alpha F)=\alpha R_jF$; in particular $R_j0=0$. Moreover $\|R_jF-R_jG\|\le\|F-G\|$,
+ $\max_\Delta R_jF=\max_\Delta F$ and $\min_\Delta R_jF=\min_\Delta F$.
+\item If $i\ne j$ and $F$ is nondecreasing in $p_i$ (that is, $F(p)\le F(p')$ whenever $p,p'\in\Delta$ differ only in
+ the $i$-th coordinate and $p_i\le p'_i$), then so is $R_jF$. Consequently $\Rcal F=R_m\circ\dots\circ R_1F$ is
+ nondecreasing in every coordinate, and $\Rcal F(0)=\min_\Delta\Rcal F$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) By \eqref{eq:fcp-slices}, for $(y,x)\in\Delta$ the admissible $a$ are exactly $0\le a\le L(y)-x$, and the points
+$(y,a)$, $(y,a+x)$ lie on the slice through $y$. So the definition of $R_j$ is the formula of
+Lemma~\ref{lem:fcp-interval} applied to $F(y,\cdot)$ on $[0,L(y)]$, and the remaining statements are
+Lemma~\ref{lem:fcp-interval}(a),(c).
+
+(ii) \emph{Continuity.} Let $(y_n,x_n)\to(y,x)$ in $\Delta$. Upper semicontinuity: let $a$ be a minimiser at $(y,x)$
+and put $a_n=\min\bigl(a,L(y_n)-x_n\bigr)$. Then $a_n\ge0$, $(y_n,x_n,a_n)\in E$, and $a_n\to a$ because
+$L(y_n)-x_n\to L(y)-x\ge a$; hence
+$\limsup_n(R_jF)(y_n,x_n)\le\lim_n\Phi_F(y_n,x_n,a_n)=\Phi_F(y,x,a)=(R_jF)(y,x)$. Lower semicontinuity: pass to a
+subsequence along which $(R_jF)(y_n,x_n)$ converges to the $\liminf$, choose minimisers $a_n$, and pass to a further
+subsequence with $a_n\to a^*$. Since $E$ is closed, $(y,x,a^*)\in E$, so
+$(R_jF)(y,x)\le\Phi_F(y,x,a^*)=\lim\Phi_F(y_n,x_n,a_n)=\liminf(R_jF)(y_n,x_n)$. This covers slices of length zero,
+where $a^*=0$.
+
+\emph{Convexity.} Let $p_0=(y_0,x_0)$ and $p_1=(y_1,x_1)$ be points of $\Delta$ with minimisers $a_0,a_1$, let
+$0\le\vartheta\le1$, and put $y_\vartheta=(1-\vartheta)y_0+\vartheta y_1$, $x_\vartheta=(1-\vartheta)x_0+\vartheta x_1$,
+$a_\vartheta=(1-\vartheta)a_0+\vartheta a_1$. Then $a_\vartheta\ge0$ and, by concavity of $L$,
+$a_\vartheta+x_\vartheta\le(1-\vartheta)L(y_0)+\vartheta L(y_1)\le L(y_\vartheta)$, so $a_\vartheta$ is admissible at
+$(y_\vartheta,x_\vartheta)$. Convexity of $F$ gives
+$F(y_\vartheta,a_\vartheta)\le(1-\vartheta)F(y_0,a_0)+\vartheta F(y_1,a_1)\le(1-\vartheta)(R_jF)(p_0)+\vartheta(R_jF)(p_1)$,
+and the same bound for $F(y_\vartheta,a_\vartheta+x_\vartheta)$. Hence
+$(R_jF)(y_\vartheta,x_\vartheta)\le(1-\vartheta)(R_jF)(p_0)+\vartheta(R_jF)(p_1)$.
+
+(iii) By \eqref{eq:fcp-slices} and Fubini, $\int_\Delta G=\int_{\Delta_j}\int_0^{L(y)}G(y,x)\,dx\,dy$ for continuous
+$G$ (for $m=1$ there is no outer integral). By (i) and Lemma~\ref{lem:fcp-interval}(b) the inner integrals of $F$ and
+$R_jF$ agree for every $y$.
+
+(iv) If $F\le G$, then $\Phi_F\le\Phi_G$ pointwise on $E$ and the minima satisfy the same inequality. Since
+$\max(u+c,v+c)=\max(u,v)+c$ and $\max(\alpha u,\alpha v)=\alpha\max(u,v)$ for $\alpha\ge0$, we have
+$\Phi_{F+c}=\Phi_F+c$ and $\Phi_{\alpha F}=\alpha\Phi_F$. Applying monotonicity and translation to
+$G-\|F-G\|\le F\le G+\|F-G\|$ gives $\|R_jF-R_jG\|\le\|F-G\|$. By (i),
+$\max_\Delta R_jF=\max_{y}\max_{[0,L(y)]}F(y,\cdot)=\max_\Delta F$, and likewise for the minimum.
+
+(v) Let $(y,x)$ and $(y',x)$ be points of $\Delta$ with $y'=y+t\mathbf e_i$, $t\ge0$. Since $b_{\nu i}\ge0$,
+$L(y)\ge L(y')$. A minimiser $a'$ at $(y',x)$ satisfies $0\le a'$ and $a'+x\le L(y')\le L(y)$, so it is admissible at
+$(y,x)$, and $F(y,a')\le F(y',a')$, $F(y,a'+x)\le F(y',a'+x)$ because $F$ is nondecreasing in $p_i$. Hence
+$(R_jF)(y,x)\le(R_jF)(y',x)$. For the consequence, $R_1F$ is nondecreasing in $p_1$ by (i); each further $R_j$
+makes the output nondecreasing in $p_j$ and, by what was just shown, keeps it nondecreasing in $p_1,\dots,p_{j-1}$.
+For $p\in\Delta$ the path from $0$ to $p$ that raises one coordinate at a time stays in $\Delta$ by downward closure,
+so $\Rcal F(0)\le\Rcal F(p)$.
+\end{proof}
+
+\begin{lemma}[Polyhedral form]\label{lem:fcp-polyhedral}
+\uses{lem:fcp-rearrangement}
+Let $F=\max_{\iota\in I}\phi_\iota$ be rational convex polyhedral on $\Delta$. Let
+$\Pi\subset\R^{m-1}\times\R\times\R\times\R$ be the rational polyhedron of points $(y,x,t,a)$ satisfying
+\begin{gather*}
+ (y,x)\in\Delta,\qquad a\ge0,\qquad b_{\nu j}(a+x)+\textstyle\sum_{i\ne j}b_{\nu i}y_i\le\ell_\nu\ \ (b_{\nu j}>0),\\
+ t\ge\phi_\iota(y,a),\qquad t\ge\phi_\iota(y,a+x)\qquad(\iota\in I).
+\end{gather*}
+Then the epigraph $\{(p,t):p\in\Delta,\ t\ge(R_jF)(p)\}$ of $R_jF$ over $\Delta$ is the image of $\Pi$ under
+$(y,x,t,a)\mapsto(y,x,t)$. Eliminating $a$ from the defining inequalities of $\Pi$ by one step of Fourier--Motzkin
+elimination gives finitely many rational inequalities $\langle\alpha_l,p\rangle+\zeta_lt\le\delta_l$
+($l\in\mathcal S$) that define this epigraph, every $\zeta_l$ is $\le0$, the set $\mathcal S_-=\{l:\zeta_l<0\}$ is
+nonempty, and
+\[
+ R_jF=\max_{l\in\mathcal S_-}\frac{\langle\alpha_l,p\rangle-\delta_l}{-\zeta_l}\qquad\text{on }\Delta .
+\]
+In particular $R_jF$ is rational convex polyhedral, and so is $\Rcal F$.
+\end{lemma}
+
+\begin{proof}
+Let $(y,x)\in\Delta$ and $a\ge0$ with $a+x\le L(y)$. Then $(y,a)$ and $(y,a+x)$ lie in $\Delta$ by
+\eqref{eq:fcp-slices}, and $t\ge\max(F(y,a),F(y,a+x))$ is equivalent to the $2|I|$ inequalities in the second line.
+Hence $(y,x,t,a)\in\Pi$ if and only if $(y,x,a)\in E$ and $t\ge\Phi_F(y,x,a)$. Since the minimum defining $R_jF$ is
+attained, $t\ge(R_jF)(y,x)$ holds if and only if some $a$ with $(y,x,t,a)\in\Pi$ exists. This proves the first
+assertion.
+
+Write each inequality of $\Pi$ as $\kappa a\le\Psi(y,x,t)$ with $\kappa\in\Q$ and $\Psi$ rational affine. Those with
+$\kappa>0$ give upper bounds $a\le\Psi/\kappa$, those with $\kappa<0$ lower bounds $a\ge\Psi/\kappa$, and those with
+$\kappa=0$ do not involve $a$. A real $a$ satisfying all of them exists if and only if every lower bound is at most every
+upper bound and the inequalities without $a$ hold; this is Fourier--Motzkin elimination of one variable
+\cite[\S12.2]{Schrijver1986}, and it produces finitely many rational affine inequalities in $(y,x,t)$ that define the
+projection.
+
+Fix $p\in\Delta$. The set $\{t:(p,t)\in\text{epigraph}\}$ is $[(R_jF)(p),\infty)$. An inequality with $\zeta_l>0$
+would fail for large $t$; so $\zeta_l\le0$ for every $l$. The inequalities with $\zeta_l=0$ hold at every
+$p\in\Delta$, because $\Delta$ is the projection of the epigraph. If $\mathcal S_-$ were empty, every $t$ would be
+admissible at $p$, contradicting the lower bound $(R_jF)(p)$; and for $p\in\Delta$ the admissible $t$ are exactly
+those with $t\ge(\langle\alpha_l,p\rangle-\delta_l)/(-\zeta_l)$ for all $l\in\mathcal S_-$. Taking the least such $t$
+gives the formula. The statement for $\Rcal F$ follows by applying this $m$ times.
+\end{proof}
+
+\begin{proof}[Proof of \Mref{Lemma}{lem:cmp-rearrangement}]
+Item (i) there is items (ii) and (iii) of Lemma~\ref{lem:fcp-rearrangement}; item (ii) there is item (iv);
+item (iii) there is item (i) together with the last assertion of item (iv); item (iv) there is item (v); and item (v)
+there is Lemma~\ref{lem:fcp-polyhedral}.
+\end{proof}
+
+\subsection{The finite fixed point}\label{sec:fcp-fixed}
+
+For $0<\lambda<1$ and a concave continuous $P$ on $\Delta$, let $\mathcal C$ be the set of continuous convex functions on
+$\Delta$ and $T_\lambda(F)=\Rcal(\lambda F-P)$. The fixed point $K_\lambda$ of $T_\lambda$ is used as in
+\cite[\S2.2]{OpenAI2026}. Here $\lambda$ and the number $N$ of iterations are given by rational formulas, and the
+$N$-th iterate $K_N$, a rational convex polyhedral function obtained by finitely many Fourier--Motzkin eliminations,
+already satisfies the comparison inequality with gap $\tfrac78d$. The following proposition is the detailed form of
+\Mref{Proposition}{prop:cmp-fixed-point}.
+
+\begin{proposition}[Finite comparator, detailed form]\label{prop:fcp-fixed-point}
+\uses{lem:fcp-rearrangement, lem:fcp-polyhedral}
+Let $\tau_\Delta\in(0,1)$ be rational and let $P$ be rational concave piecewise affine on $\Delta$ with mean
+$\mu=\vol(\Delta)^{-1}\int_\Delta P>0$ and $P\ge\beta_P$ on $\Delta\setminus\tau_\Delta\Delta$ for some $\beta_P>0$. Let
+$d\in\Q$ with $0<d<\min(\mu,\beta_P)$, and put
+\[
+ \eta_\Delta=(1-\tau_\Delta)(\mu-d),\qquad M_P=\max\bigl(1,\ d-\min_\Delta P+1\bigr),\qquad
+ \lambda=1-\frac{\eta_\Delta}{2(M_P+\eta_\Delta)} .
+\]
+\begin{enumerate}[label=(\alph*)]
+\item $\mu$, $\min_\Delta P$, $\max_\Delta P$ and $\|P\|$ are rational and are computed from $(\Delta,P)$ by finitely
+ many rational operations; hence so are $\eta_\Delta$, $M_P$ and $\lambda$, and $\tfrac12<\lambda<1$,
+ $\lambda\eta_\Delta/(1-\lambda)=2M_P+\eta_\Delta>d-\min_\Delta P$.
+\item $T_\lambda$ maps $\mathcal C$ to itself and is a contraction with constant $\lambda$ for the uniform norm. Its
+ unique fixed point $K_\lambda$ is convex, nondecreasing in every coordinate, has mean $-\mu/(1-\lambda)$, and
+ $\|K_\lambda\|\le\|P\|/(1-\lambda)$.
+\item $(1-\lambda)\max_\Delta K_\lambda<-d$, and $\Rcal(K_\lambda-P)\le K_\lambda-d$ on $\Delta$.
+\item The iterates $K_0=0$, $K_{r+1}=T_\lambda(K_r)$ are rational convex polyhedral and satisfy
+ $\|K_r-K_\lambda\|\le\lambda^r\|P\|/(1-\lambda)$. Each $K_{r+1}$ is obtained from $K_r$ by $m$ Fourier--Motzkin
+ eliminations (Lemma~\ref{lem:fcp-polyhedral}).
+\item Let $N_0$ be the least integer $N_0\ge0$ with $\lambda^{N_0}\|P\|/(1-\lambda)<d/16$. For every $N\ge N_0$,
+ \[
+  N_0\le1+\frac1{1-\lambda}\log^+\frac{16\|P\|}{d(1-\lambda)}\qquad\text{and}\qquad
+  \Rcal(K_N-P)\le K_N-\tfrac78d\quad\text{on }\Delta .
+ \]
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a) Write $G=-P=\max_{u\in U}(-\psi_u)$ with rational affine $\psi_u$.
+
+\emph{Extrema.} For a rational convex polyhedral $H$, $\Rcal H$ is nondecreasing in every coordinate and has the same
+minimum as $H$ (Lemma~\ref{lem:fcp-rearrangement}(iv),(v)). Since $0\in\Delta$ and $\Delta\subset\R^m_{\ge0}$,
+\[
+ \operatorname{Min}(H):=(\Rcal H)(0)=\min_\Delta H,
+\]
+and $(\Rcal H)(0)$ is the maximum of the finitely many rational affine functions produced by
+Lemma~\ref{lem:fcp-polyhedral}, evaluated at $0$. For an affine $\phi$, $\max_\Delta\phi=-\operatorname{Min}(-\phi)$, and
+$\max_\Delta\max_u\phi_u=\max_u\max_\Delta\phi_u$. Hence $\min_\Delta P=-\max_\Delta G$ and
+$\max_\Delta P=-\operatorname{Min}(G)$ are rational and are obtained by finitely many eliminations and comparisons, and
+$\|P\|=\max(|\min_\Delta P|,|\max_\Delta P|)$.
+
+\emph{Integrals.} We integrate a rational polynomial $f$ over a region $D\subset\R^r$ given by finitely many rational
+closed halfspaces and contained in a cube $[-M,M]^r$; we add the $2r$ cube inequalities to the list. For $\Delta$ one may
+take $M=1+\sum_{j}\sum_{\nu:\,b_{\nu j}>0}\ell_\nu/b_{\nu j}$, since $0\le p_j\le\ell_\nu/b_{\nu j}$ on $\Delta$ whenever
+$b_{\nu j}>0$, and such $\nu$ exist for every $j$ (\S\ref{sec:fcp-setting}). If $r=0$, the ambient space is a point of
+volume $1$: return $f$ if the (constant) inequalities hold and $0$ otherwise. If $r>0$, write $p=(x,t)$ with
+$x\in\R^{r-1}$. Each inequality with positive (negative) $t$-coefficient, divided by that coefficient, gives an upper
+bound $t\le u_\alpha(x)$ (a lower bound $t\ge l_\beta(x)$) with $u_\alpha,l_\beta$ rational affine; inequalities with zero
+$t$-coefficient are constraints on $x$. The cube inequalities provide at least one bound of each kind. Delete repeated
+affine functions from each of the two lists. For each pair $(\alpha,\beta)$ let $D_{\alpha\beta}\subset\R^{r-1}$ be the
+region defined by the constraints on $x$, the projected cube, and
+\[
+ l_{\beta'}(x)\le l_\beta(x)\ \text{for all }\beta',\qquad u_\alpha(x)\le u_{\alpha'}(x)\ \text{for all }\alpha',\qquad
+ l_\beta(x)\le u_\alpha(x).
+\]
+For $x\in D_{\alpha\beta}$ the fibre $\{t:(x,t)\in D\}$ is $[l_\beta(x),u_\alpha(x)]$, and the sets $D_{\alpha\beta}$
+cover the projection of $D$ (choose $\alpha,\beta$ attaining the minimum and maximum). If $(\alpha,\beta)\ne(\alpha',\beta')$,
+then $D_{\alpha\beta}\cap D_{\alpha'\beta'}$ lies in the zero set of a nonzero difference $u_\alpha-u_{\alpha'}$ or
+$l_\beta-l_{\beta'}$ of distinct affine functions, which is empty or an affine hyperplane, hence a null set. Expanding
+$f(x,t)=\sum_{k=0}^{n}f_k(x)t^k$ and integrating in $t$,
+\[
+ \int_Df=\sum_{\alpha,\beta}\int_{D_{\alpha\beta}}g_{\alpha\beta},\qquad
+ g_{\alpha\beta}(x)=\sum_{k=0}^nf_k(x)\,\frac{u_\alpha(x)^{k+1}-l_\beta(x)^{k+1}}{k+1},
+\]
+by Fubini's theorem on the compact set $D$; fibres of length zero contribute zero. Each $g_{\alpha\beta}$ is a rational
+polynomial and each $D_{\alpha\beta}$ is again a rational halfspace region in a cube, of dimension $r-1$. By induction on
+$r$ the recursion terminates after finitely many rational operations and returns $\int_Df$ exactly, also when $D$ is
+empty or lower-dimensional.
+
+\emph{The mean.} Choose a rational $R$ with $R>|G|$ on $[-M,M]^m$, for instance
+$R=1+\max_u\bigl(|\psi_u(0)|+M\sum_j|\partial_j\psi_u|\bigr)$. The slab
+\[
+ E=\{(p,t):p\in\Delta,\ -\psi_u(p)\le t\ (u\in U),\ t\le R\}
+\]
+is a rational halfspace region in $[-\max(M,R),\max(M,R)]^{m+1}$ whose fibre over $p\in\Delta$ is $[G(p),R]$. By
+Fubini,
+\[
+ \vol(E)=R\vol(\Delta)-\int_\Delta G,\qquad\text{so}\qquad \int_\Delta P=\vol(E)-R\vol(\Delta).
+\]
+Both volumes are computed by the recursion with $f=1$, and $\vol(\Delta)>0$ because $\Delta$ is full-dimensional. Hence
+$\mu$ is rational and computed by finitely many rational operations.
+
+Since $d<\mu$, $\eta_\Delta>0$; since $M_P\ge1$, $1-\lambda=\eta_\Delta/(2(M_P+\eta_\Delta))\in(0,\tfrac12)$. Then
+$\lambda\eta_\Delta/(1-\lambda)=\lambda\cdot2(M_P+\eta_\Delta)=2(M_P+\eta_\Delta)-\eta_\Delta=2M_P+\eta_\Delta$, and
+$2M_P+\eta_\Delta>M_P\ge d-\min_\Delta P+1$.
+
+(b) $\mathcal C$ is a closed subset of the Banach space $C(\Delta)$, hence complete. If $F\in\mathcal C$, then
+$\lambda F-P$ is continuous and convex, and $\Rcal(\lambda F-P)\in\mathcal C$ by
+Lemma~\ref{lem:fcp-rearrangement}(ii). By Lemma~\ref{lem:fcp-rearrangement}(iv),
+$\|T_\lambda F-T_\lambda G\|\le\|\lambda(F-G)\|=\lambda\|F-G\|$. The contraction principle gives a unique fixed point
+$K_\lambda\in\mathcal C$. Since $K_\lambda=\Rcal(\cdots)$, it is nondecreasing in every coordinate by
+Lemma~\ref{lem:fcp-rearrangement}(v). Integrating $K_\lambda=\Rcal(\lambda K_\lambda-P)$ with
+Lemma~\ref{lem:fcp-rearrangement}(iii) gives $\int K_\lambda=\lambda\int K_\lambda-\int P$, so the mean of $K_\lambda$ is
+$-\mu/(1-\lambda)$. Finally $\Rcal0=0$, so $\|K_\lambda\|=\|\Rcal(\lambda K_\lambda-P)-\Rcal0\|\le\lambda\|K_\lambda\|+\|P\|$.
+
+(c) Let $M_\lambda=\max_\Delta K_\lambda$ and suppose $M_\lambda\ge-d/(1-\lambda)$, that is,
+$\lambda M_\lambda\le M_\lambda+d$. We show $\lambda K_\lambda-P<M_\lambda$ on $\Delta$.
+
+If $p\in\Delta\setminus\tau_\Delta\Delta$, then
+$\lambda K_\lambda(p)-P(p)\le\lambda M_\lambda-\beta_P\le M_\lambda+d-\beta_P<M_\lambda$, since $d<\beta_P$.
+
+If $p\in\tau_\Delta\Delta$, write $p=\tau_\Delta v$ with $v\in\Delta$. By (b), $K_\lambda(0)=\min K_\lambda$, and the
+minimum is at most the mean, so $K_\lambda(0)\le-\mu/(1-\lambda)$. Convexity on the segment from $0$ to $v$ gives
+\[
+ K_\lambda(p)\le\tau_\Delta K_\lambda(v)+(1-\tau_\Delta)K_\lambda(0)\le M_\lambda-(1-\tau_\Delta)\bigl(M_\lambda-K_\lambda(0)\bigr),
+\]
+and $M_\lambda-K_\lambda(0)\ge-d/(1-\lambda)+\mu/(1-\lambda)=(\mu-d)/(1-\lambda)$. Hence
+$K_\lambda(p)\le M_\lambda-\eta_\Delta/(1-\lambda)$, and by (a)
+\[
+ \lambda K_\lambda(p)-P(p)\le\lambda M_\lambda-\frac{\lambda\eta_\Delta}{1-\lambda}-\min_\Delta P
+ \le M_\lambda+d-\min_\Delta P-(2M_P+\eta_\Delta)<M_\lambda .
+\]
+
+Since $\Delta$ is compact, $\max_\Delta(\lambda K_\lambda-P)<M_\lambda$. But $\max\Rcal G=\max G$ by
+Lemma~\ref{lem:fcp-rearrangement}(iv) applied $m$ times, so
+$M_\lambda=\max\Rcal(\lambda K_\lambda-P)=\max(\lambda K_\lambda-P)$, a contradiction. Therefore $(1-\lambda)M_\lambda<-d$,
+so $(1-\lambda)K_\lambda<-d$ on $\Delta$ and $K_\lambda-P\le(\lambda K_\lambda-P)-d$. By
+Lemma~\ref{lem:fcp-rearrangement}(iv), $\Rcal(K_\lambda-P)\le\Rcal(\lambda K_\lambda-P)-d=K_\lambda-d$.
+
+(d) $K_0=0$ is rational convex polyhedral. If $K_r$ is, then $\lambda K_r-P$ is (\S\ref{sec:fcp-setting}; $\lambda$
+is rational), and $K_{r+1}=R_m\cdots R_1(\lambda K_r-P)$ is, by $m$ applications of Lemma~\ref{lem:fcp-polyhedral}. The
+contraction gives
+$\|K_r-K_\lambda\|\le\lambda^r\|K_0-K_\lambda\|=\lambda^r\|K_\lambda\|\le\lambda^r\|P\|/(1-\lambda)$ by (b).
+
+(e) $N_0$ is found by comparing rationals. Put $n_0=(1-\lambda)^{-1}\log^+\bigl(16\|P\|/(d(1-\lambda))\bigr)$. If
+$16\|P\|<d(1-\lambda)$, then $N_0=0$. Otherwise every integer $n>n_0$ satisfies
+$\lambda^n\le e^{-(1-\lambda)n}<e^{-(1-\lambda)n_0}=d(1-\lambda)/(16\|P\|)$; so $N_0\le\lfloor n_0\rfloor+1$ in both cases.
+For $N\ge N_0$ the same tail test holds since $0<\lambda<1$.
+Put $\delta_N=\|K_N-K_\lambda\|<d/16$. By Lemma~\ref{lem:fcp-rearrangement}(iv) and (c),
+\[
+ \Rcal(K_N-P)\le\Rcal(K_\lambda-P)+\delta_N\le K_\lambda-d+\delta_N\le K_N-d+2\delta_N<K_N-\tfrac78d .\qedhere
+\]
+\end{proof}
+
+The construction uses the arithmetic count
+\[
+ N=\left\lceil\frac{16\|P\|}{d(1-\lambda)(\lambda^{-1}-1)}\right\rceil+1.
+\]
+Bernoulli's inequality gives $\lambda^{-N}\ge1+N(\lambda^{-1}-1)>16\|P\|/[d(1-\lambda)]$,
+so this count satisfies the tail test and is at least $N_0$.
+
+Only an upper bound for $\|P\|$ enters the argument: if $\bar P\ge\|P\|$ is rational, the least $N$ with
+$\lambda^N\bar P/(1-\lambda)<d/16$ has the same property. The number $\#I$ of affine pieces of $K_N=\max_{\iota\in
+I}\phi_\iota$ is finite and is read off from the eliminations; it enters later only through the smoothing parameter
+$c_K$ of Lemma~\ref{lem:fcp-smoothing}.
+
+\subsection{Smoothing}\label{sec:fcp-smoothing}
+
+\begin{lemma}[Log-sum-exp smoothing]\label{lem:fcp-smoothing}
+Let $\phi_\iota$ ($\iota\in I$, $1\le\#I<\infty$) be affine functions on $\R^m$, $c_K>0$, and
+\[
+ K=\frac1{c_K}\log\sum_{\iota\in I}e^{c_K\phi_\iota}.
+\]
+\begin{enumerate}[label=(\alph*)]
+\item $\max_\iota\phi_\iota\le K\le\max_\iota\phi_\iota+\log(\#I)/c_K$ on $\R^m$; if $\#I=1$, $K$ is the single
+ $\phi_\iota$.
+\item $K$ is real-analytic and convex on $\R^m$, and $K\circ p$ is real-analytic on $\C^m$.
+\item $\nabla K=\sum_\iota\varpi_\iota\nabla\phi_\iota$ with weights
+ $\varpi_\iota=e^{c_K\phi_\iota}/\sum_{\iota'}e^{c_K\phi_{\iota'}}\in(0,1]$, $\sum_\iota\varpi_\iota=1$; in particular
+ $|\partial_iK|\le\max_\iota|\partial_i\phi_\iota|$, and $K$ is nondecreasing in $p_i$ if every $\phi_\iota$ is.
+\end{enumerate}
+If $d>0$ and $c_K$ is an integer with $c_K>32\,\#I/d$, then $\log(\#I)/c_K<d/32$.
+\end{lemma}
+
+\begin{proof}
+(a) With $\phi_{\max}=\max_\iota\phi_\iota$,
+$e^{c_K\phi_{\max}}\le\sum_\iota e^{c_K\phi_\iota}\le\#I\,e^{c_K\phi_{\max}}$; take $\frac1{c_K}\log$.
+
+(c) Differentiating, $\nabla K=\sum_\iota\varpi_\iota\nabla\phi_\iota$, where each $\nabla\phi_\iota$ is a constant
+vector; the bound and the monotonicity follow because the $\varpi_\iota$ are convex weights.
+
+(b) The sum of exponentials of affine functions is real-analytic and positive, and $\log$ is real-analytic on
+$(0,\infty)$. Differentiating (c) once more,
+\[
+ \partial_a\partial_bK=c_K\Bigl(\sum_\iota\varpi_\iota\,\partial_a\phi_\iota\,\partial_b\phi_\iota
+ -\Bigl(\sum_\iota\varpi_\iota\,\partial_a\phi_\iota\Bigr)\Bigl(\sum_\iota\varpi_\iota\,\partial_b\phi_\iota\Bigr)\Bigr),
+\]
+which is $c_K$ times the covariance matrix of the vectors $\nabla\phi_\iota$ under the probability weights
+$\varpi_\iota$, hence positive semidefinite. So $K$ is convex. Since each $p_j=\pi|w_j|^2$ is a polynomial in the real
+coordinates of $w$, $K\circ p$ is real-analytic.
+
+Finally $\log x<x$ for $x\ge1$, so $\log(\#I)/c_K<\#I/c_K<d/32$.
+\end{proof}
+
+\subsection{Composition of coordinate realisations}\label{sec:fcp-composition}
+
+The next lemma concatenates one isotopy per coordinate and adds up their errors. The clock is the flat step $S$ of
+Definition~\ref{def:pre-flat}, all of whose derivatives vanish at $0$ and $1$.
+
+\begin{lemma}[Composition of coordinate realisations]\label{lem:fcp-composition}
+\uses{lem:fcp-rearrangement, def:pre-flat, lem:pre-concat}
+Let $F_0$ be continuous and convex on $\Delta$, $F_j=R_jF_{j-1}$ for $1\le j\le m$, and $e_1,\dots,e_m\ge0$. For each
+$j$ let $Q^{(j)}\colon[0,1]\times\C^m\to\R$ be smooth (with one-sided derivatives in $s$ at $s=0,1$), and let
+$(q^{(j)}_s)_{s\in[0,1]}$ be a smooth isotopy of $\C^m$ (smooth in $(s,w)$ in the same sense) generated by $Q^{(j)}_s$,
+that is, $\partial_sq^{(j)}_s=X^{(j)}_s\circ q^{(j)}_s$ with $\iota_{X^{(j)}_s}\omega_V=-dQ^{(j)}_s$, with
+$q^{(j)}_0=\mathrm{id}$ and $q^{(j)}_s(V_\Delta)=V_\Delta$. Assume:
+\begin{enumerate}[label=(\arabic*)]
+\item there is $\varsigma_j>0$ such that
+ $\{Q^{(j)}_s,\langle b_\nu,p\rangle\}=0$ on $p^{-1}\{\langle b_\nu,p\rangle>\ell_\nu-\varsigma_j\}$ for every $\nu$ and
+ $s$;
+\item $F_{j-1}\bigl(p(q^{(j)}_1(w))\bigr)\le F_j\bigl(p(w)\bigr)+e_j$ for every $w\in V_\Delta$.
+\end{enumerate}
+For $t\in[\frac{r-1}m,\frac rm]$, $r=1,\dots,m$, and $j=m+1-r$, put
+\[
+ q_t=q^{(j)}_{S(mt-r+1)}\circ q^{(j+1)}_1\circ\dots\circ q^{(m)}_1 .
+\]
+Then:
+\begin{enumerate}[label=(\alph*)]
+\item $q_t$ is well defined, $q_0=\mathrm{id}$, $q_1=q^{(1)}_1\circ\dots\circ q^{(m)}_1$, $q_t(V_\Delta)=V_\Delta$, and
+ $(q_t)$ is a smooth isotopy of $\C^m$ generated by the smooth function $Q_t=mS'(mt-r+1)\,Q^{(j)}_{S(mt-r+1)}$ on
+ $[\frac{r-1}m,\frac rm]$; $Q_t=0$ at $t=r/m$;
+\item with $\varsigma=\min_j\varsigma_j$, $\{Q_t,\langle b_\nu,p\rangle\}=0$ on
+ $p^{-1}\{\langle b_\nu,p\rangle>\ell_\nu-\varsigma\}$ for every $\nu$ and $t$;
+\item $F_0\bigl(p(q_1(w))\bigr)\le(\Rcal F_0)\bigl(p(w)\bigr)+\sum_je_j$ for every $w\in V_\Delta$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) Apply Lemma~\ref{lem:pre-concat}(b) with $X=\C^m$, $N=m$, $t_r=r/m$ and $\psi^{(r)}=q^{(m+1-r)}$, the isotopy
+generated by $Y^{(r)}_s=X^{(m+1-r)}_s$, the Hamiltonian field of $Q^{(m+1-r)}_s$. The clocks there are
+$\sigma_r(t)=S(mt-r+1)$, and on $[\frac{r-1}m,\frac rm]$ the concatenation is
+$\psi^{(r)}_{\sigma_r(t)}\circ\psi^{(r-1)}_1\circ\dots\circ\psi^{(1)}_1=q_t$. That lemma gives that $q_t$ is well
+defined and a smooth isotopy of $\C^m$ with $q_0=\mathrm{id}$ and $q_1=\psi^{(m)}_1\circ\dots\circ\psi^{(1)}_1
+=q^{(1)}_1\circ\dots\circ q^{(m)}_1$, generated on $[\frac{r-1}m,\frac rm]$ by the Hamiltonian
+$\sigma_r'(t)Q^{(j)}_{\sigma_r(t)}=mS'(mt-r+1)Q^{(j)}_{S(mt-r+1)}$, which is smooth in $(t,w)$ and vanishes at the
+seams. Each factor maps $V_\Delta$ onto itself, hence so does $q_t$.
+
+(b) On the $r$-th interval $Q_t$ is a multiple of $Q^{(j)}_{s}$ with $s=S(mt-r+1)$, and
+$\{\langle b_\nu,p\rangle>\ell_\nu-\varsigma\}\subset\{\langle b_\nu,p\rangle>\ell_\nu-\varsigma_j\}$.
+
+(c) Fix $w\in V_\Delta$ and put $u_m=w$, $u_{j-1}=q^{(j)}_1(u_j)$ for $j=m,\dots,1$. All $u_j$ lie in $V_\Delta$, and
+$u_0=q_1(w)$. By (2), $F_{j-1}(p(u_{j-1}))\le F_j(p(u_j))+e_j$. Chaining these inequalities from $j=1$ to $j=m$ gives
+$F_0(p(q_1(w)))\le F_m(p(w))+\sum_je_j$, and $F_m=\Rcal F_0$.
+\end{proof}
+
+In the proof of \Mref{Theorem}{thm:cmp-main}, the isotopies $q^{(j)}$ of \Mref{Theorem}{thm:cmp-realisation} for
+$F_{j-1}$, the coordinate $j$ and $e_j=d/(8(m+1))$ satisfy the hypotheses of Lemma~\ref{lem:fcp-composition}, with
+$F_0=K_N-P$: they are smooth Hamiltonian isotopies of $\C^m$ with smooth compactly supported generators; hypothesis
+(2) is \Mref{Theorem}{thm:cmp-realisation}(c); and (1) holds with the collar $\varsigma_j$ of
+\Mref{Theorem}{thm:cmp-realisation}(b), because a function vanishing on an open set has zero Poisson bracket there,
+while for $b_{\nu j}=0$ the bracket vanishes everywhere. Lemma~\ref{lem:fcp-composition}(a),(b) is then the smoothness
+of $(q_t)$ and $(Q_t)$ across the seams and condition~(1) of \Mref{Definition}{def:mech-datum}, and
+Lemma~\ref{lem:fcp-composition}(c) with Proposition~\ref{prop:fcp-fixed-point}(e) gives the estimate
+$(K_N-P)(p(q_1(w)))\le K_N(p(w))-\frac34d$ used there.
+
+\subsection{One fibre coordinate}\label{sec:fcp-one}
+
+For $m=1$ we have $\Delta=[0,h]$ for some rational $h>0$ (a single outer face $p=h$), $L\equiv h$, and $R_1$ is the
+increasing rearrangement of Lemma~\ref{lem:fcp-interval} on $[0,h]$. This is the case of the four-dimensional
+models. Two further facts are used there: the rearrangement does not increase Lipschitz constants along slices, which
+the planar realisation of \S\ref{sec:plc} uses to convert a level error into a value error, and for $m=1$ the
+elimination of Lemma~\ref{lem:fcp-polyhedral} can be replaced by the inversion of a distribution function.
+
+\begin{lemma}[Lipschitz bounds]\label{lem:fcp-lipschitz}
+\uses{lem:fcp-interval, lem:fcp-rearrangement}
+Let $L\ge0$, let $f$ be continuous and convex on $[0,L]$ with $|f(v)-f(v')|\le\Lambda_f|v-v'|$, and let $f^\sharp$ be
+as in Lemma~\ref{lem:fcp-interval}. Then $0\le f^\sharp(x+b)-f^\sharp(x)\le\Lambda_fb$ whenever $0\le x\le x+b\le L$.
+Consequently, for every $m$, if $F$ is continuous and convex on $\Delta$ and $F(y,\cdot)$ is $\Lambda_f$-Lipschitz on
+every slice, then so is $(R_jF)(y,\cdot)$; if $F=\max_\iota\phi_\iota$, one may take
+$\Lambda_f=\max_\iota|\partial_j\phi_\iota|$.
+\end{lemma}
+
+\begin{proof}
+The lower bound is Lemma~\ref{lem:fcp-interval}(c). Let $[a,a+x]$ be a minimising interval for $x$ and put
+$a'=\min(a,L-x-b)$. Then $0\le a'\le a$ and $a'+x+b\le L$, so $a'$ is admissible for $x+b$. If $a'=a$, the new
+endpoints are $a$ and $a+x+b$; if $a'=L-x-b<a$, then $a-a'=a+x+b-L\le b$ and $a'+x+b=L\ge a+x$. In both cases
+$|a'-a|\le b$ and $0\le(a'+x+b)-(a+x)\le b$, so
+$f^\sharp(x+b)\le\max(f(a'),f(a'+x+b))\le\max(f(a),f(a+x))+\Lambda_fb=f^\sharp(x)+\Lambda_fb$. The statement for $R_j$
+follows from Lemma~\ref{lem:fcp-rearrangement}(i). For $F=\max_\iota\phi_\iota$, $F(y,\cdot)$ is a maximum of affine
+functions of slopes $\partial_j\phi_\iota$.
+\end{proof}
+
+\begin{lemma}[Rearrangement of a piecewise affine function]\label{lem:fcp-distribution}
+\uses{lem:fcp-interval, lem:fcp-rearrangement}
+Let $f$ be continuous, convex and piecewise affine on $[0,h]$, with knots $0=\xi_0<\xi_1<\dots<\xi_n=h$ and rational
+knots and values. Put $f_{\min}=\min f$. Then $\mathcal L_f$ is continuous, piecewise affine and strictly increasing on
+$[f_{\min},\max f]$, with $\mathcal L_f(\max f)=h$ and knots among the values $f(\xi_i)$, and
+\[
+ R_1f(x)=f_{\min}\quad(0\le x\le\mathcal L_f(f_{\min})),\qquad R_1f(x)=\mathcal L_f^{-1}(x)\quad(\mathcal L_f(f_{\min})\le x\le h).
+\]
+$R_1f$ is piecewise affine with rational values and with knots among $0$, $h$ and the rational numbers
+$\mathcal L_f(f(\xi_i))$, and it is convex by Lemma~\ref{lem:fcp-rearrangement}(ii).
+\end{lemma}
+
+\begin{proof}
+Put $w_i=\xi_{i+1}-\xi_i>0$, $v_i=f(\xi_i)$, $s_i=(v_{i+1}-v_i)/w_i$ and $c_i=v_i-s_i\xi_i$. The length contributed by the $i$-th affine segment is
+\[
+ d_i(b)=\begin{cases}
+ \max\!\left(0,\min\!\left(\xi_{i+1},\dfrac{b-c_i}{s_i}\right)-\xi_i\right),&s_i>0,\\
+ \max\!\left(0,\xi_{i+1}-\max\!\left(\xi_i,\dfrac{b-c_i}{s_i}\right)\right),&s_i<0,\\
+ w_i\,\mathbf1_{\{b\ge c_i\}},&s_i=0.
+ \end{cases}
+\]
+Indeed, solve the affine inequality on $[\xi_i,\xi_{i+1}]$, using the left endpoint for positive slope and the right
+endpoint for negative slope. Consecutive closed segments overlap only at endpoints, which have measure zero; hence
+$\mathcal L_f(b)=\sum_i d_i(b)$. All constants in this formula are rational. By convexity, a segment with $s_i=0$ lies at
+the level $f_{\min}$ (its zero slope lies between the slopes on either side, which are therefore $\le0$ to the left and
+$\ge0$ to the right), so on $[f_{\min},\max f]$ its contribution is the constant $w_i$. Every other contribution is
+continuous and affine between the values $v_i$ and $v_{i+1}$. Hence $\mathcal L_f$ is continuous and piecewise affine
+on $[f_{\min},\max f]$, with knots among the $v_i$, and the values $\mathcal L_f(v_i)$ are rational.
+
+Let $f_{\min}\le b<b'\le\max f$. By the intermediate value theorem some $v_0\in[0,h]$ has $f(v_0)=\frac12(b+b')$, so
+$v_0\in\{f\le b'\}\setminus\{f\le b\}$. Both sets are closed intervals, the first containing the second (which is
+nonempty), so the convex hull of $\{f\le b\}\cup\{v_0\}$ lies in $\{f\le b'\}$ and is strictly longer than
+$\{f\le b\}$. Thus $\mathcal L_f$ is strictly increasing on $[f_{\min},\max f]$, and $\mathcal L_f(\max f)=h$.
+
+Lemma~\ref{lem:fcp-interval}(a) now gives $R_1f=f_{\min}$ on $[0,\mathcal L_f(f_{\min})]$ and $R_1f=\mathcal L_f^{-1}$ on
+$[\mathcal L_f(f_{\min}),h]$. On each interval between consecutive values $v_i$, $\mathcal L_f(b)=C+\Sigma b$ with rational
+$C,\Sigma$ and $\Sigma>0$, whose inverse is $x\mapsto(x-C)/\Sigma$. So $R_1f$ is piecewise affine with rational
+coefficients and knots among $0$, $h$ and the $\mathcal L_f(v_i)$. Convexity is Lemma~\ref{lem:fcp-rearrangement}(ii).
+\end{proof}
+
+\subsection{Equal balls in dimension four}\label{sec:fcp-equal}
+
+When $k\ge10$ balls of equal capacity are packed, the scalar problem has the closed-form solution of
+\Mref{Proposition}{prop:cmp-linear}. We record the identities and margins used there and in the explicit inner map of
+\S\ref{sec:pll}. Let $k\ge10$ be an integer, $\eta_\star\in(0,\frac14)$ and $t_0=1-\eta_\star/2$, and let
+$s=\sqrt k$, $a=t_0/s$, $h=t_0/3$, $c_s=3s-9$, $g=3(1-t_0)=\frac32\eta_\star$, $A=h/a$, $B=h/(h-a)$ and the tent $\Lambda$ be as
+in \Msec{sec:cmp-linear}. In the equal-capacity branch $\eta_\star=1-\rho\sqrt k$ is the volume defect of the normalised
+capacity $\rho$ (Remark~\ref{rem:rtc-equal}). Put $K_{\rm lin}(p)=c_sp$, $\Pb(p)=3(1-3p)-k(a-p)_+$ and
+$F=K_{\rm lin}-\Pb$ on $\R$, and let $\bar D(h)=\{z\in\C:\pi|z|^2\le h\}$. By \Msec{sec:cmp-linear}, $0<a<h$, $c_s>0$,
+$A,B>0$, $1/A+1/B=1$ (\Mnum{eq:cmp-AB}), and $F=-g+c_s\Lambda$ on $\R$ (\Mnum{eq:cmp-identity}).
+
+\begin{lemma}[The slopes of the tent]\label{lem:fcp-AB}
+\lean{SymplecticPacking.Params.inv_A_add_inv_B, SymplecticPacking.Params.cs_mul_A, SymplecticPacking.Params.cs_mul_B,
+SymplecticPacking.Params.three_s_a}
+$A+B=AB$, $h/A=a$, $h/B=h-a$, and
+\[
+ c_sA=k-3s,\qquad c_sB=3s,\qquad 3sa=3-g .
+\]
+\end{lemma}
+
+\begin{proof}
+Multiplying $1/A+1/B=1$ by $AB$ gives $A+B=AB$; $h/A=a$ and $h/B=h-a$ are the definitions. Using
+$h-a=t_0(s-3)/(3s)$,
+\[
+ c_sA=(3s-9)\frac s3=s^2-3s=k-3s,\qquad c_sB=(3s-9)\frac{s}{s-3}=3s,\qquad 3sa=3t_0=3-g .\qedhere
+\]
+\end{proof}
+
+The tent takes the values
+$\Lambda(0)=Aa=h$, $\Lambda(a)=0$ and $\Lambda(h)=B(h-a)=h$, and by \Mref{Corollary}{thm:cmp-tent-rearrangement} its
+increasing rearrangement on $[0,h]$ is $x\mapsto x$. No area-preserving homeomorphism $q$ of $\bar D(h)$ satisfies
+$\Lambda(p(q(z)))\le\pi|z|^2$ exactly. Indeed, for $0<b<h=Aa$ this would give
+$q(\bar D(b))\subset\{z:\Lambda(\pi|z|^2)\le b\}$, which by \Mref{Lemma}{lem:cmp-tent-sublevel} is the closed annulus
+$\{a-b/A\le\pi|z|^2\le a+b/B\}$ of area $b$ with $a-b/A>0$. The compact set $q(\bar D(b))$ has area $b$, so its
+relatively open complement in the annulus has measure zero; as every nonempty relatively open subset of this annulus has
+positive measure, $q(\bar D(b))$ is the whole annulus. A closed disc is not homeomorphic to an annulus. The inner map of
+\S\ref{sec:pll} achieves the inequality up to an error $4e_q$, where $e_q$ is chosen as follows. The bound
+$e_q\le g/(128c_s)$ makes the cost $c_s\cdot4e_q$ of the inner error at most $g/32$; the bound $e_q\le h/100$ keeps the
+error terms of the inner map small compared with the fibre height.
+
+\begin{definition}[Inner smoothing parameter]\label{def:fcp-eq}
+\lean{SymplecticPacking.Params.eq_, SymplecticPacking.Params.eq_pos, SymplecticPacking.Params.eq_le_h}
+\uses{lem:fcp-AB}
+Put
+\[
+ e_q=\min\Bigl(\frac h{100},\ \frac g{128\,c_s}\Bigr).
+\]
+Then $0<e_q\le h/100$.
+\end{definition}
+
+\begin{lemma}[Margin]\label{lem:fcp-margin}
+\lean{SymplecticPacking.Params.margin_one, SymplecticPacking.Params.K_sub_F_ge}
+\uses{def:fcp-eq, lem:fcp-AB}
+$g-4c_se_q\ge\frac{31}{32}g$. Consequently, for all real $u$ and $x$,
+\[
+ \Lambda(x)\le u+4e_q\quad\Longrightarrow\quad K_{\rm lin}(u)-F(x)\ge\tfrac{31}{32}g .
+\]
+In particular, if $q$ satisfies $\Lambda(p(q(z)))\le\pi|z|^2+4e_q$ on $\bar D(h)$, then
+$(K_{\rm lin}-\Pb)(p(q(z)))\le K_{\rm lin}(\pi|z|^2)-\frac{31}{32}g$ there.
+\end{lemma}
+
+\begin{proof}
+$4c_se_q\le4c_s\cdot g/(128c_s)=g/32$. By (\Mnum{eq:cmp-identity}) and $c_s>0$,
+$K_{\rm lin}(u)-F(x)=c_su+g-c_s\Lambda(x)\ge g-4c_se_q\ge\frac{31}{32}g$. The last statement is the case $u=\pi|z|^2$,
+$x=p(q(z))$.
+\end{proof}

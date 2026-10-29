@@ -1,0 +1,703 @@
+%======================================================================
+\section{Rearranging convex functions by explicit isotopies}\label{sec:plc}
+
+This section proves \Mref{Theorem}{thm:cmp-realisation}: one coordinate rearrangement $R_j$ of a convex
+polyhedral function with real coefficients is realised, up to an arbitrarily small error, by an explicit Hamiltonian isotopy of the toric
+domain $V_\Delta$ (Theorem~\ref{thm:plc-lift}). Theorem~\ref{thm:plc-planar} is the parameter-free planar core.
+Outside the equal-capacity case the four-dimensional branch uses instead the scalar construction of
+\S\ref{sec:scalar-cmp} (Remark~\ref{rem:plc-scaling}).
+
+The construction has three layers. On one slice, rescaled to $[0,1]$, the convex function $f$ is replaced by a
+proper strictly convex potential $U$ (log-sum-exp smoothing plus a reciprocal barrier), and the angle receives a
+proper wall $V$. Both centred wells are then modified on explicit small intervals to be exactly quadratic. The construction of \S\ref{sec:pln} turns this modified pair into a compactly supported Hamiltonian
+isotopy of the disc of area $1$ whose endpoint carries, on a core disc, the centred circle of area $I$ onto the level
+set of $\widetilde U_y(p-p^*(y))+\widetilde V(\theta)$ enclosing area $I$. The only estimate specific to convex $f$ is an area estimate
+(Lemma~\ref{lem:plc-area}): that level lies below $g(I)$ plus a small error, where $g$ is the increasing
+rearrangement of $f$. In the second layer every constant is chosen uniformly in the other moments $y=(p_i)_{i\ne j}$
+on an explicit open parameter domain, which gives one jointly smooth family (Theorem~\ref{thm:plc-param}). In the
+third layer the family is lifted to $\C^m$ by the rescaling of \cite[\S2.3]{OpenAI2026}, with an explicit smooth
+slice length $\ell(y)<L(y)$, an explicit cutoff $\chi(y)$ near degenerate slices, and two open sets which
+define the lifted Hamiltonian on all of $\C^m$ (Definition~\ref{def:plc-slice}). In \cite[\S2.3]{OpenAI2026} the
+planar maps are obtained from an existence lemma on nested discs (compare \cite[Lemma~3.2]{SchlenkFolding}). Here they are given by closed formulas: every
+constant is an explicit function of the data, and the resulting isotopy is one jointly smooth function of the
+parameter, the time and the point.
+
+Fibre Hamiltonians follow $\iota_{X_Q}\omega=-dQ$ (\S\ref{sec:pre-conventions}). We use the conventions of
+\S\ref{sec:pln}: $D(A)=\{z\in\C:\pi|z|^2<A\}$, $\bar D(A)$ its closure, and the standard area form on every plane.
+The notation of \S\ref{sec:fcp} is in force: $\Delta=\{p\in\R^m_{\ge0}:\langle b_\nu,p\rangle\le\ell_\nu\}$, the toric
+domain $V_\Delta=\{w\in\C^m:p(w)\in\Delta\}$ with moments $p(w)=(\pi|w_i|^2)_i$ and form
+$\omega_V=\sum_idp_i\wedge d\theta_i$, the sum of the standard area forms of the coordinate planes, the slice lengths
+$L_\nu$, $L$, the projection $\Delta_j$, the coordinate rearrangement $R_j$ (\Mref{Definition}{def:cmp-rearrangement})
+and the slice description \eqref{eq:fcp-slices}.
+
+%----------------------------------------------------------------------
+\subsection{Planar data and potentials}\label{sec:plc-potentials}
+
+\paragraph{Planar data.} Let $d\ge0$ and let $\mathcal O\subset\R^d$ be open ($d=0$ means that $\mathcal O$ is one point
+and the parameter is absent). Let $\mathcal I$ be a finite nonempty index set and $a_r,b_r\in C^\infty(\mathcal O)$,
+$r\in\mathcal I$, and put
+\begin{equation}\label{eq:plc-f}
+ f_y(p)=\max_{r\in\mathcal I}\bigl(a_r(y)+b_r(y)p\bigr)\qquad(y\in\mathcal O,\ p\in\R).
+\end{equation}
+Let $\Lambda\ge1$ and $M_0$ be real numbers with
+\[
+ |b_r(y)|\le\Lambda\quad\text{and}\quad|a_r(y)|+|b_r(y)|\le M_0\qquad(r\in\mathcal I,\ y\in\mathcal O).
+\]
+We call $(\mathcal O,(a_r,b_r)_{r\in\mathcal I},\Lambda,M_0)$ \emph{planar data}; the families used below are the
+rescaled polytope slices of Definition~\ref{def:plc-slice}, and $d=0$ gives the parameter-free case. The second bound
+implies $|f_y|\le M_0$ on $[0,1]$ and $|b_r(y)|\le M_0$. For $y\in\mathcal O$, $g_y$ denotes the increasing
+rearrangement of $f_y|_{[0,1]}$,
+\[
+ g_y(x)=\min_{0\le a\le1-x}\max\bigl(f_y(a),f_y(a+x)\bigr)\qquad(0\le x\le1),
+\]
+which is nondecreasing with $g_y(0)=\min_{[0,1]}f_y$ and $g_y(1)=\max_{[0,1]}f_y$ (Lemma~\ref{lem:fcp-interval}). Since $f_y$
+is $\Lambda$-Lipschitz on $[0,1]$, Lemma~\ref{lem:fcp-lipschitz} gives
+\begin{equation}\label{eq:plc-glip}
+ 0\le g_y(x')-g_y(x)\le\Lambda(x'-x)\qquad(0\le x\le x'\le1).
+\end{equation}
+
+The scale $\eta$ below is the width of the boundary layer of $[0,1]$ that is sacrificed, $\beta_0$ the width of the
+corresponding angular strips, $\sigma_0$ the size of each smoothing error, $\kappa_0$ and $\nu_0$ the strengths of the
+barrier and of the wall, $c_0$ the sharpness of the log-sum-exp smoothing, $r_0$ a bracket for the minimum point of
+$U_y$, and $\Lambda_2$ a curvature bound. They are chosen so that all errors add up to less than $\frac{11}{32}\xi$
+(Lemma~\ref{lem:plc-area}).
+
+\begin{definition}[Planar constants and potentials]\label{def:plc-constants}
+\uses{lem:fcp-smoothing}
+Given planar data and a real $\xi>0$, put
+\begin{gather*}
+ \eta=\frac12\min\Bigl(\frac1{16},\frac{\xi}{32(\Lambda+1)}\Bigr),\quad \beta_0=\frac\eta8,\quad \sigma_0=\frac\xi8,\quad
+ \nu_0=4\sigma_0\beta_0(1-\beta_0),\quad \kappa_0=\frac{\sigma_0\eta}8,\\
+ c_0=\frac{8(\#\mathcal I+1)}{\sigma_0},\qquad r_0=\min\Bigl(\frac18,\sqrt{\frac{\kappa_0}{4(\Lambda+2\kappa_0+1)}}\Bigr),\qquad
+ \Lambda_2=c_0\Lambda^2,
+\end{gather*}
+and define, for $y\in\mathcal O$,
+\begin{gather*}
+ \tilde f_y(p)=\frac1{c_0}\log\sum_{r\in\mathcal I}\exp\bigl(c_0(a_r(y)+b_r(y)p)\bigr)\quad(p\in\R),\\
+ U_y(p)=\tilde f_y(p)+\kappa_0\Bigl(\frac1p+\frac1{1-p}\Bigr)\quad(0<p<1),\\
+ V(\theta)=\frac{\nu_0\theta^2}{\frac14-\theta^2}\quad\bigl(-\tfrac12<\theta<\tfrac12\bigr).
+\end{gather*}
+\end{definition}
+
+The barrier $\kappa_0(1/p+1/(1-p))$ makes $U_y$ proper on $(0,1)$ even where $f_y$ is
+affine; the wall $V$ plays the same role in the angle. Both perturbations are small away from the boundary: the
+barrier is at most $\sigma_0/4$ on $[\eta,1-\eta]$, and $V\le\sigma_0$ outside the strips of width $\beta_0$ at the two
+angular ends.
+
+\begin{lemma}[The potentials]\label{lem:plc-potentials}
+\uses{def:plc-constants, lem:fcp-smoothing, lem:fcp-lipschitz, def:pln-potential-pair}
+For planar data and $\xi>0$, with the constants of Definition~\ref{def:plc-constants}:
+\begin{enumerate}[label=(\alph*)]
+\item $\tilde f_y(p)$ is $C^\infty$ in $(y,p)\in\mathcal O\times\R$ and real-analytic and convex in $p$; $U$ is $C^\infty$ on
+ $\mathcal O\times(0,1)$ and real-analytic in $p$; $V$ is even and real-analytic on $(-\frac12,\frac12)$ with $V(0)=0$.
+\item (Approximation.) $f_y\le \tilde f_y<f_y+\sigma_0/4$ on $\R$; $U_y>f_y$ on $(0,1)$; $0\le U_y-f_y<\sigma_0/2$ on
+ $[\eta,1-\eta]$; $0\le V\le\sigma_0$ on $[-\frac12+\beta_0,\frac12-\beta_0]$.
+\item (Convexity and properness.) $|\tilde f_y'|\le\Lambda$ and $0\le \tilde f_y''\le\Lambda_2$ on $\R$; $U_y''\ge32\kappa_0$ on $(0,1)$;
+ $U_y(p)\to+\infty$ as $p\downarrow0$ or $p\uparrow1$; $V''>0$ and $V(\theta)\to+\infty$ as $|\theta|\uparrow\frac12$.
+
+\item (Minimum.) The minimum point $p^*(y)$ of $U_y$ satisfies $r_0<p^*(y)<1-r_0$; with $U_{\min}(y)=U_y(p^*(y))$,
+ \[
+  32\kappa_0\le U_y''(p^*(y))\le\Lambda_2+\frac{4\kappa_0}{r_0^3},\qquad
+  a_{\min}:=\Bigl(\frac{2}{\Lambda_2+4\kappa_0/r_0^3}\Bigr)^{1/2}\le a_0(y)\le a_{\max}:=\frac1{4\sqrt{\kappa_0}},
+ \]
+ where $a_0(y)=\sqrt{2/U_y''(p^*(y))}$; and $b_0=\sqrt{2/V''(0)}=1/(2\sqrt{\nu_0})$.
+\item (Angular inverse.) The inverse $Y$ of the signed square root of $V$ is $Y(v)=v/(2\sqrt{v^2+\nu_0})$.
+\item (Energy.) Let $\delta_E=\eta/8$ and $E_{\rm box}=\Lambda+\sigma_0/4+16\kappa_0/\eta+\nu_0/(4\delta_E(1-\delta_E))$. For
+ $E\ge E_{\rm box}$, the area $\mathcal A_y(E)$ of $\{(p,\theta)\in(0,1)\times(-\frac12,\frac12):U_y(p)-U_{\min}(y)+V(\theta)\le E\}$ is at least
+ $A_{\min}=(1-2\delta_E)^2$, and $A_{\min}>1-2\eta$.
+\item (Margins.) Let $E>0$. If $0<p<1$ and $U_y(p)-U_{\min}(y)<E$, then
+ $\min(p,1-p)>\kappa_0/(M_0+4\kappa_0+E)$. If $|\theta|<\frac12$ and $V(\theta)<E$, then
+ $|\theta|<\frac12\sqrt{E/(E+\nu_0)}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) For fixed $y$, $\tilde f_y$ is the log-sum-exp of the affine functions $p\mapsto a_r(y)+b_r(y)p$, hence real-analytic and
+convex (Lemma~\ref{lem:fcp-smoothing}(b)); in $(y,p)$ it is the composite of the smooth map
+$(y,p)\mapsto(a_r(y)+b_r(y)p)_r$ with the real-analytic function $x\mapsto c_0^{-1}\log\sum_re^{c_0x_r}$. The barrier and $V$
+are rational functions without poles on the stated intervals.
+
+(b) By Lemma~\ref{lem:fcp-smoothing}(a), $f_y\le \tilde f_y\le f_y+\log(\#\mathcal I)/c_0$, and $\log(\#\mathcal I)/c_0<\#\mathcal I/c_0<\sigma_0/4$. The barrier is
+positive, so $U_y>f_y$, and on $[\eta,1-\eta]$ it is at most $2\kappa_0/\eta=\sigma_0/4$. The function $V$ is nondecreasing in
+$|\theta|$; at $|\theta|=\frac12-\beta_0$, $\theta^2\le\frac14$ and $\frac14-\theta^2=(\frac12-|\theta|)(\frac12+|\theta|)=\beta_0(1-\beta_0)$,
+so $V\le\nu_0/(4\beta_0(1-\beta_0))=\sigma_0$.
+
+(c) By Lemma~\ref{lem:fcp-smoothing}(c), $\tilde f_y'=\sum_r\varpi_rb_r(y)$ with convex weights $\varpi_r$, so $|\tilde f_y'|\le\Lambda$, and $\tilde f_y''$
+is $c_0$ times the variance of the slopes $b_r(y)$ under these weights (proof of Lemma~\ref{lem:fcp-smoothing}(b)),
+which lies in $[0,c_0\Lambda^2]$. The barrier has second derivative $2\kappa_0(p^{-3}+(1-p)^{-3})$, a convex function
+symmetric about $\frac12$ with minimum $32\kappa_0$ there. $\tilde f_y$ is bounded on $[0,1]$, so $U_y$ is proper. Writing
+$V(\theta)=\nu_0\bigl(\frac14(\frac14-\theta^2)^{-1}-1\bigr)$ one finds $V''(\theta)=\nu_0(1+12\theta^2)/(8(\frac14-\theta^2)^3)>0$, and $V$ is
+proper. For the unmodified wells, $U_y'$ is strictly increasing and
+tends to $\mp\infty$ at $0$ and $1$, so it has a unique zero $p^*(y)\in(0,1)$ and changes sign there, and $U_y''(p^*)>0$;
+$V$ is even and strictly convex with $V(0)=0$, so $V'(\theta)\theta>0$ for $\theta\ne0$, and $V''(0)=8\nu_0>0$.
+
+(d) Since $r_0<\frac14$ and $|\tilde f_y'|\le\Lambda$,
+\[
+ U_y'(r_0)\le\Lambda-\frac{\kappa_0}{r_0^2}+\frac{\kappa_0}{(1-r_0)^2}<\Lambda+2\kappa_0-\frac{\kappa_0}{r_0^2}<0,
+\]
+because $\kappa_0/r_0^2\ge4(\Lambda+2\kappa_0+1)>\Lambda+2\kappa_0$; symmetrically $U_y'(1-r_0)>0$. Hence
+$r_0<p^*(y)<1-r_0$. The lower bound for $U_y''(p^*)$ is (c); the upper bound is $\tilde f_y''\le\Lambda_2$ plus
+$2\kappa_0((p^*)^{-3}+(1-p^*)^{-3})\le4\kappa_0/r_0^3$. The bounds for $a_0$ follow, and $V''(0)=8\nu_0$ gives $b_0$.
+
+(e) $Y$ is odd, real-analytic and increasing, with limits $\pm\frac12$. With $\vartheta=Y(v)$,
+$\vartheta^2=v^2/(4(v^2+\nu_0))$ and $\frac14-\vartheta^2=\nu_0/(4(v^2+\nu_0))$, so $V(\vartheta)=v^2$; since $Y$ has the sign of $v$,
+$Y$ inverts the signed square root $\operatorname{sign}(\theta)\sqrt{V(\theta)}$.
+
+(f) On $Q_E=[\delta_E,1-\delta_E]\times[-\frac12+\delta_E,\frac12-\delta_E]$, by (b), $U_y(p)\le\max_{[0,1]}f_y+\sigma_0/4+2\kappa_0/\delta_E$,
+while $U_{\min}(y)\ge\min_{[0,1]}f_y$ and $\max_{[0,1]}f_y-\min_{[0,1]}f_y\le\Lambda$; and $V\le\nu_0/(4\delta_E(1-\delta_E))$ on $Q_E$, as in
+(b). So $U_y-U_{\min}(y)+V\le E_{\rm box}$ on $Q_E$, and the sublevel at $E\ge E_{\rm box}$ contains $Q_E$, of area $A_{\min}$. Finally
+$A_{\min}=1-\eta/2+\eta^2/16>1-2\eta$.
+
+(g) By (c), $|\tilde f_y'|\le\max_r|b_r(y)|\le M_0$, so $|\tilde f_y(\frac12)-\tilde f_y(p)|\le M_0/2$ for $p\in(0,1)$; and
+$U_{\min}(y)\le U_y(\frac12)=\tilde f_y(\frac12)+4\kappa_0$. If $U_y(p)-U_{\min}(y)<E$, then
+\[
+ \frac{\kappa_0}{p}<U_y(p)-\tilde f_y(p)<U_{\min}(y)+E-\tilde f_y(p)\le\tilde f_y(\tfrac12)-\tilde f_y(p)+4\kappa_0+E
+ \le M_0+4\kappa_0+E,
+\]
+and likewise for $1-p$. If $V(\theta)<E$, then $\nu_0\theta^2<E(\frac14-\theta^2)$, so $\theta^2<E/(4(E+\nu_0))$.
+\end{proof}
+
+
+%----------------------------------------------------------------------
+\subsection{Isotopy data}\label{sec:plc-data}
+
+Theorem~\ref{thm:pln-isotopy} needs an admissible potential pair and numerical data controlling the isotopy uniformly
+in the parameter (Definition~\ref{def:pln-isotopy-data}). For the convex potentials both are given by closed formulas
+in the planar constants. The roles of the data are those listed after Definition~\ref{def:pln-isotopy-data}; in addition
+$r_B<1$ bounds the support, and $K_{\min}$, $A_{\max}$ are auxiliary.
+
+\begin{definition}[Modified wells and isotopy data of the convex pair]\label{def:plc-data}
+\lean{SymplecticPacking.HighDim.PlanarGen.Input.ftU,
+ SymplecticPacking.HighDim.PlanarGen.Input.wellV,
+ SymplecticPacking.HighDim.PlanarGen.Input.XU,
+ SymplecticPacking.HighDim.PlanarGen.Input.XV,
+ SymplecticPacking.HighDim.PlanarGen.Input.pathData}
+\uses{def:plc-constants, lem:plc-potentials, def:pln-isotopy-data}
+Given planar data and $\xi>0$, with the constants of Definition~\ref{def:plc-constants}, let $\psi$ and $C_\psi$ be the
+flat cutoff and its derivative bound of \S\ref{sec:scalar-wells}, and put $\delta=\xi/64$,
+$\alpha_y=U_y''(p^*(y))$, $\alpha_{\min}=32\kappa_0$, $\alpha_{\max}=c_0\Lambda^2+4\kappa_0/r_0^3$,
+\[
+ K_3=8c_0^2\Lambda^3+192\kappa_0/r_0^4+1,\qquad
+ \epsilon_U=\min\left(\frac{r_0}8,
+ \frac{\alpha_{\min}}{32K_3(1+C_\psi)},\sqrt{\frac\delta{\alpha_{\max}}}\right),
+\]
+\[
+ g_y(x)=U_y(p^*(y)+x)-U_y(p^*(y)),\]\[
+ \widetilde U_y(x)=g_y(x)+\psi(x/\epsilon_U)
+       \left(\frac{\alpha_yx^2}2-g_y(x)\right)\qquad(-p^*(y)<x<1-p^*(y)).
+\]
+For the angle, apply \eqref{eq:scalar-quadratic-well} to $(f,A,B,c)=(V,-\frac12,\frac12,0)$ with $\delta$ in place of
+$\delta_{\rm w}$: $r_V=\frac18$, $\alpha_V=V''(0)=8\nu_0$, $G_V=\psi(x/r_V)V$, $K_V=1+\max_x|G_V'''(x)|$,
+\[
+ \epsilon_V=\min\left(\frac{r_V}4,
+ \frac{\alpha_V}{32K_V(1+C_\psi)},\sqrt{\delta/\alpha_V}\right),\]\[
+ \widetilde V(x)=V(x)+\psi(x/\epsilon_V)
+       \left(\frac{\alpha_Vx^2}2-G_V(x)\right)\qquad(|x|<\tfrac12).
+\]
+The \emph{modified convex pair} is $U_y(p):=\widetilde U_y(p-p^*(y))$ on $I_U=(0,1)$ and $V:=\widetilde V$ on
+$I_V=(-\frac12,\frac12)$, with disc area $h=1$; $X_y$ and $Y$ denote its Morse inverses
+(Lemma~\ref{lem:pln-morse-inverse}). Its slopes at zero are $a_0(y)=\sqrt{2/\alpha_y}$ and $b_0=1/(2\sqrt{\nu_0})$.
+
+The isotopy data are $p^*_{\rm lo}=r_0$, $p^*_{\rm hi}=1-r_0$ and
+\begin{gather*}
+ \delta_E=\eta/8,\quad A_{\min}=(1-2\delta_E)^2,\quad
+ p^\dagger=1-5\eta,\quad e_q=2\eta,\\
+ p_{\rm on}=1-31\eta/4,\quad p_{\rm zero}=1-61\eta/8,\\
+ E_{\rm rect}=2M_0+2+2\kappa_0/\delta_E+\nu_0/(2\delta_E)+2\delta,\\
+ a_{\min}=\sqrt{2/\alpha_{\max}},\quad a_{\max}=\sqrt{2/\alpha_{\min}},\\
+ K_{\min}=\pi a_{\min}b_0,\\
+ \bar E=E_{\rm rect}+\frac{p^\dagger A_{\min}}{K_{\min}(A_{\min}-p^\dagger)}+1,\quad E_c=\bar E,\\
+ \bar X=a_{\max}\sqrt{\bar E}+1,\qquad
+ \bar Y=b_0\sqrt{\bar E}+\tfrac12,\\
+ \Delta P=\frac{\kappa_0}{2M_0+2+4\kappa_0+\bar E+\delta},\\
+ \Delta\theta=\frac12\left(1-\sqrt{\frac{\bar E+\delta+1}{\bar E+\delta+1+\nu_0}}\right),\\
+ \delta_x=\bar X,\quad\delta_\theta=\bar Y,\quad
+ \delta_s=\min\left(\frac14,\frac{\Delta P}{2\bar X},\frac{\Delta\theta}{2\bar Y}\right),\\
+ \lambda_0=\min\left(\frac12,\frac{r_0}{2\bar X},\frac1{4\bar Y}\right),\\
+ P_{\min}=\tfrac14\min(r_0,\Delta P),\quad P_{\max}=\tfrac32,\quad
+ M_C=\frac1{2\sqrt{\pi P_{\min}}}+2\sqrt{\pi P_{\max}},\\
+ R^\dagger=\sqrt{p^\dagger/\pi},\quad R_h=\sqrt{1/\pi},\quad r_b^+=\sqrt{(1-r_0)/\pi},\\
+ A_{\max}=\frac{\sqrt{a_{\max}/b_0}}{2\sqrt{\pi r_0}}+
+             2\sqrt\pi\sqrt{b_0/a_{\min}},\\
+ B_{\rm lin}=R^\dagger(1+A_{\max}),\quad
+ B^*=M_C\sqrt{\bar X^2+\bar Y^2},\quad
+ R_q=\sqrt{(1-\Delta P/2)/\pi},\\
+ c_{\rm sh}=\min\left(\frac14,
+ \frac{R_h-r_b^+}{8\max(R^\dagger,B_{\rm lin},B^*)}\right),\\
+ R_{\rm supp}=\max(R^\dagger,r_b^++c_{\rm sh}B_{\rm lin},
+                       r_b^++c_{\rm sh}B^*,R_q),\\
+ r_B=P_{\rm supp}=\pi R_{\rm supp}^2.
+\end{gather*}
+All entries are independent of $y$. Apart from $K_V$, the maximum of an explicit smooth compactly supported
+function, they are finite expressions in $\Lambda$, $M_0$, $\#\mathcal I$, $\xi$ and $C_\psi$.
+\end{definition}
+
+\begin{lemma}[The modified convex pair and its isotopy data]\label{lem:plc-data}
+\lean{SymplecticPacking.HighDim.PlanarGen.Input.ftU_close,
+ SymplecticPacking.HighDim.PlanarGen.Input.ftU_mono,
+ SymplecticPacking.HighDim.PlanarGen.Input.Ebar_area_gate,
+ SymplecticPacking.HighDim.PlanarGen.Input.qin_chart_domain,
+ SymplecticPacking.HighDim.PlanarGen.Input.ordinary_of_pieces}
+\uses{def:plc-data, lem:plc-potentials, def:pln-isotopy-data, lem:pln-energy, lem:scalar-wells}
+For planar data and $\xi>0$:
+\begin{enumerate}[label=(\alph*)]
+\item $|\widetilde U_y(x)-g_y(x)|\le\delta$ and $|\widetilde V-V|\le\delta$; $\widetilde U_y(x)=\frac12\alpha_yx^2$ for
+ $|x|\le\epsilon_U$ and $\widetilde V(x)=\frac12\alpha_Vx^2$ for $|x|\le\epsilon_V$; $x\widetilde U_y'(x)>0$ and
+ $x\widetilde V'(x)>0$ for $x\ne0$; $\widetilde U_y\ge0$, $\widetilde V\ge0$.
+\item The modified convex pair is an admissible potential pair over $\mathcal Y=\mathcal O$ with $h=1$, exactly
+ quadratic near the minimum, and $r_0<p^*(y)<1-r_0$.
+\item The numbers of Definition~\ref{def:plc-data} are isotopy data for this pair (using the uniform-energy
+ alternative in \ref{it:pln-D4}); in particular $P_{\rm supp}=r_B<1$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) By Lemma~\ref{lem:plc-potentials}(c),(d), $U_y$ is smooth and strictly convex on $(0,1)$, proper, with unique
+critical point $p^*(y)\in(r_0,1-r_0)$ and $\alpha_{\min}\le\alpha_y\le\alpha_{\max}$. We apply
+Lemma~\ref{lem:scalar-wells} to $f=U_y$, $c=p^*(y)$, $\eps=\epsilon_U$, $K=K_3$. First $2\epsilon_U\le r_0/4<\min(p^*,1-p^*)$.
+For $|x|\le2\epsilon_U$ the point $p=p^*+x$ lies in $[\frac34r_0,1-\frac34r_0]$. There $g_y'''(x)=\tilde f_y'''(p)+
+6\kappa_0((1-p)^{-4}-p^{-4})$, and $\tilde f_y'''$ is $c_0^2$ times the third central moment of the slopes $b_r(y)$ under
+the weights of Lemma~\ref{lem:fcp-smoothing}(c), so $|\tilde f_y'''|\le c_0^2(2\Lambda)^3$; and
+$6\kappa_0\max(p^{-4},(1-p)^{-4})\le6\kappa_0(4/(3r_0))^4<192\kappa_0/r_0^4$. Hence $|g_y'''|\le K_3$ there. Finally
+$\epsilon_U\le\alpha_{\min}/(32K_3(1+C_\psi))\le\alpha_y/(32K_3(1+C_\psi))$ and $\epsilon_U\le\sqrt{\delta/\alpha_{\max}}\le
+\sqrt{\delta/\alpha_y}$. Lemma~\ref{lem:scalar-wells} gives the assertions for $\widetilde U_y$ (with error $\delta/24$).
+For $\widetilde V$, $V$ is smooth, even, strictly convex and proper with $V(0)=0$
+(Lemma~\ref{lem:plc-potentials}(c)), $\chi_V g_V=G_V$, and $\epsilon_V$ is the width of
+\eqref{eq:scalar-quadratic-well}; Lemma~\ref{lem:scalar-wells} applies again. Nonnegativity follows from the sign of
+the derivatives and the value $0$ at $0$.
+
+(b) $p^*$ is smooth on $\mathcal O$ by the implicit function theorem ($U_y'(p^*(y))=0$, $U_y''>0$), so $\alpha_y$ and
+$(y,x)\mapsto g_y(x)$ are smooth, and hence so is $(y,p)\mapsto\widetilde U_y(p-p^*(y))$; $\widetilde V$ does not depend on
+$y$. \ref{it:pln-P1} follows from (a): the minimum of $U_y$ is at $p^*(y)\in(0,1)$ with second derivative
+$\alpha_y>0$, and $V$ has minimum $0$ at $0$ with $V''(0)=8\nu_0>0$. \ref{it:pln-P2}: near the ends of their
+intervals the modified wells equal $g_y$ and $V$, which are proper, and they are exactly quadratic on the
+$y$-independent neighbourhoods $|x|\le\epsilon_U$, $|x|\le\epsilon_V$, with quadratic coefficients
+$\frac12\alpha_y$ and $4\nu_0$.
+
+(c) Write $\mathcal A_y$, $\mathcal A_{y,s}$ for the area functions of Lemma~\ref{lem:pln-energy} for this pair. All
+numbers are positive: $A_{\min}=1-\frac\eta2+\frac{\eta^2}{16}>1-5\eta=p^\dagger>0$ since $\eta\le\frac1{32}$, and the
+remaining positivity is clear.
+
+\emph{Area gate.} Let $Q_E=[\delta_E,1-\delta_E]\times[-\frac12+\delta_E,\frac12-\delta_E]$. For $(p,\theta)\in Q_E$,
+$|\tilde f_y(p)-\tilde f_y(p^*)|\le M_0$ (since $|\tilde f_y'|\le M_0$) and the barrier at $p$ is at most $2\kappa_0/\delta_E$,
+so $g_y(p-p^*)=U_y(p)-U_{\min}(y)\le M_0+2\kappa_0/\delta_E$; and $V(\theta)\le\nu_0/(4\delta_E(1-\delta_E))\le
+\nu_0/(2\delta_E)$. By (a), $\widetilde U_y(p-p^*)+\widetilde V(\theta)\le M_0+2\kappa_0/\delta_E+\nu_0/(2\delta_E)+2\delta
+\le E_{\rm rect}$ on $Q_E$. By Lemma~\ref{lem:pln-morse-inverse}(iv), $\mathcal A_y(E)\ge\operatorname{area}Q_E=A_{\min}$ for
+$E\ge E_{\rm rect}$. Since $j_0(y)=a_0(y)b_0\ge a_{\min}b_0$, Lemma~\ref{lem:pln-energy}(b) gives, for $s\in[0,1]$,
+\[
+ \mathcal A_{y,s}(\bar E)\ge\alpha(1-s)^2+\beta s^2\ge\frac{\alpha\beta}{\alpha+\beta},\qquad
+ \alpha=K_{\min}\bar E,\quad\beta=A_{\min}.
+\]
+As $\alpha>p^\dagger\beta/(\beta-p^\dagger)$, we get $\alpha(\beta-p^\dagger)>p^\dagger\beta$, i.e.\
+$\alpha\beta/(\alpha+\beta)>p^\dagger$. Hence $\mathcal A_{y,s}(E_c)>p^\dagger$ for all $s\in[0,1]$ (the uniform-energy
+alternative of \ref{it:pln-D4}, $E_c=\bar E$), and \ref{it:pln-D5} holds for the areas.
+
+\emph{\ref{it:pln-D1}.} $1-\frac{31}4\eta<1-\frac{61}8\eta<1-5\eta$, and $r_0<p^*(y)<1-r_0<1$ by
+Lemma~\ref{lem:plc-potentials}(d).
+
+\emph{\ref{it:pln-D2}.} Let $u^2,v^2<E_c$, $x=X_y(u)$, $\theta=Y(v)$ and $p=p^*+x$. Then $\widetilde U_y(x)=u^2<\bar E$, so
+$U_y(p)-U_{\min}(y)=g_y(x)<\bar E+\delta$, and Lemma~\ref{lem:plc-potentials}(g) gives
+$\min(p,1-p)>\kappa_0/(M_0+4\kappa_0+\bar E+\delta)>\Delta P$. Thus $\Delta P<p<1-\Delta P\le\pi R_q^2<1$. Likewise
+$V(\theta)\le\widetilde V(\theta)+\delta<\bar E+\delta$, so $|\theta|<\frac12\sqrt{(\bar E+\delta)/(\bar E+\delta+\nu_0)}
+\le\frac12-\Delta\theta$, the function $E\mapsto E/(E+\nu_0)$ being increasing.
+
+\emph{\ref{it:pln-D3} and \ref{it:pln-D5}.} For $u^2\le\bar E$: $a_0(y)|u|\le a_{\max}\sqrt{\bar E}$ and $|X_y(u)|<1$ (as
+$X_y(u)\in(-p^*,1-p^*)$), so $\max(a_0|u|,|X_y(u)|)\le\bar X$ and $|a_0u-X_y(u)|\le\bar X=\delta_x$. For $v^2\le\bar E$:
+$b_0|v|\le b_0\sqrt{\bar E}$ and $|Y(v)|<\frac12$, so similarly with $\bar Y=\delta_\theta$.
+
+\emph{\ref{it:pln-D4}.} $\delta_s\le\frac14$, $\delta_s\delta_x\le\frac12\Delta P$ and $\delta_s\delta_\theta\le\frac12\Delta\theta$ by
+the definition of $\delta_s$; the energy condition was shown above.
+
+\emph{\ref{it:pln-D6}.} By the definition of $\lambda_0$, with $p^*_{\rm lo}=r_0$.
+
+\emph{\ref{it:pln-D7}.} $P_{\min}=\frac14\min(r_0,\Delta P)\le\frac12\min(p^*_{\rm lo},\Delta P)$ and
+$P_{\max}=\frac32\ge\max(\frac32p^*_{\rm hi},1)$. By \eqref{eq:pln-A0}, with $c_x=\sqrt{a_0/b_0}$ and
+$r_b=\sqrt{p^*/\pi}$,
+\[
+ |(\mathbf A_y)_{11}|=\frac{\sqrt{a_0/b_0}}{2\sqrt{\pi p^*}}\le\frac{\sqrt{a_{\max}/b_0}}{2\sqrt{\pi r_0}},\qquad
+ |(\mathbf A_y)_{22}|=2\sqrt{\pi p^*}\sqrt{b_0/a_0}\le2\sqrt\pi\sqrt{b_0/a_{\min}};
+\]
+so both are at most $A_{\max}$ and
+$R^\dagger\max(1,|(\mathbf A_y)_{11}|,|(\mathbf A_y)_{22}|)\le B_{\rm lin}$. The bounds for $B^*$ and $c_{\rm sh}$ hold by
+definition.
+
+Lemma~\ref{lem:pln-data}(b) now gives $P_{\rm supp}<h=1$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The area estimate}\label{sec:plc-area}
+
+\begin{lemma}[Area estimate]\label{lem:plc-area}
+\uses{lem:plc-potentials, lem:fcp-interval, lem:fcp-lipschitz}
+Assume planar data, $\xi>0$ and the constants of Definition~\ref{def:plc-constants}, and write $\check{\mathcal A}_y(E)$
+for the area of $\{(p,\theta)\in(0,1)\times(-\frac12,\frac12):U_y(p)-U_{\min}(y)+V(\theta)\le E\}$. Let $y\in\mathcal O$ and
+$0\le I\le1-3\eta$. Then
+\begin{equation}\label{eq:plc-area}
+ \operatorname{area}\bigl\{(p,\theta)\in(0,1)\times(-\tfrac12,\tfrac12):U_y(p)+V(\theta)\le g_y(I+3\eta)+2\sigma_0\bigr\}
+ \ge(I+\eta)(1-2\beta_0)>I.
+\end{equation}
+Consequently, if $E\ge0$ and $\check{\mathcal A}_y(E)\le I$, then $U_{\min}(y)+E<g_y(I+3\eta)+2\sigma_0$, and every $(p,\theta)$ with
+$U_y(p)+V(\theta)\le U_{\min}(y)+E$ satisfies
+\begin{equation}\label{eq:plc-core-value}
+ f_y(p)<g_y(I)+3\Lambda\eta+2\sigma_0<g_y(I)+\tfrac{11}{32}\xi .
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Put $b=g_y(I+3\eta)$; note $I+3\eta\le1$. By Lemma~\ref{lem:fcp-interval}(a) the sublevel set $\{p\in[0,1]:f_y(p)\le b\}$ is a
+closed interval $J$ of length at least $I+3\eta$, and $J'=J\cap[\eta,1-\eta]$ has length at least $I+\eta$. For $p\in J'$,
+Lemma~\ref{lem:plc-potentials}(b) gives $U_y(p)<f_y(p)+\sigma_0/2\le b+\sigma_0/2$, and for $|\theta|\le\frac12-\beta_0$ it gives
+$V(\theta)\le\sigma_0$. So the rectangle $J'\times[-\frac12+\beta_0,\frac12-\beta_0]$ lies in the set of \eqref{eq:plc-area}, whose area
+is therefore at least $(I+\eta)(1-2\beta_0)$. Since $I+\eta\le1$ and $2\beta_0=\eta/4$,
+$(I+\eta)(1-2\beta_0)\ge I+\eta-2\beta_0=I+\frac34\eta>I$.
+
+If $\check{\mathcal A}_y(E)\le I$ but $U_{\min}(y)+E\ge b+2\sigma_0$, the sublevel set at level $U_{\min}(y)+E$ contains the set of \eqref{eq:plc-area},
+so $\check{\mathcal A}_y(E)>I$, a contradiction. Hence $U_{\min}(y)+E<b+2\sigma_0$. For $(p,\theta)$ with $U_y(p)+V(\theta)\le U_{\min}(y)+E$,
+Lemma~\ref{lem:plc-potentials}(b) and $V\ge0$ give $f_y(p)<U_y(p)+V(\theta)<b+2\sigma_0$, and $b\le g_y(I)+3\Lambda\eta$ by
+\eqref{eq:plc-glip}. Finally $3\Lambda\eta\le3\xi/64$ and $2\sigma_0=\xi/4$, whose sum is below $11\xi/32$.
+\end{proof}
+
+The estimate includes $I=0$: the centre of the disc goes to the minimum of $U_y+V$, where the lemma bounds $f_y$ by
+$\min f_y$ plus the error (smoothness of the inner map at the centre is Theorem~\ref{thm:pln-inner}).
+
+\begin{lemma}[Area estimate after quadratic modification]\label{lem:plc-modified-area}
+\uses{lem:plc-area, lem:plc-data, lem:fcp-lipschitz}
+In the setting of Lemma~\ref{lem:plc-area}, put $H_0(p,\theta)=U_y(p)-U_{\min}(y)+V(\theta)$ and
+$\widetilde H(p,\theta)=\widetilde U_y(p-p^*(y))+\widetilde V(\theta)$ on $(0,1)\times(-\frac12,\frac12)$, with the modified wells
+of Definition~\ref{def:plc-data}, so that $|\widetilde H-H_0|\le2\delta$, $\delta=\xi/64$ (Lemma~\ref{lem:plc-data}(a)). Let
+$\widetilde{\mathcal A}_y(E)$ be the area of $\{\widetilde H\le E\}$.
+If $0\le I\le1-3\eta$, $E\ge0$ and $\widetilde{\mathcal A}_y(E)\le I$, then every point with
+$\widetilde H(p,\theta)\le E$ satisfies
+\[
+ f_y(p)<g_y(I)+3\Lambda\eta+2\sigma_0+5\delta
+ \le g_y(I)+\frac38\xi<g_y(I)+\xi.
+\]
+\end{lemma}
+
+\begin{proof}
+Set $T=g_y(I+3\eta)+2\sigma_0-U_{\min}(y)$. The set $\{H_0\le T\}$ has area greater than $I$
+by Lemma~\ref{lem:plc-area}, and it is contained in
+$\{\widetilde H\le T+2\delta\}$. Monotonicity of sublevel area and
+$\widetilde{\mathcal A}_y(E)\le I$ therefore imply $E<T+2\delta$.
+At a point with $\widetilde H\le E$ we have
+\[
+ f_y(p)\le U_y(p)+V(\theta)
+ =U_{\min}(y)+H_0(p,\theta)
+ \le U_{\min}(y)+E+2\delta
+ <g_y(I+3\eta)+2\sigma_0+4\delta.
+\]
+By \eqref{eq:plc-glip}, $g_y(I+3\eta)\le g_y(I)+3\Lambda\eta$, and
+$3\Lambda\eta+2\sigma_0+5\delta\le\frac{3\xi}{64}+\frac{16\xi}{64}+\frac{5\xi}{64}=\frac38\xi$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{One convex function}\label{sec:plc-planar}
+
+\begin{theorem}[Planar rearrangement of a convex function]\label{thm:plc-planar}
+\uses{lem:plc-potentials, lem:plc-data, lem:plc-area, lem:plc-modified-area, thm:pln-inner, thm:pln-isotopy, thm:pln-full-disc}
+Let $f(p)=\max_{r\in\mathcal I}(a_r+b_rp)$ with finitely many real $a_r,b_r$, let $\Lambda\ge1$ and $M_0$ be real with $|b_r|\le\Lambda$
+and $|a_r|+|b_r|\le M_0$ for every $r$, let $g$ be the increasing rearrangement of $f$ on $[0,1]$, and let $\xi>0$ be real. Let
+$Q^{\rm pl}=Q$ and $q_t=\hat q_t$ be the Hamiltonian and the isotopy of Theorem~\ref{thm:pln-isotopy} for the
+modified pair of Definition~\ref{def:plc-data} ($d=0$) and the isotopy data of Definition~\ref{def:plc-data}, and let $r_B$ be
+the number defined there. Then:
+\begin{enumerate}[label=(\alph*)]
+\item $Q^{\rm pl}$ is $C^\infty$ on $\R\times\C$, and $Q^{\rm pl}(t,u)=0$ if $\pi|u|^2\ge r_B$ or $t\notin(0,1)$;
+\item $q_t$ is generated by $Q^{\rm pl}$ ($\iota_X\omega=-dQ^{\rm pl}_t$), $q_t=\mathrm{id}$ for $t\le0$, $q_t=q_1$ for $t\ge1$,
+ $q_t=\mathrm{id}$ on $\{\pi|u|^2\ge r_B\}$, and $q_t(\bar D(A))=\bar D(A)$ for every $A\ge r_B$, in particular for $A=1$;
+\item for every $z\in\bar D(1)$,
+ \[
+  f\bigl(\pi|q_1(z)|^2\bigr)\le g(\pi|z|^2)+\xi .
+ \]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:plc-data}, Theorem~\ref{thm:pln-isotopy} applies with $h=1$ and a one-point parameter space. Its
+items (a), (b), (d) give (a) and (b), because $P_{\rm supp}=r_B$ and $Q$, which vanishes with all derivatives on
+$\{\pi|u|^2>P_{\rm supp}\}$, vanishes by continuity on $\{\pi|u|^2\ge P_{\rm supp}\}$; likewise $q_t=\mathrm{id}$ there.
+
+(c) Put $I=\pi|z|^2$. If $I\le1-8\eta<p_{\rm on}$, Theorem~\ref{thm:pln-isotopy}(c) gives $q_1(z)=q_{\rm in}(z)=C(f_{\rm in}(z))$,
+where $f_{\rm in}$ is the map $f_y$ of Definition~\ref{def:pln-inner-map} and $C$ the polar chart \eqref{eq:pln-chart}. By
+Theorem~\ref{thm:pln-inner}(b),(c), with $f_{\rm in}(z)=(x,\theta)$ and $p=p^*+x=\pi|q_1(z)|^2$, we have
+$\widetilde H(p,\theta)=E(I)$, where $E(I)$ is the level whose closed sublevel $\{\widetilde H\le E(I)\}$ has area exactly $I$
+(Lemma~\ref{lem:pln-morse-inverse}(iv)). Since $I\le1-3\eta$, Lemma~\ref{lem:plc-modified-area} gives
+$f(\pi|q_1(z)|^2)<g(I)+\frac38\xi$. If $1-8\eta<I\le1$, then $\pi|q_1(z)|^2\in[0,1]$ by (b), so by \eqref{eq:plc-glip}
+\[
+ f(\pi|q_1(z)|^2)\le\max_{[0,1]}f=g(1)\le g(I)+\Lambda(1-I)<g(I)+8\Lambda\eta\le g(I)+\tfrac18\xi .\qedhere
+\]
+\end{proof}
+
+\begin{remark}[Dimension four]\label{rem:plc-scaling}
+For $m=1$ there is no parameter: $\Delta=[0,h]$ with $h=L$ a positive real, $\ell$ is a constant in
+$[h-\zeta/2,h-\delta_1]$, and $\chi$ is a constant, equal to $1$ when $h\ge\frac74\eta_1$ (Definition~\ref{def:plc-slice},
+Lemma~\ref{lem:plc-slice}). If $\chi\ne0$, Theorem~\ref{thm:plc-lift} is Theorem~\ref{thm:plc-planar} run with the clock
+$\chi S(t)$ and rescaled to the disc of area $\ell$; if $\chi=0$, the isotopy is the identity. The four-dimensional branch does not use this route: for $m=1$ the iteration can act directly on continuous convex
+functions on $[0,h]$, without the polyhedral bookkeeping of \S\ref{sec:fcp} and without the slice length $\ell$ and the
+cutoff $\chi$, and \S\ref{sec:scalar-cmp} carries this out with a fixed mollifier and one planar path on the whole disc of
+area $h$, with constants written for the cubic model.
+\end{remark}
+
+%----------------------------------------------------------------------
+\subsection{Families}\label{sec:plc-param}
+
+\begin{theorem}[Planar rearrangement with parameters]\label{thm:plc-param}
+\uses{thm:plc-planar, lem:plc-potentials, lem:plc-data, lem:plc-area, thm:pln-isotopy, thm:pln-param}
+Let $(\mathcal O,(a_r,b_r)_{r\in\mathcal I},\Lambda,M_0)$ be planar data and $\xi>0$ real. Let $Q^{\rm pl}(y,t,u)=Q_{y,t}(u)$ and
+$q_{y,t}=\hat q_{y,t}$ be the Hamiltonian and the isotopy of Theorem~\ref{thm:pln-isotopy} for the modified potential pair of
+Definition~\ref{def:plc-data} over $\mathcal O$ and the isotopy data of Definition~\ref{def:plc-data}. Then
+$Q^{\rm pl}$ and $(y,t,u)\mapsto q_{y,t}(u)$ are $C^\infty$ on $\mathcal O\times\R\times\C$; for every $y\in\mathcal O$,
+$Q^{\rm pl}(y,\cdot,\cdot)$ and $q_{y,\cdot}$ have properties (a) and (b) of Theorem~\ref{thm:plc-planar} with the same $r_B$;
+and for every $y\in\mathcal O$ and $z\in\bar D(1)$,
+\[
+ f_y\bigl(\pi|q_{y,1}(z)|^2\bigr)\le g_y(\pi|z|^2)+\xi .
+\]
+\end{theorem}
+
+\begin{proof}
+The constants of Definitions~\ref{def:plc-constants} and~\ref{def:plc-data} do not depend on $y$, and
+Lemmas~\ref{lem:plc-potentials} and~\ref{lem:plc-data} hold for every $y\in\mathcal O$; so Theorem~\ref{thm:pln-isotopy} applies
+over the open set $\mathcal Y=\mathcal O$, and Theorem~\ref{thm:pln-param}(a) gives joint smoothness. For fixed $y$ the proof of
+Theorem~\ref{thm:plc-planar} applies verbatim with $f_y,g_y,U_y,\mathcal A_y$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{Slice lengths, cutoffs and the parameter domain}\label{sec:plc-slice}
+
+We return to the polytope. Fix a convex polyhedral function with real coefficients $F=\max_{r\in\mathcal I}\phi_r$ ($\phi_r$ real affine
+on $\R^m$, $\mathcal I$ finite), a coordinate $j$ and a real $e>0$. Write $p=(y,x)$ with $x=p_j$, $y\in\R^{m-1}$, and let
+$\mathcal N_j=\{\nu:b_{\nu j}>0\}$, which is nonempty (\S\ref{sec:fcp-setting}), $N_j=\#\mathcal N_j$. Recall that $N_\Delta\ge N_j$ is the number of faces of $\Delta$ (\S\ref{sec:fcp-setting}). For $m=1$ the
+variable $y$ is absent and every $L_\nu$ is a positive constant. The coordinate-box conditions below are then void;
+the face-length conditions remain the displayed tests on these constants.
+
+\begin{definition}[Slice data and the lifted Hamiltonian]\label{def:plc-slice}
+\uses{def:pre-flat, def:plc-constants, def:plc-data, thm:plc-param}
+\begin{enumerate}[label=(\arabic*)]
+\item (Constants.)
+ \[
+  \Lambda_F=1+\sum_r|\partial_j\phi_r|,\quad \eta_1=\frac e{64\Lambda_F},\quad \zeta=\frac{\eta_1}8,\quad
+  \xi=\frac e4,\quad \delta_1=\frac\zeta4,\quad s_1=\frac\zeta{4(N_\Delta+1)},
+ \]
+ and
+ \[
+  \varrho=2+\sum_i\sum_{\nu:\,b_{\nu i}>0}\frac{\ell_\nu}{b_{\nu i}}.
+ \]
+\item (Slice length.) For $y\in\R^{m-1}$,
+ \[
+  \ell(y)=-s_1\log\sum_{\nu\in\mathcal N_j}\exp\bigl(-L_\nu(y)/s_1\bigr)-\delta_1 .
+ \]
+\item (Cutoffs.) With the flat step $S$ of Definition~\ref{def:pre-flat},
+ \[
+  \chi_L(y)=\prod_{\nu\in\mathcal N_j}S\Bigl(\frac{L_\nu(y)-5\eta_1/4}{\eta_1/2}\Bigr),\quad
+  \rho_{\rm box}(y)=\prod_{i\ne j}\Bigl(1-S\Bigl(\frac{y_i^2-\varrho^2}{3\varrho^2}\Bigr)\Bigr),\quad
+  \chi=\rho_{\rm box}\,\chi_L .
+ \]
+\item (Parameter domain.) $\mathcal O_j=\{y\in\R^{m-1}:\|y\|_\infty<3\varrho,\ L_\nu(y)>\frac34\eta_1\ (\nu\in\mathcal N_j)\}$, an open
+ polyhedron containing $\{y\in\Delta_j:L(y)>\frac34\eta_1\}$ (Lemma~\ref{lem:plc-slice}(c)).
+\item (Planar data on slices.) $a_r(y)=\phi_r(y,0)$ and $b_r(y)=\ell(y)\,\partial_j\phi_r$, so that $f_y(p)=F(y,\ell(y)p)$ in
+ \eqref{eq:plc-f};
+ \begin{gather*}
+  \bar\ell=1+\sum_{\nu\in\mathcal N_j}
+      \frac{|\ell_\nu|+4\varrho\sum_i|b_{\nu i}|}{b_{\nu j}},\qquad
+  \Lambda=1+\bar\ell\sum_r|\partial_j\phi_r|,\\
+  M_0=1+\sum_r\left(|\phi_r(0)|+4\varrho\sum_i|\partial_i\phi_r|
+                              +|\partial_j\phi_r|\bar\ell\right).
+ \end{gather*}
+ Let $Q^{\rm pl}$, $q_{y,t}$ and $r_B$ be those of Theorem~\ref{thm:plc-param} for the planar data
+ $(\mathcal O_j,(a_r,b_r),\Lambda,M_0)$ and $\xi$.
+\item (Formula and zero sets.) Let $\mathcal Z_j,\mathcal F_j\subset\R^{m-1}$ be the open sets
+ \begin{align*}
+  \mathcal Z_j&=\bigl\{y:|y_i|>\tfrac94\varrho\text{ for some }i\ne j,\ \text{or}\ L_\nu(y)<\tfrac98\eta_1\text{ for some }\nu\in\mathcal N_j\bigr\},\\
+  \mathcal F_j&=\bigl\{y:|y_i|<\tfrac52\varrho\text{ for all }i\ne j,\ \text{and}\ L_\nu(y)>\eta_1\text{ for all }\nu\in\mathcal N_j\bigr\}.
+ \end{align*}
+\item (Lifted Hamiltonian.) For $t\in\R$ and $w\in\C^m$, with $y=y(w)=(\pi|w_i|^2)_{i\ne j}$,
+ \begin{equation}\label{eq:plc-lift}
+  Q^{(j)}(t,w)=\begin{cases}\chi(y)S'(t)\,\ell(y)\,Q^{\rm pl}\bigl(y,\chi(y)S(t),\,w_j/\sqrt{\ell(y)}\bigr)&\text{if }y\in\mathcal F_j,\\
+  0&\text{if }y\in\mathcal Z_j.\end{cases}
+ \end{equation}
+\end{enumerate}
+\end{definition}
+
+The sets $\mathcal F_j$ and $\mathcal Z_j$ make \eqref{eq:plc-lift} a definition on all of $\C^m$: the planar family exists only over $\mathcal O_j$,
+the formula is used only on $\mathcal F_j\subset\mathcal O_j$, and by Lemma~\ref{lem:plc-slice}(e) the two cases cover
+$\R^{m-1}$ and agree on their overlap. If $\mathcal O_j=\emptyset$, then $\mathcal F_j=\emptyset$ and $Q^{(j)}=0$.
+
+\begin{lemma}[Properties of the slice data]\label{lem:plc-slice}
+\uses{def:plc-slice, lem:pre-flat, lem:fcp-smoothing}
+In the situation of Definition~\ref{def:plc-slice}:
+\begin{enumerate}[label=(\alph*)]
+\item $\ell$ is real-analytic on $\R^{m-1}$ and $\delta_1\le L(y)-\ell(y)\le\zeta/2$ for all $y$.
+\item $\chi$ is $C^\infty$ with values in $[0,1]$. $\rho_{\rm box}(y)=1$ if $\|y\|_\infty\le\varrho$, and $\rho_{\rm box}=0$ on the open set
+ $\{|y_i|>2\varrho\text{ for some }i\}$; $\chi_L=0$ on the open set $\{L_\nu<\frac54\eta_1\text{ for some }\nu\in\mathcal N_j\}$, and
+ $\chi_L(y)=1$ if $L(y)\ge\frac74\eta_1$.
+\item $\Delta_j\subset\{\|y\|_\infty\le\varrho-2\}$; hence $\{y\in\Delta_j:L(y)>\frac34\eta_1\}\subset\mathcal O_j$, and $\chi(y)=1$ for
+ $y\in\Delta_j$ with $L(y)\ge2\eta_1$.
+\item On $\mathcal O_j$: $\ell>\frac58\eta_1$, $|b_r|\le\Lambda$, and $|f_y(p)|\le M_0$ for $0\le p\le1$; thus
+ $(\mathcal O_j,(a_r,b_r),\Lambda,M_0)$ are planar data. Moreover $\ell\le\bar\ell$ on $\mathcal O_j$, and $f_y$ is $\Lambda_F\ell(y)$-Lipschitz on $[0,1]$.
+\item $\mathcal Z_j\cup\mathcal F_j=\R^{m-1}$, $\mathcal F_j\subset\mathcal O_j$, $\ell>\frac78\eta_1$ on $\mathcal F_j$, and $\chi=0$ on the open
+ set $\mathcal Z_j$.
+\item If $\chi(y)\ne0$, then $|y_i|<2\varrho$ for all $i\ne j$, $L_\nu(y)>\frac54\eta_1$ for all $\nu\in\mathcal N_j$, $y\in\mathcal F_j$,
+ and $\ell(y)>\eta_1$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $\ell+\delta_1$ is the soft minimum $-s_1\log\sum_\nu e^{-L_\nu/s_1}$ of the affine functions $L_\nu$, $\nu\in\mathcal N_j$;
+Lemma~\ref{lem:fcp-smoothing}(a),(b), applied to the functions $-L_\nu$, shows that it is real-analytic and lies in
+$[L-s_1\log N_j,\,L]$. Since $\log N_j<N_j\le N_\Delta<N_\Delta+1$, $s_1\log N_j<\zeta/4$, and $L-\ell\in[\delta_1,\delta_1+\zeta/4]\subset[\delta_1,\zeta/2]$.
+
+(b) Smoothness and range follow from Lemma~\ref{lem:pre-flat}. If $|y_i|\le\varrho$, the argument of $S$ in the $i$-th
+factor of $\rho_{\rm box}$ is $\le0$ and the factor is $1$; if $|y_i|\ge2\varrho$, the argument is $\ge1$ and the factor is $0$.
+If $L_\nu<\frac54\eta_1$, the $\nu$-th factor of $\chi_L$ vanishes; if $L\ge\frac74\eta_1$, every $L_\nu\ge L$ gives argument $\ge1$.
+
+(c) Let $y\in\Delta_j$ and $i\ne j$. Some $\nu$ has $b_{\nu i}>0$ (by compactness of $\Delta$, as for $j$ in
+\S\ref{sec:fcp-setting}), and $b_{\nu i}y_i\le\langle b_\nu,(y,0)\rangle\le\ell_\nu$ with $y_i\ge0$; so $0\le y_i\le\varrho-2$. Then
+$\rho_{\rm box}(y)=1$ and $\|y\|_\infty<3\varrho$. If $L(y)>\frac34\eta_1$, then $L_\nu(y)\ge L(y)>\frac34\eta_1$ for all $\nu\in\mathcal N_j$,
+so $y\in\mathcal O_j$; if $L(y)\ge2\eta_1$, moreover $\chi_L(y)=1$ by (b).
+
+(d) On $\mathcal O_j$ every $L_\nu>\frac34\eta_1$, so $L>\frac34\eta_1$ and $\ell\ge L-\zeta/2>\frac34\eta_1-\frac1{16}\eta_1>\frac58\eta_1$. For
+$\nu\in\mathcal N_j$ and $\|y\|_\infty<3\varrho$, $L_\nu(y)\le(\ell_\nu+3\varrho\sum_{i\ne j}b_{\nu i})/b_{\nu j}$, so $0<\ell<L\le\bar\ell$ and
+$|b_r|=\ell|\partial_j\phi_r|\le\bar\ell\sum_r|\partial_j\phi_r|<\Lambda$. For $0\le p\le1$, $|a_r(y)|+|b_r(y)|\le M_0$ and therefore $|f_y(p)|\le M_0$, since
+$|\phi_r(y,0)|\le|\phi_r(0)|+3\varrho\sum_{i\ne j}|\partial_i\phi_r|$. The functions $a_r$ are affine and $b_r$ real-analytic. The Lipschitz
+bound is the slope bound $\max_r|b_r(y)|\le\Lambda_F\ell(y)$.
+
+(e) If $y\notin\mathcal Z_j$, then $|y_i|\le\frac94\varrho<\frac52\varrho$ and $L_\nu(y)\ge\frac98\eta_1>\eta_1$, so $y\in\mathcal F_j$. If
+$y\in\mathcal F_j$, then $\|y\|_\infty<\frac52\varrho<3\varrho$ and $L_\nu>\eta_1>\frac34\eta_1$, so $y\in\mathcal O_j$, and
+$\ell\ge L-\zeta/2>\eta_1-\frac1{16}\eta_1$. If $y\in\mathcal Z_j$, either some $|y_i|>\frac94\varrho>2\varrho$, and $\rho_{\rm box}(y)=0$ by (b),
+or some $L_\nu(y)<\frac98\eta_1<\frac54\eta_1$, and $\chi_L(y)=0$ by (b).
+
+(f) If $\chi(y)\ne0$, every factor of $\chi_L(y)$ is nonzero, so $(L_\nu(y)-\frac54\eta_1)/(\eta_1/2)>0$, and every factor of
+$\rho_{\rm box}(y)$ is nonzero, so $y_i^2<4\varrho^2$. Hence $|y_i|<2\varrho<\frac52\varrho$ and $L_\nu(y)>\frac54\eta_1>\eta_1$, so
+$y\in\mathcal F_j$, and $\ell\ge L-\zeta/2>\frac54\eta_1-\frac1{16}\eta_1>\eta_1$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The lift}\label{sec:plc-lift}
+
+\begin{lemma}[Support and outer faces]\label{lem:plc-faces}
+\uses{def:plc-slice, lem:plc-slice, thm:plc-param}
+Let $Q^{(j)}$ be as in Definition~\ref{def:plc-slice} and put
+\[
+ c_j=\tfrac12(1-r_B)\,\eta_1\min_{\nu\in\mathcal N_j}b_{\nu j}>0.
+\]
+\begin{enumerate}[label=(\alph*)]
+\item If $Q^{(j)}(t,w)\ne0$, then, with $y=y(w)$, $\chi(y)\ne0$, $\|y\|_\infty<2\varrho$ and $p_j(w)<r_B\,\ell(y)$. In particular
+ $Q^{(j)}$ vanishes outside $\R\times K_j$, $K_j=\{w:\|y(w)\|_\infty\le2\varrho,\ p_j(w)\le r_B\bar\ell\}$, a compact set.
+\item For $\nu\in\mathcal N_j$ and every $t$: if $Q^{(j)}(t,w)\ne0$, then
+ \begin{equation}\label{eq:plc-collar}
+  \ell_\nu-\langle b_\nu,p(w)\rangle=b_{\nu j}\bigl(L_\nu(y)-p_j\bigr)\ge b_{\nu j}\bigl((L(y)-\ell(y))+(1-r_B)\ell(y)\bigr)
+  >b_{\nu j}(1-r_B)\eta_1 .
+ \end{equation}
+ Hence $Q^{(j)}_t$ vanishes on the open set $\{w:\langle b_\nu,p(w)\rangle>\ell_\nu-c_j\}$.
+\item For $\nu\notin\mathcal N_j$ and every $t$, $\{Q^{(j)}_t,\langle b_\nu,p\rangle\}=0$ on $\C^m$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) By \eqref{eq:plc-lift}, $Q^{(j)}(t,w)\ne0$ forces $y\in\mathcal F_j$, $\chi(y)\ne0$ and
+$Q^{\rm pl}(y,\chi(y)S(t),w_j/\sqrt{\ell(y)})\ne0$. Lemma~\ref{lem:plc-slice}(f) gives $\|y\|_\infty<2\varrho$, and, since
+$Q^{\rm pl}(y,\cdot,u)=0$ for $\pi|u|^2\ge r_B$ (Theorem~\ref{thm:plc-param}), $\pi|w_j|^2/\ell(y)<r_B$. By
+Lemma~\ref{lem:plc-slice}(d),(e), $\ell(y)\le\bar\ell$. $K_j$ is closed and bounded, since $|w_i|^2\le2\varrho/\pi$ for $i\ne j$ and
+$|w_j|^2\le r_B\bar\ell/\pi$.
+
+(b) $\langle b_\nu,p\rangle=\sum_{i\ne j}b_{\nu i}y_i+b_{\nu j}p_j$ and $L_\nu=(\ell_\nu-\sum_{i\ne j}b_{\nu i}y_i)/b_{\nu j}$ give the identity. By (a)
+$p_j<r_B\ell$, and $L_\nu\ge L$; this gives the first inequality. By Lemma~\ref{lem:plc-slice}(a) $L-\ell\ge0$, and by
+Lemma~\ref{lem:plc-slice}(f) $\ell>\eta_1$; this gives the second. Since $c_j<b_{\nu j}(1-r_B)\eta_1$, no point of
+$\{\ell_\nu-\langle b_\nu,p\rangle<c_j\}$ has $Q^{(j)}_t\ne0$.
+
+(c) $\langle b_\nu,p\rangle=\sum_{i\ne j}b_{\nu i}p_i$. The Hamiltonian field of $p_i=\pi|w_i|^2$ rotates the $i$-th coordinate plane and
+fixes the other coordinates, and $Q^{(j)}_t$ depends on $w_i$, $i\ne j$, only through $p_i$; so it is invariant under these
+rotations, and $\{Q^{(j)}_t,p_i\}=\pm dQ^{(j)}_t(X_{p_i})=0$.
+\end{proof}
+
+\begin{theorem}[Realisation of one coordinate rearrangement]\label{thm:plc-lift}
+\lean[needed]{SymplecticPacking.HighDim.liftGen_spec}
+\uses{def:plc-slice, lem:plc-slice, lem:plc-faces, thm:plc-param, lem:fcp-rearrangement, lem:fcp-lipschitz}
+Let $F=\max_{r\in\mathcal I}\phi_r$ be convex polyhedral with real coefficients on $\Delta$, $j\in\{1,\dots,m\}$ and $e>0$ real, and let $Q^{(j)}$
+be the function of Definition~\ref{def:plc-slice}. Then $Q^{(j)}$ is $C^\infty$ on $\R\times\C^m$, vanishes outside $\R\times K_j$
+with $K_j$ compact, and $Q^{(j)}(t,\cdot)=0$ for $t\le0$ and $t\ge1$. Its flow $(q^{(j)}_t)_{t\in[0,1]}$ ($\iota_X\omega_V=-dQ^{(j)}_t$) is a smooth
+Hamiltonian isotopy of $\C^m$ with:
+\begin{enumerate}[label=(\alph*)]
+\item $q^{(j)}_0=\mathrm{id}$; each $q^{(j)}_t$ preserves the moments $p_i$, $i\ne j$, and maps $V_\Delta$ onto $V_\Delta$; explicitly,
+ for $w$ with $\chi(y(w))\ne0$ the $j$-th coordinate of $q^{(j)}_t(w)$ is $\sqrt{\ell(y)}\,q_{y,\chi(y)S(t)}(w_j/\sqrt{\ell(y)})$, $y=y(w)$,
+ and for $\chi(y(w))=0$ it is $w_j$; the coordinates $w_i$, $i\ne j$, are rotated in their planes, so their moduli are
+ preserved;
+\item with the positive $c_j$ of Lemma~\ref{lem:plc-faces}, for every $\nu\in\mathcal N_j$ and every $t$, $Q^{(j)}_t$ vanishes on
+ $\{\langle b_\nu,p\rangle>\ell_\nu-c_j\}$, and for every $\nu\notin\mathcal N_j$, $Q^{(j)}_t$ Poisson-commutes with $\langle b_\nu,p\rangle$;
+\item $F\bigl(p(q^{(j)}_1(w))\bigr)\le(R_jF)(p(w))+e$ for every $w\in V_\Delta$.
+\end{enumerate}
+In particular \Mref{Theorem}{thm:cmp-realisation} holds, with $Q^{(j)}_t=Q^{(j)}(t,\cdot)$.
+\end{theorem}
+
+\begin{proof}
+\emph{Smoothness.} The sets $\Omega_Z=\{w:y(w)\in\mathcal Z_j\}$ and $\Omega_F=\{w:y(w)\in\mathcal F_j\}$ are open in $\C^m$, since
+$w\mapsto y(w)$ is continuous, and they cover $\C^m$ by Lemma~\ref{lem:plc-slice}(e). On $\R\times\Omega_Z$, $Q^{(j)}=0$. On $\R\times\Omega_F$,
+$y(w)\in\mathcal O_j$ and $\ell(y(w))>\frac78\eta_1$ (Lemma~\ref{lem:plc-slice}(e)), so the formula in \eqref{eq:plc-lift} is a composite
+of $C^\infty$ maps: $w\mapsto y(w)$ is polynomial, $\chi$ and $\ell$ are smooth, $\ell^{-1/2}$ is smooth where $\ell>0$,
+$w\mapsto w_j/\sqrt{\ell(y(w))}$ is smooth including at $w_j=0$ and on every axis $w_i=0$, and $Q^{\rm pl}$ is smooth on
+$\mathcal O_j\times\R\times\C$ (Theorem~\ref{thm:plc-param}). On the overlap the formula vanishes, because $\chi(y)=0$ there by
+Lemma~\ref{lem:plc-slice}(e). Hence $Q^{(j)}$ is well defined and $C^\infty$. By Lemma~\ref{lem:plc-faces}(a) it vanishes outside
+$\R\times K_j$. For $t\le0$ and $t\ge1$, $S'(t)=0$, so $Q^{(j)}(t,\cdot)=0$. The flow of a smooth time-dependent field supported in
+$\R\times K_j$ exists for all times and is a smooth isotopy of $\C^m$.
+
+\emph{The flow (a).} Since $\omega_V$ is the sum of the area forms of the coordinate planes, the $w_i$-component of the
+field at $w$ is the planar Hamiltonian field of $w_i\mapsto Q^{(j)}(t,w)$, the other coordinates being fixed. For $i\ne j$ this
+function depends on $w_i$ only through $p_i$, so the component is $\partial Q^{(j)}_t/\partial p_i$ times the field of $p_i$, which
+rotates the $i$-th plane; hence $|w_i|$ and $p_i$ are constant along the flow (equivalently $\{Q^{(j)}_t,p_i\}=0$, as in
+Lemma~\ref{lem:plc-faces}(c)), and so is $y$. If $\chi(y)=0$, the function $w_j\mapsto Q^{(j)}(t,w)$ vanishes identically (for $y\in\mathcal Z_j$
+by definition, for $y\in\mathcal F_j$ through the factor $\chi(y)$), so $w_j$ is constant. If $\chi(y)\ne0$, then $y\in\mathcal F_j$ and
+$Q^{(j)}(t,w)=\ell\,G_t(w_j/\sqrt\ell)$ with $G_t(u)=\chi S'(t)Q^{\rm pl}(y,\chi S(t),u)$, $\ell=\ell(y)$, $\chi=\chi(y)$. For a planar Hamiltonian
+$\ell\,G(w/\sqrt\ell)$ the field at $w$ is $\sqrt\ell\,X_G(w/\sqrt\ell)$, because the gradient of $\ell\,G(w/\sqrt\ell)$ is $\sqrt\ell(\nabla G)(w/\sqrt\ell)$
+and the field is a fixed linear map applied to the gradient. Hence $u=w_j/\sqrt\ell$ solves
+$\dot u=\chi S'(t)X_{Q^{\rm pl}(y,\chi S(t),\cdot)}(u)$. The curve $t\mapsto q_{y,\chi S(t)}(u_0)$ solves the same equation with the same initial
+value, so $u(t)=q_{y,\chi S(t)}(u_0)$. This is the description in (a), and $q^{(j)}_0=\mathrm{id}$.
+
+By \eqref{eq:fcp-slices}, $w\in V_\Delta$ if and only if $y(w)\in\Delta_j$ and $p_j(w)\le L(y(w))$. The flow preserves $y$. If $\chi(y)=0$ it
+fixes $w_j$. If $\chi(y)\ne0$, the planar map $q_{y,\chi S(t)}$ maps $\bar D(1)$ onto itself and is the identity on $\{\pi|u|^2\ge r_B\}$
+(Theorem~\ref{thm:plc-param}); in the variable $w_j=\sqrt\ell u$ it maps $\{p_j\le\ell\}$ onto itself and fixes every point with
+$p_j\ge r_B\ell$. Since $\ell<L$ (Lemma~\ref{lem:plc-slice}(a)), it maps $\{p_j\le L(y)\}$ into itself and fixes every point with
+$p_j>L(y)$. Thus $q^{(j)}_t$ maps $V_\Delta$ into $V_\Delta$ and $\C^m\setminus V_\Delta$ into $\C^m\setminus V_\Delta$; being a bijection of
+$\C^m$, it maps $V_\Delta$ onto $V_\Delta$.
+
+\emph{Faces (b).} This is Lemma~\ref{lem:plc-faces}(b),(c).
+
+\emph{The estimate (c).} Let $w\in V_\Delta$, $p(w)=(y,x)$, so $y\in\Delta_j$ and $0\le x\le L(y)$, and let $x'=p_j(q^{(j)}_1(w))$. By (a),
+$p(q^{(j)}_1(w))=(y,x')$ with $0\le x'\le L(y)$. Along the slice, $F(y,\cdot)$ is $\Lambda_F$-Lipschitz, and by
+Lemma~\ref{lem:fcp-rearrangement}(i) $(R_jF)(y,x)$ is the increasing rearrangement of $F(y,\cdot)$ on $[0,L(y)]$ at $x$; in particular
+$(R_jF)(y,x)\ge\min_{[0,L(y)]}F(y,\cdot)$.
+
+\emph{Case $L(y)<2\eta_1$.} Then
+\[
+ F(y,x')\le\max_{[0,L(y)]}F(y,\cdot)\le\min_{[0,L(y)]}F(y,\cdot)+\Lambda_FL(y)<(R_jF)(y,x)+2\Lambda_F\eta_1,
+\]
+and $2\Lambda_F\eta_1=e/32$. This case covers all slices on which $\chi$ may lie strictly between $0$ and $1$ and all degenerate
+slices.
+
+\emph{Case $L(y)\ge2\eta_1$.} Then $\chi(y)=1$ and $y\in\mathcal O_j$ (Lemma~\ref{lem:plc-slice}(c)). Write $\ell=\ell(y)$, $L=L(y)$, and let
+$g_y$ be the increasing rearrangement of $f_y(p)=F(y,\ell p)$ on $[0,1]$. For $0\le x''\le\ell$, the substitution $a\mapsto\ell a$ gives
+\begin{equation}\label{eq:plc-rescale}
+ g_y(x''/\ell)=\min_{0\le a\le\ell-x''}\max\bigl(F(y,a),F(y,a+x'')\bigr),
+\end{equation}
+the rearrangement of $F(y,\cdot)$ on the shortened slice $[0,\ell]$.
+
+If $x\le\ell$: by (a), $x'=\ell\,\pi|q_{y,1}(u)|^2$ with $u=w_j/\sqrt\ell\in\bar D(1)$, $\pi|u|^2=x/\ell$. Theorem~\ref{thm:plc-param} gives
+$F(y,x')=f_y(\pi|q_{y,1}(u)|^2)\le g_y(x/\ell)+\xi$. Let $[a,a+x]\subset[0,L]$ be a minimising interval for $(R_jF)(y,x)$ and
+$a'=\min(a,\ell-x)\ge0$. Then $[a',a'+x]\subset[0,\ell]$ and
+\[
+ 0\le a-a'=\max(0,a+x-\ell)\le L-\ell,
+\]
+so both endpoints move by at most $L-\ell$,
+and by \eqref{eq:plc-rescale}
+\[
+ g_y(x/\ell)\le\max\bigl(F(y,a'),F(y,a'+x)\bigr)\le(R_jF)(y,x)+\Lambda_F(L-\ell).
+\]
+If $\ell<x\le L$: then $\pi|u|^2=x/\ell>1\ge r_B$ for $u=w_j/\sqrt\ell$, so $x'=x$ by (a). For a minimising interval $[a,a+x]$ of
+$(R_jF)(y,x)$, $0\le a\le L-x<L-\ell$, hence $F(y,x)\le F(y,a+x)+\Lambda_Fa\le(R_jF)(y,x)+\Lambda_F(L-\ell)$.
+
+In both subcases, by Lemma~\ref{lem:plc-slice}(a),
+\[
+ F(y,x')\le(R_jF)(y,x)+\xi+\Lambda_F\frac\zeta2=(R_jF)(y,x)+\frac e4+\frac e{1024}<(R_jF)(y,x)+e .
+\]
+This proves (c). Items (a)--(c) are the conclusions of \Mref{Theorem}{thm:cmp-realisation}: the isotopy is defined on all
+of $\C^m$, hence on a neighbourhood of $V_\Delta$, and $c_j>0$. A positive dyadic number below $c_j$ gives a rational collar if required, without changing the generator.
+\end{proof}
+

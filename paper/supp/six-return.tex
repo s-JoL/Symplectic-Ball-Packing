@@ -1,0 +1,500 @@
+\section{Dimension six: compact transfers and the large ball}\label{sec:sxr}
+
+The smaller balls are first packed into the polynomial model of Section~\ref{sec:sxm}.
+We transfer their compact images through the cubic and quadric polynomial families,
+insert the large ball by a bubble at the distinguished point, and apply one common
+map into the unit ball. Each transfer preserves the form exactly.
+
+\subsection{Packing over a bordered base}\label{sec:sxr-minorant}
+
+Let $r'_i\in(\rho_i,r_i)$ and use the parameters of Lemma~\ref{lem:sxm-parameters}.
+Put $G=H_0-\sum_i(r_i-|p|)_+$,
+$\tau=(1+\max_i r_i/h_1)/2$ and $d_0=9(b-h_2)$.
+The cap supports lie in $\tau\Delta$, and $G\ge d_0$ off $\tau\Delta$.
+The function $G$ is concave: it is the sum of the concave profile $H_0$ and the
+negatives of convex caps. Write $\overline G=|\Delta|^{-1}\int_\Delta G$ and set
+\[
+ \eta=\frac1{32}\min(d_0,\overline G)>0.
+\]
+Set
+\[
+ d=\min\bigl((\overline G-\eta)/2,d_0/4\bigr),\quad
+ \gamma=11d/16,\quad r_*=11d/64,\quad
+ l=\max\bigl(\mathfrak m(\eta),\mathfrak m(r_*/32)+2\bigr).
+\]
+These are positive; the level $l$ reserves two outer collar levels.
+
+\begin{proposition}[Inner packing]\label{prop:sxr-minorant}
+\lean{SymplecticPacking.HighDim.NativeProfile.tolerance_spec,SymplecticPacking.HighDim.ToricPackingStages.cubicRawModel_spec,SymplecticPacking.HighDim.ToricPackingStages.cubicRawPhysical_handleMass_loss,SymplecticPacking.HighDim.ToricPackingStages.native_surfaceRemainder_nonneg}
+The physical form $\Omega_{\rm phys}$ admits pairwise disjoint symplectic embeddings
+$\phi_i$ of neighbourhoods of $B(r'_i)$, with compact images in
+$\Sigma_l\times\{z:p(z)\in\Delta\}$ and with moments strictly inside the two outer
+faces. All maps are obtained from the finite comparator for $G-\eta$ and the common
+handle construction.
+\end{proposition}
+
+\begin{proof}
+Lemma~\ref{lem:sxm-parameters} gives $\overline G>0$; the positivity bound for $H_0$
+gives the other positive entries of $\eta$.
+Proposition~\ref{prop:sxm-bordered} gives $H_l>H_0-\eta$.
+For the finite comparator use $P=G-\eta$, outer lower bound $d_0/2$, parameter $d$ and gap $\gamma$.
+The factor $1/32$ ensures $P\ge d_0/2$ off the core and positive mean.
+Also $P<H_l-\sum_i(r_i-|p|)_+$.
+To represent $-P$ as a maximum of affine functions, take every sum consisting
+of one negative affine piece of $H_0$, one of the two pieces of each cap, and
+the constant $\eta$. The maximum of these sums is
+$-H_0+\sum_i(r_i-|p|)_++\eta$.
+The handle lies in $\operatorname{int}\Sigma_0$.
+Put $R=5+l$. The second entry in the maximum defining $l$ ensures that the curvature mass between $\Sigma_{l-2}$ and $\Sigma_l$ is less than $r_*/32$,
+uniformly on $\Delta$: positivity and the tail bound give
+$0\le H_l-H_{l-2}\le H_0-H_{l-2}<r_*/32$.
+Use the fixed boundary cutoff and background coefficient
+\[
+ \chi_\partial(t)=S\!\left(\frac{|t|^2-(R-2)^2}{(R-1)^2-(R-2)^2}\right),\qquad
+ c_{\rm bg}=\min\left(\frac{r_*}{128},\frac{\kappa_{\min}}2\right)>0.
+\]
+The correction atlas is the family of Lemma~\ref{lem:vtr-cells} with $m=2$ and $R=R-1$; its inner boxes cover
+$\{|t|\le R-1\}$, which contains the support of $1-\chi_\partial$ and the handle, and its closed outer boxes lie in
+$\operatorname{int}\Sigma_l$ (Lemma~\ref{lem:shd-handle-data}). Here $\kappa_{\min}>0$ is the minimum of the ratio
+$d_\Sigma\Gamma(p)/\sigma$, $\sigma=dd^c\log(1+|t|^2+|y_1|^2+|y_2|^2)$, over the union of these closed boxes times $\Delta$, a
+compact set on which $d_\Sigma\Gamma(p)>0$ (Lemma~\ref{lem:sxm-weights}). Thus the correction region of
+\Mref{Definition}{def:hdl-handle-data}(d) is this union, with $\Lambda=\sigma$ and $\kappa_-=\kappa_{\min}$, and it contains the
+correction core, as required in \S\ref{sec:native-toric}.
+The reference mass is $\int_{\Sigma_l}\sigma\le2^m=4$ (Lemma~\ref{lem:vtr-tail}), so the removed form
+\[
+ (1-\chi_\partial)\bigl(d_\Sigma\Gamma(p)-c_{\rm bg}\sigma\bigr)
+\]
+has handle mass $H(p)$ satisfying
+\[
+ H(p)\ge H_l(p)-r_*/16.
+\]
+Indeed the physical collar costs less than $r_*/32$ and the background costs at most
+$4c_{\rm bg}\le r_*/32$. The compact-coordinate primitive and annular correction are then the fixed formulas
+of Construction~\ref{cons:native-normalization}. In the cylinder use the working half-width $b_H=1/16$ and circle-clock parameter $1/4$.
+For $N=k+1$ the layer step is $D_H=2b_H/(3N+1)$, with layer intervals
+$[-b_H+(3i+1)D_H,-b_H+(3i+2)D_H]$, $0\le i<N$.
+For the enlarged inner capacities $\widetilde r_i=(3r_i+r'_i)/4$, use the cap smoothing scale
+$(r_i-\widetilde r_i)/2$ and thin-strip parameter $(r_i-\widetilde r_i)/4$.
+All these layer parameters are positive.
+The comparison inequality and the cap bound give a residual of at least
+$\gamma-r_*/16>0$ after redistribution. Thus the common layer and Moser formulas apply to $H$
+without assuming its concavity and give the stated neighbourhood embeddings.
+Positivity and the strict outer face margins persist on neighbourhoods of the compact ball images.
+\end{proof}
+
+Let $K_1=\bigcup_i\phi_i(B(r'_i))$. In the subsequent steps only this compact set,
+and its successive compact images, need to be controlled.
+
+\subsection{Compact exact transfer}\label{sec:sxr-moser}
+
+We use a complete auxiliary flow before choosing its stopping time. Its cutoff
+and the stopping rule are described here; all extrema below are of continuous
+scalar functions on the displayed compact sets.
+
+For a product of the base curve with a vector space, take the finite coordinate
+boxes of the quadric atlas covering the compact base projection. Write $\rho_i$
+for their coordinate plateaux: $\rho_i=1$ on the inner box and its closed support
+lies inside the chart. Let $G_i(t,x)$ be the squared determinant of $d\Gamma_t$
+in that product chart, evaluated at $x$, and put
+\[
+ \begin{gathered}
+ g(t,x)=\sum_i\rho_i(x_{\rm base})G_i(t,x),\qquad
+ \mu=\min\bigl(1,\min_K g(0,\cdot)\bigr)>0,\\
+ R=\max\bigl(0,\max_K |x_{\rm fibre}|_{\rm coord}^2\bigr).
+ \end{gathered}
+\]
+The summands are extended by zero outside their charts. This extension is smooth
+because the closed support of $\rho_i$ lies strictly inside the chart. Use
+\begin{equation}\label{eq:sxr-native-cutoff}
+ \chi(t,x)=S(4g(t,x)/\mu-1)\,S(2-t^2)\,
+ S\bigl(2(R+1-|x_{\rm fibre}|_{\rm coord}^2)\bigr).
+\end{equation}
+Its closed support lies where $g\ge\mu/4>0$, hence where the form is
+nondegenerate and at least one of the finite charts applies. It is spatially
+compact: the base lies in the union of the closed boxes, and
+$|x_{\rm fibre}|_{\rm coord}^2\le R+1$.
+
+In each chart, pull back the full ambient covector representing $\Gamma_t$,
+including its vertical components, differentiate it, and solve the resulting
+finite linear system
+\[
+ \iota_{X_t}d\Gamma_t=-\partial_t\Gamma_t.
+\]
+Take the first applicable chart in the fixed finite order and multiply its field
+by $\chi$. The chart solutions agree on overlaps. Consequently this rule defines
+a globally smooth, spatially compact field $W_t$, extended by zero away from the
+cutoff support. Spatial compactness gives its flow $\Psi_s$ on $-2<s<2$,
+determined by the ambient-coordinate ODE and continuity of the lifted curve. The displayed
+chart inverses prove smoothness of this lift.
+
+\begin{lemma}[Exact transfer with a finite stopping rule]\label{lem:sxr-exact}
+Let $\Gamma_t$ be a smooth one-form family, with $d\Gamma_0$ nondegenerate on a
+compact set $K$. Let $A_t:U\to N$ be a smooth family, an embedding for
+$0<t\le\delta$, with $A_t^*\Omega_t=d\Gamma_t$ on the open neighbourhood $U$ of
+$K$. Let $T\subset N$ be open. Suppose the complete field $W$ above
+comes with finitely many smooth scalar control functions $b_j(t,x)$ such that
+\[
+ b_j(0,x)>0\quad(x\in K),\qquad
+ \bigl[\,b_j(t,x)>0\text{ for all }j\,\bigr]
+ \Longrightarrow \chi(t,x)=1,\ x\in U,\ A_t(x)\in T.
+\]
+Define
+\begin{align}
+ c_*&=\min\bigl(1,\min_{j,x\in K} b_j(0,x)\bigr),\label{eq:sxr-clearance}\\
+ V_*&=1+\max\left(0,\max_{j,(s,x)\in[-1,1]\times K}
+   \left|\partial_s\bigl[b_j(s,\Psi_sx)\bigr]\right|\right),\label{eq:sxr-speed}\\
+ \tau_*&=\min\left(\delta/2,\,1/4,\,c_*/(4V_*)\right).\label{eq:sxr-safe-time}
+\end{align}
+For $0<t\le\tau_*$, the map $A_t\circ\Psi_t$ is a symplectic embedding of a
+neighbourhood of $K$ into $T$. Empty minima and maxima are interpreted by the
+inserted constants $1$ and $0$.
+\end{lemma}
+
+\begin{proof}
+The field is defined before $\tau_*$, so the derivative in
+\eqref{eq:sxr-speed} is continuous on the compact set $[-1,1]\times K$.
+We have $c_*>0$ and $V_*>0$. For $|s|\le2\tau_*$, the mean-value estimate gives
+\[
+ b_j(s,\Psi_sx)\ge b_j(0,x)-V_*|s|\ge c_*/2>0
+ \qquad(x\in K).
+\]
+Thus the image of $[-\tau_*,2\tau_*]\times K$ under
+$(s,x)\mapsto(s,\Psi_sx)$ is a compact set on which every control function is
+positive. Positivity persists on a neighbourhood of this compact set. On that
+neighbourhood $W=X$, so Cartan's formula gives
+\[
+ \frac d{ds}\Psi_s^*d\Gamma_s
+ =\Psi_s^*d(\partial_s\Gamma_s+\iota_{X_s}d\Gamma_s)=0.
+\]
+Consequently $(A_t\Psi_t)^*\Omega_t=d\Gamma_0$. The flow map $\Psi_t$ is a
+diffeomorphism; composing its restriction with the embedding $A_t$ gives the
+required neighbourhood embedding. The target control functions give its image in $T$.
+\end{proof}
+
+On a vector space the same construction uses a fixed basis, with
+$\ell=\min_K\det(d\Gamma_0)^2$ and
+$R=\max_K |x|_{\rm coord}^2$. Its cutoff is
+\[
+ S(4\det(d\Gamma_t)^2/\ell-2)\,
+ S\bigl(2(R+1-|x|_{\rm coord}^2)\bigr)\,S(2-t^2).
+\]
+The three plateau control functions are
+$4\det(d\Gamma_t)^2/\ell-3$, $2(R+1-|x|_{\rm coord}^2)-1$, and $1-t^2$.
+Together with the displayed source and target control functions, they enter
+\eqref{eq:sxr-clearance}--\eqref{eq:sxr-safe-time}.
+The same rule, applied uniformly, gives a common bubble parameter in Proposition~\ref{prop:sxr-bubble}.
+
+\subsection{The cubic transfer}\label{sec:sxr-transport}
+
+Here the smaller family is nonempty. The empty-family case in Theorem~\ref{thm:lrg-six} is the direct inclusion and uses no cubic transfer.
+
+Define the cone polynomial on $\C^2\times\C^2$ by
+\[
+ Z(v,w,z_1,z_2)_{k,i}=z_1^{k_1}z_2^{k_2}q_{d_k,m_k,i}(v,w),
+ \qquad \lambda_{\rm cone}=Z^*\lambda_{1/(L\pi)}.
+\]
+The $(k,i)=((0,0),0)$ coordinate equals one, so this primitive is everywhere smooth.
+For $t>0$ define
+\[
+ \mathcal N_t(v,w,z)=(v,w,z,f(v,w)/t),\qquad
+ \lambda_t^{\rm cub}=\mathcal N_t^*\lambda_{\rm cone},\quad
+ \Omega_t^{\rm cub}=d\lambda_t^{\rm cub}.
+\]
+
+For a nonempty compact physical source $K_1$, write $\zeta=\sqrt{\pi L}\,z$ and put
+\[
+ \delta_b=\frac12\min_{(y,z)\in K_1}
+   \min\bigl(A_*-|\zeta_1|^2,\ B_*-|\zeta_1|^2-|\zeta_2|^2\bigr)>0,
+\]
+\[
+ \chi_b(\zeta)=S_{\delta_b/2,\delta_b}(A_*-|\zeta_1|^2)
+ S_{\delta_b/2,\delta_b}(B_*-|\zeta_1|^2-|\zeta_2|^2).
+\]
+The bridge is
+$\Xi(y,z)=(y,\chi_b(\zeta)\mathsf R_{a(y)}^{-1}(\zeta))$ on the disk domain and zero in its fibre
+coordinate outside that domain. Its base coordinate remains $y$.
+The plateau is zero near the boundary of the disk domain and one on a neighbourhood of $K_1$.
+Thus this is an explicit globally smooth extension of the inverse radial map, with its exact pullback on that neighbourhood.
+
+\begin{proposition}[Cubic transfer]\label{prop:sxr-transport}
+\lean{SymplecticPacking.BranchLarge3.fam_spec,SymplecticPacking.BranchLarge3.bridge_spec,SymplecticPacking.BranchLarge3.cubicTransfer_spec}
+There are an explicit $t>0$ and a smooth symplectic embedding $g_1$ of a
+neighbourhood of $K_1$ into
+$\{(v,w,z):vw\ne0\}$, with $g_1^*\Omega_t^{\rm cub}=\Omega_{\rm phys}$.
+\end{proposition}
+
+\begin{proof}
+Use a normal coordinate $\xi$ to the cubic and write
+$g(z)=|f_v(z)|^2+|f_w(z)|^2$ for $z=(v,w)$.
+Let $K_C$ and $H_C$ be the base and disk projections of $\Xi(K_1)$, and set
+\[
+ \mathcal D=\{(\iota y,\xi):(y,z_1,\xi)\in K_C\times H_C\},\qquad
+ m=\frac12\min_{y\in K_C}g(\iota y)>0,\qquad
+ R_1=1+\max_{Y\in\mathcal D}\operatorname{nsq}(Y),
+\]
+where $\operatorname{nsq}(v,w,\xi)=|v|^2+|w|^2+|\xi|^2$.
+For the displacement and derivative bounds below use the product maximum norm. Define
+\[
+ r_N=\sqrt{R_1}+1,\qquad R_N=3r_N^2,\qquad
+ G_N=\max_{\|z\|\le r_N}\|Dg(z)\|,
+\]
+\[
+ h_m(s)=sS_{m/4,m/2}(s)+\frac m2\bigl(1-S_{m/4,m/2}(s)\bigr),\qquad
+ c_R(s)=1-S_{R_N,R_N+1}(s),
+\]
+\[
+ X(v,w,\xi)=c_R(\operatorname{nsq}(v,w,\xi))
+ \left(h_m(g(v,w))^{-1}(\overline{f_v}\xi,\overline{f_w}\xi),0\right).
+\]
+The denominator is at least $m/4$, and $X$ is spatially compact. Let
+\[
+ C_N=\sup_Y\|X(Y)\|,\qquad
+ d_N=\min\left(1,\frac{m}{2(G_N+1)}\right),\qquad
+ \epsilon_N=\min\left(1,\frac{d_N}{C_N+1}\right)>0.
+\]
+Take $\psi_t$ to be the complete flow of
+$S^{\rm plateau}_{-2,-1,1,2}(t)X$.
+For initial $Y=(v,w,\xi)$ in the open tube
+\[
+ \mathcal W=\{Y:\operatorname{nsq}(Y)<R_1,\ g(v,w)>m\},
+\]
+the displacement on $|t|\le\epsilon_N$ is less than $d_N\le1$.
+It keeps the product maximum norm below $r_N$, the gradient square above $m/2$ and
+$\operatorname{nsq}<3r_N^2=R_N$.
+The regularized field therefore agrees with the normal lift, and
+$f(\psi_t(v,w,\xi)_{\C^2})=f(v,w)+t\xi$ on this tube.
+The initial data $\mathcal D$ lie strictly inside $\mathcal W$, since $g\ge2m$ and
+$\operatorname{nsq}\le R_1-1$. In particular the constraint is $f=t\xi$ when $f(v,w)=0$.
+Set $A_t(y,z_1,\xi)=(\psi_t(\iota y,\xi)_{\C^2},z_1)$.
+For $t\ne0$, $\xi=f/t$ is recovered from the image, and reversing $\psi_t$
+recovers $y$, so $A_t$ is an embedding on a common neighbourhood.
+The map $\mathcal N_t\circ A_t$ has the smooth extension
+$(\psi_t(\iota y,\xi)_{\C^2},z_1,\xi)$ at $t=0$.
+Pull back $\lambda_{\rm cone}$ along this extension, then along $\Xi$, to obtain
+$\Gamma_t$. Its initial curvature is $\Omega_{\rm phys}$ by the radial bridge
+identity. The target $vw\ne0$ contains $A_0\Xi(K_1)$.
+For the stopping rule, use the three plateau control functions
+$4g(t,x)/\mu-2$, $1-t^2$ and $2(R+1-|x_{\rm fibre}|_{\rm coord}^2)-1$ of \eqref{eq:sxr-native-cutoff}, whose positivity
+implies $\chi=1$, together with
+\[
+ \begin{gathered}
+ A_*-|\zeta_1|^2-\delta_b,\quad
+ B_*-|\zeta_1|^2-|\zeta_2|^2-\delta_b,\quad
+ R_1-|y|^2,\\
+ |\nabla f(y_{\rm base})|^2-m,\quad
+ |(A_s\Xi(x))_v|^2,\quad |(A_s\Xi(x))_w|^2.
+ \end{gathered}
+\]
+Here $\zeta$ is the scaled physical disk coordinate, $\delta_b$ is the bridge
+margin, and
+\[
+ y=(\iota(\Xi(x)_{\rm base}),\Xi(x)_{\rm normal}).
+\]
+The constants $R_1,m,\delta_b$ are the explicit margins above. These nine smooth control functions are positive at $s=0$ on $K_1$.
+Use $\delta=\epsilon_N$ in Lemma~\ref{lem:sxr-exact}.
+Extend $\Xi$ to the ambient affine coordinates using the same positive
+coefficient formulas. If $\widetilde F_s$ is the resulting smooth cone-coordinate
+map, the ambient covector used to compute the field is
+\[
+ \alpha_s(p)=\lambda_{\rm cone}(\widetilde F_s(p))\circ D\widetilde F_s(p).
+\]
+Its full Jacobian includes the dependence on both fibre coordinates.
+Use its complete cutoff flow in \eqref{eq:sxr-speed}, and set $t=\tau_*$ from
+\eqref{eq:sxr-safe-time}. Lemma~\ref{lem:sxr-exact} gives the assertion.
+\end{proof}
+
+\subsection{The quadric tube}\label{sec:sxr-return}
+
+Let $K_2=g_1(K_1)$ and use $P_{t,\delta}$ of Lemma~\ref{lem:sxm-lift}.
+Define
+\[
+ \lambda_{t,\delta}^{\rm out}
+  =[P_{t,\delta}(z,1,v,w)]^*\lambda_{1/(L\pi)},\qquad
+ \Omega_{t,\delta}^{\rm out}=d\lambda_{t,\delta}^{\rm out}.
+\]
+Again the zero-weight constant coordinate is one. Thus the primitive is smooth
+everywhere in this chart, including points where some other coefficients vanish.
+
+\begin{proposition}[The quadric tube map]\label{prop:sxr-quadric-return}
+There are an explicit $\delta>0$ and a symplectic embedding $g_2$ of a
+neighbourhood of $K_2$ into $\{z\ne0\}$, with
+$g_2^*\Omega_{t,\delta}^{\rm out}=\Omega_t^{\rm cub}$.
+\end{proposition}
+
+\begin{proof}
+Put $A_\delta=T_\delta$. Lemma~\ref{lem:sxm-lift} supplies a smooth extension
+$\Gamma_\delta=T_\delta^*\lambda_{t,\delta}^{\rm out}$ at zero, and its value at
+zero is $\lambda_t^{\rm cub}$.
+For $\delta>0$, $T_\delta$ is an affine shear with invertible last coordinate.
+Moreover $T_0(v,w,z)$ has last coordinate $vw$, which is nonzero on $K_2$.
+The initial form is nondegenerate there because $g_1$ is a symplectic
+neighbourhood embedding. Lemma~\ref{lem:sxr-exact}, with target $\{z\ne0\}$,
+gives the assertion.
+\end{proof}
+
+Change from the chart $X_1=1$ to $X_0=1$ by
+\[
+ J(v,w,z)=(z^{-1},v/z,w/z).
+\]
+It is a diffeomorphism on $z\ne0$. The compact set
+$K'=Jg_2(K_2)$ avoids the origin. Set
+$\rho=\min_{x\in K'}\max_j|x_j|>0$ and
+$e(x)=\sum_{j=0}^2|x_j|^2$. Take the disjoint open sets
+$T_{\rm out}=\{e(x)>\rho^2/4\}$ and
+$T_{\rm in}=\{e(x)<\rho^2/4\}$. If the smaller family is empty, omit these steps.
+
+\subsection{The polynomial bubble}\label{sec:sxr-bubble}
+
+Let $A<r_0<a$, and take $L=(Q+1)\operatorname{den}(a)\operatorname{den}(e)\operatorname{den}(d_2)$ in
+Lemma~\ref{lem:sxm-parameters} with $Q=\lfloor3/(a-r_0)\rfloor+1$, so that $L>Q$. Set
+\[
+ m_0=\lfloor r_0L\rfloor,\quad M_1=m_0+1,\quad M_2=m_0+2,\quad M_3=m_0+3,
+ \qquad d(\epsilon)=(1-\epsilon)/L.
+\]
+Then $r_0<M_1/L$ and $M_1<M_2<L-S_*$, $M_2<M_3$.
+Let $V_j$ denote the ordered-monomial Veronese map, whose coordinates are indexed
+by words of length $j$ and satisfy $\|V_j(X)\|^2=\|X\|^{2j}$.
+For $X=(X_0,X')$ put $B_\epsilon X=(\epsilon X_0,X')$ and define the degree-$L$
+polynomial vector
+\begin{equation}\label{eq:sxr-bubble-polynomial}
+ \mathcal P_\epsilon(X)=
+ \left(P_{t,\delta}(X),\
+       \epsilon^{M_2-M_1}X_0^{L-M_1}V_{M_1}(B_\epsilon X),\
+       \epsilon^{M_3}V_L(X)\right).
+\end{equation}
+For $\epsilon\ne0$ the last block has no nontrivial zero; hence neither does
+$\mathcal P_\epsilon$.
+In the distinguished affine chart define
+\begin{equation}\label{eq:sxr-degree-form}
+ \omega_\epsilon=
+ \epsilon\,dd^c\log(1+|x|^2)
+       +d(\epsilon)\,dd^c\log\|\mathcal P_\epsilon(1,x)\|^2.
+\end{equation}
+It is Kähler for $0<\epsilon<1$.
+
+\begin{proposition}[Separated insertion of the large ball]\label{prop:sxr-bubble}
+There is an explicit $\epsilon\in(0,1/2)$ such that the smaller ball maps deform
+to symplectic neighbourhood embeddings for $\omega_\epsilon$ with compact images
+in $T_{\rm out}$, and $B(r_0)$ has a symplectic neighbourhood embedding for the
+same form with image in $T_{\rm in}$.
+\end{proposition}
+
+\begin{proof}
+On the outer compact set, \eqref{eq:sxr-degree-form} has a smooth primitive family
+at $\epsilon=0$ with initial curvature the outer polynomial form.
+Indeed $P_{t,\delta}$ is nonzero in the $X_1=1$ chart, and both added blocks vanish
+at zero. The uniform compact Moser transfer, with $A_\epsilon$ the identity,
+uses the two target control functions
+\[
+ |z|^2,\qquad 1+|v|^2+|w|^2-(\rho^2/4)|z|^2.
+\]
+They express $z\ne0$ and $J(v,w,z)\in T_{\rm out}$ without division.
+Equations~\eqref{eq:sxr-clearance}--\eqref{eq:sxr-safe-time} give a threshold
+$\tau>0$ and the smaller maps in $T_{\rm out}$ for every $0<\epsilon\le\tau$.
+
+For the central chart put $x=\epsilon y$ and divide
+$\mathcal P_\epsilon(1,\epsilon y)$ by $\epsilon^{M_2}$.
+Every entry of $P_{t,\delta}$ vanishes to order at least $L-S_*>M_2$ at $o$,
+so its divided block extends polynomially and vanishes at zero.
+The middle block becomes exactly $V_{M_1}(1,y)$, while the final block vanishes
+because $M_3>M_2$. The resulting vector is therefore nonzero at zero for every
+$y$, and its Hopf primitive extends smoothly in $\epsilon$.
+The first term of \eqref{eq:sxr-degree-form}, pulled back by $y\mapsto\epsilon y$,
+also extends smoothly and vanishes at zero.
+The limiting central form is
+\[
+ \frac{M_1}L\,dd^c\log(1+|y|^2).
+\]
+Its affine chart contains a symplectic image of $B(r_0)$, since $r_0<M_1/L$.
+Apply the uniform compact transfer to this compact image, with
+$A_\epsilon(y)=\epsilon y$ and the target control function
+$\rho^2/4-e(\epsilon y)>0$; it gives a threshold $\sigma>0$ by the same finite
+stopping rule. Set $\epsilon=\min(\tau,\sigma)/2$, taking both initial time bounds
+at most $1/2$. The two target sets are disjoint, so the images are disjoint.
+\end{proof}
+
+\subsection{A common map to the ball}\label{sec:sxr-shell}
+
+\begin{lemma}[Polynomial target form]\label{lem:sxr-shell}
+\lean{SymplecticPacking.BranchLarge3.moser_spec,SymplecticPacking.BranchLarge3.targetMap_spec}
+Let $P:\C^{n+1}\to\C^q$ be a homogeneous polynomial map of degree $L$, with no
+nontrivial zero. If $0\le d$ and $Ld<1$, there is an explicit smooth symplectic
+embedding of
+\[
+ \left(\C^n,(1-Ld)dd^c\log(1+|x|^2)+d\,dd^c\log\|P(1,x)\|^2\right)
+ \quad\hbox{into }(\Bo(1),\omega_0).
+\]
+\end{lemma}
+
+\begin{proof}
+Put $c=1/\pi$ and, on $\C^{n+1}\setminus0$, $h_c(X)=c\operatorname{Im}\langle X,dX\rangle/(2\|X\|^2)=d^c\log\|X\|^2$; thus
+$\|X\|^2h_c=c\lambda_0$, with $\lambda_0$ the standard Liouville form. Fix the plateaux
+$\chi=S^{\rm plateau}_{1/4,\,3/8,\,3,\,4}$ and $\psi=S^{\rm plateau}_{-2,\,-1,\,1,\,2}$, and put
+\[
+ \Gamma_s(X)=\|X\|^2\bigl[(1-Lsd\,\chi(\|X\|^2))\,h_c(X)+sd\,\chi(\|X\|^2)\,P^*h_c(X)\bigr],\qquad\Omega_s=d\Gamma_s ,
+\]
+extended by $c\lambda_0$ near $0$, where $\chi=0$. Outside the shell $\frac14\le\|X\|^2\le4$, $\Omega_s=c\,\omega_0$.
+
+\emph{Nondegeneracy.} All data are invariant under $X\mapsto e^{i\theta}X$, with generator $iX$. Since $h_c(iX)=c/2$ and
+$P^*h_c(iX)=h_c(iLP)=cL/2$, we get $\Gamma_s(iX)=c\|X\|^2/2$ for all $s$, so $\iota_{iX}\Omega_s=-d(c\|X\|^2/2)$, i.e.
+$\Omega_s(iX,V)=-c\operatorname{Re}\langle X,V\rangle$. On the complex orthogonal complement $E_X$ of $\C X$, $d\|X\|^2=0$, so
+$\Omega_s|_{E_X}=\|X\|^2\bigl[(1-Lsd\chi)\,dh_c+sd\chi\,P^*dh_c\bigr]|_{E_X}$, which is positive for $s\in[0,1]$ because
+$dh_c$ restricts to a positive form on $E_X$, $P^*dh_c\ge0$ and $1-Lsd\chi\ge1-Ld>0$. If $\iota_V\Omega_s=0$ with
+$V=aX+b\,iX+\xi$, $\xi\in E_X$, then pairing with $iX$ gives $a=0$, pairing with $E_X$ gives $\xi=0$, and $\Omega_s(iX,X)=-c\|X\|^2\ne0$
+gives $b=0$. So $\Omega_s$ is symplectic on $\C^{n+1}$ for $s\in[0,1]$; the same argument shows that the complex hyperplane
+$E=\{X_0=0\}$, which contains $\C X$ for $X\in E$, is a symplectic subspace.
+
+\emph{Relative Moser field.} Put $\alpha=\Gamma_1-\Gamma_0$, supported in the shell, with $\alpha(iX)=0$. For $b\in\C^n$ let
+$\mathsf e(b)=(0,b)$, and let $\mathsf N_t(b,u)=(u,\mathsf Y_t(b,u))$ be the unique vector with $X_0$-component $u\in\C$ that is
+$\Omega_{S(t)}$-orthogonal to $E$ at $\mathsf e(b)$; it is real linear in $u$ and smooth in $(t,b)$, because $E^{\Omega}$ is a
+real two-dimensional complement of $E$ projecting isomorphically to the $X_0$-coordinate. Put $\operatorname{pr}(X)=X'$ and
+\[
+ h_t(X)=-\psi(|X_0|^2)\,\alpha_{\mathsf e(\operatorname{pr}X)}\bigl(\mathsf N_t(\operatorname{pr}X,X_0)\bigr),\qquad \beta_t=\alpha+dh_t,
+\]
+$\iota_{W_t}\Omega_{S(t)}=-\beta_t$ and $V_t=S'(t)W_t$. Then $h_t$ vanishes on $E$ and is real linear in $X_0$ near $E$, so at
+$\mathsf e(b)$, $dh_t(\mathsf N_t(b,u))=-\alpha(\mathsf N_t(b,u))$: $\beta_t$ annihilates $E^{\Omega_{S(t)}}$, hence
+$W_t\in(E^{\Omega})^{\Omega}=E$ along $E$. The function $h_t$ is circle invariant (all data are) and $\beta_t(iX)=\alpha(iX)+dh_t(iX)=0$,
+so $\Omega_{S(t)}(iX,W_t)=-\beta_t(iX)=0$ gives $\operatorname{Re}\langle X,V_t\rangle=0$. The field $V_t$ is smooth, vanishes for
+$t\notin[0,1]$, and has compact support in the shell (where $\alpha$ and $h_t$ live, $|X_0|^2\le2$), so its flow $\phi_t$ is
+complete. It preserves every sphere $\|X\|=r$, the hyperplane $E$ and therefore $\{X_0\ne0\}$, and commutes with the circle
+action. Since $\frac d{dt}\Omega_{S(t)}=S'(t)\,d\alpha=S'(t)\,d\beta_t$, Cartan's formula gives
+$\frac d{dt}\phi_t^*\Omega_{S(t)}=\phi_t^*d(\iota_{V_t}\Omega_{S(t)}+S'(t)\beta_t)=0$, so $\phi_1^*\Omega_1=\Omega_0$.
+
+\emph{Descent.} On the unit sphere $\chi=1$, and $\Omega_s$ restricted to the sphere is the pullback under the Hopf map of
+$(1-Lsd)\,dd^c\log\|X\|^2+sd\,dd^c\log\|P(X)\|^2$; in the chart $X_0=1$ this is $\omega_s:=(1-Lsd)dd^c\log(1+|x|^2)+sd\,dd^c\log\|P(1,x)\|^2$
+(the difference of the potentials is $\log|X_0|^{2(1-Lsd)+2Lsd}=\log|X_0|^2$, which is pluriharmonic). Since $\phi_1$ preserves the
+unit sphere and $\{X_0\ne0\}$ and commutes with the circle action, it descends to a diffeomorphism $\bar\phi$ of $\C^n$ with
+$\bar\phi^*\omega_1=\omega_0=dd^c\log(1+|x|^2)$. Put $G=\bar\phi^{-1}$, so $G^*dd^c\log(1+|x|^2)=\omega_1$. The map
+$x\mapsto x/\sqrt{\pi(1+|x|^2)}$ is a diffeomorphism of $\C^n$ onto $\Bo(1)$ pulling $\omega_0$ back to $dd^c\log(1+|x|^2)$
+(Lemma~\ref{lem:rtc-ball-chart}); its composite with $G$ is the required embedding.
+\end{proof}
+
+\subsection{Assembly}\label{sec:sxr-proof}
+
+\begin{theorem}[One large ball, $n=3$]\label{thm:lrg-six}\label{thm:sxr-packing}
+Let $A,\rho_1,\dots,\rho_k>0$ have valid auxiliary data $(a;r)$ with $a\in\Q$, and let $\rho_i<r'_i<r_i$ and
+$A<r_0<a$. Then there are smooth symplectic embeddings $f_0$ of an open neighbourhood of $B(r_0)$ and $f_i$ of open
+neighbourhoods of $B(r'_i)$, $1\le i\le k$, into $\Bo(1)$, given by the formulas below, such that the sets $f_0(B(r_0))$
+and $f_i(B(r'_i))$ are pairwise disjoint and contained in $B(1-\zeta)$, where
+\[
+ \zeta=\tfrac12\min\Bigl\{1-\pi|y|^2:\ y\in\textstyle f_0(B(r_0))\cup\bigcup_{i=1}^kf_i(B(r'_i))\Bigr\}>0 .
+\]
+\end{theorem}
+
+\begin{proof}
+Take $L$ and $S_*$ from Definition~\ref{def:lrg-six-model}, so that $L>Q=\lfloor3/(a-r_0)\rfloor+1$, and put
+\[
+ m_0=\lfloor r_0L\rfloor,\qquad M_1=m_0+1,\quad M_2=m_0+2,\quad M_3=m_0+3 .
+\]
+Then $r_0<M_1/L$ and $M_1<M_2<L-S_*$, $M_2<M_3$. The vanishing order in Proposition~\ref{prop:lrg-six-polynomials}
+permits the bubble construction of Proposition~\ref{prop:sxr-bubble} with the orders $M_1,M_2,M_3$, in which
+$\epsilon=\min(\tau,\sigma)/2$ for the two explicit thresholds $\tau,\sigma>0$ of that proposition. Its central chart
+contains a symplectic image of $B(r_0)$ and its outer chart contains the images of
+Proposition~\ref{prop:sxr-minorant}: starting with the maps $\phi_i$ of that proposition, apply in order $g_1$ (Proposition~\ref{prop:sxr-transport}), $g_2$
+(Proposition~\ref{prop:sxr-quadric-return}), the outer bubble deformation and $J$. The resulting maps and the large-ball map of Proposition~\ref{prop:sxr-bubble} have
+pairwise disjoint compact images for the common degree-$L$ polynomial form \eqref{eq:sxr-degree-form}, with coefficient
+$(1-\epsilon)/L$. Lemma~\ref{lem:sxr-shell} applies because $1-Ld(\epsilon)=\epsilon>0$, and its common embedding into
+$\Bo(1)$ preserves all disjointness. The union of the images of $B(r_0)$ and the $B(r'_i)$ is compact and lies in $\Bo(1)$, so
+the minimum defining $\zeta$ is attained and positive, and $\pi|y|^2\le1-2\zeta<1-\zeta$ on it. If there are no smaller
+balls, $f_0$ is the inclusion.
+\end{proof}

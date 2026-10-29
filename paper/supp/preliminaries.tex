@@ -1,0 +1,695 @@
+\section{Conventions and elementary tools}\label{sec:pre}
+
+This section fixes the conventions of both documents and proves the elementary lemmas that the
+other sections use without comment: the flat step and the flat concatenation of paths and isotopies,
+cutoffs, the top power and the local form of toric symplectic forms, and the Moser lemma with the sign
+conventions of the paper. Lemma~\ref{lem:pre-top-power} contains \Mref{Lemma}{lem:hdl-top-power} as a
+special case. Tables~\ref{tab:pre-conventions} and~\ref{tab:pre-interfaces} (\S\ref{sec:pre-unified}) collect the
+coordinate, sign and normalisation conventions of all parts of the construction and say where one is converted into
+another; Table~\ref{tab:pre-notation} extends \Mref{Table}{tab:mech-notation}.
+
+\subsection{Conventions}\label{sec:pre-conventions}
+
+This subsection expands the conventions of \Msec{sec:intro-conventions} with the identities used in
+the proofs.
+
+Manifolds are finite dimensional, Hausdorff and second countable; boundaries are stated explicitly.
+
+\emph{Phase space.} We write $\R^{2n}=\C^n$ with $z_j=x_j+iy_j$ and
+$\omega_0=\sum_{j=1}^ndx_j\wedge dy_j$. Let $J_0$ be the matrix of $\omega_0$, i.e.\
+$\omega_0(v,w)=\langle v,J_0w\rangle$; in the coordinates $(x,y)$, $J_0=\bigl(\begin{smallmatrix}0&I\\-I&0
+\end{smallmatrix}\bigr)$, which is multiplication by $-i$ on $\C^n$. Where $\R^{2n}$ is regarded as a
+complex vector space with $i$ acting by $J_0$ (\Msec{sec:ham}), this complex structure is the conjugate of
+that of $\C^n$. For a function $H(t,z)$, smooth in $(t,z)$, the Hamiltonian vector field $X_H=X_{H_t}$ is
+defined by $\iota_{X_H}\omega_0=dH_t$, where $d$ is the spatial differential. Equivalently
+\[
+ X_H=J_0\nabla H,\qquad \dot x_j=\frac{\partial H}{\partial y_j},\quad \dot y_j=-\frac{\partial H}{\partial x_j},
+ \qquad \dot z_j=-2i\,\frac{\partial H}{\partial\bar z_j},
+\]
+since $\omega_0(X,w)=\langle X,J_0w\rangle=-\langle J_0X,w\rangle$ and $J_0^2=-I$. We write $\varphi^t_H$ for the
+flow of $X_H$ from time $0$ to time $t$. For example $H=\pi|z_1|^2$ generates
+$z_1\mapsto e^{-2\pi it}z_1$, a rotation of period one. The letter $p$ is reserved for moment maps.
+
+\emph{Capacities and balls.} For $c>0$ and $s\in\C^n$,
+\[
+ B(c)=\{z\in\C^n:\pi|z|^2\le c\},\qquad \Bo(c)=\{\pi|z|^2<c\},\qquad B(s,c)=s+B(c),
+\]
+the closed and open balls of capacity $c$; the Euclidean radius of $B(c)$ is $\sqrt{c/\pi}$. We write
+$\EB(r)$ and $\EB^\circ(r)$ for the closed and open Euclidean balls of radius $r$ about the origin.
+Volumes are taken with respect to $\omega^n/n!$; for $\omega_0$ this is Lebesgue measure, and
+$\vol B(c)=\pi^n(c/\pi)^n/n!=c^n/n!$.
+
+\begin{lemma}[Dilations]\label{lem:pre-dilation}
+Let $\lambda>0$, $\delta_\lambda(z)=\lambda z$, and let $H(t,z)$ be smooth. Then
+$\delta_\lambda^*\omega_0=\lambda^2\omega_0$, $\delta_\lambda(B(s,c))=B(\lambda s,\lambda^2c)$, and the function
+$\tilde H(t,z)=\lambda^2H(t,z/\lambda)$ satisfies $X_{\tilde H}(t,z)=\lambda X_H(t,z/\lambda)$; hence an integral curve
+$\gamma$ of $X_H$ gives the integral curve $\lambda\gamma$ of $X_{\tilde H}$, and
+$\varphi^t_{\tilde H}=\delta_\lambda\circ\varphi^t_H\circ\delta_\lambda^{-1}$ wherever either side is defined.
+\end{lemma}
+
+\begin{proof}
+The first two statements are immediate. Put $X(t,z)=\lambda X_H(t,z/\lambda)$. For $w\in\C^n$,
+$\omega_0(X(t,z),w)=\lambda\,dH_{(t,z/\lambda)}(w)$, while $d\tilde H_{(t,z)}(w)=\lambda^2\,dH_{(t,z/\lambda)}(w/\lambda)$ is the same
+number; so $X=X_{\tilde H}$. If $\dot\gamma=X_H(t,\gamma)$ then
+$\frac d{dt}(\lambda\gamma)=\lambda X_H(t,\gamma)=X_{\tilde H}(t,\lambda\gamma)$.
+\end{proof}
+
+With $\lambda=1/\sqrt C$ this is the normalisation of the target capacity to $1$ used throughout
+(\Msec{sec:ham}).
+
+\emph{Moments and angles.} On a fibre $\C^m$ with coordinates $w_j=\xi_j+i\eta_j$ we use
+\[
+ p_j=\pi|w_j|^2,\qquad \theta_j=\frac{\arg w_j}{2\pi}\in\R/\Z,\qquad |p|=\sum_{j=1}^mp_j,\qquad
+ \omega_V=\sum_{j=1}^mdp_j\wedge d\theta_j=\sum_{j=1}^md\xi_j\wedge d\eta_j .
+\]
+The identity $dp_j\wedge d\theta_j=d\xi_j\wedge d\eta_j$ holds where $w_j\ne0$: in polar coordinates
+$w_j=re^{i\phi}$ both sides equal $r\,dr\wedge d\phi$. The one-form $p_j\,d\theta_j=\frac12(\xi_j\,d\eta_j-\eta_j\,d\xi_j)$
+is smooth on all of $\C$, with differential $d\xi_j\wedge d\eta_j$. A function $f(p)$ with $f$ smooth on an
+open subset of $\R^m$ is a smooth function of $w$, because each $p_j$ is a polynomial in $(\xi_j,\eta_j)$;
+such functions are called \emph{toric}.
+
+\emph{Fibre Hamiltonians.} On fibres, and on the models built from them, Hamiltonian fields of fibre
+Hamiltonians $Q$ follow the convention of \cite{OpenAI2026},
+\[
+ \iota_{X_Q}\omega_V=-dQ ,
+\]
+which is opposite to the convention for $H$. With this convention $X_{p_j}=\partial_{\theta_j}$ generates
+$w_j\mapsto e^{2\pi it}w_j$, the rotation of period one in the positive direction, because
+$\iota_{\partial_{\theta_j}}(dp_j\wedge d\theta_j)=-dp_j$. The field $X_Q$ of the fibre convention is the field
+$X_{-Q}$ of the convention of $\omega_0$. Two functions \emph{Poisson-commute} if $\omega_V(X_F,X_G)=0$; this
+condition does not depend on the convention, and it holds if and only if $F$ is constant along the
+flow of $X_G$. The convention $\iota_{X_Q}\omega_V=-dQ$ is used for fibre Hamiltonians, for Hamiltonians
+on the toric models and for Moser fields; the convention $\iota_{X_H}\omega_0=dH$ is used for the global Hamiltonian
+on $\R^{2n}$ (\Msec{sec:ham}, \Msec{sec:eff}, \S\ref{sec:iso}, \S\ref{sec:cpl}).
+
+\emph{Complex conventions and the Fubini--Study form.} We use
+\[
+ d^c=\frac{i}{4\pi}(\bar\partial-\partial),\qquad dd^c=\frac{i}{2\pi}\partial\bar\partial ,
+\]
+so that $d^cu$ is a real one-form for real $u$. Since $\partial$ and $\bar\partial$ are derivations,
+$d^cF(u)=F'(u)\,d^cu$ for smooth $F$ and smooth real $u$. For a function $u=F(|z|^2)$ of one complex variable,
+$\bar\partial u-\partial u=F'(|z|^2)(z\,d\bar z-\bar z\,dz)=-2i\,F'(|z|^2)|z|^2\,d\phi$ with $\phi=\arg z$, hence
+\begin{equation}\label{eq:pre-dc}
+ d^cF(|z|^2)=F'(|z|^2)\,|z|^2\,d\theta,\qquad\text{in particular}\qquad d^c\log|z|^2=d\theta,
+\end{equation}
+with $\theta=\arg z/2\pi$. The one-form $|z|^2d\theta=(x\,dy-y\,dx)/2\pi$ is smooth, so \eqref{eq:pre-dc} holds
+on all of $\C$ when $F$ is smooth, and on $\C\setminus0$ for $F=\log$. Since $\int_{|z|=\varepsilon}d\theta=1$,
+the current $dd^c\log|z|^2$ has unit mass at the origin. On $\CP^n$ we put
+$\omega_{\rm FS}=dd^c\log\|Z\|^2$.
+
+\begin{lemma}[The affine Fubini--Study chart]\label{lem:pre-fs}
+\lean{OAI.PackingSufficiencySupport.Hamiltonian.affineFSPrimitive_smooth,
+OAI.PackingSufficiencySupport.Hamiltonian.affineFSPrimitive_exterior,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_smooth,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_pullback,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_image,
+OAI.PackingSufficiencySupport.Hamiltonian.fsAffineMap_smoothOn,
+OAI.PackingSufficiencySupport.Hamiltonian.fsAffineMap_fsBallMap,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_fsAffineMap,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_primitive,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_gap}
+On $\C^N$, put $D=1+|z|^2$ and
+\[
+ \lambda_{\rm FS}=
+ \frac{1}{2\pi D}\sum_{j=1}^N(x_j\,dy_j-y_j\,dx_j),\qquad
+ \omega_{\rm FS}=d\lambda_{\rm FS}.
+\]
+Then:
+\begin{enumerate}[label=(\alph*)]
+\item $\lambda_{\rm FS}=d^c\log D$ is smooth. Where every coordinate is nonzero it equals
+ $\sum_j p_j^{\rm FS}\,d\theta_j$, with $p_j^{\rm FS}=|z_j|^2/D$ and
+ $\theta_j=\arg z_j/(2\pi)$; its differential is $\sum_jdp_j^{\rm FS}\wedge d\theta_j$ there.
+\item The map $\mathrm{ch}(z)=z/\sqrt{\pi D}$ is a smooth bijection of $\C^N$ onto $\Bo(1)$ with $\mathrm{ch}^*\omega_0=\omega_{\rm FS}$,
+ with smooth inverse $w\mapsto\sqrt\pi\,w/\sqrt{1-\pi|w|^2}$.
+\item $\mathrm{ch}^*\lambda_{\rm std}=\lambda_{\rm FS}$, where
+ $\lambda_{\rm std}=\frac12\sum_j(x_j\,dy_j-y_j\,dx_j)$, and
+ $\pi|\mathrm{ch}(z)|^2=1-D^{-1}<1$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The identity $d^c|z|^2=\sum_j(x_j\,dy_j-y_j\,dx_j)/(2\pi)$ and the chain rule give (a).
+The inverse in (b) follows by solving $\pi|w|^2=|z|^2/(1+|z|^2)$ for the radial factor.
+Both maps are smooth on their stated domains. Under a variable real radial rescaling $z\mapsto r(z)z$,
+$\lambda_{\rm std}$ pulls back to $r(z)^2\lambda_{\rm std}$: the derivative of $r$ contributes
+$\omega_0(z,z)=0$. Taking $r=(\pi D)^{-1/2}$ gives (c), and applying $d$ gives $\mathrm{ch}^*\omega_0=\omega_{\rm FS}$.
+\end{proof}
+
+The model forms of \Mref{Table}{tab:mech-models} are written with $d^c$ and $\omega_{\rm FS}$ in this
+normalisation.
+
+\emph{Bidegree and orientation.} Let $U$ be an open subset of a surface $\Sigma$ with oriented coordinates
+$(x,y)$ over which a bundle $E=L_1\oplus\dots\oplus L_m$ has a unitary frame, so that $E|_U=U\times\C^m$. Every
+form on an open subset of $U\times\C^m$ splits uniquely into components of bidegree $(r,s)$, where $r$
+counts $dx,dy$ and $s$ counts $d\xi_j,d\eta_j$; the coefficients may depend on all variables. A form of
+bidegree $(r,0)$ is called \emph{basic}, and a component vanishes if $r>2$ or $s>2m$. A top-degree form is
+\emph{positive} if it is a positive multiple of $\omega_V^m\wedge dx\wedge dy$ for an oriented coordinate system
+$(x,y)$ of $\Sigma$; when $\kappa$ is a positive area form on $\Sigma$, this is the orientation of
+$\omega_V^m\wedge\kappa$. A one-form on $E$ is \emph{horizontal} if it annihilates the vertical tangent vectors.
+
+\subsection{The flat step}\label{sec:pre-flat}
+
+We use the following flat step for clocks and cutoffs, composing it with the explicitly defined
+smooth functions and taking products.
+
+\begin{definition}[Flat step]\label{def:pre-flat}
+\lean{expNegInvGlue, Real.smoothTransition, SymplecticPacking.flatStep}
+Let $a_\flat(x)=0$ for $x\le0$ and $a_\flat(x)=e^{-1/x}$ for $x>0$, and
+\[
+ S(x)=\frac{a_\flat(x)}{a_\flat(x)+a_\flat(1-x)}\qquad(x\in\R).
+\]
+\end{definition}
+
+The denominator is positive because $x>0$ or $1-x>0$. On $(0,1)$,
+$S(x)=e^{-1/x}/(e^{-1/x}+e^{-1/(1-x)})$; $S=0$ on $(-\infty,0]$ and $S=1$ on $[1,\infty)$.
+
+\begin{lemma}[Properties of $S$]\label{lem:pre-flat}
+\lean{Real.smoothTransition.contDiff,
+Real.smoothTransition.zero_of_nonpos,
+Real.smoothTransition.one_of_one_le,
+Real.smoothTransition.monotone,
+Real.smoothTransition.nonneg,
+Real.smoothTransition.le_one,
+OAI.PackingSufficiencySupport.Hamiltonian.smoothTransition_deriv_pos,
+OAI.PackingSufficiencySupport.Hamiltonian.smoothTransition_deriv_eq_zero}
+\uses{def:pre-flat}
+$S$ is $C^\infty$ on $\R$, takes values in $[0,1]$, is nondecreasing on $\R$ and strictly increasing on
+$[0,1]$, and $S(1-x)=1-S(x)$. For every $j\ge1$, $S^{(j)}=0$ on $(-\infty,0]\cup[1,\infty)$; in particular
+$S^{(j)}(0)=S^{(j)}(1)=0$.
+\end{lemma}
+
+\begin{proof}
+On $x>0$ every derivative of $a_\flat$ has the form $Q_j(1/x)e^{-1/x}$ with $Q_j$ a polynomial, and
+$Q_j(1/x)e^{-1/x}\to0$ as $x\downarrow0$; by induction all derivatives of $a_\flat$ exist at $0$ and vanish there,
+so $a_\flat$ is $C^\infty$. Since the denominator of $S$ is smooth and positive, $S$ is $C^\infty$. The identity
+$S(1-x)=a_\flat(1-x)/(a_\flat(1-x)+a_\flat(x))=1-S(x)$ is immediate. On $(0,1)$,
+$S(x)=1/(1+\exp(1/x-1/(1-x)))$ and the exponent is strictly decreasing, so $S$ is strictly increasing on
+$[0,1]$; with the constant values outside $(0,1)$ this gives monotonicity and $0\le S\le1$. Finally $S$ is
+constant on $(-\infty,0]$ and on $[1,\infty)$, so $S^{(j)}$, $j\ge1$, vanishes on the interiors of these sets, and
+by continuity of $S^{(j)}$ also at $0$ and $1$.
+\end{proof}
+
+The vanishing of all derivatives at $0$ and $1$ is what allows paths to be concatenated in time without
+corners (Lemma~\ref{lem:pre-concat}).
+
+\begin{lemma}[Flat concatenation]\label{lem:pre-concat}
+\uses{lem:pre-flat}
+Let $0=t_0<t_1<\dots<t_N=1$ and let $\sigma_j(t)=S\big((t-t_{j-1})/(t_j-t_{j-1})\big)$, $1\le j\le N$, be the
+\emph{clocks}.
+\begin{enumerate}[label=(\alph*)]
+\item Let $\mathcal P$ and $M$ be smooth manifolds and $\gamma_1,\dots,\gamma_N\colon[0,1]\times\mathcal P\to M$ smooth maps
+(smooth up to the boundary, i.e.\ restrictions of smooth maps on $(-\delta,1+\delta)\times\mathcal P$ for some $\delta>0$)
+such that $\gamma_j(1,y)=\gamma_{j+1}(0,y)$ for all $y$. Define $\bar\gamma\colon\R\times\mathcal P\to M$ by
+$\bar\gamma(t,y)=\gamma_j(\sigma_j(t),y)$ for $t\in[t_{j-1},t_j]$, $\bar\gamma(t,y)=\gamma_1(0,y)$ for $t\le0$ and
+$\bar\gamma(t,y)=\gamma_N(1,y)$ for $t\ge1$. Then $\bar\gamma$ is well defined and $C^\infty$, and at every point
+$(t_j,y)$, $0\le j\le N$, every partial derivative of $\bar\gamma$ (in charts) that contains at least one derivative in
+$t$ vanishes.
+\item Let $\psi^{(1)},\dots,\psi^{(N)}\colon[0,1]\times M\to M$ be smooth isotopies of $M$ (smooth up to the boundary as in
+(a)) with $\psi^{(j)}_0=\mathrm{id}$, generated by smooth time-dependent vector fields $Y^{(j)}_s$, so that
+$\partial_s\psi^{(j)}_s=Y^{(j)}_s\circ\psi^{(j)}_s$. Put $\Phi_0=\mathrm{id}$, $\Phi_j=\psi^{(j)}_1\circ\Phi_{j-1}$, and
+\[
+ \varphi_t=\psi^{(j)}_{\sigma_j(t)}\circ\Phi_{j-1}\qquad(t\in[t_{j-1},t_j]),
+\]
+$\varphi_t=\mathrm{id}$ for $t\le0$ and $\varphi_t=\Phi_N$ for $t\ge1$. Then $\varphi$ is a smooth isotopy with
+$\varphi_0=\mathrm{id}$ and $\varphi_1=\Phi_N=\psi^{(N)}_1\circ\dots\circ\psi^{(1)}_1$, generated by the field
+$Y_t=\sigma_j'(t)\,Y^{(j)}_{\sigma_j(t)}$ on $[t_{j-1},t_j]$ and $Y_t=0$ for $t\notin(0,1)$. The field $Y$ is smooth on
+$\R\times M$, and $Y$ and all its partial derivatives vanish at $t=t_j$. If $M$ is symplectic and
+$Y^{(j)}_s$ is the Hamiltonian field of $Q^{(j)}_s$ (in either sign convention), with $Q^{(j)}$ smooth on $[0,1]\times M$
+(up to the boundary), then $Y_t$ is the Hamiltonian field of $Q_t=\sigma_j'(t)\,Q^{(j)}_{\sigma_j(t)}$ on $[t_{j-1},t_j]$,
+$Q_t=0$ for $t\notin(0,1)$, and $Q$ is smooth on $\R\times M$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) At $t=t_j$ the two definitions give $\gamma_j(1,y)=\gamma_{j+1}(0,y)$, and at $t=0,1$ the constant extensions agree
+with $\gamma_1(0,y)$ and $\gamma_N(1,y)$; so $\bar\gamma$ is well defined and continuous. Fix $j$ and a point $(t_j,y_0)$, and
+work in charts around $\bar\gamma(t_j,y_0)$ and $y_0$ (by continuity $\bar\gamma$ maps a neighbourhood into the chart). On
+$[t_{j-1},t_j]\times\mathcal P$ the map $\bar\gamma$ is the smooth map $\gamma_j\circ(\sigma_j\times\mathrm{id})$. By the chain rule and
+Fa\`a di Bruno's formula, a partial derivative of it containing at least one $t$-derivative is a sum of terms each of
+which contains a factor $\sigma_j^{(i)}(t)$ with $i\ge1$; at $t=t_j$ (and at $t=t_{j-1}$) these factors are
+$(t_j-t_{j-1})^{-i}S^{(i)}(1)=0$ (resp.\ $S^{(i)}(0)=0$) by Lemma~\ref{lem:pre-flat}. The derivatives containing only
+$y$-derivatives are the $y$-derivatives of $\gamma_j(1,\cdot)=\gamma_{j+1}(0,\cdot)$ from both sides. Hence the one-sided
+jets at $t=t_j$ from the left and from the right agree (the same holds at $t=0$ and $t=1$ against the constant
+extensions). A continuous map which is $C^\infty$ up to the boundary on two closed half-spaces and whose
+one-sided jets agree along the common boundary is $C^\infty$; so $\bar\gamma$ is $C^\infty$.
+
+(b) The maps $\gamma_j(s,x)=\psi^{(j)}_s(\Phi_{j-1}(x))$ satisfy the hypotheses of (a), since
+$\gamma_j(1,\cdot)=\Phi_j=\psi^{(j+1)}_0\circ\Phi_j=\gamma_{j+1}(0,\cdot)$; so $\varphi$ is smooth, and each $\varphi_t$ is a
+diffeomorphism as a composition of diffeomorphisms. On $[t_{j-1},t_j]$,
+\[
+ \partial_t\varphi_t=\sigma_j'(t)\,(\partial_s\psi^{(j)})_{\sigma_j(t)}\circ\Phi_{j-1}
+ =\sigma_j'(t)\,Y^{(j)}_{\sigma_j(t)}\circ\psi^{(j)}_{\sigma_j(t)}\circ\Phi_{j-1}=\sigma_j'(t)\,Y^{(j)}_{\sigma_j(t)}\circ\varphi_t .
+\]
+The field $(t,x)\mapsto\sigma_j'(t)Y^{(j)}(\sigma_j(t),x)$ is smooth on $[t_{j-1},t_j]\times M$, and every partial derivative of
+it (in $t$, in $x$, or mixed) at $t=t_{j-1}$ or $t=t_j$ is a sum of terms containing a factor $\sigma_j^{(i)}$ with $i\ge1$,
+hence vanishes there; on $t\notin(0,1)$ the field is $0$. So the one-sided jets at the seams are all zero and
+$Y$ is smooth. The statement on Hamiltonians follows because $X_{cQ}=cX_Q$ for constants $c$ in either
+convention, and $Q$ is smooth by the same argument applied to the smooth function $Q^{(j)}$ on $[0,1]\times M$.
+\end{proof}
+
+\subsection{Cutoffs}\label{sec:pre-cutoff}
+
+\begin{definition}[Radial and interval cutoffs]\label{def:pre-cutoff}
+\lean{SymplecticPacking.General.Ham.radialCutoff}
+For $0\le r<r'$ and $u$ in a Euclidean space $\R^d$ put
+\[
+ \chi_{r,r'}(u)=1-S\Big(\frac{|u|^2-r^2}{r'^2-r^2}\Big).
+\]
+For $\ell_0<\ell_1$ and $0<w<(\ell_1-\ell_0)/2$ put
+$\chi^{\rm I}_{\ell_0,\ell_1,w}(x)=S\big((x-\ell_0)/w\big)\,S\big((\ell_1-x)/w\big)$ for $x\in\R$.
+\end{definition}
+
+The argument of $S$ in $\chi_{r,r'}$ is a polynomial in $u$, so every derivative of a cutoff is an
+explicit expression in the derivatives of $S$. We write
+\[
+ s_1=\max_{\R}S' ,
+\]
+a finite constant determined by $S$, since $S'$ is continuous and vanishes outside $[0,1]$.
+
+\begin{lemma}[Cutoffs]\label{lem:pre-cutoff}
+\lean{SymplecticPacking.General.Ham.radialCutoff_contDiff,
+SymplecticPacking.General.Ham.radialCutoff_eq_one,
+SymplecticPacking.General.Ham.radialCutoff_eq_zero,
+SymplecticPacking.General.Ham.radialCutoff_mem_Icc,
+SymplecticPacking.General.Ham.tsupport_radialCutoff_subset}
+\uses{def:pre-cutoff, lem:pre-flat}
+\begin{enumerate}[label=(\alph*)]
+\item $\chi_{r,r'}$ is $C^\infty$, $O(d)$-invariant and nonincreasing in $|u|$, takes values in $[0,1]$, equals $1$
+on $\EB(r)$ and $0$ outside $\EB^\circ(r')$, and all its derivatives of order $\ge1$ vanish on
+$\EB(r)\cup(\R^d\setminus\EB^\circ(r'))$, in particular on the spheres $|u|=r$ and $|u|=r'$. Its gradient is
+\[
+ \nabla\chi_{r,r'}(u)=-\frac{2u}{r'^2-r^2}\,S'\Big(\frac{|u|^2-r^2}{r'^2-r^2}\Big),\qquad
+ |\nabla\chi_{r,r'}|\le\frac{2r's_1}{r'^2-r^2}.
+\]
+\item $\chi^{\rm I}_{\ell_0,\ell_1,w}$ is $C^\infty$ with values in $[0,1]$, equals $1$ on $[\ell_0+w,\ell_1-w]$ and $0$ outside
+$(\ell_0,\ell_1)$, and all its derivatives of order $\ge1$ vanish outside $(\ell_0,\ell_0+w)\cup(\ell_1-w,\ell_1)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) Write $\chi_{r,r'}=1-S\circ\ell$ with $\ell(u)=(|u|^2-r^2)/(r'^2-r^2)$, a polynomial. Smoothness, invariance,
+monotonicity and the range follow from Lemma~\ref{lem:pre-flat}. If $|u|\le r$ then $\ell(u)\le0$ and $\chi=1$; if
+$|u|\ge r'$ then $\ell(u)\ge1$ and $\chi=0$. By Fa\`a di Bruno's formula every derivative of order $\ge1$ of
+$S\circ\ell$ at $u$ is a sum of terms each containing a factor $S^{(i)}(\ell(u))$ with $i\ge1$, which vanishes when
+$\ell(u)\le0$ or $\ell(u)\ge1$ (Lemma~\ref{lem:pre-flat}). The gradient is the chain rule, and $|u|\le r'$ wherever
+$S'(\ell(u))\ne0$.
+(b) If $x\le\ell_0$ or $x\ge\ell_1$ one factor vanishes. If $\ell_0+w\le x\le\ell_1-w$ both arguments are $\ge1$. On
+$(\ell_0,\ell_0+w)$ we have $x<\ell_1-w$ because $2w<\ell_1-\ell_0$, so the second factor is $1$ and only the first varies;
+symmetrically on $(\ell_1-w,\ell_1)$. The statement on derivatives follows as in (a).
+\end{proof}
+
+A cutoff around a coordinate disc always means the squared-distance cutoff $\chi_{r,r'}$ in that coordinate.
+
+\subsection{Toric forms}\label{sec:pre-toric}
+
+\begin{lemma}[Top power]\label{lem:pre-top-power}
+\lean{OAI.PackingSufficiencySupport.Hamiltonian.toric_twoCovectorForm_isInvertible,
+OAI.PackingSufficiencySupport.Hamiltonian.twoCovectorForm_isInvertible,
+OAI.PackingSufficiencySupport.Hamiltonian.toric_horizontalCoupling_isInvertible,
+OAI.PackingSufficiencySupport.Hamiltonian.oneCovectorForm_isInvertible,
+SymplecticPacking.Forms.pf_splitForm}
+\uses{M-def:hdl-handle-data}
+Let $m\ge1$, $n=m+1$, and let $U$ be an oriented surface chart with coordinates $(x,y)$.
+On an open subset of $U\times\C^m$, write $w_j=\xi_j+i\eta_j$,
+$\omega_V=\sum_jd\xi_j\wedge d\eta_j$, and $\kappa'=\varkappa\,dx\wedge dy$.
+The mixed term $\vartheta$ is of one of the two types used in the construction:
+\begin{enumerate}[label=(\alph*)]
+\item $\vartheta=\sum_jdp_j\wedge a'_j$, where $p_j=\pi|w_j|^2$ and the $a'_j$ are basic one-forms;
+ their coefficients may depend on the base and fibre variables.
+\item $\vartheta=\zeta\wedge\beta'$, where $\zeta$ is vertical and $\beta'$ is basic.
+\end{enumerate}
+In both cases $\omega_V^{m-1}\wedge\vartheta^2=0$, and
+\[
+ (\omega_V+\kappa'+\vartheta)^n
+ =n\,\omega_V^m\wedge\kappa'
+ =n!\,\varkappa\;d\xi_1\wedge d\eta_1\wedge\dots\wedge d\xi_m\wedge d\eta_m\wedge dx\wedge dy.
+\]
+Thus the two-form is nondegenerate exactly where $\varkappa\ne0$, and positive where $\varkappa>0$.
+In particular, on the handle annulus take $\beta=b(v)\,dv$ closed, $\nu=c_\nu\,ds\wedge dv$,
+$e>0$, $c_\nu>0$, $b\ge0$, and a smooth $G(s,w)$ independent of $v$. Then
+\[
+ \big(\omega_V+e\nu+d(G\beta)\big)^n
+ =n\big(e c_\nu+b(v)\partial_sG\big)\omega_V^m\wedge ds\wedge dv.
+\]
+It is symplectic and positive where $\partial_sG\ge0$.
+\Mref{Lemma}{lem:hdl-top-power} uses precisely these two cases.
+\end{lemma}
+
+\begin{proof}
+Forms of even degree commute, so the multinomial formula gives
+\[
+ (\omega_V+\kappa'+\vartheta)^n=\sum_{i_1+i_2+i_3=n}\frac{n!}{i_1!\,i_2!\,i_3!}\,\omega_V^{i_1}\wedge\kappa'^{i_2}\wedge\vartheta^{i_3} ,
+\]
+and the summand of index $(i_1,i_2,i_3)$ has bidegree $(2i_2+i_3,\,2i_1+i_3)$. It vanishes unless $2i_2+i_3\le2$ and
+$2i_1+i_3\le2m$. The first condition leaves $(i_2,i_3)\in\{(0,0),(0,1),(0,2),(1,0)\}$, and then $i_1=n-i_2-i_3$. For
+$(i_2,i_3)=(0,0)$ and $(0,1)$ the fibre degree is $2n$ and $2m+1$, both larger than $2m$. For $(i_2,i_3)=(1,0)$, $i_1=m$,
+and the summand is $n\,\omega_V^m\wedge\kappa'$. For $(i_2,i_3)=(0,2)$, $i_1=m-1$, and the summand is
+$\frac{n!}{2\,(m-1)!}\,\omega_V^{m-1}\wedge\vartheta^2$, which vanishes by the identity proved below in cases (a) and (b). Since
+$\omega_V^m=m!\,d\xi_1\wedge d\eta_1\wedge\dots\wedge d\xi_m\wedge d\eta_m$, this proves the formula. A two-form on a vector space of
+dimension $2n$ is nondegenerate if and only if its $n$-th power is nonzero.
+
+(a) $\vartheta\wedge\vartheta=-\sum_{j,l}dp_j\wedge dp_l\wedge a'_j\wedge a'_l$, and
+$\omega_V^{m-1}=(m-1)!\sum_{i=1}^m\bigwedge_{r\ne i}d\xi_r\wedge d\eta_r$. The one-form
+$dp_j=2\pi(\xi_jd\xi_j+\eta_jd\eta_j)$ lies in the span of $d\xi_j,d\eta_j$, so $d\xi_j\wedge d\eta_j\wedge dp_j=0$. For $j=l$,
+$dp_j\wedge dp_j=0$. For $j\ne l$ and any $i$, one of $j,l$ differs from $i$, say $j$; then the summand
+$\bigwedge_{r\ne i}d\xi_r\wedge d\eta_r$ contains $d\xi_j\wedge d\eta_j$, and its product with $dp_j$ vanishes. Hence
+the mixed-square identity. (For $m=1$ only $j=l=1$ occurs.)
+
+(b) $(\zeta\wedge\beta')\wedge(\zeta\wedge\beta')=-\zeta\wedge\zeta\wedge\beta'\wedge\beta'=0$ because $\beta'\wedge\beta'=0$. For the displayed
+case: $d\beta=0$, $\beta=b(v)\,dv$ and $\partial_vG=0$, so $d(G\beta)=dG\wedge\beta=\partial_sG\,b(v)\,ds\wedge dv+d_wG\wedge\beta$, where
+$d_wG=\sum_j(\partial_{\xi_j}G\,d\xi_j+\partial_{\eta_j}G\,d\eta_j)$ has bidegree $(0,1)$. With $\nu=c_\nu\,ds\wedge dv$ the form is
+$\omega_V+\kappa'+\vartheta$ with $\kappa'=(ec_\nu+b\,\partial_sG)\,ds\wedge dv$ and $\vartheta=d_wG\wedge\beta$, of the type just treated.
+Since $e>0$, $c_\nu>0$ and $b\ge0$, the coefficient is positive where $\partial_sG\ge0$.
+\end{proof}
+
+The non-toric term $d_wG\wedge\beta$ of (b) is harmless because it is divisible by the single basic one-form
+$\beta$, so it squares to zero (closedness of $\beta$ is used only for $d(G\beta)=dG\wedge\beta$). A sum of a toric mixed
+term and a term $\zeta\wedge\beta$ need not satisfy the mixed-square identity: for $m=1$,
+$\omega_V^0\wedge(dp\wedge a'+\zeta\wedge\beta)^2=2\,dp\wedge a'\wedge\zeta\wedge\beta$ is in general nonzero. The handle construction
+therefore uses (a) off the annulus $\mathcal A$ and (b) on it, never a mixture.
+
+The model calculations below are local coordinate calculations. On an oriented base chart $U$,
+let $a_j$ be smooth real one-forms, $F_j=-da_j$, and let $\sigma$ be a smooth two-form.
+On $U\times\C^m$ put $p_j=\pi|w_j|^2$ and
+\[
+ \lambda_j=\tfrac12(\xi_j\,d\eta_j-\eta_j\,d\xi_j),\qquad
+ p_j\alpha_j=\lambda_j+p_ja_j.
+\]
+Here $\alpha_j=d\theta_j+a_j$ where $w_j\ne0$; the product $p_j\alpha_j$ is defined everywhere by
+the displayed smooth expression. These formulas require no choice of a global frame or identification
+with a projective normal bundle. In a cover presentation their descent is checked by the stated deck transformations.
+
+\begin{lemma}[Local form of the model form]\label{lem:pre-local-form}
+\uses{lem:pre-fs, lem:pre-top-power}
+On the above product chart put
+\[
+ \Omega_0=\sigma+\sum_{j=1}^md(p_j\alpha_j).
+\]
+\begin{enumerate}[label=(\alph*)]
+\item The one-forms $p_j\alpha_j$ are smooth, and $\Omega_0$ is closed and invariant under fibre rotations.
+\item
+\[
+ \Omega_0=\omega_V+\kappa(p)+\sum_jdp_j\wedge a_j,
+ \qquad \kappa(p)=\sigma-\sum_jp_jF_j.
+\]
+\item For the circle generator $X_{p_j}=\partial_{\theta_j}$,
+ $\iota_{X_{p_j}}\Omega_0=-dp_j$, including the fibre axis.
+\item With $n=m+1$, $\Omega_0^n=n\,\omega_V^m\wedge\kappa(p)$.
+ Thus it is nondegenerate where $\kappa(p)\ne0$ and positive where $\kappa(p)>0$.
+ If $F_j=d_j\sigma$ for constants $d_j$, its horizontal coefficient is
+ $\kappa(p)=(1-\sum_jd_jp_j)\sigma$.
+\item On a fixed compact base patch, integration at fixed moment gives
+ $\int\kappa(p)=\int\sigma-\sum_jp_j\int F_j$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The defining expression $\lambda_j+p_ja_j$ is smooth, and
+\[
+ d(\lambda_j+p_ja_j)=d\xi_j\wedge d\eta_j+dp_j\wedge a_j-p_jF_j.
+\]
+This proves (a),(b), since two-forms on the two-dimensional base are closed.
+Contraction with a fibre rotation gives (c); both sides vanish on its axis.
+Part (d) is Lemma~\ref{lem:pre-top-power} for toric mixed terms.
+Linearity of integration gives (e).
+\end{proof}
+
+For the periodic cubic input, $m=1$, $F_1=3\sigma$ and $\kappa=(1-3p)\sigma$; for the quadric curves,
+$F_j=2\sigma$ and $\kappa=(1-2|p|)\sigma$ (\S\ref{sec:cub}, \S\ref{sec:qdr}).
+
+\subsection{The Moser lemma}\label{sec:pre-moser}
+
+\begin{lemma}[Moser lemma]\label{lem:pre-moser}
+\lean{SymplecticPacking.Handle.LField.flow_preserves_form}
+\uses{lem:pre-concat}
+Let $M$ be a smooth manifold, $U\subset M$ open and $I\subset\R$ an open interval containing $[0,1]$. Let $\Omega_t$ and
+$\mathfrak v_t$, $t\in I$, be two-forms and one-forms on $U$ depending smoothly on $(t,x)\in I\times U$, such that each
+$\Omega_t$ is closed and nondegenerate at every point of $U$ and
+\[
+ \partial_t\Omega_t=d\mathfrak v_t .
+\]
+Let $Y_t$ be the vector field on $U$ defined by $\iota_{Y_t}\Omega_t=-\mathfrak v_t$, and let $\Psi_t$ be its flow from time $0$
+($\Psi_0=\mathrm{id}$), where defined.
+\begin{enumerate}[label=(\alph*)]
+\item $Y$ is smooth on $I\times U$, and $Y_t(x)=0$ whenever $\mathfrak v_t(x)=0$ as an element of $T_x^*M$.
+\item If $\Psi_t(x)$ is defined for $t\in[0,1]$, then $\Psi_t$ is defined and smooth on a neighbourhood of $x$ and
+$(\Psi_t^*\Omega_t)_x=(\Omega_0)_x$ for $t\in[0,1]$.
+\item If $Y_t(x)=0$ for all $t\in[0,1]$, then $\Psi_t(x)=x$ for $t\in[0,1]$. In particular $\Psi_t$ fixes pointwise every set
+at whose points $\mathfrak v_t$ is the zero covector for all $t\in[0,1]$.
+\item (Tangency.) Let $U'\subset U$ be open, $\mu\in C^\infty(U')$ and $V$ a vector field on $U'$ with
+$\iota_V\Omega_t=-d\mu$ and $\mathfrak v_t(V)=0$ on $U'$ for $t\in[0,1]$. Then $d\mu(Y_t)=0$ on $U'$, and $\mu$ is constant along
+every integral curve of $Y$ on a subinterval of $[0,1]$ as long as the curve stays in $U'$.
+\item (Completeness.) Let $\mathcal K\subset U$ be compact, and suppose that every integral curve $\gamma\colon J\to U$ of $Y$,
+$J\subset[0,1]$ an interval, which meets $\mathcal K$ satisfies $\gamma(J)\subset\mathcal K$. Then $\Psi_t$ is defined on $\mathcal K$ for
+every $t\in[0,1]$, $\Psi_t(\mathcal K)=\mathcal K$, $\Psi_t|_{\mathcal K}$ is the restriction of a diffeomorphism between open
+neighbourhoods of $\mathcal K$, and $\Psi_t^*\Omega_t=\Omega_0$ at every point of $\mathcal K$.
+\item (Reparametrisation and concatenation.) If $\varsigma\colon I\to I$ is smooth with $\varsigma(0)=0$, the pair
+$(\Omega_{\varsigma(t)},\varsigma'(t)\mathfrak v_{\varsigma(t)})$ satisfies the hypotheses, its field is $\varsigma'(t)Y_{\varsigma(t)}$, and its flow is
+$\Psi_{\varsigma(t)}$. Consequently, let $(\Omega^{(j)}_s,\mathfrak v^{(j)}_s)$, $1\le j\le N$, be pairs on $U$, smooth on
+$[0,1]\times U$ (up to the boundary), with every $\Omega^{(j)}_s$ closed and nondegenerate on $U$,
+$\partial_s\Omega^{(j)}_s=d\mathfrak v^{(j)}_s$, and $\Omega^{(j)}_1=\Omega^{(j+1)}_0$. With the clocks $\sigma_j$ of
+Lemma~\ref{lem:pre-concat} put $(\Omega_t,\mathfrak v_t)=(\Omega^{(j)}_{\sigma_j(t)},\sigma_j'(t)\mathfrak v^{(j)}_{\sigma_j(t)})$ on $[t_{j-1},t_j]$,
+$(\Omega_t,\mathfrak v_t)=(\Omega^{(1)}_0,0)$ for $t\le0$ and $(\Omega_t,\mathfrak v_t)=(\Omega^{(N)}_1,0)$ for $t\ge1$. Then
+$(\Omega_t,\mathfrak v_t)_{t\in\R}$ satisfies the hypotheses with $I=\R$, and its time-one map is
+$\Psi_1=\Psi^{(N)}_1\circ\dots\circ\Psi^{(1)}_1$ wherever the right side is defined.
+\item (Equivariance.) If a diffeomorphism $g$ of $U$ satisfies $g^*\Omega_t=\Omega_t$ and $g^*\mathfrak v_t=\mathfrak v_t$ for all $t$,
+then $g_*Y_t=Y_t$ and $g\circ\Psi_t=\Psi_t\circ g$ wherever defined.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) In local coordinates $\Omega_t$ is a smooth family of invertible skew matrices and $Y_t=-\Omega_t^{-1}\mathfrak v_t$; the
+inverse is smooth by Cramer's rule, and $Y_t(x)=0$ if $\mathfrak v_t(x)=0$.
+
+(b) The domain of the flow is open, so if $\Psi_t(x)$ is defined for $t\in[0,1]$, then $\Psi_t$ is defined and smooth on a
+neighbourhood of $x$ for $t$ in a neighbourhood of $[0,1]$. For time-dependent flows,
+$\frac d{dt}\Psi_t^*\Omega_t=\Psi_t^*\big(\partial_t\Omega_t+\mathcal L_{Y_t}\Omega_t\big)$. By Cartan's formula and $d\Omega_t=0$,
+$\mathcal L_{Y_t}\Omega_t=d\iota_{Y_t}\Omega_t=-d\mathfrak v_t$, so the derivative vanishes, and $\Psi_0^*\Omega_0=\Omega_0$.
+
+(c) The constant curve at $x$ is an integral curve; by uniqueness it is the integral curve through $x$. The second
+statement follows by (a).
+
+(d) $d\mu(Y_t)=-(\iota_V\Omega_t)(Y_t)=-\Omega_t(V,Y_t)=\Omega_t(Y_t,V)=(\iota_{Y_t}\Omega_t)(V)=-\mathfrak v_t(V)=0$, and
+$\frac d{dt}\mu(\gamma(t))=d\mu(Y_t)=0$ along integral curves in $U'$.
+
+(e) Choose a smooth compactly supported cutoff equal to $1$ near $[0,1]\times\mathcal K$, with support in
+$I\times U$, and extend the cut-off field by zero. Its flow $\Phi_t$ and inverse are defined on all of $M$
+for $t\in[0,1]$ and are jointly smooth near that interval.
+For any trajectory of this field, the times at which it lies in $\mathcal K$ form a relatively closed subset
+of $[0,1]$. This subset is also relatively open: near a point of $[0,1]\times\mathcal K$ the cutoff is $1$,
+so the trajectory solves the original equation, and the trapping hypothesis applies on a time interval
+about that point. Connectedness of $[0,1]$ shows that a trajectory meeting $\mathcal K$ stays there.
+This applies both to a trajectory starting in $\mathcal K$ and to the trajectory through a point of
+$\mathcal K$ at time $t$, proving $\Phi_t(\mathcal K)=\mathcal K$ in both directions.
+The tube lemma gives an open neighbourhood of $\mathcal K$ whose trajectories remain where the cutoff
+is $1$ throughout $[0,1]$. There $\Phi$ is the original flow $\Psi$, with its smooth inverse;
+part (b) gives the pullback identity.
+
+(f) $\iota_{\varsigma'(t)Y_{\varsigma(t)}}\Omega_{\varsigma(t)}=-\varsigma'(t)\mathfrak v_{\varsigma(t)}$ and $\partial_t\Omega_{\varsigma(t)}=\varsigma'(t)\,d\mathfrak v_{\varsigma(t)}$.
+The curve $t\mapsto\Psi_{\varsigma(t)}(x)$ starts at $x$ and has derivative $\varsigma'(t)Y_{\varsigma(t)}(\Psi_{\varsigma(t)}(x))$, so by
+uniqueness it is the flow of the reparametrised field. For the concatenation, each $\Omega_t$ is one of the closed
+nondegenerate forms $\Omega^{(j)}_s$; $\Omega$ is smooth on $\R\times U$ by Lemma~\ref{lem:pre-concat}(a), applied to the maps
+$(s,x)\mapsto\Omega^{(j)}_s(x)$ into the bundle of two-forms; and $\mathfrak v$ is smooth on $\R\times U$ by the argument of
+Lemma~\ref{lem:pre-concat}(b): on each $[t_{j-1},t_j]$ every partial derivative of $\sigma_j'(t)\mathfrak v^{(j)}_{\sigma_j(t)}$, including
+the zeroth, contains a factor $\sigma_j^{(i)}$ with $i\ge1$, so all one-sided $t$-jets vanish at every $t_j$, as they do for
+the constant extension $0$. On $[t_{j-1},t_j]$, $\partial_t\Omega_t=\sigma_j'(t)\,(\partial_s\Omega^{(j)})_{\sigma_j(t)}=d\mathfrak v_t$, and off
+$(0,1)$ both sides vanish. On $[t_{j-1},t_j]$ the curve $t\mapsto\Psi^{(j)}_{\sigma_j(t)}(x)$ starts at $x$ for $t=t_{j-1}$ and has derivative
+$\sigma_j'(t)Y^{(j)}_{\sigma_j(t)}=Y_t$ at its points, as in the first part; so by uniqueness the flow of $Y$ from time $t_{j-1}$
+to time $t$ is $\Psi^{(j)}_{\sigma_j(t)}$, and composing the stages gives $\Psi_1$.
+
+(g) Since $g^*\mathfrak v_t=\mathfrak v_t$, also $(g^{-1})^*\mathfrak v_t=\mathfrak v_t$, and
+$\iota_{g_*Y_t}\Omega_t=(g^{-1})^*\big(\iota_{Y_t}g^*\Omega_t\big)=(g^{-1})^*\big(\iota_{Y_t}\Omega_t\big)=-(g^{-1})^*\mathfrak v_t=-\mathfrak v_t$;
+by uniqueness $g_*Y_t=Y_t$. Flows of $g$-related fields are conjugated by $g$.
+\end{proof}
+
+\emph{Signs.} The Moser field is defined by $\iota_{Y_t}\Omega_t=-\mathfrak v_t$, the same sign as the fibre convention: if
+$\Omega_t=\omega$ is constant and $\mathfrak v_t=dQ_t$, then $Y_t=X_{Q_t}$ with $\iota_{X_Q}\omega=-dQ$. The field depends on the
+chosen primitive $\mathfrak v_t$, not only on $\partial_t\Omega_t$; properties (c) and (d) are properties of the primitive.
+Part (c) needs $\mathfrak v_t$ to vanish as a covector on $M$; vanishing of its pullback to a submanifold only makes
+$Y_t$ $\Omega_t$-orthogonal to that submanifold.
+
+\subsection{Conventions across the construction}\label{sec:pre-unified}
+
+Table~\ref{tab:pre-conventions} lists the conventions by setting. Two of them differ in a way that matters for
+checking: the global Hamiltonian uses $\iota_{X_H}\omega_0=dH$, while fibre Hamiltonians and Moser fields use the
+opposite sign.
+Table~\ref{tab:pre-interfaces} lists, for each interface between parts of the construction, the convention on each
+side and the place where the conversion is made.
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}p{0.15\textwidth}p{0.62\textwidth}p{0.17\textwidth}@{}}
+\caption{Conventions by setting.}\label{tab:pre-conventions}\\
+\toprule
+setting & convention & where\\\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable\ (continued)}\\
+\toprule
+setting & convention & where\\\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{Continued on the next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+phase space $\R^{2n}$ & $z_j=x_j+iy_j$; real coordinates $\zeta=(x_1,\dots,x_n,y_1,\dots,y_n)$, the order in which
+ $J_0=\bigl(\begin{smallmatrix}0&I\\-I&0\end{smallmatrix}\bigr)$; $\omega_0=\sum_jdx_j\wedge dy_j$,
+ $\omega_0(v,w)=\langle v,J_0w\rangle$; multiplication by $i$ is $J_\C=-J_0$ &
+ \S\Mnum{sec:intro}, \S\Mnum{sec:ham}, \S\ref{sec:pre-conventions}, \S\ref{sec:iso}\\
+global Hamiltonian & $\iota_{X_H}\omega_0=dH$, $X_H=J_0\nabla H$, $\dot x_j=\partial_{y_j}H$, $\dot y_j=-\partial_{x_j}H$;
+ $H=\pi|z_1|^2$ rotates $z_1$ by $e^{-2\pi it}$. Used for $H[n,k,C,c,s]$, for $\Hfin=\beta_BP$ and for the
+ certificate fields $J_0\nabla P_e$ & \S\Mnum{sec:intro}, \S\ref{sec:cpl}, \S\ref{sec:certificate}\\
+capacities and radii & $B(c)=\{\pi|z|^2\le c\}$ has Euclidean radius $\sqrt{c/\pi}$ and volume $c^n/n!$;
+ $B(s,c)=\EB(s,\sqrt{c/\pi})$. The models, transfers and comparison data work with capacities; the common
+ isotopy works with the radii $r_i=\sqrt{c_i/\pi}$, $r_{\ell,i}$, $r'_i$, $\bar r_i$. In the Epoch problem the unit
+ ball is $B(s_i,\pi)$ and $\Bo(\pi R^2)\subset\EB(R)$ &
+ \S\Mnum{sec:intro}, Def.~\Mnum{def:ham-radii}, Cor.~\Mnum{thm:main-epoch}\\
+normalisation & target capacity $1$: $\rho_i=c_i/C$; $\delta(z)=z/\sqrt C$ maps $\Bo(C)$ to $\Bo(1)$, admissibility is
+ homogeneous, $\tilde H(t,z)=\lambda^2H(t,z/\lambda)$ under $z\mapsto\lambda z$ &
+ Def.~\Mnum{def:ham-normalise}, Lemma~\ref{lem:pre-dilation}\\
+toric fibre $\C^m$ & $w_j=\xi_j+i\eta_j$ (written $x_j+iy_j$ in \S\Mnum{sec:mech-toric}); $p_j=\pi|w_j|^2$,
+ $\theta_j=\arg w_j/2\pi\in\R/\Z$, $|p|=\sum_jp_j$; $\omega_V=\sum_jd\xi_j\wedge d\eta_j=\sum_jdp_j\wedge d\theta_j$ &
+ \S\Mnum{sec:intro-conventions}, \S\ref{sec:pre-conventions}\\
+fibre Hamiltonian & $\iota_{X_Q}\omega_V=-dQ$; $X_{p_j}=\partial_{\theta_j}$ rotates $w_j$ by $e^{+2\pi it}$; the field
+ $X_Q$ of this convention is $X_{-Q}$ of the global one. The same sign is used in the plane,
+ $\iota_X\omega_\C=-dQ$, for the comparison data and the cubic data &
+ \S\Mnum{sec:cmp}, Def.~\Mnum{def:mech-datum}, \S\ref{sec:pln}, Def.~\ref{def:shd4-data}\\
+Moser fields & $\iota_{Y_t}\Omega_t=-\mathfrak v_t$ for $\partial_t\Omega_t=d\mathfrak v_t$; for constant $\Omega_t$ and
+ $\mathfrak v_t=dQ_t$ this is the fibre convention. Used for the handle paths and for the returns of the transfers &
+ Lemma~\ref{lem:pre-moser}\\
+planar machine & disc $D(P)=\{\pi|z|^2<P\}$ of area $P$; $\omega_\C=dp\wedge d\vartheta$ with $p=\pi|z|^2$,
+ $\vartheta=\arg z/2\pi$; Morse plane $(u,v)$ with $du\wedge dv$; rectangle $(x,\theta)$ with $dx\wedge d\theta$ and
+ $\theta=\vartheta-\frac12$, chart $(v,\theta)\mapsto-\sqrt{v/\pi}\,e^{2\pi i\theta}$; symplectic means Jacobian $1$ &
+ \S\ref{sec:pln}, \S\ref{sec:pll-setting}, \S\Mnum{sec:cmp-realisation}\\
+model balls & $\C^n=\C\times\C^m\ni(z_{\rm b},z_{\rm f})$, $\varpi=\pi|z_{\rm b}|^2$, $B(c)=\{\varpi+|p|\le c\}$,
+ $\omega_0=\omega_\C(z_{\rm b})+\omega_V(z_{\rm f})$; slice height $(c-|p|)_+$ &
+ Def.~\Mnum{def:mech-toric-ball}, \S\Mnum{sec:hdl-proof}\\
+model forms & $\Omega_0=\sigma+\sum_jd(p_j\alpha_j)=\omega_V+\kappa(p)+\sum_jdp_j\wedge a_j$, $\iota_{X_{p_j}}\Omega_0=-dp_j$;
+ cubic cover $\R^2\times\C\ni(u,v,w)$: $\alpha=d\arg w/2\pi-3\eta$, $\Omega_0=\omega_V+(1-3p)\sigma-3\,dp\wedge\eta$,
+ $\int_\Gamma\sigma=3$; quadric: $\Omega_0=\omega_V+d[(1-2|p|)\lambda]$; large ball, $n\ge4$: $u=p_1$,
+ $w=\sum_{j\ge2}p_j$, $\Omega_{\rm mix}=\omega_V+d[(1-u-2w)\lambda]$ &
+ Lemma~\ref{lem:pre-local-form}, Def.~\ref{def:cub-model}, Table~\Mnum{tab:mech-models}, \S\ref{sec:lrg-high}\\
+K\"ahler forms & $d^c=\frac i{4\pi}(\bar\partial-\partial)$, so $dd^c\log|z|^2$ has unit mass and a line in $\CP^n$ has
+ area $1$; $\omega_{\rm FS}=dd^c\log\|Z\|^2$, in the affine chart $dd^c\log(1+|z|^2)$;
+ $\mathrm{ch}(z)=z/\sqrt{\pi(1+|z|^2)}$ maps $\C^N$ onto $\Bo(1)$ with $\mathrm{ch}^*\omega_0=\omega_{\rm FS}$; cubic
+ representatives $(Z,W)\sim(e^{i\chi}Z,e^{3i\chi}W)$ &
+ Lemma~\ref{lem:pre-fs}, \S\ref{sec:rtc-conventions}\\
+\end{longtable}
+}
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}p{0.17\textwidth}p{0.6\textwidth}p{0.17\textwidth}@{}}
+\caption{Conventions at the interfaces and where they are converted.}\label{tab:pre-interfaces}\\
+\toprule
+interface & conventions and conversion & where\\\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable\ (continued)}\\
+\toprule
+interface & conventions and conversion & where\\\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{Continued on the next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+comparison $\to$ planar realisation & The comparison is a statement on the moment polytope, in the moments $p$;
+ the rearrangement $R_j$ acts on $p_j$. The planar map lives on a disc of area $1$ in the rectangle chart, with the
+ fibre sign on both sides. The conversion is the rescaling of the inner slice to area $1$:
+ $Q^{(j)}_t(w)=\chi(y)S'(t)\ell_{\rm in}(y)\,Q^{\rm pl}\bigl(y,\chi(y)S(t),w_j/\sqrt{\ell_{\rm in}(y)}\bigr)$, the dilation
+ rule with $\lambda^2=\ell_{\rm in}$. For $n=2$ no rescaling occurs: the planar path acts on the fibre $\C$ itself &
+ \S\Mnum{sec:cmp-realisation}, Thm.~\ref{thm:plc-lift}, Prop.~\ref{prop:scalar-planar-realisation}\\
+fibre Hamiltonian $\to$ bundle & The isotopy $q_t$, generated with the fibre sign, is suspended over the annulus by
+ $\mathcal D_\lambda(s,v,w)=(s,v,q_{\lambda f(s)}(w))$ with generator $Q^\lambda_s=\lambda f'(s)Q_{\lambda f(s)}$; then
+ $\mathcal D_\lambda^*\omega_V=\omega_V+d[(Q^\lambda_s\circ q_{\lambda f(s)})\,ds]$. The time of $q$ becomes the annulus
+ coordinate $s$; the sign is unchanged, and the Moser fields of the three paths use the same sign &
+ Lemma~\Mnum{lem:hdl-suspension}, \S\ref{sec:shd-four}\\
+model $\to$ transfer to $\Bo(1)$ & The model embeddings satisfy $\psi_i^*\Omega=\omega_0$ for the splitting
+ $\C\times\C^m$ of the source; the transfer satisfies $\mathcal T^*\omega_0=\Omega$ (resp.\ $\Omega_0$) and lands in
+ $\Bo(1)$, the target normalised to capacity $1$. The passage from $\omega_{\rm FS}$ to $\omega_0$ is the chart
+ $\mathrm{ch}$ (quadric) or $b_{\rm ball}$, with $b_{\rm ball}^*\omega_0=\omega_{\rm FS}$ on unit representatives (cubic) &
+ Prop.~\Mnum{prop:mech-assembly}, Thms.~\ref{thm:cub-transfer}, \ref{thm:qdr-transfer}, \S\ref{sec:rtc-avoid}\\
+embeddings $\to$ common isotopy & The models give normalised maps $f^\natural_i$ for $(n,k,1,\rho)$ with capacities
+ $\rho_i<\rho_i^+<\rho_i^{\rm dom}$. The conversion to the physical target is
+ $f_i(u)=\sqrt C\,f^\natural_i(u/\sqrt C)$, $c'_i=C\rho_i^+$, $\bar c_i=C\rho_i^{\rm dom}$; from here on balls are
+ described by Euclidean radii and linear maps by matrices in $(x,y)$ blocks &
+ Def.~\Mnum{def:ham-normalise}, Prop.~\Mnum{prop:ham-embeddings}, Def.~\Mnum{def:ham-radii}\\
+Hamiltonian $\to$ finite form & Same coordinates and sign. $P\in\Q[t,z]$ is a polynomial in $t$ and the real
+ coordinates $\zeta_1,\dots,\zeta_{2n}$ (the variables $x_0=t,x_1,\dots,x_{2n}$ of a polynomial program), and
+ $\beta_B(z)=\prod_l\beta_{B,1}(\zeta_l)$. The Epoch interface reads $(Q,P)=(x,y)$ &
+ \S\Mnum{sec:eff}, Def.~\ref{def:certificate-program}, Rem.~\Mnum{rem:eff-epoch-interface}\\
+\end{longtable}
+}
+
+\subsection{Notation}\label{sec:pre-notation}
+
+Table~\ref{tab:pre-notation} lists the symbols used in more than one section. Local symbols are introduced
+where they are used; a statement that reuses a letter of the table redefines it there.
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}p{0.27\textwidth}p{0.55\textwidth}p{0.12\textwidth}@{}}
+\caption{Notation used in more than one section. The letters $s$, $y$, $b$ and $J$ have more than one row
+or a local meaning (for instance in Table~\Mnum{tab:mech-models} and in \S\ref{sec:lrg}); the section fixes which is meant.}
+\label{tab:pre-notation}\\
+\toprule
+symbol & meaning & defined in\\\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable\ (continued)}\\
+\toprule
+symbol & meaning & defined in\\\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{Continued on the next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+$n\ge2$, $m=n-1$ & complex dimension of phase space; fibre rank of the toric models & \S\Mnum{sec:intro}\\
+$z_j=x_j+iy_j$ & coordinates of $\C^n=\R^{2n}$ & \S\Mnum{sec:intro}\\
+$\omega_0$, $X_H$ & $\sum dx_j\wedge dy_j$; Hamiltonian field, $\iota_{X_H}\omega_0=dH$ & \S\Mnum{sec:intro}\\
+$J_0$, $\varphi^t_H$ & matrix of $\omega_0$ (multiplication by $-i$); flow of $X_H$ & \S\Mnum{sec:ham}, \S\ref{sec:pre}\\
+$B(c)$, $\Bo(c)$, $B(s,c)$ & closed / open ball $\{\pi|z|^2\le c\}$ of capacity $c$; $s+B(c)$ & \S\Mnum{sec:intro}\\
+$\EB(r)$, $\EB^\circ(r)$ & closed / open Euclidean ball of radius $r$ & \S\Mnum{sec:ham}\\
+$k$, $c_i$, $s_i$, $C$ & number of balls, capacities, centres, target capacity & \S\Mnum{sec:intro}\\
+$\rho_i=c_i/C$ & normalised capacities & \S\Mnum{sec:intro}\\
+$a_i$; $\bar\rho_i$, $\hat\rho_i$ & auxiliary capacities; closed enlarged source capacity and open domain capacity of the layer construction, $\rho_i<\bar\rho_i<\hat\rho_i<a_i$; with $\delta_i=\frac12(a_i-\rho_i)$, $(\bar\rho_i,\hat\rho_i)=(a_i-\delta_i,a_i-\frac34\delta_i)$ for $n=2$ and $(a_i-\frac34\delta_i,a_i-\frac12\delta_i)$ for $n\ge3$ & \S\Mnum{sec:hdl}, Def.~\ref{def:str-enlarged}\\
+$\eta_\star=1-\rho\sqrt k$ & volume defect of the equal-capacity branch in dimension four; $t_0=1-\eta_\star/2$ & \S\ref{sec:fcp-equal}, Rem.~\ref{rem:rtc-equal}\\
+$\rho_i^+$, $\rho_i^{\rm dom}$ & enlarged closed source capacity and capacity of the open embedding domain, chosen separately in each branch & \S\Mnum{sec:ham}\\
+$A$, $a$, $s=1-a$ & large given capacity, reserved capacity, shell parameter & \S\ref{sec:lrg}\\
+$p=(p_j)$, $|p|$, $\theta_j$ & moments $\pi|w_j|^2$, their sum, angles $\arg w_j/2\pi$ & \S\Mnum{sec:intro}, \S\ref{sec:pre}\\
+$\omega_V$, $X_{p_j}$ & fibre form $\sum dp_j\wedge d\theta_j$; rotation generator, $\iota_{X_{p_j}}\omega_V=-dp_j$ & \S\Mnum{sec:mech}, \S\ref{sec:pre}\\
+$w=(w_j)$; $\varpi$ & fibre coordinates; moment of the base disc in $\C\times\C^m$ & \S\Mnum{sec:mech}\\
+$\Delta$, $\langle b_\nu,p\rangle\le\ell_\nu$, $\tau_\Delta$ & downward moment polytope, its outer faces, core fraction & \S\S\Mnum{sec:mech}, \Mnum{sec:cmp}\\
+$h$; $h_1,h_2$ & fibre height(s) of $\Delta$ & \S\Mnum{sec:mech}\\
+$V_\Delta$, $V_\Delta(E)$ & toric domain $\{p(w)\in\Delta\}\subset\C^m$; its fibrewise version in $E$ & \S\Mnum{sec:mech}\\
+$\Gamma$, $Z$ & base of a model and its marked set; the model section fixes the affine or cover presentation & \S\S\ref{sec:cub}--\ref{sec:lrg}\\
+$\Sigma$ & base surface ($\Gamma$, or a compact bordered subsurface) & \S\Mnum{sec:mech}\\
+$d^c$, $\omega_{\rm FS}$, $\sigma$ & $\frac i{4\pi}(\bar\partial-\partial)$; normalised affine Fubini--Study form; base area form & \S\ref{sec:pre}\\
+$E$, $\alpha_j$, $\Omega_0$ & model space in its affine or cover presentation; angular forms; $\sigma+\sum d(p_j\alpha_j)$ & \S\S\ref{sec:cub}--\ref{sec:lrg}\\
+$a_j$, $a_j(p)$, $a'_j$; $F_j$ & connection one-forms, toric mixed terms (not the capacities $a_i$); curvature (Chern) forms & \S\Mnum{sec:mech}, \S\ref{sec:pre}\\
+$\kappa(p)$ & horizontal area form at moment $p$ & \S\Mnum{sec:mech}\\
+$\Hb(p)=\int_\Sigma\kappa(p)$ & base area profile & \S\Mnum{sec:mech}\\
+$\Pb(p)$ & unused area $\Hb(p)-\sum_i(a_i-|p|)_+$ & \S\Mnum{sec:mech}\\
+$P$ & minorant of $\Pb$ in a comparison datum & \S\S\Mnum{sec:mech}, \Mnum{sec:cmp}\\
+$K$, $F=K-P$, $\gamma$ & comparison function, comparison defect, gap & \S\S\Mnum{sec:mech}, \Mnum{sec:cmp}\\
+$R_j$, $\Rcal$ & coordinatewise increasing rearrangement, $\Rcal=R_m\circ\dots\circ R_1$ & \S\Mnum{sec:cmp}\\
+$q_t$, $q=q_1$, $Q_t$ & fibre isotopy, its endpoint, generator ($\iota_{X_{Q_t}}\omega_V=-dQ_t$) & \S\S\Mnum{sec:mech}, \Mnum{sec:cmp}\\
+$\mathcal A\subset\mathcal A^+$, $\mathcal B$, $(s,v)$, $\beta$ & handle annulus, dual band, handle coordinates, closed one-form of period $1$ & \S\Mnum{sec:hdl}\\
+$\nu$, $c_\nu$; $\Lambda$ & periodic unit-area reference form and its local density; finite affine reference form of the handle on a bordered base & \S\Mnum{sec:hdl}\\
+$e_\Lambda\Lambda$, $H^*$, $J$ & positive background form, handle mass $\Hb-\epsilon_{\rm sm}$, collar coefficient $K-H^*$ & \S\Mnum{sec:hdl}\\
+$h_i(p)$, $R^*$ & smooth caps, $0\le h_i\le(a_i-|p|)_+$, with $h_i\ge(a_i+\rho_i^\sharp)/2-|p|$; residual & \S\Mnum{sec:hdl}\\
+$\mathcal D$, $\Phi$; $\Lambda_i$, $E_i$ & twist, Moser map; layers, layer maps ($\mathcal E_i$ in the main text) & \S\Mnum{sec:hdl}\\
+$\mathcal T$, $\mathcal C_{\mathcal K}$ & transfer from a model to the target, compact set containing the image of $\mathcal K$ & \S\Mnum{sec:mech}, \S\S\ref{sec:cub}--\ref{sec:lrg}\\
+$S$, $s_1$, $\sigma_j$; $\chi_{r,r'}$, $\chi^{\rm I}$ & flat step, $\max S'$, clocks; radial and interval cutoffs & \S\ref{sec:pre}\\
+$\mathfrak v_t$ & Moser primitive, $\iota_{Y_t}\Omega_t=-\mathfrak v_t$ & \S\ref{sec:pre}\\
+$\defdesc(h)$ & definite description & \S\Mnum{sec:intro}\\
+$r_{1,i}<r_{2,i}<r_{3,i}<r_{4,i}$ & enlarged Euclidean source radii for the common isotopy and its cutoff & \S\Mnum{sec:ham}\\
+$y_i=f_i(0)$, $Y_i=y_i/\tau$, $L$, $\delta_c$, $\tau$ & isotopy centres, far centres, Lipschitz bound, separation, common tail scale & \S\Mnum{sec:ham}\\
+$F_{i,t}$ & common isotopy & \S\Mnum{sec:ham}\\
+$\mathfrak a_{i,t}$, $\mathfrak h_{i,t}$ & source one-form, source primitive & \S\Mnum{sec:ham}\\
+$H=H[n,k,C,c,s]$ & the global Hamiltonian & \S\Mnum{sec:ham}\\
+$\beta_B$, $P$, $\Hfin$ & box cutoff, rational polynomial (this meaning of $P$ only in \S\Mnum{sec:eff}), $\Hfin=\beta_B\cdot P$ & \S\Mnum{sec:eff}\\
+$b_R$, $L_X$, $\eta$ & radial budget, Lipschitz bound of $X_H$, field error (other uses of $\eta$, such as the connection form of the cubic model, are local) & \S\Mnum{sec:eff}\\
+L1, L2, L3 & levels of explicitness & \S\Mnum{sec:intro}\\
+\end{longtable}
+}

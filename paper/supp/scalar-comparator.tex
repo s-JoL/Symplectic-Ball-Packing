@@ -1,0 +1,600 @@
+%======================================================================
+\section{The scalar comparison datum for the cubic model}\label{sec:scalar-cmp}
+
+On an interval the comparison construction acts directly on continuous convex functions, and no polyhedral
+bookkeeping is needed. This section gives the scalar iteration with its stopping rule, a fixed mollifier, the planar
+potentials and the Hamiltonian realiser, and then substitutes the parameters of the four-dimensional cubic model for
+arbitrary $k\ge1$ and arbitrary (possibly unequal) capacities. The iteration is the scalar instance of
+\cite[\S2]{OpenAI2026}. We use $D(A)=\{z\in\C:\pi|z|^2<A\}$, the standard area form $\omega_\C$, and the flat step $S$ of
+Definition~\ref{def:pre-flat}; fibre Hamiltonians satisfy $\iota_{X_Q}\omega_\C=-dQ$.
+
+\subsection{Finite iteration and fixed mollification}\label{sec:scalar-iteration}
+
+Let $h>0$ and let $P\colon\R\to\R$ be continuous and concave on $[0,h]$. Suppose that
+\begin{gather}\label{eq:scalar-input}
+ \int_0^hP(p)\,dp=\mu h,\qquad 0<\tau<1,\qquad
+ P(p)\ge\beta>0\quad(\tau h\le p\le h),\\
+ 0<d<\min(\mu,\beta),\qquad P_{\min}\le P(p),\qquad |P(p)|\le\bar P,\notag\\
+ |P(p)-P(q)|\le L_P|p-q|\quad(p,q\in[0,h]),\notag
+\end{gather}
+where $\bar P>0$ and $L_P\ge0$. For a continuous convex $f$ on $[0,h]$, write
+\begin{equation}\label{eq:scalar-rearrangement}
+ (Rf)(I)=\min_{0\le x\le h-I}\max\bigl(f(x),f(x+I)\bigr),\qquad 0\le I\le h.
+\end{equation}
+This is the coordinate rearrangement of \S\ref{sec:fcp} for $m=1$ and $\Delta=[0,h]$ (whose proofs do not use
+rationality). By Lemmas~\ref{lem:fcp-interval}, \ref{lem:fcp-rearrangement} and~\ref{lem:fcp-lipschitz}, $Rf$ is the
+increasing rearrangement of $f$; it is continuous, convex and nondecreasing, $Rf(0)=\min f$, $Rf(h)=\max f$;
+$\int_0^hRf=\int_0^hf$; $R(f+c)=Rf+c$; $f\le f'$ implies $Rf\le Rf'$; $\|Rf-Rf'\|\le\|f-f'\|$; and $Rf$ is
+$L$-Lipschitz whenever $f$ is.
+
+Set
+\begin{gather}\label{eq:scalar-iteration}
+ \eta_{\rm c}=(1-\tau)(\mu-d),\qquad B_P=\max(1,d-P_{\min}+1),\qquad
+ \lambda=1-\frac{\eta_{\rm c}}{2(B_P+\eta_{\rm c})},\\
+ K_0=0,\qquad K_{r+1}=R(\lambda K_r-P),\qquad
+ M=\frac{L_P}{1-\lambda},\notag\\
+ N=\left\lfloor\frac{\log^+\!\bigl(16\bar P/[d(1-\lambda)]\bigr)}{1-\lambda}\right\rfloor+1,
+ \qquad \log^+x=\max(0,\log x).\notag
+\end{gather}
+Since $\eta_{\rm c}>0$ and $B_P\ge1$, $0<1-\lambda<\frac12$. The integer $N$ is explicit. When $P$ is piecewise
+affine, as in \S\ref{sec:scalar-cubic}, each $K_r$ is a continuous convex piecewise affine function with finitely many
+knots, computed from $K_{r-1}$ by Lemma~\ref{lem:fcp-distribution} (whose proof holds verbatim for real knots and
+values).
+
+\begin{lemma}[Finite scalar gap]\label{lem:scalar-finite-gap}
+Each $K_r$ is continuous, convex, nondecreasing and $M$-Lipschitz on $[0,h]$, and
+\begin{equation}\label{eq:scalar-KN-gap}
+ R(K_N-P)(I)\le K_N(I)-\frac78d\qquad(0\le I\le h).
+\end{equation}
+{\normalfont \lean{SymplecticPacking.Branch2.Cmp.Input.nSteps, SymplecticPacking.Branch2.Cmp.Input.Hyp.iter_props,
+ SymplecticPacking.Branch2.Cmp.Input.Hyp.iter_succ_sub, SymplecticPacking.Branch2.Cmp.Input.Hyp.iter_integral,
+ SymplecticPacking.Branch2.Cmp.Input.Hyp.iter_zero_le, SymplecticPacking.Branch2.Cmp.Input.Hyp.iter_top,
+ SymplecticPacking.Branch2.Cmp.Input.Hyp.pow_nSteps, SymplecticPacking.Branch2.Cmp.Input.Hyp.KN_gap}}
+\end{lemma}
+
+\begin{proof}
+By induction, $\lambda K_r-P$ is continuous, convex and $(\lambda M+L_P)$-Lipschitz, and $\lambda M+L_P=M$; so
+$K_{r+1}=R(\lambda K_r-P)$ is continuous, convex, nondecreasing and $M$-Lipschitz. Nonexpansiveness gives
+$\|K_1-K_0\|=\|R(-P)-R(0)\|\le\bar P$ and $\|K_{r+1}-K_r\|\le\lambda\|K_r-K_{r-1}\|$, hence
+\begin{equation}\label{eq:scalar-consecutive}
+ \|K_{r+1}-K_r\|_{[0,h]}\le\lambda^r\bar P.
+\end{equation}
+Integral preservation gives $\int_0^hK_{r+1}=\lambda\int_0^hK_r-\mu h$, so
+\[
+ \int_0^hK_r=-\frac{\mu h(1-\lambda^r)}{1-\lambda},\qquad
+ (1-\lambda)K_r(0)\le-\mu(1-\lambda^r),
+\]
+the second because the nondecreasing $K_r$ is at most its mean at $0$.
+
+We next prove
+\begin{equation}\label{eq:scalar-top}
+ (1-\lambda)K_r(h)\le\lambda^r\bar P-d.
+\end{equation}
+We have $\mu\le\bar P$ by integration, and
+\[
+ \frac{\lambda\eta_{\rm c}}{1-\lambda}=2B_P+\eta_{\rm c}>d-P_{\min},\qquad
+ \eta_{\rm c}\le\mu-d.
+\]
+Consequently
+$(1-\lambda)(d-P_{\min})\le\lambda(\mu-d)$, or
+$\lambda\mu+(1-\lambda)P_{\min}\ge d$.
+The case $r=0$ of \eqref{eq:scalar-top} follows from $d<\mu\le\bar P$.
+For the induction step, $Rf(h)=\max f$ and convexity of $\lambda K_r-P$ give
+\[
+ K_{r+1}(h)=\max\{\lambda K_r(0)-P(0),\lambda K_r(h)-P(h)\}.
+\]
+After multiplication by $1-\lambda$, the first entry is bounded above by
+$-\lambda\mu+\lambda^{r+1}\mu-(1-\lambda)P_{\min}\le\lambda^{r+1}\bar P-d$.
+The second is bounded above by
+$\lambda^{r+1}\bar P-\lambda d-(1-\lambda)P(h)\le\lambda^{r+1}\bar P-d$, since $P(h)\ge\beta>d$.
+This proves \eqref{eq:scalar-top}.
+
+Since $\lambda\le e^{-(1-\lambda)}$ and $(1-\lambda)N>\log^+\bigl(16\bar P/[d(1-\lambda)]\bigr)$,
+\[
+ \lambda^N\bar P<\bar P\exp\Bigl(-\log^+\frac{16\bar P}{d(1-\lambda)}\Bigr)\le\frac{d(1-\lambda)}{16}\le\frac d{16}.
+\]
+Finally, $(1-\lambda)K_N\le(1-\lambda)K_N(h)$, order preservation and translation invariance give
+\begin{align*}
+ R(K_N-P)&\le R(\lambda K_N-P)+(1-\lambda)K_N(h)\\
+ &=K_{N+1}+(1-\lambda)K_N(h)
+ \le K_N+2\lambda^N\bar P-d\le K_N-\frac78d,
+\end{align*}
+using \eqref{eq:scalar-consecutive} and \eqref{eq:scalar-top}.
+\end{proof}
+
+Define the extension and fixed mollifier by
+\begin{gather}\label{eq:scalar-mollifier}
+ K^{\rm ext}(p)=\min_{0\le x\le h}\bigl(K_N(x)+M|p-x|\bigr),\qquad
+ b(t)=\begin{cases}\exp\!\bigl(-1/(1-t^2)\bigr),&|t|<1,\\0,&|t|\ge1,\end{cases}\\
+ b_0=\int_{-1}^1b(t)\,dt,\qquad w=\frac{d}{32(M+1)},\qquad
+ K(p)=\frac1{b_0}\int_{-1}^1K^{\rm ext}(p-wt)b(t)\,dt.\notag
+\end{gather}
+
+\begin{proposition}[Smooth scalar comparator]\label{prop:scalar-cmp-gap}
+The function $K$ of \eqref{eq:scalar-mollifier} is smooth, convex and $M$-Lipschitz on $\R$. Moreover,
+\begin{equation}\label{eq:scalar-smooth-gap}
+ \|K-K_N\|_{[0,h]}\le\frac d{32},\qquad
+ R(K-P)(I)\le K(I)-\frac{13}{16}d\quad(0\le I\le h).
+\end{equation}
+{\normalfont \lean{SymplecticPacking.Branch2.Cmp.infExt, SymplecticPacking.Branch2.Cmp.bump,
+ SymplecticPacking.Branch2.Cmp.mollify, SymplecticPacking.Branch2.Cmp.Input.Kcmp,
+ SymplecticPacking.Branch2.Cmp.Input.Hyp.Kcmp_contDiff,
+ SymplecticPacking.Branch2.Cmp.Input.Hyp.Kcmp_convex,
+ SymplecticPacking.Branch2.Cmp.Input.Hyp.Kcmp_close,
+ SymplecticPacking.Branch2.Cmp.Input.Hyp.Kcmp_gap}}
+\end{proposition}
+
+\begin{proof}
+For $p\in[0,h]$, $K_N(x)+M|p-x|\ge K_N(p)$ for all $x\in[0,h]$ because $K_N$ is $M$-Lipschitz, with equality at
+$x=p$; so $K^{\rm ext}=K_N$ on $[0,h]$. As an infimum of $M$-Lipschitz functions of $p$, $K^{\rm ext}$ is $M$-Lipschitz.
+It is convex, being the partial minimum over the compact convex set $[0,h]$ of the jointly convex function
+$(p,x)\mapsto K_N(x)+M|p-x|$. Convolution with the smooth compactly supported probability density
+$t\mapsto b(t)/b_0$ preserves convexity and the Lipschitz constant and produces a smooth function. Since $|t|\le1$ on
+the support, $|K(p)-K^{\rm ext}(p)|\le Mw<d/32$. Nonexpansiveness and Lemma~\ref{lem:scalar-finite-gap} now give
+\[
+ R(K-P)\le R(K_N-P)+d/32\le K_N-7d/8+d/32\le K-13d/16.
+\]
+\end{proof}
+
+\subsection{The scalar planar potentials}\label{sec:scalar-potentials}
+
+Let $F$ be continuous, convex and $L$-Lipschitz on $[0,h]$, where $L\ge0$, and let $e>0$. Suppose that
+$U_0\colon\R\to\R$ is smooth and convex, with
+\begin{equation}\label{eq:scalar-majorant}
+ F\le U_0\le F+\sigma_{\rm in}\quad\hbox{on }[0,h],\qquad 0\le\sigma_{\rm in}\le e/16.
+\end{equation}
+Define
+\begin{gather}\label{eq:scalar-planar-constants}
+ \eta=\frac12\min\left(\frac h{16},\frac{e}{32(L+1)}\right),\qquad
+ \beta_{\rm a}=\frac{\eta}{8h},\qquad \sigma=\frac e8,\qquad
+ \nu=4\sigma\beta_{\rm a}(1-\beta_{\rm a}),\qquad \kappa=\frac{\sigma\eta}{8},\\
+ U(p)=U_0(p)+\kappa\left(\frac1p+\frac1{h-p}\right)\quad(0<p<h),\qquad
+ V(y)=\frac{\nu y^2}{\frac14-y^2}\quad(|y|<\tfrac12).\notag
+\end{gather}
+Then $0<\eta\le h/32$, $L\eta\le e/64$, $0<\beta_{\rm a}\le1/256$, and $\kappa,\nu>0$. Here $p$ is the moment and $y$
+the angle of the rectangle $(0,h)\times(-\frac12,\frac12)$.
+
+\begin{lemma}[Area below a scalar potential level]\label{lem:scalar-area}
+$U$ and $V$ are smooth and strictly convex on their intervals and tend to $+\infty$ at both endpoints. Hence $U$ has
+a unique critical point $p^*\in(0,h)$, its minimum, with $U''(p^*)>0$; we write $m_*=U(p^*)$. Also $V(0)=0$ is the
+minimum of $V$ and $V''(0)=8\nu$. For $0\le I\le h-4\eta$, put $b_I=RF(I+3\eta)+2\sigma$. Then
+\begin{equation}\label{eq:scalar-area}
+ \operatorname{area}\{(p,y)\in(0,h)\times(-\tfrac12,\tfrac12):U(p)+V(y)\le b_I\}>I.
+\end{equation}
+{\normalfont \lean{SymplecticPacking.Branch2.Planar.PlanarInput.Hyp.U_strictConvex,
+ SymplecticPacking.Branch2.Planar.PlanarInput.Hyp.U_proper,
+ SymplecticPacking.Branch2.Planar.PlanarInput.Hyp.V_strictConvex,
+ SymplecticPacking.Branch2.Planar.PlanarInput.exists_unique_crit,
+ SymplecticPacking.Branch2.Planar.PlanarInput.Hyp.area_sublevel}}
+\end{lemma}
+
+\begin{proof}
+On $(0,h)$, $U''=U_0''+2\kappa(p^{-3}+(h-p)^{-3})>0$, and $U\to+\infty$ at $0$ and $h$ because $U_0$ is bounded on
+$[0,h]$; so $U'$ is strictly increasing from $-\infty$ to $+\infty$ and has a unique zero $p^*$. Writing
+\[
+ V(y)=\frac\nu4\left(\frac1{y+1/2}+\frac1{1/2-y}\right)-\nu
+\]
+shows that $V$ is strictly convex and proper, and $V'(y)=(\nu/2)y/(\frac14-y^2)^2$ gives $V''(0)=8\nu$.
+
+On $[\eta,h-\eta]$ the barrier is at most $2\kappa/\eta=\sigma/4$, so $U\le F+\sigma_{\rm in}+\sigma/4\le F+3\sigma/4$
+there. For $|y|\le\frac12-\beta_{\rm a}$, $\frac14-y^2\ge\beta_{\rm a}(1-\beta_{\rm a})$ and $V(y)\le
+\nu/(4\beta_{\rm a}(1-\beta_{\rm a}))=\sigma$.
+
+Since $I+3\eta\le h$, Lemma~\ref{lem:fcp-interval}(a) gives an interval $[a,a+I+3\eta]\subset[0,h]$ on which
+$F\le RF(I+3\eta)$. Its intersection with $[\eta,h-\eta]$ has length at least $I+\eta$, and its product with
+$[-\frac12+\beta_{\rm a},\frac12-\beta_{\rm a}]$ lies in the set of \eqref{eq:scalar-area}, because
+$\frac34\sigma+\sigma<2\sigma$. This rectangle has area at least
+\[
+ (I+\eta)(1-2\beta_{\rm a})=I+\eta-\frac{\eta(I+\eta)}{4h}>I,
+\]
+since $I+\eta<4h$.
+\end{proof}
+
+\subsection{Quadratic wells and the endpoint map}\label{sec:scalar-wells}
+
+Both potentials are modified near their minima to be exactly quadratic. Let
+$\psi(t)=1-S((t^2-1)/3)$; it is smooth and even, $\psi=1$ on $[-1,1]$, $\psi=0$ outside $(-2,2)$, $0\le\psi\le1$,
+and $C_\psi=\max_{[-2,2]}|\psi'|$ is finite. Let $f$ be a smooth function on an interval $(A,B)$ and $c\in(A,B)$ with
+$f'(c)=0$, $\alpha=f''(c)>0$, $(x-c)f'(x)>0$ for $x\ne c$, and $f(x)\to+\infty$ as $x\to A$ and as $x\to B$. Put
+\begin{gather}\label{eq:scalar-quadratic-well}
+ \delta_{\rm w}=e/64,\qquad g_f(x)=f(c+x)-f(c),\qquad r_f=\tfrac14\min(c-A,B-c),\qquad
+ \chi_f(x)=\psi(x/r_f),\\
+ K_{3,f}=1+\max_{x\in[-2r_f,2r_f]}|(\chi_fg_f)'''(x)|,\qquad
+ \eps_f=\min\left(\frac{r_f}{4},\frac{\alpha}{32K_{3,f}(1+C_\psi)},
+                           \sqrt{\frac{\delta_{\rm w}}\alpha}\right),\notag\\
+ \widetilde f(x)=g_f(x)+\psi(x/\eps_f)\bigl(\alpha x^2/2-\chi_f(x)g_f(x)\bigr)\qquad(A-c<x<B-c).
+ \notag
+\end{gather}
+Here $\chi_fg_f$ is extended by zero outside $[-2r_f,2r_f]\subset(A-c,B-c)$; the extension is smooth. Since
+$2\eps_f\le r_f/2$, $\chi_f=1$ on the support of $\psi(x/\eps_f)$, so
+$\widetilde f=g_f+\psi(x/\eps_f)(\alpha x^2/2-g_f)$, and $K_{3,f}>\max_{|x|\le2\eps_f}|g_f'''(x)|$.
+
+\begin{lemma}[Quadratic modification of a well]\label{lem:scalar-wells}
+Let $f,c,\alpha$ be as above, and let $\eps>0$, $K>0$, $\delta>0$ satisfy $2\eps<\min(c-A,B-c)$,
+$|g_f'''|\le K$ on $[-2\eps,2\eps]$, $\eps\le\alpha/(32K(1+C_\psi))$ and $\eps\le\sqrt{\delta/\alpha}$. Put
+$\widetilde f(x)=g_f(x)+\psi(x/\eps)(\alpha x^2/2-g_f(x))$ on $(A-c,B-c)$. Then $\widetilde f$ is smooth and
+\[
+ |\widetilde f-g_f|\le\delta/24,\qquad
+ \widetilde f(x)=\alpha x^2/2\quad(|x|\le\eps),\qquad
+ x\widetilde f'(x)>0\quad(x\ne0),\qquad \widetilde f=g_f\quad(|x|\ge2\eps).
+\]
+The map $\Sigma_f(x)=\operatorname{sign}(x)\sqrt{\widetilde f(x)}$ is an increasing smooth diffeomorphism of
+$(A-c,B-c)$ onto $\R$, and its inverse $X_f$ satisfies
+\[
+ \widetilde f(X_f(u))=u^2,\qquad X_f'(u)>0,\qquad
+ X_f(u)=u/\sqrt{\alpha/2}\quad(|u|\le\sqrt{\alpha/2}\,\eps).
+\]
+In particular this applies to \eqref{eq:scalar-quadratic-well} with $(\eps,K,\delta)=(\eps_f,K_{3,f},\delta_{\rm w})$,
+and to $(f,A,B,c)=(U,0,h,p^*)$ and $(V,-\frac12,\frac12,0)$; we write $\widetilde U$, $\widetilde V$ for the two
+modifications.
+{\normalfont \lean{SymplecticPacking.Branch2.Planar.Well.eps, SymplecticPacking.Branch2.Planar.Well.ft,
+ SymplecticPacking.Branch2.Planar.Well.ft_close, SymplecticPacking.Branch2.Planar.Well.ft_eq_quad,
+ SymplecticPacking.Branch2.Planar.Well.Sig_sq, SymplecticPacking.Branch2.Planar.Well.X_smooth,
+ SymplecticPacking.Branch2.Planar.Well.X_deriv_pos, SymplecticPacking.Branch2.Planar.Well.ft_X,
+ SymplecticPacking.Branch2.Planar.PlanarInput.wellU_hyp,
+ SymplecticPacking.Branch2.Planar.PlanarInput.wellV_hyp}}
+\end{lemma}
+
+\begin{proof}
+Since $g_f(0)=g_f'(0)=0$ and $g_f''(0)=\alpha$, Taylor's theorem gives, for $|x|\le2\eps$,
+\[
+ |g_f(x)-\alpha x^2/2|\le K|x|^3/6,\qquad |g_f'(x)-\alpha x|\le Kx^2/2 .
+\]
+Hence $|\widetilde f-g_f|\le K(2\eps)^3/6=\frac43K\eps\cdot\eps^2\le\frac43\cdot\frac\alpha{32}\cdot\frac\delta\alpha
+=\delta/24$. Differentiating,
+$\widetilde f'(x)-\alpha x=(1-\psi(x/\eps))(g_f'(x)-\alpha x)+\eps^{-1}\psi'(x/\eps)(\alpha x^2/2-g_f(x))$, and for
+$0<|x|<2\eps$ (where $|x|/\eps<2$)
+\[
+ |\widetilde f'(x)-\alpha x|\le Kx^2\Bigl(\frac12+\frac{C_\psi}3\Bigr)\le K|x|\cdot2\eps(1+C_\psi)\le\frac{\alpha|x|}{16}.
+\]
+So $x\widetilde f'(x)>0$ there; for $|x|\ge2\eps$, $\widetilde f=g_f$ and $xg_f'(x)>0$ by hypothesis. As
+$\widetilde f(0)=0$, $\widetilde f>0$ for $x\ne0$. On $|x|<\eps$, $\Sigma_f(x)=\sqrt{\alpha/2}\,x$; on $x\ne0$,
+$\Sigma_f$ is smooth with $\Sigma_f'=\widetilde f'/(2\Sigma_f)>0$. Since $\widetilde f=g_f\to+\infty$ at both ends,
+$\Sigma_f$ is an increasing bijection onto $\R$ with positive derivative, hence a diffeomorphism; the identities for
+$X_f=\Sigma_f^{-1}$ follow. For \eqref{eq:scalar-quadratic-well}, $2\eps_f\le r_f/2$, and the hypotheses on $U$
+and $V$ hold by Lemma~\ref{lem:scalar-area}: strict convexity gives $(x-c)f'(x)>0$.
+\end{proof}
+
+Let $X_U,X_V$ be the inverses $X_f$ of Lemma~\ref{lem:scalar-wells} for $f=U$ and $f=V$, with widths $\eps_U,\eps_V$,
+so that $\widetilde U(X_U(u))=u^2$ and $\widetilde V(X_V(v))=v^2$, $X_U$ maps $\R$ onto $(-p^*,h-p^*)$ and $X_V$ maps $\R$
+onto $(-\frac12,\frac12)$. Put
+\begin{gather}\label{eq:scalar-endpoint-data}
+ b_{\rm top}=RF(h-\eta)+2\sigma,\qquad
+ \bar E=b_{\rm top}-m_*+2\delta_{\rm w},\qquad u_1=\sqrt{\bar E}+1,\\
+ \varphi(t)=tS(t),\qquad Z(u)=\varphi(u-u_1)-\varphi(-u-u_1),\notag\\
+ X(u)=X_U(u)+Z(u),\qquad Y(v)=X_V(v)+Z(v),\qquad
+ a=\sqrt{2/U''(p^*)},\qquad b=\sqrt{2/V''(0)},\notag\\
+ \eps_{\rm M}=\min\bigl(\sqrt{U''(p^*)/2}\,\eps_U,
+                          \sqrt{V''(0)/2}\,\eps_V,1\bigr).\notag
+\end{gather}
+By \eqref{eq:scalar-area} with $I=h-4\eta>0$ the sublevel $\{U+V\le b_{\rm top}\}$ is nonempty, so $b_{\rm top}\ge m_*$
+and $\bar E>0$. The function $\varphi$ is smooth, vanishes on $(-\infty,0]$, equals $t$ on $[1,\infty)$ and has
+$\varphi'=S+tS'\ge0$; so $Z$ is smooth, nondecreasing, zero on $[-u_1,u_1]$ and unbounded in both directions.
+Consequently $X,Y$ are smooth increasing diffeomorphisms of $\R$ with positive derivatives, $X=X_U$ and $Y=X_V$ on
+$[-u_1,u_1]$, and $X(u)=au$, $Y(v)=bv$ on $[-\eps_{\rm M},\eps_{\rm M}]$.
+
+We use the rotation normalisation $T_J$ and the area normalisation $D_J$ of a density $J$ from
+Definition~\ref{def:pln-normalisations}: with $\operatorname{Rot}_\theta w=e^{i\theta}w$,
+\begin{gather}\label{eq:scalar-inner-normalisation}
+ \bar J(t)=\frac1{2\pi}\int_0^{2\pi}J(\operatorname{Rot}_\theta\sqrt t)\,d\theta,\qquad
+ B_J(w)=\frac1{2\pi}\int_0^{2\pi}(\theta-\pi)J(\operatorname{Rot}_\theta w)\,d\theta,\\
+ T_J(w)=\operatorname{Rot}_{B_J(w)/\bar J(|w|^2)}w,\qquad
+ \mathcal A_J(E)=\pi\int_0^E\bar J(t)\,dt,\qquad E_J=\mathcal A_J^{-1},\notag\\
+ D_J(z)=\sqrt{\frac{\pi E_J(I)}{I}}\,z\quad(I=\pi|z|^2>0),\qquad D_J(0)=0.\notag
+\end{gather}
+If $J$ is smooth and positive on $\R^2$, constant near $0$, and $\mathcal A_J(E)\to\infty$, then by
+Lemmas~\ref{lem:pln-rotation} and~\ref{lem:pln-area} $T_J$ is a diffeomorphism of $\R^2$ preserving each circle about
+$0$ with $T_J^*(\bar J(|w|^2)\,du\wedge dv)=J\,du\wedge dv$, $D_J$ is a diffeomorphism of $\C$ with
+$|D_J(z)|^2=E_J(\pi|z|^2)$ and $D_J^*(\bar J(|w|^2)\,du\wedge dv)=\omega_\C$, and both maps are linear near $0$.
+
+Define
+\begin{equation}\label{eq:scalar-inner-map}
+ F_{\rm M}(u+iv)=X(u)+iY(v),\qquad J(u+iv)=X'(u)Y'(v),\qquad
+ f=F_{\rm M}\circ T_J^{-1}\circ D_J.
+\end{equation}
+Here $J>0$ is smooth and equals $ab$ for $|u|,|v|\le\eps_{\rm M}$, and $F_{\rm M}$ is a diffeomorphism of $\R^2$ with
+$F_{\rm M}^*(dx\wedge dy)=J\,du\wedge dv$. Writing $\varrho_X(x)=(X^{-1}(x))^2$ and $\varrho_Y(y)=(Y^{-1}(y))^2$,
+$F_{\rm M}$ maps $\{u^2+v^2\le E\}$ onto $\{\varrho_X(x)+\varrho_Y(y)\le E\}$, so
+\begin{equation}\label{eq:scalar-level-area}
+ \mathcal A_J(E)=\operatorname{area}\{\varrho_X(x)+\varrho_Y(y)\le E\}\longrightarrow\infty,\qquad
+ \varrho_X(\operatorname{Re}f(z))+\varrho_Y(\operatorname{Im}f(z))=E_J(\pi|z|^2),
+\end{equation}
+the second because $T_J^{-1}$ preserves $|w|$. Hence $f$ is an area-preserving diffeomorphism of $\C$ (as in
+Lemma~\ref{lem:pln-area}(iv)). If $\varrho_X(x)<u_1^2$, then $X^{-1}(x)\in(-u_1,u_1)$, so $X^{-1}(x)=X_U^{-1}(x)$ and
+$\varrho_X(x)=\widetilde U(x)$; likewise $\varrho_Y(y)<u_1^2$ implies $\varrho_Y(y)=\widetilde V(y)$. Conversely
+$\widetilde U(x)<u_1^2$ implies $|X_U^{-1}(x)|<u_1$, hence $\varrho_X(x)=\widetilde U(x)$, and likewise for $\widetilde V$.
+
+The endpoint is
+\begin{gather}\label{eq:scalar-endpoint}
+ P_-=p^*+X_U(-u_1),\qquad P_+=p^*+X_U(u_1),\qquad a_{\rm cut}=P_-/4,\\
+ s_a(p)=p\,S((p-a)/a)+\tfrac a2\bigl(1-S((p-a)/a)\bigr),\notag\\
+ C_a(x+iy)=-\sqrt{s_a(p^*+x)/\pi}\,e^{2\pi iy},\qquad \Phi=C_{a_{\rm cut}}\circ f.\notag
+\end{gather}
+Here $0<P_-<p^*<P_+<h$; $s_a(p)=a/2$ for $p\le a$, $s_a(p)=p$ for $p\ge2a$, and in between $s_a(p)$ is a convex
+combination of $p>a$ and $a/2$; so $s_a>0$ and $C_a$ is smooth on $\C$.
+
+\begin{lemma}[Scalar endpoint and its error]\label{lem:scalar-endpoint}
+The map $\Phi$ is smooth on $\C$, is injective and area preserving on $D(h-4\eta)$, and satisfies
+\begin{equation}\label{eq:scalar-endpoint-error}
+ F(\pi|\Phi(z)|^2)<RF(\pi|z|^2)+e\qquad(\pi|z|^2\le h-4\eta).
+\end{equation}
+On the latter closed disc, $P_-<\pi|\Phi(z)|^2<P_+$.
+{\normalfont \lean{SymplecticPacking.Branch2.Planar.MorsePair.finner_smooth,
+ SymplecticPacking.Branch2.Planar.MorsePair.finner_symplectic,
+ SymplecticPacking.Branch2.Planar.MorsePair.Acal_eq_area,
+ SymplecticPacking.Branch2.Planar.PlanarInput.Einv_lt,
+ SymplecticPacking.Branch2.Planar.PlanarInput.inner_comparison,
+ SymplecticPacking.Branch2.Planar.PlanarInput.endMap,
+ SymplecticPacking.Branch2.Planar.PlanarInput.alex_hyp}}
+\end{lemma}
+
+\begin{proof}
+Let $0\le I\le h-4\eta$, $b_I=RF(I+3\eta)+2\sigma\le b_{\rm top}$ (as $RF$ is nondecreasing) and
+$E'=b_I-m_*+2\delta_{\rm w}\le\bar E$. Write $g_U(x)=U(p^*+x)-m_*$, so $g_V=V$. If $U(p)+V(y)\le b_I$ and $x=p-p^*$, then
+$g_U(x)+V(y)\le b_I-m_*$, and Lemma~\ref{lem:scalar-wells} gives $\widetilde U(x)+\widetilde V(y)\le E'<u_1^2$; as both
+terms are nonnegative, $\varrho_X(x)=\widetilde U(x)$, $\varrho_Y(y)=\widetilde V(y)$, and
+$\varrho_X(x)+\varrho_Y(y)\le E'$. Translation preserves area, so by Lemma~\ref{lem:scalar-area} and
+\eqref{eq:scalar-level-area}, $\mathcal A_J(E')>I$, that is,
+\begin{equation}\label{eq:scalar-energy-error}
+ E_J(I)<b_I-m_*+2\delta_{\rm w}\le\bar E<u_1^2.
+\end{equation}
+Now let $\pi|z|^2=I$ and $(x,y)=f(z)$. By \eqref{eq:scalar-level-area}, $\varrho_X(x),\varrho_Y(y)<u_1^2$, so
+$|X^{-1}(x)|,|Y^{-1}(y)|<u_1$; hence $p^*+x\in(P_-,P_+)\subset(0,h)$, $|y|<\frac12$, and
+$\widetilde U(x)+\widetilde V(y)=E_J(I)$. By Lemma~\ref{lem:scalar-wells},
+$U(p^*+x)+V(y)\le m_*+E_J(I)+2\delta_{\rm w}<b_I+4\delta_{\rm w}$. Since $F\le U_0<U$ on $(0,h)$, $V\ge0$ and $RF$ is
+$L$-Lipschitz (Lemma~\ref{lem:fcp-lipschitz}),
+\[
+ F(p^*+x)<RF(I+3\eta)+2\sigma+4\delta_{\rm w}\le RF(I)+3L\eta+2\sigma+4\delta_{\rm w}
+ \le RF(I)+\frac{23}{64}e<RF(I)+e.
+\]
+As $p^*+x>P_-=4a_{\rm cut}$, $s_{a_{\rm cut}}(p^*+x)=p^*+x$, so $\pi|\Phi(z)|^2=p^*+x$ and
+\eqref{eq:scalar-endpoint-error} follows. Thus $f$ maps $D(h-4\eta)$ into the open set
+$\{(x,y):p^*+x>2a_{\rm cut},\ |y|<\frac12\}$, on which $C_{a_{\rm cut}}$ is the polar chart
+$(x,y)\mapsto-\sqrt{(p^*+x)/\pi}\,e^{2\pi iy}$; this chart is injective (its polar angle $2\pi y+\pi$ lies in
+$(0,2\pi)$) and pulls $\omega_\C$ back to $dx\wedge dy$ (Lemma~\ref{lem:pll-physical-chart}). Since $f$ is an
+area-preserving diffeomorphism, $\Phi$ is injective and area preserving on $D(h-4\eta)$. Smoothness of $\Phi$ on $\C$
+follows from that of $f$ and $C_{a_{\rm cut}}$.
+\end{proof}
+
+\subsection{The Alexander path and its Hamiltonian}\label{sec:scalar-isotopy}
+
+The endpoint is joined to its linearisation by the integral Alexander family
+\begin{equation}\label{eq:scalar-alexander}
+ b_*:=\Phi(0)=-r_b,\qquad r_b=\sqrt{p^*/\pi},\qquad
+ q_\alpha(z)=b_*+\int_0^1D\Phi(t\alpha z)[z]\,dt\quad(0\le\alpha\le1).
+\end{equation}
+Indeed $f(0)=F_{\rm M}(0)=0$ and $s_{a_{\rm cut}}(p^*)=p^*$, so $\Phi(0)=-r_b$. Thus
+$q_\alpha=b_*+(\Phi(\alpha z)-b_*)/\alpha$ for $\alpha>0$, $q_1=\Phi$ and $q_0=b_*+A_0z$ with $A_0=D\Phi(0)$. Near
+$0$ the density $J$ is the constant $ab$, so $T_J=\mathrm{id}$ and $D_J=(ab)^{-1/2}\mathrm{id}$ there
+(Lemmas~\ref{lem:pln-rotation}(iv) and~\ref{lem:pln-area}(v)), and $Df(0)=\operatorname{diag}(c_x,c_y)$ with
+$c_x=a/\sqrt{ab}$, $c_y=b/\sqrt{ab}$, $c_xc_y=1$. The polar chart has $DC_{a_{\rm cut}}(0)=\operatorname{diag}(-1/(2\pi r_b),
+-2\pi r_b)$ (Lemma~\ref{lem:pll-physical-chart}), so
+\[
+ A_0=\operatorname{diag}(A_{11},A_{22}),\qquad
+ A_{11}=-\frac{c_x}{2\pi r_b},\qquad A_{22}=-2\pi r_bc_y,\qquad A_{11}A_{22}=1.
+\]
+Let
+\begin{gather}\label{eq:scalar-path-constants}
+ p^\dagger=h-5\eta,\qquad R^\dagger=\sqrt{p^\dagger/\pi},\qquad R_h=\sqrt{h/\pi},\qquad
+ R_q=\sqrt{P_+/\pi},\\
+ M_\Phi=\max_{\pi|z|^2\le p^\dagger}\|D\Phi(z)\|,\qquad B_*=M_\Phi R^\dagger,\qquad
+ B_3=R^\dagger\max(1,|A_{11}|,|A_{22}|),\notag\\
+ c_{\rm sh}=\min\left(\frac14,\frac{R_h-r_b}{8\max(R^\dagger,B_3,B_*)}\right),\notag\\
+ R_{\rm supp}=\max(R^\dagger,r_b+c_{\rm sh}B_3,r_b+c_{\rm sh}B_*,R_q),\qquad
+ P_{\rm supp}=\pi R_{\rm supp}^2.\notag
+\end{gather}
+$M_\Phi$ is the maximum of a continuous function on a compact disc. With
+\[
+ M_\alpha=\operatorname{Rot}_{\pi\alpha}\operatorname{diag}(|A_{11}|^\alpha,|A_{22}|^\alpha),
+\]
+so that $M_0=\mathrm{Id}$,
+$M_1=A_0$ (both entries of $A_0$ are negative), $\det M_\alpha=1$ and $\|M_\alpha\|\le\max(1,|A_{11}|,|A_{22}|)$, the five
+segments on $D(p^\dagger)$ are
+\begin{equation}\label{eq:scalar-five-segments}
+\begin{aligned}
+ \mathfrak e^0_\alpha(z)&=c_{\rm sh}^{\alpha}z,&
+ \mathfrak e^1_\alpha(z)&=\alpha b_*+c_{\rm sh}z,\\
+ \mathfrak e^2_\alpha(z)&=b_*+c_{\rm sh}M_\alpha z,\\
+ \mathfrak e^3_\alpha(z)&=b_*+c_{\rm sh}(q_\alpha(z)-b_*),\\
+ \mathfrak e^4_\alpha(z)&=b_*+c_{\rm sh}^{1-\alpha}(\Phi(z)-b_*).
+\end{aligned}
+\end{equation}
+Put $\mathfrak e_t=\mathfrak e^j_{S(5t-j)}$ for $j/5\le t\le(j+1)/5$, $j=0,\dots,4$, $\mathfrak e_t=\mathrm{id}$ for $t\le0$
+and $\mathfrak e_t=\Phi$ for $t\ge1$. This is Construction~\ref{cons:pln-five-segment} with the Alexander family $q_\alpha$
+in place of the inner family.
+
+\begin{lemma}[The scalar ordinary path]\label{lem:scalar-ordinary}
+$(\mathfrak e_t)$ is an ordinary path in the sense of Definition~\ref{def:pln-ordinary-path} (with a one-point
+parameter space), with constants $p^\dagger$, $P_{\rm supp}$, $h$, $c_{\rm sh}$ and
+\[
+ \gamma_t=c_{\rm sh}^{\,2S(5t)-2S(5t-4)},\qquad c_{\rm sh}^2\le\gamma_t\le1,\qquad\gamma_1=1,
+ \qquad P_{\rm supp}<h.
+\]
+{\normalfont \lean{SymplecticPacking.Branch2.Planar.AlexInput.Gq, SymplecticPacking.Branch2.Planar.AlexInput.q,
+ SymplecticPacking.Branch2.Planar.AlexInput.toFam_hyp,
+ SymplecticPacking.Branch2.Planar.FamData.cnew, SymplecticPacking.Branch2.Planar.FamData.ordPath,
+ SymplecticPacking.Branch2.Planar.FamData.ordinary,
+ SymplecticPacking.Branch2.Planar.PlanarInput.Hyp.planarPath_ordinary}}
+\end{lemma}
+
+\begin{proof}
+The integrand in \eqref{eq:scalar-alexander} is smooth in $(t,\alpha,z)$, so $(\alpha,z)\mapsto q_\alpha(z)$ is smooth on
+$[0,1]\times D(p^\dagger)$, including $\alpha=0$. For $\alpha>0$, $q_\alpha$ is $\Phi\circ(\alpha\,\cdot)$ followed by an affine
+bijection, and $\Phi$ is injective with $\det D\Phi=1$ on $D(p^\dagger)\subset D(h-4\eta)$ (Lemma~\ref{lem:scalar-endpoint});
+so $q_\alpha$ is injective with $\det Dq_\alpha=1$; $q_0$ is affine with $\det A_0=1$. Also
+$|q_\alpha(z)-b_*|\le M_\Phi|z|\le B_*$.
+
+\emph{Seams and smoothness.} $\mathfrak e^0_1=\mathfrak e^1_0$, $\mathfrak e^1_1=\mathfrak e^2_0$ (as $M_0=\mathrm{Id}$),
+$\mathfrak e^2_1=\mathfrak e^3_0$ (as $M_1=A_0$ and $q_0-b_*=A_0z$), $\mathfrak e^3_1=\mathfrak e^4_0$ and $\mathfrak e^4_1=\Phi$.
+All derivatives of $S$ vanish at $0$ and $1$, so the concatenation is smooth on $\R\times D(p^\dagger)$
+(Lemma~\ref{lem:pre-concat}); this gives \ref{it:pln-O1}.
+
+\emph{Determinants.} The segments are injective with constant Jacobian determinants $c_{\rm sh}^{2\alpha}$, $c_{\rm sh}^2$,
+$c_{\rm sh}^2$, $c_{\rm sh}^2$ and $c_{\rm sh}^{2(1-\alpha)}$; with $\alpha=S(5t-j)$ these equal $\gamma_t\in[c_{\rm sh}^2,1]$, and
+$\gamma_1=1$. This is \ref{it:pln-O2}.
+
+\emph{Ranges.} Let $|z|<R^\dagger$. Then $|\mathfrak e^0_\alpha(z)|<R^\dagger$; $|\mathfrak e^1_\alpha(z)|\le r_b+c_{\rm sh}R^\dagger$ and
+$|\mathfrak e^2_\alpha(z)|\le r_b+c_{\rm sh}\|M_\alpha\|R^\dagger$ are at most $r_b+c_{\rm sh}B_3$;
+$|\mathfrak e^3_\alpha(z)|\le r_b+c_{\rm sh}B_*$; and $\mathfrak e^4_\alpha(z)$ is a convex combination of $b_*$ and $\Phi(z)$,
+both of modulus at most $R_q$ (Lemma~\ref{lem:scalar-endpoint} and $p^*<P_+$). So all images lie in
+$\bar D(P_{\rm supp})$, which is \ref{it:pln-O3}. Finally $R^\dagger<R_h$, $R_q<R_h$ (as $P_+<h$), and
+$r_b+c_{\rm sh}\max(B_3,B_*)\le r_b+\frac18(R_h-r_b)<R_h$ (as $p^*<h$); hence $P_{\rm supp}<h$.
+\end{proof}
+
+The ambient realiser is that of \S\S\ref{sec:pln-flow}--\ref{sec:pln-ham} for this path. With $e_q=2\eta$ put
+\begin{gather}\label{eq:scalar-source-cutoff}
+ p_{\rm on}=h-31e_q/8,\qquad p_{\rm zero}=h-61e_q/16,\qquad
+ \chi(I)=1-S\!\left(\frac{I-p_{\rm on}}{p_{\rm zero}-p_{\rm on}}\right),\\
+ W_t(y)=\chi(\pi|\mathfrak e_t^{-1}(y)|^2)\,
+             \partial_t\mathfrak e_t(\mathfrak e_t^{-1}(y))
+ \quad\text{on }\mathfrak e_t(D(p^\dagger)),\qquad W_t=0\quad\text{elsewhere},\notag
+\end{gather}
+where $\mathfrak e_t^{-1}(y)$ is the unique preimage in $D(p^\dagger)$. Since
+$h-4e_q<p_{\rm on}<p_{\rm zero}<h-15e_q/4<p^\dagger$, these are the field and cutoff of Lemma~\ref{lem:pln-ambient-flow}.
+Let $\phi_t$ be the flow of $W_t$ with $\phi_0=\mathrm{id}$, and put
+\begin{equation}\label{eq:scalar-qhat}
+ G_t(w)=\phi_t(w/\sqrt{\gamma_t}),\qquad \widehat J_t=\det DG_t,\qquad
+ \widehat q_t=G_t\circ T_{\widehat J_t}^{-1}\circ D_{\widehat J_t},
+\end{equation}
+with the normalisations \eqref{eq:scalar-inner-normalisation}; this is $\hat q$ of Lemma~\ref{lem:pln-normalisation}.
+Finally define, as in Construction~\ref{cons:pln-hamiltonian},
+\begin{gather}\label{eq:scalar-Hamiltonian}
+ a^q_t(z)[v]=\omega_\C\bigl(\partial_t\widehat q_t(z),D\widehat q_t(z)[v]\bigr),\qquad
+ h^q_t(z)=\int_0^1a^q_t(rz)[z]\,dr,\\
+ z_{\rm bd}=\sqrt{(h+P_{\rm supp})/(2\pi)},\qquad
+ Q_t(y)=-h^q_t(\widehat q_t^{-1}(y))+h^q_t(z_{\rm bd}).\notag
+\end{gather}
+
+\begin{proposition}[Scalar Hamiltonian realisation]\label{prop:scalar-planar-realisation}
+The maps $\widehat q_t$ $(t\in\R)$ are symplectic diffeomorphisms of $\C$, smooth in $(t,z)$ with smooth inverses;
+$\widehat q_t=\mathrm{id}$ for $t\le0$ and $\widehat q_t=\widehat q_1$ for $t\ge1$; each $\widehat q_t$ is the identity on
+$\{\pi|z|^2>P_{\rm supp}\}$ and maps $\bar D(h)$ onto itself. The function $Q$ of \eqref{eq:scalar-Hamiltonian} is smooth
+on $\R\times\C$, vanishes for $t\notin(0,1)$ and on $\{\pi|y|^2>P_{\rm supp}\}$, and generates $\widehat q$:
+$\partial_t\widehat q_t=\Xi_t\circ\widehat q_t$ with $\iota_{\Xi_t}\omega_\C=-dQ_t$. The endpoint satisfies
+\begin{equation}\label{eq:scalar-full-comparison}
+ F(\pi|\widehat q_1(z)|^2)\le RF(\pi|z|^2)+e\qquad(\pi|z|^2\le h).
+\end{equation}
+{\normalfont \lean{SymplecticPacking.Qhat.ambientField, SymplecticPacking.Qhat.ambientFlow,
+ SymplecticPacking.Qhat.Gphi, SymplecticPacking.Qhat.Jhat, SymplecticPacking.Qhat.qhat,
+ SymplecticPacking.Qhat.Qham, SymplecticPacking.Qhat.qhat_interface,
+ SymplecticPacking.Branch2.Planar.PlanarInput.Hyp.planarPath_comparison}}
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:scalar-ordinary}, Lemmas~\ref{lem:pln-ambient-flow} and~\ref{lem:pln-normalisation} and
+Proposition~\ref{prop:pln-hamiltonian} apply to $(\mathfrak e_t)$ with the levels $p_{\rm on}<p_{\rm zero}<p^\dagger$. They give
+all assertions except \eqref{eq:scalar-full-comparison}, together with $\widehat q_1=\mathfrak e_1=\Phi$ on
+$\bar D(p_{\rm on})\supset\bar D(h-4e_q)=\bar D(h-8\eta)$ (Lemma~\ref{lem:pln-normalisation}(f)).
+
+For $I=\pi|z|^2\le h-8\eta$, \eqref{eq:scalar-full-comparison} is Lemma~\ref{lem:scalar-endpoint}. For $h-8\eta<I\le h$,
+$\pi|\widehat q_1(z)|^2\in[0,h]$, so, using $RF(h)=\max F$ and the $L$-Lipschitz bound for $RF$,
+\[
+ F(\pi|\widehat q_1(z)|^2)\le\max_{[0,h]}F=RF(h)\le RF(I)+L(h-I)\le RF(I)+8L\eta\le RF(I)+e/8 .\qedhere
+\]
+\end{proof}
+
+\subsection{Substitution of the cubic parameters}\label{sec:scalar-cubic}
+
+Let $k\ge1$, $0<\rho_i<1/3$ and $\sum_i\rho_i^2<1$. The auxiliary quantities of
+Lemma~\ref{lem:cub-auxiliary} are
+\begin{gather}\label{eq:scalar-cubic-parameters}
+ D_\rho=1-\sum_i\rho_i^2,\quad S_\rho=\sum_i\rho_i,\quad \rho_{\max}=\max_i\rho_i,\qquad
+ \delta_a=\min\left(\frac{1/3-\rho_{\max}}8,\frac{D_\rho}{8(S_\rho+k)},\frac18\right),\\
+ a_i=\rho_i+\delta_a,\qquad a_{\max}=\rho_{\max}+\delta_a,\qquad D_a=1-\sum_ia_i^2,\qquad
+ \varsigma=\min\left(\frac{1/3-a_{\max}}2,\frac{D_a}{12}\right),\notag\\
+ h=\frac13-\varsigma,\qquad \tau=\frac{a_{\max}+h}{2h},\qquad
+ \Hb(p)=3(1-3p),\qquad \Pb(p)=\Hb(p)-\sum_i(a_i-p)_+,\notag\\
+ \beta=3(1-3h),\qquad \mu=\frac{1-\sum_ia_i^2-(1-3h)^2}{2h},\qquad
+ d=\tfrac12\min(\mu,\beta),\qquad d_n=\tfrac12(h+1/3).\notag
+\end{gather}
+For \eqref{eq:scalar-input} take
+\begin{equation}\label{eq:scalar-cubic-input}
+ P=\Pb,\qquad P_{\min}=-\sum_i a_i,\qquad \bar P=3+\sum_i a_i,\qquad L_P=9+k.
+\end{equation}
+Construct $K$ by \eqref{eq:scalar-iteration} and \eqref{eq:scalar-mollifier}. For the planar input, set
+\begin{gather}\label{eq:scalar-cubic-planar}
+ F(p)=K(p)-\Pb(p),\qquad e=d/16,\qquad L=M+9+k,\qquad \eps_{\rm cap}=d/(128k),\\
+ U_0(p)=K(p)-\Hb(p)+\sum_i\frac{a_i-p+\sqrt{(a_i-p)^2+\eps_{\rm cap}^2}}2,
+ \qquad \sigma_{\rm in}=d/256.\notag
+\end{gather}
+Let $\widehat q$ and $Q$ be \eqref{eq:scalar-qhat} and \eqref{eq:scalar-Hamiltonian} for these data, and put
+$g=3d/4$.
+
+\begin{proposition}[The cubic comparison datum]\label{prop:scalar-cubic-data}
+For every $k\ge1$ and all $\rho_1,\dots,\rho_k\in(0,\frac13)$ with $\sum_i\rho_i^2<1$, the data
+\eqref{eq:scalar-cubic-parameters}--\eqref{eq:scalar-cubic-planar} satisfy the hypotheses \eqref{eq:scalar-input} of
+Lemma~\ref{lem:scalar-finite-gap} and \eqref{eq:scalar-majorant} of \S\ref{sec:scalar-potentials}, and
+\begin{equation}\label{eq:scalar-cubic-gap}
+ K(I)-F(\pi|\widehat q_1(z)|^2)\ge g\ge\tfrac{31}{32}g\qquad(I=\pi|z|^2\le h).
+\end{equation}
+Consequently $(k,\rho_i,a_i,h,d_n,g,K,\widehat q,Q)$ are valid cubic data in the sense of Definition~\ref{def:shd4-data}.
+{\normalfont \lean{SymplecticPacking.Branch2.cmpInput, SymplecticPacking.Branch2.Kc,
+ SymplecticPacking.Branch2.planarInput, SymplecticPacking.Branch2.Hyp.cmpInput_hyp,
+ SymplecticPacking.Branch2.Hyp.planarInput_hyp, SymplecticPacking.Branch2.cubicDataOf,
+ SymplecticPacking.Branch2.Hyp.cubicDataOf_valid}}
+\end{proposition}
+
+\begin{proof}
+\emph{Auxiliary capacities.} Since $\delta_a\le\frac18$ and $\delta_a\le D_\rho/(8(S_\rho+k))$,
+$\sum_ia_i^2-\sum_i\rho_i^2=2\delta_aS_\rho+k\delta_a^2\le2\delta_a(S_\rho+k)\le D_\rho/4$, so
+$0<\frac34D_\rho\le D_a\le1$. Also $a_{\max}=\rho_{\max}+\delta_a<\frac13$, so $\varsigma>0$ and
+$a_{\max}<h<\frac13$; hence $0<\tau<1$ and $\tau h=\frac12(a_{\max}+h)>a_{\max}$. Moreover
+$(1-3h)^2=9\varsigma^2\le D_a^2/16<D_a$.
+
+\emph{Hypotheses \eqref{eq:scalar-input}.} Since $\int_0^h\Hb=\frac12[1-(1-3h)^2]$ and $\int_0^h(a_i-p)_+\,dp=\frac12a_i^2$,
+$\int_0^h\Pb=\frac12[D_a-(1-3h)^2]=\mu h>0$. For $p\ge\tau h>a_{\max}$ the caps vanish and
+$\Pb(p)=\Hb(p)\ge\Hb(h)=\beta>0$. So $0<d<\min(\mu,\beta)$. The function $\Pb$ is continuous, concave and
+$(9+k)$-Lipschitz, and on $[0,h]$ we have $\Hb>0$, hence $-\sum_ia_i\le\Pb\le3$; this gives $P_{\min}$, $\bar P$ and
+$L_P$.
+
+\emph{Hypotheses \eqref{eq:scalar-majorant}.} By Proposition~\ref{prop:scalar-cmp-gap}, $K$ is smooth, convex and
+$M$-Lipschitz, so $F=K-\Hb+\sum_i(a_i-p)_+$ is convex and $L$-Lipschitz on $[0,h]$ with $L=M+9+k$. The soft cap
+$s_\eps(x)=\frac12(x+\sqrt{x^2+\eps^2})$, $\eps>0$, is smooth and convex with $0\le s_\eps(x)-x_+\le\eps/2$. Hence
+$U_0=K-\Hb+\sum_is_{\eps_{\rm cap}}(a_i-p)$ is smooth and convex on $\R$ and $F\le U_0\le F+k\eps_{\rm cap}/2=F+d/256$,
+with $\sigma_{\rm in}=d/256=e/16$.
+
+\emph{The gap.} By \eqref{eq:scalar-full-comparison} and \eqref{eq:scalar-smooth-gap}, for $\pi|z|^2=I\le h$,
+\[
+ F(\pi|\widehat q_1(z)|^2)\le RF(I)+\frac d{16}\le K(I)-\frac{13d}{16}+\frac d{16}=K(I)-\frac{3d}4=K(I)-g.
+\]
+
+\emph{Validity.} Definition~\ref{def:shd4-data}(a): $0<\rho_i<a_i\le a_{\max}<h<d_n<\frac13$, and $0<g=\frac34d<\beta=\Hb(h)$.
+Item (b) is Proposition~\ref{prop:scalar-planar-realisation} ($\widehat q_0=\mathrm{id}$, $Q_t=0$ for $t\notin(0,1)$, and
+$\widehat q_t=\mathrm{id}$, $Q_t=0$ on $\{\pi|z|^2>P_{\rm supp}\}$ with $P_{\rm supp}<h$). Item (c) is
+\eqref{eq:scalar-cubic-gap}.
+\end{proof}
+
+The handle construction of \S\ref{sec:shd-four} uses, with these data, the cap and the lower base profile
+\[
+ \begin{gathered}
+ e_h=g/16,\qquad H^*=\Hb-e_h,\qquad \mu_h=g/(16k),\qquad J=K-H^*,\\
+ h_i(p)=\tfrac12\bigl(a_i-p+\sqrt{(a_i-p)^2+\mu_h^2}\bigr);
+ \end{gathered}
+\]
+the smoothing width $\mu_h$ of the handle cap is distinct from the width $\eps_{\rm cap}$ of the planar majorant.
+
+The source capacities of the general cubic embeddings are
+\begin{equation}\label{eq:scalar-enlargement}
+ \bar\rho_i=\frac{\rho_i+a_i}{2},\qquad
+ \delta_i=a_i-\bar\rho_i,\qquad \hat\rho_i=\bar\rho_i+\frac{\delta_i}{4},
+\end{equation}
+so $\rho_i<\bar\rho_i<\hat\rho_i<a_i$. With the cubic data of Proposition~\ref{prop:scalar-cubic-data}, the maps
+$f_i^{\rm cap}=b_{\rm ball}\circ\mathcal T_{\rm u}\circ\mathsf N\circ f^N_i$ of Remark~\ref{rem:shd-four} are smooth
+symplectic embeddings of $\Bo(\hat\rho_i)$ into $\Bo(1)$ with pairwise disjoint images
+(Proposition~\ref{prop:shd4-maps}, Theorem~\ref{thm:rtc-transfer} and Theorem~\ref{thm:cub-packing}). For a target
+capacity $C>0$ and given capacities $c_i$ with $3c_i<C$ and $\sum_ic_i^2<C^2$, put $\rho_i=c_i/C$ and
+\begin{equation}\label{eq:scalar-cubic-scaling}
+ f_i(u)=\sqrt C\, f_i^{\rm cap}(u/\sqrt C),\qquad
+ c'_i=C\bar\rho_i,\qquad \bar c_i=C\hat\rho_i.
+\end{equation}
+The homothety $u\mapsto u/\sqrt C$ maps $\Bo(\bar c_i)$ onto $\Bo(\hat\rho_i)$ and multiplies $\omega_0$ by $1/C$, so
+$f_i$ is a smooth symplectic embedding of $\Bo(\bar c_i)$ into $\Bo(C)$; the images $f_i(\Bo(\bar c_i))$, and in
+particular the compact sets $f_i(B(c'_i))$, are pairwise disjoint, and $c_i<c'_i<\bar c_i$, as required in
+\Mref{Definition}{def:ham-datum}.
+\lean{SymplecticPacking.Branch2.CubicData.rhoBar, SymplecticPacking.Branch2.CubicData.rhoHat,
+ SymplecticPacking.Branch2.CubicData.fcapGen, SymplecticPacking.Branch2.CubicData.Valid.fcapGen_smooth,
+ SymplecticPacking.Branch2.CubicData.Valid.fcapGen_symplectic,
+ SymplecticPacking.Branch2.CubicData.Valid.fcapGen_injective,
+ SymplecticPacking.Branch2.CubicData.Valid.fcapGen_disjoint,
+ SymplecticPacking.Branch2.CubicData.Valid.fcapGen_mem_ball,
+ SymplecticPacking.Branch2.embeddingsGen, SymplecticPacking.Branch2.embeddingsGen_spec}

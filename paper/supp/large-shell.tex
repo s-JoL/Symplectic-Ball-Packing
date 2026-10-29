@@ -1,0 +1,411 @@
+\section{One large ball in dimension at least eight: the shell return and the packing}\label{sec:two}
+
+Let $n\ge4$, $m=n-2$. The base is the affine locus $\Sigma=\{y_j^2=t^2-j\}$ with
+$\lambda=d^c\log(1+|t|^2+\sum_j|y_j|^2)$ and $\sigma=d\lambda$.
+The model is the product over the compact piece $\Sigma_R$. The second-stage quadric transfer, a radial-integral
+phase and the slit-shell map return the inner packing to the shell $S_a$. Throughout $(a;r)$ is valid auxiliary data for $(A;\rho)$, with $1/2<a<1$ and $s=1-a$.
+
+\subsection{Parameters}\label{sec:two-parameters}
+
+Recall from Lemma~\ref{lem:lrg-mixed-volume} that for $0<h_1<1$ and $0<h_2\le\frac12$
+\[
+ J(h_1,h_2)=J_m(h_2)\,\frac{1-(1-h_1)^n}{n},\qquad J_m(h)=\frac{2^mh^m}{m!}\Bigl[1-\frac{2mh}{m+1}\Bigr],
+\]
+is the integral of $\Hb=2^m(1-u-2w)$ over $\Delta(h_1,h_2)=\{p\in\R^{n-1}_{\ge0}:u\le h_1,\ w+h_2u\le h_2\}$, where
+$u=p_1$ and $w=p_2+\dots+p_{n-1}$, and that $J(s,\frac12)=(1-a^n)/n!$. The following lemma gives the parameters of the
+large branch by closed formulas; they are the parameters of Theorem~\ref{thm:lrg-high}.
+
+\begin{lemma}[Parameters of the large branch]\label{lem:two-parameters}
+\lean{SymplecticPacking.BranchLargeHigh.Mixed.mean_gap,SymplecticPacking.BranchLargeHigh.Mixed.gap_arith,SymplecticPacking.BranchLargeHigh.pow_add_le}
+\uses{lem:lrg-auxiliary, lem:lrg-mixed-volume, lem:qdr-volume}
+Let $n\ge4$, $k\ge1$, and let $(a;r_1,\dots,r_k)$ be a valid auxiliary tuple. Put $s=1-a$, $r_*=\max_ir_i$,
+$\varsigma=1-a^n-\sum_ir_i^n$,
+\[
+ \delta=\min\Bigl(\frac{s-r_*}2,\ \frac{\varsigma}{2n!(4+2^n)}\Bigr),\qquad
+ h_1=s-\delta,\qquad h_2=\tfrac12-\delta,
+\]
+\[
+ b_2=\tfrac12\bigl(h_2+\tfrac12\bigr),\qquad h_2'=\tfrac12(h_2+b_2),\qquad
+ \tau_\Delta=\frac{r_*+h_1}{2h_1},
+\]
+\[
+ \beta_\Delta=2^m(1-h_1)(1-2h_2),\qquad
+ d=\tfrac12\min\Bigl(\beta_\Delta,\frac{J(h_1,h_2)-\sum_i r_i^n/n!}{2}\Bigr),\qquad \Delta=\Delta(h_1,h_2),
+\]
+and $P=\Hb-\sum_i(r_i-|p|)_+$ on $\Delta$. All these numbers are positive, and rational when the auxiliary data are rational, and:
+\begin{enumerate}[label=(\roman*)]
+\item $r_*<h_1<s$ and $r_*<h_2<h_2'<b_2<\frac12$;
+\item $J(h_1,h_2)\ge\bigl(1-a^n-\frac12\varsigma\bigr)/n!$, hence $\int_\Delta P\,dp=J(h_1,h_2)-\frac1{n!}\sum_ir_i^n\ge\varsigma/(2\,n!)>0$;
+\item $\tau_\Delta<1$ and $\{p\in\R^{n-1}_{\ge0}:|p|\le r_i\}\subset\tau_\Delta\Delta$ for every $i$;
+\item $P$ is a concave, piecewise affine function with real coefficients on $\Delta$, and $P=\Hb\ge\beta_\Delta>0$ on $\Delta\setminus\tau_\Delta\Delta$;
+\item $\vol\Delta<1$, and the mean $\bar P$ of $P$ on $\Delta$ satisfies $\bar P>\int_\Delta P\,dp$;
+\item $0<d<\min(\bar P,\beta_\Delta)$.
+\end{enumerate}
+In particular $(\Delta,P,\tau_\Delta,d)$ satisfies the hypotheses of \Mref{Proposition}{prop:cmp-fixed-point}, in the
+real-coefficient form stated after it (with rational coefficients when the auxiliary data are rational).
+\end{lemma}
+
+\begin{proof}
+The auxiliary inequalities give $r_i<s<\frac12$ and $\varsigma>0$, so $\delta>0$. Rational auxiliary data give rational parameters.
+
+(i) We have $h_1\ge(s+r_*)/2>r_*$ and $h_1<s$.
+Since $h_2-h_1=1/2-s>0$, this also gives $r_*<h_2$.
+The inequalities $h_2<h_2'<b_2<1/2$ follow from their definitions.
+
+(ii) Put $F=n!$ and $B=(1-2\delta)^m(1+2m\delta)$. Substituting the two heights in the profile formula gives
+\[
+ FJ(h_1,h_2)=B\bigl(1-(a+\delta)^n\bigr).
+\]
+Here $0<\delta<1/4$. Bernoulli's inequality and $(1-2\delta)^m\le1$ give
+\[
+ 1-4m^2\delta^2\le B\le1+2m\delta.
+\]
+Also $0\le(a+\delta)^n-a^n\le\delta n2^n$, by expanding the difference of powers with
+$0\le a,\delta\le1$. Therefore
+\begin{align*}
+ 1-a^n-FJ(h_1,h_2)
+ &=(1-B)(1-a^n)+B\bigl((a+\delta)^n-a^n\bigr)\\
+ &\le4m^2\delta^2+(1+2m\delta)\delta n2^n\\
+ &\le F(4+2^n)\delta\le\varsigma/2.
+\end{align*}
+For the penultimate inequality use $m^2\le n!$, $\delta\le1/4$ and
+$(1+2m\delta)n\le(m+1)(m+2)\le n!$. This proves the required lower bound for $J$.
+The caps lie in $\Delta$ by (iii), and their integrals are $r_i^n/n!$, giving the formula for $\int_\Delta P$.
+
+(iii) $\tau_\Delta<1$ since $r_*<h_1$ and $r_*<h_2$. Let $|p|=u+w\le r_i$. Then $u\le r_*<\frac12(h_1+r_*)\le\tau_\Delta h_1$,
+and $w+h_2u\le w+u\le r_*<\tau_\Delta h_2$: here $h_2<1$ and $\tau_\Delta h_2>\tau_\Delta h_1>r_*$. Hence $p\in\tau_\Delta\Delta=\{u\le\tau_\Delta h_1,\ w+h_2u\le\tau_\Delta h_2\}$.
+
+(iv) $\Hb$ is affine with integer coefficients and each $-(r_i-|p|)_+$ is concave and piecewise affine. If
+$p\in\Delta\setminus\tau_\Delta\Delta$, then $|p|>r_i$ for every $i$ by (iii), so all caps vanish and $P=\Hb$, and
+$\Hb\ge\beta_\Delta$ by \eqref{eq:lrg-mixed-positive}.
+
+(v) $\Delta\subset[0,h_1]\times\{p'\in\R^m_{\ge0}:|p'|\le h_2\}$, so $\vol\Delta\le h_1h_2^m/m!<1$; since $\int_\Delta P>0$, its mean
+exceeds its integral.
+
+(vi) follows because $d\le\beta_\Delta/2$ and
+$d\le\frac14\int_\Delta P<\bar P$. The last assertion is (iii)--(vi) with $\beta_P=\beta_\Delta$; $\Delta$ is a polytope and
+$P$ is concave and piecewise affine.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The second stage and radial phase}\label{sec:two-second}
+
+Put $b_2=(2h_2+1)/4$ and let $\varphi=\mathcal T_{b_2}$ be the affine quadric transfer in dimension $2(n-1)$.
+Write $v=(v_2,\dots,v_{n-1})$ for its fibre moments and
+\[
+ \ell=\sum_{j=2}^{n-1}v_jd\theta_j+(1-2|v|)\lambda,\qquad d\ell=\Omega_X.
+\]
+This is a smooth primitive across the axes. Its restriction to a radial fibre tangent is zero.
+
+The fibre contraction $\mathsf r_t(x,z')=(x,tz')$, $0\le t\le1$, preserves $\mathcal N_{b_2}=\{(x,z'):|v(z')|<b_2\}$.
+
+\begin{lemma}[The zero section]\label{lem:two-zero-fixed}
+The second transfer satisfies $\varphi(x,0)=\mathrm{ch}(x)$ and
+$i^*(\varphi^*\lambda_{\rm std}-\ell)=0$, where $i(x)=(x,0)$.
+\end{lemma}
+
+\begin{proof}
+The first identity is part of Theorem~\ref{thm:qdr-transfer}. The chart $\mathrm{ch}$ pulls the standard Liouville form back
+to $\lambda=d^c\log D$ (Lemma~\ref{lem:pre-fs}), and the restriction of $\ell$ to the zero section is also $\lambda$.
+\end{proof}
+
+\subsection{The phase identity}\label{sec:two-identification}
+
+\begin{lemma}[The radial phase and its covector]\label{lem:two-identification}
+\lean{SymplecticPacking.BranchLargeHigh.Two.liftPhase_mfderiv,
+SymplecticPacking.BranchLargeHigh.Two.zeroPhase_eq_zero}
+Put $\Xi=\varphi^*\lambda_{\rm std}-\ell$ and
+\[
+ \Psi(x,z')=\int_0^1\lambda_{\rm std}(\varphi(x,tz'))[\partial_t\varphi(x,tz')]\,dt.
+\]
+Then $\Psi$ is smooth on $\mathcal N_{b_2}$ and
+\begin{equation}\label{eq:two-homotopy}
+ d\Psi=\Xi=\varphi^*\lambda_{\rm std}-\ell.
+\end{equation}
+For $\hat{\mathcal J}_{x,z'}(z_1)=e^{2\pi i\Psi(x,z')}z_1$ and
+$\Phi_2(x,z_1,z')=(\hat{\mathcal J}_{x,z'}(z_1),\varphi(x,z'))$, one has
+\begin{equation}\label{eq:two-Phi2}
+ \Phi_2^*\Omega_c=d[\lambda_{\rm fib}+(1-u)\ell].
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+The transfer pullback gives $d\Xi=\varphi^*\omega_0-d\ell=0$.
+By Lemma~\ref{lem:two-zero-fixed}, $i^*\Xi=0$.
+Write $\mathsf r^*\Xi=a_t+g\,dt$ on $[0,1]\times\mathcal N_{b_2}$.
+Closedness gives $\partial_ta_t=dg$; integrating from zero to one gives
+$\Xi=d\int_0^1g(t,\cdot)dt$.
+Since $\ell$ is zero on radial fibre tangents, the last integral is exactly the displayed $\Psi$.
+Smooth parameter integration proves its smoothness, including at $z'=0$.
+
+A phase rotation of $z_1$ pulls its Liouville form back to $\lambda_{\rm fib}+u\,d\Psi$.
+Therefore the primitive of the target coupled form pulls back to
+\[
+ \lambda_{\rm fib}+u\,d\Psi+(1-u)\varphi^*\lambda_{\rm std}
+ =\lambda_{\rm fib}+\varphi^*\lambda_{\rm std}-u\ell.
+\]
+Its exterior derivative is $d[\lambda_{\rm fib}+(1-u)\ell]$, because
+$d\varphi^*\lambda_{\rm std}=d\ell$. This proves \eqref{eq:two-Phi2}.
+\end{proof}
+
+\subsection{The finite mixed model}\label{sec:two-mixed}
+
+Use the affine product and form of Definition~\ref{def:lrg-mixed-model}.
+For the moment change put
+\[
+ \chi(x,z_1,z')=(x,z_1,z'/\sqrt{1-u}),\qquad
+ \mathcal U=\{u<1,\ w<b_2(1-u)\},\qquad \mathcal R=\Phi_2\circ\chi.
+\]
+
+\begin{lemma}[Mixed form and return]\label{lem:two-mixed}
+\lean{SymplecticPacking.BranchLargeHigh.Two.mixedModel_form_eq,
+SymplecticPacking.BranchLargeHigh.Two.returnMap'_pullback}
+On $u<1$ the smooth inverse of $\chi$ is
+\[
+ (x,z_1,v)\longmapsto(x,z_1,\sqrt{1-u}\,v).
+\]
+It preserves $u$ and fibre angles, with tail moments $v_j=p_j/(1-u)$. On the interior of the finite mixed region,
+\[
+ \mathcal R^*\Omega_c=\Omega_{\rm mix}=\omega_V+d[(1-u-2w)\lambda].
+\]
+For the finite region $\mathcal M_R=\Sigma_R\times\{z:p(z)\in\Delta\}$, the map $\mathcal R$ is injective on $\mathcal M_R$ and smooth on its interior. The displayed pullback identity holds on that interior. It preserves $u$ and has base moment $\mu<1$.
+The compact region over $\Sigma_R$ with moment polytope $\Delta(h_1,h_2)$ lies in $\mathcal U$.
+Its actual base profile is $A_R(1-u-2w)$ and its scalar integral is
+$(A_R/2^m)J(h_1,h_2)$.
+\end{lemma}
+
+\begin{proof}
+The square root is positive on $u<1$, which proves both smooth coordinate formulas across the axes.
+Using $v_j=p_j/(1-u)$ gives
+\[
+ \chi^*\{\lambda_{\rm fib}+(1-u)\ell\}
+ =\sum_{j=1}^{n-1}p_jd\theta_j+(1-u-2w)\lambda.
+\]
+Take the full exterior derivative and use \eqref{eq:two-Phi2}.
+Injectivity follows first from injectivity of $\varphi$, then cancellation of the common nonzero phase in the first
+coordinate, and finally the inverse of $\chi$. The base moment bound is the open-ball containment of $\varphi$.
+On $\Delta$, $u\le h_1<1$ and $w\le h_2(1-u)<b_2(1-u)$.
+The horizontal curvature at fixed moment is $(1-u-2w)\sigma$; its base integral is $A_R(1-u-2w)$. The scalar formula for $J$ gives the last assertion.
+\end{proof}
+
+\input{supp/mixed-affine}
+
+\begin{proposition}[Handle data for the affine mixed model]\label{prop:two-handle}
+Use the base $\Sigma_R$ of Proposition~\ref{prop:two-affine-budget}, the fixed annuli and dual form of
+Proposition~\ref{prop:vtr-handle}, the physical primitive $\Gamma_{\rm phys}(p)=(1-u-2w)\lambda$ with curvature
+$\kappa(p)=(1-u-2w)\sigma$, the reference primitive $\lambda$ with $\Lambda=\sigma$ and $A_{\rm ref}=2^m$, the density floor
+$\kappa_-=(1-h_1)(1-2h_2)$, and the collar cutoff $\chi_\partial=1-\chi_R$. Take as correction core $\Sigma_{R-1}$, covered by
+the inner boxes of the quadric presentation of Construction~\ref{cons:shd-handle-data}, and as correction region the
+union of these boxes, contained in $\operatorname{int}\Sigma_R$. Then:
+\begin{enumerate}[label=(\alph*)]
+\item the support of $1-\chi_\partial=\chi_R$ in $\Sigma_R$ and the handle are contained in the correction core;
+\item $\kappa(p)\ge\kappa_-\Lambda$ on all of $\Sigma_R$ for $p\in\Delta$, in particular on the correction region;
+\item with $P_R=P-11d/32$, gap $11d/32$ and reserve $\gamma_*=11d/64$, these data satisfy the bordered handle hypotheses
+ of \Mref{Theorem}{thm:mech-packing}, and Construction~\ref{cons:native-packing} applies to them.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a) $\chi_R$ vanishes for $|t|\ge R-1$, and the annular supports lie in $|t|<3\le R-2$ (Lemma~\ref{lem:vtr-tail}).
+(b) On $\Delta$, $1-u-2w\ge(1-h_1)(1-2h_2)$ by \eqref{eq:lrg-mixed-positive}. (c) The product form is
+$\omega_V+d\Gamma_{\rm phys}$, including all moment derivatives. Proposition~\ref{prop:two-affine-budget}, whose background
+coefficient is $c_{\rm bg}=\min(\gamma_*/(32A_{\rm ref}),\kappa_-/2)=e_\Lambda$, gives the positive background, the collar bound
+and the compactly supported zero-mass defect, whose finite coordinate primitive depends smoothly on $p$. Hence the
+normalisation and layer construction apply with reserve $\gamma_*$.
+\end{proof}
+
+\subsection{The slit-shell map}\label{sec:two-slit}
+
+The coupled target is the explicit product $(\xi,z)\in\{\pi|\xi|^2<1\}\times\C$.
+Write $\mu=\pi|\xi|^2$, $u=\pi|z|^2$, $\lambda_{\rm base}=\lambda_{\rm std}(\xi)$ and
+$\lambda_{\rm fib}=\frac12\operatorname{Im}(\bar z\,dz)$, so
+\begin{equation}\label{eq:two-coupled}
+ \Omega_1=\Omega_c=d[\lambda_{\rm fib}+(1-u)\lambda_{\rm base}].
+\end{equation}
+The strip map moves the first moment away from zero. Its compensating base dilation is exactly the square-root
+factor in the following shell coordinates; the factor $\sqrt{1-u}$ in \eqref{eq:lrg-slit} absorbs the change of the fibre
+moment from $u$ to $x$, and the zero section $u=0$ lands at depth $x>0$ inside the shell.
+
+\begin{lemma}[Slit-shell map]\label{lem:two-slit}\label{lem:lrg-slit}
+\lean{SymplecticPacking.BranchLargeHigh.shell_pullback, SymplecticPacking.BranchLargeHigh.shell_injOn,
+ SymplecticPacking.BranchLargeHigh.shell_capacity, SymplecticPacking.Strip.x_lower_margin, SymplecticPacking.Strip.T_margin}
+\uses{prop:str-strip, prop:hdl-strip, def:lrg-shell}
+Let $0<a<1$, $s=1-a$, and let $\hat h,\hat\mu,\delta$ be real numbers with
+\[
+ 0<\hat h<s,\qquad 0<\hat\mu<1,\qquad 0<\delta<\tfrac14\min\bigl(s-\hat h,\ (1-\hat h)(1-\hat\mu)\bigr).
+\]
+Let $\Psi=\Psi_{2\delta}\colon z\mapsto(x,T)$ be the strip map of Proposition~\ref{prop:str-strip}
+(Proposition~\ref{prop:hdl-strip}) with parameter $2\delta$, put $b_\delta=2\delta/\pi$ and $U=\{(\xi,z):\mu<\hat\mu,\ u<\hat h\}$,
+and define $\mathrm{Sl}(\xi,z)=(y_1,y_2,\dots,y_n)\in\C^n$ on $U$ by
+\begin{equation}\label{eq:lrg-slit}
+ y_1=e^{-2\pi iT}\sqrt{\frac{1-x-(1-u)\mu}{\pi}},\qquad
+ (y_2,\dots,y_n)=e^{-2\pi iT}\sqrt{1-u}\;\xi .
+\end{equation}
+For $I\ge0$ put $\mathcal E=I+b_\delta(\frac\pi2-1)$ and
+\begin{equation}\label{eq:lrg-xstar}
+ x_*(I)=\frac{b_\delta^2}{2\bigl(\mathcal E+b_\delta+\sqrt{\mathcal E(\mathcal E+2b_\delta)}\bigr)}.
+\end{equation}
+Then:
+\begin{enumerate}[label=(\roman*)]
+\item On $U$, $0<x<u+\delta$, and $1-x-(1-u)\mu>(1-\hat h)(1-\hat\mu)-\delta>3\delta$; $\mathrm{Sl}$ is smooth on $U$,
+including along $z=0$, and $y_1\ne0$.
+\item $\mathrm{Sl}=\mathrm{Hopf}\circ\mathrm{Dil}$, where $\mathrm{Dil}(\xi,z)=(\xi',x,T)$ with $\xi'=\sqrt{(1-u)/(1-x)}\,\xi$, $\pi|\xi'|^2<1$, and
+$\mathrm{Hopf}(\xi',x,T)=\sqrt{(1-x)/\pi}\;e^{-2\pi iT}\bigl(\sqrt{1-\pi|\xi'|^2},\sqrt\pi\,\xi'\bigr)$.
+\item With $\lambda_0=\frac12\operatorname{Im}(\bar y^{\mathsf T}dy)$,
+\[
+ \mathrm{Sl}^*\lambda_0=(1-u)\lambda_{\rm base}-(1-x)\,dT,\qquad \mathrm{Sl}^*\omega_0=\Omega_1 .
+\]
+\item $\pi|\mathrm{Sl}(\xi,z)|^2=1-x$, and $a<1-\hat h-\delta<\pi|\mathrm{Sl}|^2<1$ on $U$.
+\item $\mathrm{Sl}$ is injective, with inverse on its image $x=1-\pi|y|^2$, $e^{-2\pi iT}=y_1/|y_1|$ with $T\in(0,1)$,
+$z=\Psi^{-1}(x,T)$, $\xi=e^{2\pi iT}(y_2,\dots,y_n)/\sqrt{1-u}$. Hence $\mathrm{Sl}$ is a symplectic embedding of $(U,\Omega_1)$ onto an open
+subset of $S_a$.
+\item If $I\ge0$, $\mathcal K\subset U$ is compact and $u\le I$ on $\mathcal K$, then $x\ge x_*(I)>0$ on $\mathcal K$, with $x_*(I)$ given by
+\eqref{eq:lrg-xstar}, and $|T-\frac12|\le\frac12\sqrt{1-(1+\mathcal E/b_\delta)^{-2}}<\frac12$ on $\mathcal K$, where
+$\mathcal E=I+b_\delta(\frac\pi2-1)$. Hence $\mathrm{Sl}(\mathcal K)$ lies in the compact set $\{1-\hat h-\delta\le\pi|y|^2\le1-x_*(I)\}\subset S_a$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) Proposition~\ref{prop:str-strip}(iii) with parameter $2\delta$ gives $0<x<\pi|z|^2+\delta=u+\delta$. Hence on $U$
+\[
+ 1-x-(1-u)\mu>(1-u)(1-\mu)-\delta>(1-\hat h)(1-\hat\mu)-\delta>4\delta-\delta=3\delta .
+\]
+The functions $x$, $T$ are smooth in $z$ (Proposition~\ref{prop:str-strip}(i)), and $u=\pi|z|^2$, $\mu=\pi|\xi|^2$ are
+polynomials; the radicands $1-x-(1-u)\mu$ and $1-u$ are bounded below by positive constants on $U$; so the formula is
+smooth on $U$, and $|y_1|^2>3\delta/\pi>0$.
+
+(ii) $1-\pi|\xi'|^2=\bigl(1-x-(1-u)\mu\bigr)/(1-x)>0$ by (i). The first component of $\mathrm{Hopf}\circ\mathrm{Dil}$ is
+\[
+ e^{-2\pi iT}\sqrt{(1-x)/\pi}\,\sqrt{1-\pi|\xi'|^2}=y_1,
+\]
+and the others are
+\[
+ e^{-2\pi iT}\sqrt{(1-x)/\pi}\sqrt\pi\sqrt{(1-u)/(1-x)}\,\xi=e^{-2\pi iT}\sqrt{1-u}\,\xi.
+\]
+
+(iii) Write $y=c\,V$ with $c=\sqrt{(1-x)/\pi}\,e^{-2\pi iT}$ and $V=(\sqrt{1-\pi|\xi'|^2},\sqrt\pi\,\xi')$, so $|V|=1$. Then
+$\bar y^{\mathsf T}dy=\bar c\,dc+|c|^2\bar V^{\mathsf T}dV$. Here $\operatorname{Im}(\bar c\,dc)=-2\pi|c|^2dT$, and
+$\operatorname{Im}(\bar V^{\mathsf T}dV)=\pi\operatorname{Im}(\bar\xi'^{\mathsf T}d\xi')=2\pi\lambda_{\rm base}(\xi')$ since the first entry of $V$ is
+real. As $\pi|c|^2=1-x$,
+\[
+ \mathrm{Sl}^*\lambda_0=(1-x)\bigl(\lambda_{\rm base}(\xi')-dT\bigr).
+\]
+For a positive real function $c'$, $\lambda_{\rm base}(c'\xi)=\frac12\operatorname{Im}\bigl(c'\bar\xi^{\mathsf T}(\xi\,dc'+c'd\xi)\bigr)=c'^2\lambda_{\rm base}(\xi)$,
+because $\bar\xi^{\mathsf T}\xi\,c'dc'$ is real. With $c'^2=(1-u)/(1-x)$ this gives
+$\mathrm{Sl}^*\lambda_0=(1-u)\lambda_{\rm base}(\xi)-(1-x)\,dT$. Its differential is $d[(1-u)\lambda_{\rm base}]+dx\wedge dT$, and
+$dx\wedge dT=\Psi^*(dx\wedge dT)=\omega_\C=d\lambda_{\rm fib}$ (Proposition~\ref{prop:str-strip}(i)). By \eqref{eq:two-coupled},
+$\mathrm{Sl}^*\omega_0=\Omega_1$.
+
+(iv) $\pi|y|^2=\pi|c|^2|V|^2=1-x$. By (i), $0<x<u+\delta<\hat h+\delta$, so $1-\hat h-\delta<\pi|y|^2<1$, and
+$1-\hat h-\delta>1-s+3\delta>a$ because $s-\hat h>4\delta$.
+
+(v) Let $y=\mathrm{Sl}(\xi,z)$. Then $x=1-\pi|y|^2$; since $y_1\ne0$, $y_1/|y_1|=e^{-2\pi iT}$ determines $T$ in the interval $(0,1)$;
+$\Psi$ is a bijection of $\C$ onto $(0,\infty)\times(0,1)$, so $z=\Psi^{-1}(x,T)$, hence $u$; and $\xi$ is read off from the last
+coordinates. So $\mathrm{Sl}$ is injective. $\Omega_1=\omega_\C+(1-u)\omega_{\rm base}-du\wedge\lambda_{\rm base}$ is symplectic on
+$\{u<1\}$: $du\wedge\omega_\C=0$, and $\lambda_{\rm base}\wedge\omega_{\rm base}^{n-1}=0$ for degree reasons, so
+$\Omega_1^n=n(1-u)^{n-1}\omega_\C\wedge\omega_{\rm base}^{n-1}\ne0$. Since $\mathrm{Sl}^*\omega_0=\Omega_1$, $d\,\mathrm{Sl}$ is injective; $\dim_\R U=2n$, so $\mathrm{Sl}$ is a local diffeomorphism, and an
+injective local diffeomorphism is a diffeomorphism onto its open image. The image lies in $S_a$ by (iv).
+
+(vi) If $u\le I$ on $\mathcal K$, Proposition~\ref{prop:str-strip}(iv) with parameter $2\delta$ (so $b=b_\delta$) gives
+$x\ge\frac12\bigl[\mathcal E+b_\delta-\sqrt{\mathcal E(\mathcal E+2b_\delta)}\bigr]$, which equals $x_*(I)$ because
+$(\mathcal E+b_\delta)^2-\mathcal E(\mathcal E+2b_\delta)=b_\delta^2$, and gives the bound on $T$. Then $\pi|y|^2=1-x\le1-x_*(I)$ on
+$\mathrm{Sl}(\mathcal K)$, and with (iv) this set lies in the closed annulus $\{1-\hat h-\delta\le\pi|y|^2\le1-x_*(I)\}$, which is compact
+and contained in $S_a$ because $1-\hat h-\delta>a$ and $x_*(I)>0$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\begin{proposition}[Natural slit domain]\label{prop:lrg-slit-domain}
+\lean{SymplecticPacking.BranchLargeHigh.shellDomain, SymplecticPacking.BranchLargeHigh.radicand_pos_of_bounds, SymplecticPacking.BranchLargeHigh.shell_pullback}
+For every $\delta>0$, formula \eqref{eq:lrg-slit}, using $\Psi_{2\delta}$, defines a smooth injective symplectic
+map on
+\[
+ V_\delta=\{(\xi,z):u<1,\ 1-x-(1-u)\mu>0\}.
+\]
+It has capacity $1-x$. Let $0<h<s<1$ and $0\le M<1$. If
+$\delta<(1-h)(1-M)$ and $h+\delta<s$, every compact set with $u\le h$ and $\mu\le M$
+lies in $V_\delta\cap\{x<s\}$, and its image is compact in $S_a$, $a=1-s$.
+The bound \eqref{eq:lrg-xstar} still holds on such a set whenever $I\ge0$ and $u\le I$.
+\end{proposition}
+
+\begin{proof}
+The smoothness, pullback and inverse calculations in the proof of Lemma~\ref{lem:lrg-slit} use only $u<1$ and positivity of the
+radicand. On the stated compact set, the strip inequality gives
+$1-x-(1-u)\mu>(1-h)(1-M)-\delta>0$ and $x<h+\delta<s$.
+The set $V_\delta\cap\{x<s\}$ is open and its image has capacity in $(a,1)$.
+The lower bound for $x$ uses only the strip map and the bound for $u$, so is unchanged.
+\end{proof}
+
+\subsection{Packing}\label{sec:two-packing}
+
+Below,
+$\rho_i^{\rm dom}$ is the closed source capacity to which \Mref{Theorem}{thm:mech-packing} is applied, and $\rho_i^+$ is
+the enlarged closed capacity of part (iii) of Construction~\ref{cons:ham-branch}.
+
+\begin{theorem}[One large ball, $n\ge4$]\label{thm:two-packing}\label{thm:lrg-high}
+\uses{lem:two-parameters, lem:two-identification, lem:two-mixed, prop:two-handle, lem:two-slit, M-thm:cmp-main, M-thm:mech-packing, M-prop:mech-assembly, M-def:mech-transfer, lem:lrg-auxiliary}
+Let $n\ge4$, $k\ge0$, and let $(A;\rho_1,\dots,\rho_k)$ admit the valid auxiliary tuple $(a;r_1,\dots,r_k)$. Put $\rho_0=A$,
+$\rho_0^+=\frac12(A+a)$, and let $f_0$ be the identity map of $\C^n$. If $k\ge1$, let:
+\begin{enumerate}[label=(\alph*)]
+\item $h_1,h_2,b_2,h_2',\tau_\Delta,d,\Delta,P$ be as in Lemma~\ref{lem:two-parameters};
+\item $(K,q)$ be the comparison datum of \Mref{Theorem}{thm:cmp-main} for $(\Delta,P,\tau_\Delta,d)$, with gap $\gamma=\frac{11}{16}d$;
+\item $\rho_i^{\rm dom}=(3\rho_i+5r_i)/8$, $\rho_i^+=\frac12(\rho_i+\rho_i^{\rm dom})=(11\rho_i+5r_i)/16$, and $\psi_i$ the maps of
+ Construction~\ref{cons:native-packing} for the mixed model over $\Sigma_R$ with the handle data of
+ Proposition~\ref{prop:two-handle}, the profile $P_R=P-11d/32$ with the datum $(K,q)$, auxiliary capacities $r_i$,
+ closed source capacities $\rho_i^{\rm dom}$ and internal capacities $(3r_i+\rho_i^{\rm dom})/4$;
+\item $\mathcal K=\bigcup_{i\ge1}\psi_i(B(\rho_i^{\rm dom}))$, $\mathcal K'=\Phi_2\chi(\mathcal K)$, $\mu_{\mathcal K}=\max_{\mathcal K'}\mu$, and
+\[
+ \hat\mu=\tfrac12(1+\mu_{\mathcal K}),\qquad
+ D=\min\bigl((1-h_1)(1-\hat\mu),s-h_1\bigr),\qquad \delta_{\rm sl}=D/2;
+\]
+\item $f_i=\mathrm{Sl}\circ\Phi_2\circ\chi\circ\psi_i$ for $1\le i\le k$, with $\mathrm{Sl}$ the map of
+ Proposition~\ref{prop:lrg-slit-domain} for $\delta=\delta_{\rm sl}$, that is, built from $\Psi_D$.
+\end{enumerate}
+Put $\zeta=x_*(h_1)$ of \eqref{eq:lrg-xstar} with $\delta=\delta_{\rm sl}$ if $k\ge1$, and $\zeta=1-\rho_0^+$ if $k=0$. Then
+$\mu_{\mathcal K}<1$, $\rho_i<\rho_i^+<\rho_i^{\rm dom}$ for $1\le i\le k$, $A<\rho_0^+<a$, $0<\zeta\le1-\rho_0^+$, and:
+\begin{enumerate}[label=(\roman*)]
+\item $f_0$ is a symplectic embedding of $\C^n$, and $f_i$ ($i\ge1$) is a smooth symplectic embedding of an open
+ neighbourhood of $B(\rho_i^{\rm dom})$ into $\Bo(1)$;
+\item $f_0(B(\rho_0^+))=B(\rho_0^+)\subset\Bo(a)$, and $f_i(B(\rho_i^{\rm dom}))\subset\mathcal C=\{1-h_1-\delta_{\rm sl}\le\pi|y|^2\le1-\zeta\}\subset S_a$
+ for $i\ge1$;
+\item the sets $f_0(B(\rho_0^+))$ and $f_i(B(\rho_i^{\rm dom}))$, $1\le i\le k$, are pairwise disjoint and contained in $B(1-\zeta)$.
+\end{enumerate}
+The same holds with $\rho_i^+$ in place of $\rho_i^{\rm dom}$ ($i\ge1$), since $B(\rho_i^+)\subset B(\rho_i^{\rm dom})$. Moreover $f_0$
+restricts to an embedding of every ball $\Bo(\rho)$, $\rho\le1$, into $\Bo(1)$; in particular it is defined on
+$\Bo(a)$, the open domain $\Bo(\rho_j^{\rm dom})$ of Construction~\ref{cons:ham-branch}(iii).
+\end{theorem}
+
+\begin{proof}
+\emph{The distinguished ball.} The auxiliary inequalities give $A<a$, so $A<\rho_0^+<a$. The identity is symplectic and
+maps $B(\rho_0^+)$ into $\Bo(a)\subset\Bo(1)$. If $k=0$ this proves everything, since $\zeta=1-\rho_0^+$.
+
+\emph{Comparison and packing in the model.} Let $k\ge1$. By Lemma~\ref{lem:two-parameters}(iii)--(vi), $(\Delta,P,\tau_\Delta,d)$
+satisfies the hypotheses of \Mref{Proposition}{prop:cmp-fixed-point}, so \Mref{Theorem}{thm:cmp-main} provides the comparison datum
+$(K,q)$ for $(\Delta,P)$ with gap $\gamma=\frac{11}{16}d>0$. By Lemma~\ref{lem:two-mixed} and Proposition~\ref{prop:two-handle} the
+restricted mixed model on $\Sigma_R$ is a bordered toric model with handle data, including the correction-core and
+density-floor conditions of Section~\ref{sec:native-toric}. By Proposition~\ref{prop:lrg-affine-budget},
+the same datum compares $P_R$ with gap $11d/32$, reserve $11d/64$, and
+$P_R\le H_b^R-\sum_i(r_i-|p|)_+$; and $\{|p|\le r_i\}\subset\tau_\Delta\Delta$ by Lemma~\ref{lem:two-parameters}(iii). Since
+$\rho_i<\rho_i^{\rm dom}<r_i$, \Mref{Theorem}{thm:mech-packing} gives smooth symplectic embeddings $\psi_i$ of
+neighbourhoods of $B(\rho_i^{\rm dom})$ into $(\operatorname{int}V_\Delta(E_0),\Omega_{\rm mix})$ with pairwise disjoint images
+in the interior of the finite model. So $\mathcal K$ is a compact subset of that interior.
+
+\emph{Affine return.} By Lemma~\ref{lem:two-mixed}, $\Phi_2\circ\chi$ is smooth and injective on $\mathcal U=\operatorname{int}\mathcal M_R$,
+with symplectic derivative; by the inverse function theorem it is an embedding into the coupled product
+$(\C\times\Bo_{n-1}(1),\Omega_1)$, preserving $u$. Hence $\mathcal K'$ is compact, $u\le h_1$ and $\mu<1$ on $\mathcal K'$, and
+the maximum $\mu_{\mathcal K}$ of the continuous function $\mu$ is attained, so $\mu_{\mathcal K}<1$.
+
+\emph{Slit-shell map.} Here $0<h_1<s<1$, $\mu_{\mathcal K}<\hat\mu<1$, $D\le(1-h_1)(1-\hat\mu)$ and $D\le s-h_1$, so
+$\delta_{\rm sl}<(1-h_1)(1-\mu_{\mathcal K})$ and $h_1+\delta_{\rm sl}<s$. By Proposition~\ref{prop:lrg-slit-domain} with
+$h=h_1$, $M=\mu_{\mathcal K}$, the open set $W=V_{\delta_{\rm sl}}\cap\{x<s\}$ contains $\mathcal K'$, and
+$\mathcal T_{\mathcal K}=\mathrm{Sl}\circ\Phi_2\circ\chi$ is a smooth symplectic embedding of the open set
+$\mathcal U\cap(\Phi_2\chi)^{-1}(W)$ into $S_a$. On $\mathcal K'$, $\pi|y|^2=1-x>1-u-\delta_{\rm sl}\ge1-h_1-\delta_{\rm sl}$, and the
+strip estimate of Proposition~\ref{prop:lrg-slit-domain} with $I=h_1$ gives $x\ge\zeta=x_*(h_1)>0$. Hence
+$\mathcal T_{\mathcal K}(\mathcal K)\subset\mathcal C$. Also $\zeta\le x<h_1+\delta_{\rm sl}<s$, so $1-\zeta>a>\rho_0^+$ and
+$1-h_1-\delta_{\rm sl}>a$; thus $\mathcal C\subset S_a$.
+
+\emph{Assembly.} For $i\ge1$, $\psi_i^{-1}\bigl(\mathcal U\cap(\Phi_2\chi)^{-1}(W)\bigr)$ is an open neighbourhood of
+$B(\rho_i^{\rm dom})$ in the domain of $\psi_i$, and $f_i=\mathcal T_{\mathcal K}\circ\psi_i$ is a smooth symplectic embedding of it
+(\Mref{Proposition}{prop:mech-assembly}). The sets $f_i(B(\rho_i^{\rm dom}))$, $i\ge1$, are pairwise disjoint because the
+$\psi_i(B(\rho_i^{\rm dom}))$ are and $\mathcal T_{\mathcal K}$ is injective. They lie in $\mathcal C\subset\{\pi|y|^2>a\}$, so they are
+disjoint from $f_0(B(\rho_0^+))=B(\rho_0^+)$. Finally $\mathcal C\subset B(1-\zeta)$ and $B(\rho_0^+)\subset B(1-\zeta)$.
+\end{proof}

@@ -1,0 +1,24 @@
+import SymplecticPacking.General.Corollaries
+import SymplecticPacking.General.Criterion
+import SymplecticPacking.General.MainRadius
+import verification.AxiomCheck
+
+/-!
+# Corollaries of the main construction
+
+Axiom gates for the corollaries, and explicitness of the cone target of Corollary G and of the
+support set of the Hamiltonian.
+-/
+
+#assert_publication_axioms SymplecticPacking.General.equal_admissible
+#assert_publication_axioms SymplecticPacking.General.equal_packing
+#assert_publication_axioms SymplecticPacking.General.cone_admissible
+#assert_publication_axioms SymplecticPacking.General.unequal_cone_packing
+#assert_publication_axioms SymplecticPacking.General.symplectic_neighbourhood_criterion
+#assert_publication_axioms SymplecticPacking.General.packingSupportSet_compact
+#assert_publication_axioms SymplecticPacking.General.packingHamiltonian_support_precise
+#assert_publication_axioms SymplecticPacking.General.packingSupportSet_subset_radius
+#assert_publication_axioms SymplecticPacking.General.packingHamiltonian_support_radius
+#check_explicit SymplecticPacking.General.coneTarget
+#check_explicit SymplecticPacking.General.packingSupportRadius
+#check_explicit SymplecticPacking.General.packingSupportSet

@@ -1,0 +1,24 @@
+import SymplecticPacking.HighDim.Handle.RawFullProductFlowSpec
+import verification.AxiomCheck
+
+/-!
+# The ambient Moser flow of the full product
+
+Axiom gates for the ambient Moser field, its cut-off and its flow, and explicitness of the
+inverse flow.
+-/
+
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawAmbientBox.fullCovector_pullback
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawAmbientBox.fullForm_pullback
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawAmbientBox.fullTimePrimitive_pullback
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawAmbientBox.fullMoserField_eq_manifoldMoserField
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.productInclusion_mfderiv
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.fullMoserFlow_eq_fieldFlow
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.semantic_cut_field_smooth
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.fullMoserFlow_spec
+#check_explicit SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.fullMoserField
+#check_explicit SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.cutFullMoserField
+#check_explicit SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.fullMoserFlow
+#check_explicit SymplecticPacking.HighDim.ToricPackingStages.RawSurfacePresentation.fullMoserInverse
+
+#assert_publication_axioms SymplecticPacking.HighDim.ToricPackingStages.productAmbientRegularity_of_rawCover

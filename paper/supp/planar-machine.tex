@@ -1,0 +1,1149 @@
+%======================================================================
+\section{Area-preserving disc maps from Morse charts}\label{sec:pln}
+
+The fibre map of the handle construction (\Msec{sec:hdl}) must be the endpoint of a compactly
+supported Hamiltonian isotopy of a disc which is the identity near the boundary and satisfies a comparison
+inequality. In \cite{OpenAI2026} such an isotopy is obtained from a rearrangement lemma by nested discs, a construction it
+credits to \cite[Lemma~3.2]{SchlenkFolding}, and Moser's method. This section constructs it explicitly. The construction is used twice: for the explicit
+inner map for equal balls (\S\ref{sec:pll}) and for the realisation of coordinate rearrangements of convex
+functions (\S\ref{sec:plc}). The input is a pair of potentials, $U$ in a moment variable $p$ and $V$ in an angle $\theta$, each with a single
+nondegenerate minimum near which it is exactly quadratic; in the slice family both depend smoothly on a parameter $y$
+(the other moments).
+The output is a compactly supported Hamiltonian isotopy of the plane which preserves a disc of prescribed
+area, is the identity on an outer collar of it, and whose endpoint on a prescribed core disc is an explicit
+area-preserving map carrying round circles onto level sets of $U+V$. The two families of potentials are defined later, in \S\ref{sec:pll} and in
+Definition~\ref{def:plc-data}; this section uses only the properties listed in Definition~\ref{def:pln-potential-pair}, and a
+reader of the equal-ball case can ignore every statement about the slice family.
+
+The construction has two halves. The first (\S\S\ref{sec:pln-morse}--\ref{sec:pln-inner}) produces the
+endpoint. Signed square roots of the potentials give a Morse chart. A rotation normalisation on each circle
+and a radial area normalisation make it area preserving, and the polar chart places it in the disc
+(Theorem~\ref{thm:pln-inner}). The second half (\S\S\ref{sec:pln-charts}--\ref{sec:pln-isotopy}) joins the
+identity to this endpoint without changing it on the core. Interpolating the Morse chart linearly with its
+linearisation, and rescaling the polar chart, gives a path of symplectic embeddings. A five-segment path of
+embeddings, all with image in a fixed smaller disc, connects it to the identity. The ambient flow of this
+path, cut off in the source variable, is made area preserving by one explicit normalisation of the whole
+path. The Hamiltonian is the radial primitive of the resulting flow, normalised at a fixed point of the
+collar (Theorems~\ref{thm:pln-isotopy} and~\ref{thm:pln-param}).
+
+\subsection*{Conventions}
+For $P>0$, $D(P)=\{z\in\C:\pi|z|^2<P\}$ is the open disc of \emph{area} $P$ and $\bar D(P)$ its
+closure; $D(\infty)=\C$. Every plane carries its standard area form: $\omega_\C$ on the source and target
+discs $\C$, $du\wedge dv$ on the Morse plane $\R^2\ni w=(u,v)=u+iv$, and $dx\wedge d\theta$ on the
+rectangle coordinates $(x,\theta)$. A map between open subsets of planes is \emph{symplectic} if its
+Jacobian determinant is identically $1$. In polar area coordinates $p=\pi|z|^2$,
+$\vartheta=\arg(z)/2\pi\in\R/\Z$ (the fibre angle $\theta_j$ of the main text) one has
+$\omega_\C=dp\wedge d\vartheta$ on $\C\setminus\{0\}$; under the polar chart $C_y$ of \S\ref{sec:pln-inner}
+the rectangle angle is $\theta=\vartheta-\frac12$. $\mathrm{Rot}_\alpha$ is the rotation by the angle $\alpha$
+(radians). $S$ is the flat step of Definition~\ref{def:pre-flat}; by Lemma~\ref{lem:pre-flat} it is
+$C^\infty$ and nondecreasing, $S=0$ on $(-\infty,0]$, $S=1$ on $[1,\infty)$, and all derivatives of $S$
+vanish at $0$ and $1$.
+
+In this section $E$ always denotes an \emph{energy level} (a value of a potential), $J$ a positive
+density on a plane, and $h>0$ the area of the disc $D(h)$ preserved by the isotopy. A function on an
+arbitrary subset $\Omega\subset\R^N$ is called \emph{smooth} if every point of $\Omega$ has an open
+neighbourhood in $\R^N$ on which it is the restriction of a $C^\infty$ function; on open sets this is the
+usual notion, and at the endpoints of a parameter interval it means smoothness with one-sided derivatives.
+Fibre Hamiltonians follow the convention $\iota_X\omega_\C=-dQ$ of \Msec{sec:cmp}.
+
+%----------------------------------------------------------------------
+\subsection{Admissible potential pairs}\label{sec:pln-pairs}
+
+\begin{definition}[Admissible potential pair]\label{def:pln-potential-pair}
+An \emph{admissible potential pair} is one of the following two families: the modified equal-ball wells of
+\S\ref{sec:pll} ($k\ge10$, $\frac78<t_0<1$; Lemma~\ref{lem:pll-pair}), or the modified slice wells of
+Definition~\ref{def:plc-data} over the open parameter set $\mathcal O$ of the planar data (Lemma~\ref{lem:plc-data}).
+For either family let $\mathcal Y\subset\R^d$ be its open parameter domain ($d=0$ meaning a single point), $h>0$ its
+disc area, and $U_y(p)$, $V_y(\theta)$ its potentials on open intervals $I_U,I_V$. The following properties are proved
+for both families in the lemmas just cited:
+\begin{enumerate}[label=(P\arabic*)]
+\item\label{it:pln-P1} The potentials are jointly smooth. There is a unique
+$p^*(y)\in I_U\cap(0,h)$ with $U_y'(p)(p-p^*(y))>0$ away from the minimum,
+$U_y''(p^*(y))>0$, and $V_y(0)=0$, $V_y'(\theta)\theta>0$ away from zero,
+$V_y''(0)>0$.
+\item\label{it:pln-P2} Both potentials tend to $+\infty$ at their interval
+endpoints. Their centred wells are exactly quadratic on neighbourhoods of zero;
+the widths are positive uniformly on the parameter domain used in a construction.
+The quadratic coefficients are smooth positive functions of the parameters.
+\end{enumerate}
+We write $U_{\min}(y)=U_y(p^*(y))$. The pair is \emph{exactly quadratic near the minimum} if there are
+$\eps_U,\eps_V>0$ with $U_y(p)-U_{\min}(y)=\frac12U_y''(p^*(y))(p-p^*(y))^2$ for $|p-p^*(y)|\le\eps_U$ and
+$V_y(\theta)=\frac12V_y''(0)\theta^2$ for $|\theta|\le\eps_V$.
+\end{definition}
+
+The modified wells need not be convex; only the signs of their derivatives and their quadratic germs are used.
+
+%----------------------------------------------------------------------
+\subsection{Morse inverse charts}\label{sec:pln-morse}
+
+\begin{lemma}[Morse inverse charts]\label{lem:pln-morse-inverse}
+\lean{SymplecticPacking.Inner.SigmaR_smooth, SymplecticPacking.Inner.Xtilde_smooth,
+ SymplecticPacking.Inner.Rtilde_Xtilde, SymplecticPacking.Inner.Xtilde_linear,
+ SymplecticPacking.Inner.Ytilde_smooth, SymplecticPacking.Inner.Vtilde_Ytilde,
+ SymplecticPacking.Inner.Ytilde_linear, SymplecticPacking.Branch2.Planar.MorsePair.Fmor_det,
+ SymplecticPacking.Inner.Fmor_level, SymplecticPacking.Branch2.Planar.MorsePair.Acal_eq_area}
+\uses{def:pln-potential-pair}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$.
+\begin{enumerate}[label=(\roman*)]
+\item The minimum point $y\mapsto p^*(y)$ and $y\mapsto U_{\min}(y)$ are $C^\infty$ on $\mathcal Y$.
+\item On the open set $\mathcal D_U=\{(y,x):y\in\mathcal Y,\ p^*(y)+x\in I_U\}$ put
+ \[
+  \Sigma_U(y,x)=\operatorname{sign}(x)\sqrt{U_y(p^*(y)+x)-U_{\min}(y)}.
+ \]
+ This is the signed square root, with its removable singularity at $x=0$; and $\Sigma_U$ is $C^\infty$ with
+ $\partial_x\Sigma_U>0$. For each $y$, $\Sigma_U(y,\cdot)$ is an increasing diffeomorphism of
+ $I_U-p^*(y)$ onto $\R$; its inverse $X_y$ is $C^\infty$ jointly in $(y,u)\in\mathcal Y\times\R$, and
+ \begin{gather*}
+  U_y\bigl(p^*(y)+X_y(u)\bigr)-U_{\min}(y)=u^2,\\
+  \operatorname{sign}X_y(u)=\operatorname{sign}u,\qquad
+  X_y'(0)=a_0(y):=\sqrt{2/U_y''(p^*(y))} .
+ \end{gather*}
+\item In the same way $\Sigma_V(y,\theta)=\operatorname{sign}(\theta)\sqrt{V_y(\theta)}$
+ is an increasing diffeomorphism of $I_V$ onto $\R$ for each $y$, and its inverse $Y_y$ is $C^\infty$ in
+ $(y,v)$, with $V_y(Y_y(v))=v^2$, $\operatorname{sign}Y_y(v)=\operatorname{sign}v$ and
+ $Y_y'(0)=b_0(y):=\sqrt{2/V_y''(0)}$.
+\item The Morse chart $F_y(u,v)=(X_y(u),Y_y(v))$ is a $C^\infty$ diffeomorphism of $\R^2$ onto the
+ \emph{Morse rectangle} $\mathcal R_y=(I_U-p^*(y))\times I_V$, jointly smooth in $(y,w)$, with
+ \[
+  F_y^*(dx\wedge d\theta)=J_y\,du\wedge dv,\qquad J_y(u,v)=X_y'(u)\,Y_y'(v)>0,\qquad J_y(0)=j_0(y):=a_0(y)b_0(y),
+ \]
+ and $U_y(p^*(y)+x)-U_{\min}(y)+V_y(\theta)=u^2+v^2$ for $(x,\theta)=F_y(u,v)$. Consequently, for $E\ge0$,
+ \[
+  \int_{|w|^2\le E}J_y(w)\,dw=\operatorname{area}\bigl\{(p,\theta)\in I_U\times I_V:\ U_y(p)-U_{\min}(y)+V_y(\theta)\le E\bigr\},
+ \]
+ and these areas increase to $|I_U|\,|I_V|\in(0,\infty]$ as $E\to\infty$.
+\item If the pair is exactly quadratic near the minimum, then $X_y(u)=a_0(y)u$ for $|u|\le\eps_U/a_0(y)$
+ and $Y_y(v)=b_0(y)v$ for $|v|\le\eps_V/b_0(y)$; hence $J_y=j_0(y)$ on the disc $|w|\le\rho_T(y)$,
+ $\rho_T(y)=\min(\eps_U/a_0(y),\eps_V/b_0(y))$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) $\partial_pU_y'(p)=U_y''(p)>0$ at $p=p^*(y)$, so the implicit function theorem gives, near each
+$y_0$, a smooth solution of $U_y'(p)=0$ through $p^*(y_0)$; by \ref{it:pln-P1} the zero of $U_y'$ is
+unique, so this solution is $p^*(y)$. Then $U_{\min}(y)=U_y(p^*(y))$ is smooth.
+
+(ii) $\mathcal D_U$ is open since $p^*$ is continuous. The quadratic
+germ gives $\Sigma_U(y,x)=\sqrt{U_y''(p^*)/2}\,x$ on a common neighbourhood
+of $x=0$, which is jointly smooth there. Away from $x=0$, positivity of
+$U_y(p^*+x)-U_{\min}$ gives smoothness directly from the signed square-root
+formula. For $x\ne0$,
+differentiating $\Sigma_U^2=U_y(p^*+x)-U_{\min}$ gives $2\Sigma_U\partial_x\Sigma_U=U_y'(p^*+x)$; both
+$\Sigma_U$ and $U_y'(p^*+x)$ have the sign of $x$, so $\partial_x\Sigma_U>0$; at $x=0$,
+$\partial_x\Sigma_U=\sqrt{U_y''(p^*)/2}>0$. By \ref{it:pln-P2}, $\Sigma_U(y,\cdot)$
+tends to $\mp\infty$ at the two endpoints of $I_U-p^*(y)$, so it is an increasing bijection onto $\R$.
+The map $(y,x)\mapsto(y,\Sigma_U(y,x))$ is a smooth bijection of $\mathcal D_U$ onto
+$\mathcal Y\times\R$ with invertible (triangular) derivative; by the inverse function theorem its local
+smooth inverses exist everywhere, and by injectivity they agree with the global inverse
+$(y,u)\mapsto(y,X_y(u))$, which is therefore smooth. The identities follow from
+$\Sigma_U(y,X_y(u))=u$, and $X_y'(0)=1/\partial_x\Sigma_U(y,0)=\sqrt{2/U_y''(p^*)}$.
+
+(iii) is (ii) for $V$, whose minimum point is $0$ and minimum value $0$.
+
+(iv) $F_y$ is a product of diffeomorphisms; its Jacobian is $X_y'Y_y'>0$, and $J_y(0)=a_0b_0$. The level
+identity is the sum of the identities in (ii) and (iii). The change of variables formula applied to
+$F_y$ on $\{|w|^2\le E\}$ gives the area formula, after the translation $p=p^*(y)+x$. As $E\to\infty$ the
+discs exhaust $\R^2$, so their images exhaust $\mathcal R_y$ and the areas increase to
+$\operatorname{area}\mathcal R_y=|I_U||I_V|$.
+
+(v) The exact quadratic formula on $|x|\le\eps_U$ gives $\Sigma_U(y,x)=x/a_0$; hence $X_y(u)=a_0u$ for $|u|\le\eps_U/a_0$.
+The same holds for $V$. For $|w|\le\rho_T$ both $|u|$ and $|v|$ are at most $\rho_T$, so
+$J_y(w)=a_0b_0$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{Rotation and area normalisation}\label{sec:pln-normalisation-maps}
+
+The two normalisations are defined for the positive densities used in the construction. Throughout this
+subsection we fix the following setting, which we call \emph{setting (N)}: $\mathcal P\subset\R^N$ is
+an arbitrary subset (the parameters), $\mathcal U\subset\R^N\times\R^2$ is an open set containing
+$\mathcal P\times\R^2$, and $J\colon\mathcal U\to\R$, $(\sigma,w)\mapsto J_\sigma(w)$, is $C^\infty$ and
+positive on $\mathcal P\times\R^2$, and $J$ has a constant germ at $w=0$: locally in the parameter there are
+$\rho_0>0$ and a smooth positive function $j(\sigma)$ with $J_\sigma(w)=j(\sigma)$ for $|w|\le\rho_0$. The densities
+used are the Morse densities of the two potential families and their interpolations (\S\ref{sec:pln-charts}), the
+Morse density of \S\ref{sec:scalar-cmp}, and the whole-path densities of \S\ref{sec:pln-normal}. Points of $\R^2$ are
+identified with complex numbers, so that $w\zeta$ is the complex product.
+
+\begin{definition}[Rotation and area normalisation]\label{def:pln-normalisations}
+\lean{SymplecticPacking.Inner.Jbar, SymplecticPacking.Inner.Bfun, SymplecticPacking.Inner.Trot,
+ SymplecticPacking.Inner.Acal, SymplecticPacking.Inner.Einv, SymplecticPacking.Inner.Darea}
+In setting (N), for $\sigma\in\mathcal P$, $w\in\R^2$ and $E\ge0$ put
+\begin{gather*}
+ \bar J_\sigma(|w|^2)=\frac1{2\pi}\int_0^{2\pi}J_\sigma(\mathrm{Rot}_\alpha w)\,d\alpha,\qquad
+ \mathcal M_\sigma(w)=\frac1{2\pi}\int_0^{2\pi}(\alpha-\pi)\,J_\sigma(\mathrm{Rot}_\alpha w)\,d\alpha,\\
+ T_\sigma(w)=\mathrm{Rot}_{\tau_\sigma(w)}\,w,\qquad \tau_\sigma(w)=\mathcal M_\sigma(w)/\bar J_\sigma(|w|^2),\\
+ \mathcal A_\sigma(E)=\int_{|w|^2\le E}J_\sigma(w)\,dw,\qquad
+ \mathcal A_\sigma(\infty)=\lim_{E\to\infty}\mathcal A_\sigma(E)\in(0,\infty],\\
+ \mathcal G_\sigma(w)=\frac1\pi\int_{|\zeta|\le1}J_\sigma(w\zeta)\,d\zeta .
+\end{gather*}
+Let $E_\sigma\colon[0,\mathcal A_\sigma(\infty))\to[0,\infty)$ be the inverse of $\mathcal A_\sigma$
+(Lemma~\ref{lem:pln-area}) and, for $z\in D(\mathcal A_\sigma(\infty))$ with $I=\pi|z|^2$,
+\[
+ D_\sigma(z)=\sqrt{\pi E_\sigma(I)/I}\;z\quad(z\ne0),\qquad D_\sigma(0)=0 .
+\]
+$T_\sigma$ is the \emph{rotation normalisation} and $D_\sigma$ the \emph{area normalisation} of $J_\sigma$.
+When a single density $J$ is meant we write $\bar J$, $\mathcal M_J$, $T_J$, $\mathcal A_J$, $E_J$, $\mathcal G_J$, $D_J$.
+\end{definition}
+
+The normalisations of $J_\sigma$ at a point $w$ with $|w|\le R$, or at a point $z$ with $E_\sigma(\pi|z|^2)\le R^2$,
+depend only on $J_\sigma$ on the disc $|w|\le R$: the circle and disc integrals defining $\bar J_\sigma$,
+$\mathcal M_\sigma$ and $\mathcal A_\sigma$ on $[0,R^2]$ stay in that disc. Hence on such points they coincide with the
+normalisations of
+\[
+ J^{\rm ext}_\sigma(w)=\vartheta_R(w)J_\sigma(w)
+                  +(1-\vartheta_R(w))j(\sigma),\qquad
+ \vartheta_R(w)=1-S\left(\frac{|w|^2-R^2}{3R^2}\right),
+\]
+which is smooth, positive, has the same germ, equals $J_\sigma$ for $|w|\le R$, and has
+$\mathcal A_{J^{\rm ext}_\sigma}(\infty)=\infty$. For the slice family we use this with $R^2=\bar E$
+(Definition~\ref{def:plc-data}), so that the source disc $D(p^\dagger)$ is covered by \ref{it:pln-D5}; it is a device
+of proof only, and all maps are defined with the original densities.
+
+On the circle of radius $\rho$ the density defines a measure of total mass $2\pi\rho\bar J_\sigma(\rho^2)$.
+On each such circle $T_\sigma$ is determined up to a rotation by the condition that it carries this measure to
+the uniform measure of the same mass, i.e.\ by the derivative of its angle (Lemma~\ref{lem:pln-rotation}(ii)). The
+rotation is fixed by the weighted mean $\mathcal M_\sigma$; this choice needs no base point on the circle and is a
+Cartesian function of $w$. Likewise $\mathcal G_\sigma$ writes the
+mean of $J_\sigma$ over the disc of radius $|w|$ as an integral over a fixed disc, which is what makes the
+area normalisation smooth at the origin.
+
+\begin{lemma}[Rotation normalisation]\label{lem:pln-rotation}
+\lean{SymplecticPacking.Inner.Bfun_deriv_arg, SymplecticPacking.Inner.norm_Trot,
+ SymplecticPacking.Inner.Trot_bijective, SymplecticPacking.Inner.Trot_det,
+ SymplecticPacking.Inner.Trot_eq_id_of_const, SymplecticPacking.Inner.Trot_param_smooth,
+ SymplecticPacking.Inner.TrotInv_param_smooth}
+\uses{def:pln-normalisations}
+In setting (N), let $\sigma\in\mathcal P$.
+\begin{enumerate}[label=(\roman*)]
+\item $\partial_{\arg}\mathcal M_\sigma=J_\sigma-\bar J_\sigma(|w|^2)$, where $\partial_{\arg}$ is the
+ derivative along $\psi$ in $w=\rho e^{i\psi}$.
+\item $T_\sigma$ maps each circle $\{|w|=\rho\}$ onto itself; for $\rho>0$, writing
+ $T_\sigma(\rho e^{i\psi})=\rho e^{i\psi^\sharp(\psi)}$, one has $(\psi^\sharp)'=J_\sigma/\bar J_\sigma>0$ and
+ $\psi^\sharp(\psi+2\pi)=\psi^\sharp(\psi)+2\pi$. $T_\sigma$ is a bijection of $\R^2$ and $T_\sigma(0)=0$.
+\item The maps $(\sigma,w)\mapsto T_\sigma(w)$ and $(\sigma,w)\mapsto T_\sigma^{-1}(w)$ are smooth on
+ $\mathcal P\times\R^2$, each $T_\sigma$ is a diffeomorphism of $\R^2$ with $DT_\sigma(0)=\mathrm{Id}$, and
+ $T_\sigma^*\bigl(\bar J_\sigma(|w|^2)\,du\wedge dv\bigr)=J_\sigma\,du\wedge dv$ on all of $\R^2$.
+\item If $J_\sigma(w)=j$ for $|w|\le\rho_0$, then $\mathcal M_\sigma=0$ and $T_\sigma=T_\sigma^{-1}=\mathrm{id}$
+ on $\{|w|\le\rho_0\}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\emph{Local formulas.} Let $\mathcal U'=\mathcal U\cap\{J>0\}$, an open set containing
+$\mathcal P\times\R^2$. Given $\sigma_0\in\mathcal P$ and $\rho_1>0$, the compact set
+$\{\sigma_0\}\times\bar B(0,\rho_1)$ lies in $\mathcal U'$, so there is an open ball $N_0\ni\sigma_0$ with
+$N_0\times B(0,\rho_1)\subset\mathcal U'$. On $N_0\times B(0,\rho_1)$, which is invariant under the
+rotations of the second factor, the integrands defining $\bar J_\sigma(|w|^2)$ and $\mathcal M_\sigma(w)$ are
+$C^\infty$ in $(\alpha,\sigma,w)\in[0,2\pi]\times N_0\times B(0,\rho_1)$ and positive, respectively smooth, so
+differentiation under the integral sign shows that both formulas define $C^\infty$ functions there, with
+$\bar J>0$. Hence the formula for $T_\sigma$ defines a $C^\infty$ map $\tilde T$ on
+$N_0\times B(0,\rho_1)$, which is a local smooth extension of $(\sigma,w)\mapsto T_\sigma(w)$.
+
+(i) Fix $\rho$ and put $j(\psi)=J_\sigma(\rho e^{i\psi})$, a $2\pi$-periodic function. Then
+$\mathcal M_\sigma(\rho e^{i\psi})=\frac1{2\pi}\int_0^{2\pi}(\alpha-\pi)j(\psi+\alpha)\,d\alpha$, and integration by
+parts gives
+\[
+ \partial_\psi\mathcal M_\sigma=\frac1{2\pi}\Bigl[(\alpha-\pi)j(\psi+\alpha)\Bigr]_0^{2\pi}
+ -\frac1{2\pi}\int_0^{2\pi}j(\psi+\alpha)\,d\alpha=j(\psi)-\bar J_\sigma(\rho^2).
+\]
+
+(ii) $T_\sigma$ preserves $|w|$. With $\psi^\sharp=\psi+\mathcal M_\sigma/\bar J_\sigma$, (i) gives
+$(\psi^\sharp)'=1+(J_\sigma-\bar J_\sigma)/\bar J_\sigma=J_\sigma/\bar J_\sigma>0$, and $\psi^\sharp(\psi+2\pi)=\psi^\sharp(\psi)+2\pi$
+because $\mathcal M_\sigma$ is a single-valued function of $w$. So $T_\sigma$ restricts to an
+orientation-preserving diffeomorphism of each circle of positive radius, and $T_\sigma(0)=0$; hence it is a
+bijection of $\R^2$.
+
+(iii) Smoothness of $(\sigma,w)\mapsto T_\sigma(w)$ was shown above. At $w=0$,
+$\mathcal M_\sigma(0)=J_\sigma(0)\frac1{2\pi}\int_0^{2\pi}(\alpha-\pi)d\alpha=0$, so $\tau_\sigma(0)=0$, and
+differentiating $T_\sigma(w)=\mathrm{Rot}_{\tau_\sigma(w)}w$ at $w=0$ gives
+$DT_\sigma(0)=\mathrm{Rot}_0=\mathrm{Id}$. On $w\ne0$, in polar coordinates $du\wedge dv=\rho\,d\rho\wedge d\psi$,
+and $\bar J_\sigma(|T_\sigma w|^2)=\bar J_\sigma(\rho^2)$, so
+\[
+ T_\sigma^*\bigl(\bar J_\sigma\,\rho\,d\rho\wedge d\psi\bigr)=\bar J_\sigma\,\rho\,d\rho\wedge((\psi^\sharp)'d\psi+\partial_\rho\psi^\sharp\,d\rho)
+ =J_\sigma\,\rho\,d\rho\wedge d\psi .
+\]
+Thus $\det DT_\sigma=J_\sigma/\bar J_\sigma(|w|^2)$ on $w\ne0$; both sides are continuous, so this holds at $0$
+as well (where both equal $1$), and the pull-back identity holds on $\R^2$. In particular $DT_\sigma$ is
+everywhere invertible, and $T_\sigma$ is a diffeomorphism by the inverse function theorem. For the inverse,
+let $(\sigma_0,x_0)\in\mathcal P\times\R^2$, $w_0=T_{\sigma_0}^{-1}(x_0)$, and choose $\rho_1>|w_0|$ and
+$N_0$ as above. The map $(\sigma,w)\mapsto(\sigma,\tilde T(\sigma,w))$ is $C^\infty$ on
+$N_0\times B(0,\rho_1)$ with derivative of determinant $\det D_w\tilde T(\sigma_0,w_0)>0$ at $(\sigma_0,w_0)$, so it
+has a $C^\infty$ inverse $\mathcal L$ from an open neighbourhood $N$ of $(\sigma_0,x_0)$ onto an open
+neighbourhood of $(\sigma_0,w_0)$. If $(\sigma,x)\in N$ with $\sigma\in\mathcal P$, then
+$\mathcal L(\sigma,x)=(\sigma,w')$ with $T_\sigma(w')=x$, so $w'=T_\sigma^{-1}(x)$ by injectivity of $T_\sigma$.
+Hence $(\sigma,x)\mapsto T_\sigma^{-1}(x)$ is smooth.
+
+(iv) For $|w|\le\rho_0$ every point $\mathrm{Rot}_\alpha w$ lies in the disc, so $\bar J_\sigma(|w|^2)=j$ and
+$\mathcal M_\sigma(w)=j\frac1{2\pi}\int_0^{2\pi}(\alpha-\pi)d\alpha=0$; hence $T_\sigma(w)=w$. Since $T_\sigma$ is a
+bijection preserving every circle and fixing the closed disc pointwise, $T_\sigma^{-1}$ fixes it too.
+\end{proof}
+
+\begin{lemma}[Area normalisation]\label{lem:pln-area}
+\lean{SymplecticPacking.Inner.Acal_hasDerivAt, SymplecticPacking.Inner.Acal_bijective,
+ SymplecticPacking.Inner.Darea_bijective, SymplecticPacking.Inner.norm_Darea_sq,
+ SymplecticPacking.Strip.Darea_pullback, SymplecticPacking.Strip.DareaInv_contDiff,
+ SymplecticPacking.Strip.normalize_general, SymplecticPacking.Inner.Darea_eq_of_const,
+ SymplecticPacking.Inner.Darea_param_smooth, SymplecticPacking.Inner.normalize_param_smooth}
+\uses{def:pln-normalisations, lem:pln-rotation}
+In setting (N), let $\sigma\in\mathcal P$ and put $\Omega=\{(\sigma,z):\sigma\in\mathcal P,\ \pi|z|^2<\mathcal A_\sigma(\infty)\}$.
+\begin{enumerate}[label=(\roman*)]
+\item $\mathcal A_\sigma(E)=\pi\int_0^E\bar J_\sigma(t)\,dt$; $\mathcal A_\sigma$ is a continuous strictly increasing
+ bijection of $[0,\infty)$ onto $[0,\mathcal A_\sigma(\infty))$, so $E_\sigma$ is well defined.
+\item $(\sigma,w)\mapsto\mathcal G_\sigma(w)$ is smooth and positive on $\mathcal P\times\R^2$, $\mathcal G_\sigma(0)=J_\sigma(0)$, and
+ $\mathcal A_\sigma(|w|^2)=\pi|w|^2\mathcal G_\sigma(w)$.
+\item $\Psi_\sigma(w)=\sqrt{\mathcal G_\sigma(w)}\,w$ is a diffeomorphism of $\R^2$ onto $D(\mathcal A_\sigma(\infty))$ with
+ $\pi|\Psi_\sigma(w)|^2=\mathcal A_\sigma(|w|^2)$ and $\Psi_\sigma^*\omega_\C=\bar J_\sigma(|w|^2)\,du\wedge dv$; its
+ inverse is $D_\sigma$. The map $(\sigma,z)\mapsto D_\sigma(z)$ is smooth on $\Omega$, including $z=0$;
+ $|D_\sigma(z)|^2=E_\sigma(\pi|z|^2)$, $D_\sigma^*(\bar J_\sigma(|w|^2)\,du\wedge dv)=\omega_\C$,
+ $DD_\sigma(0)=J_\sigma(0)^{-1/2}\,\mathrm{Id}$, and the quotient in the definition of $D_\sigma$ is
+ \[
+  \frac{\pi E_\sigma(\pi|z|^2)}{\pi|z|^2}=\frac1{\mathcal G_\sigma(D_\sigma(z))}\qquad(z\ne0),
+ \]
+ a smooth positive function of $(\sigma,z)\in\Omega$ with value $1/J_\sigma(0)$ at $z=0$.
+\item (Composite.) Suppose $(\sigma,w)\mapsto F_\sigma(w)$ is $C^\infty$ on an open neighbourhood of
+ $\mathcal P\times\R^2$ and each $F_\sigma$ is a diffeomorphism of $\R^2$ onto an open set $\mathcal V_\sigma$ with
+ $F_\sigma^*(dx\wedge d\theta)=J_\sigma\,du\wedge dv$. Then $f_\sigma=F_\sigma\circ T_\sigma^{-1}\circ D_\sigma$ is a
+ symplectic diffeomorphism of $D(\mathcal A_\sigma(\infty))$ onto $\mathcal V_\sigma$, $(\sigma,z)\mapsto f_\sigma(z)$ is smooth on
+ $\Omega$, $f_\sigma$ maps the circle $\{\pi|z|^2=I\}$ onto $F_\sigma(\{|w|^2=E_\sigma(I)\})$, $f_\sigma(0)=F_\sigma(0)$ and
+ $Df_\sigma(0)=J_\sigma(0)^{-1/2}DF_\sigma(0)$.
+\item (Constant near the origin.) If $J_\sigma(w)=j$ for $|w|\le\rho_0$, then $\mathcal G_\sigma=j$ there,
+ $\mathcal A_\sigma(E)=\pi jE$ for $E\le\rho_0^2$, $D_\sigma(z)=z/\sqrt j$ for $|z|\le\sqrt j\,\rho_0$, and in (iv)
+ $f_\sigma(z)=F_\sigma(z/\sqrt j)$ for $|z|\le\sqrt j\,\rho_0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) In polar coordinates,
+\begin{align*}
+ \mathcal A_\sigma(E)&=\int_0^{\sqrt E}\rho\int_0^{2\pi}J_\sigma\,d\psi\,d\rho\\
+ &=\int_0^{\sqrt E}2\pi\rho\,\bar J_\sigma(\rho^2)\,d\rho
+ =\pi\int_0^E\bar J_\sigma(t)\,dt.
+\end{align*}
+Since $J_\sigma>0$ is continuous, $\mathcal A_\sigma$ is continuous and strictly
+increasing with $\mathcal A_\sigma(0)=0$, and it increases to $\mathcal A_\sigma(\infty)$.
+
+(ii) For $w\ne0$ the real-linear map $\zeta\mapsto w\zeta$ has determinant $|w|^2$ and maps the unit disc
+onto $\{|x|\le|w|\}$, so $\pi|w|^2\mathcal G_\sigma(w)=\int_{|x|\le|w|}J_\sigma(x)\,dx=\mathcal A_\sigma(|w|^2)$; at $w=0$,
+$\mathcal G_\sigma(0)=J_\sigma(0)$. With $N_0$ and $\rho_1$ as in the proof of Lemma~\ref{lem:pln-rotation}, the
+integrand $J(\sigma,w\zeta)$ is $C^\infty$ in $(\sigma,w,\zeta)\in N_0\times B(0,\rho_1)\times\bar B(0,1)$ and positive,
+so $\mathcal G$ has a positive $C^\infty$ extension $\tilde{\mathcal G}$ to $N_0\times B(0,\rho_1)$.
+
+(iii) In polar coordinates $w=\rho e^{i\psi}$, $\Psi_\sigma(w)=r(\rho)e^{i\psi}$ with
+$\pi r(\rho)^2=\mathcal A_\sigma(\rho^2)$ by (ii). As $\rho$ runs over $[0,\infty)$, $\pi r^2$ increases strictly and
+continuously from $0$ to $\mathcal A_\sigma(\infty)$; hence $\Psi_\sigma$ is a bijection of $\R^2$ onto
+$D(\mathcal A_\sigma(\infty))$, and $E_\sigma(\pi|\Psi_\sigma(w)|^2)=|w|^2$. On $w\ne0$, by (i),
+\[
+ \Psi_\sigma^*\omega_\C=r\,dr\wedge d\psi=\tfrac1{2\pi}\,d(\pi r^2)\wedge d\psi
+ =\tfrac1{2\pi}\,\pi\bar J_\sigma(\rho^2)\,2\rho\,d\rho\wedge d\psi=\bar J_\sigma(\rho^2)\,du\wedge dv ,
+\]
+so $\det D\Psi_\sigma(w)=\bar J_\sigma(|w|^2)$; by continuity this also holds at $w=0$, where
+$D\Psi_\sigma(0)=\sqrt{\mathcal G_\sigma(0)}\,\mathrm{Id}$ and both sides equal $J_\sigma(0)$. Hence $\Psi_\sigma$ is a
+diffeomorphism onto the open disc. Its inverse maps the circle $\{\pi|z|^2=I\}$ radially onto
+$\{|w|^2=E_\sigma(I)\}$, i.e.\ it is $z\mapsto\sqrt{\pi E_\sigma(I)/I}\,z=D_\sigma(z)$ (and $0\mapsto0$). This gives
+$|D_\sigma(z)|^2=E_\sigma(\pi|z|^2)$, the pull-back identity, and $DD_\sigma(0)=D\Psi_\sigma(0)^{-1}$. Joint smoothness:
+let $(\sigma_0,z_0)\in\Omega$ and $w_0=D_{\sigma_0}(z_0)$; choose $\rho_1>|w_0|$, $N_0$ and $\tilde{\mathcal G}$ as in (ii). The map
+$(\sigma,w)\mapsto(\sigma,\sqrt{\tilde{\mathcal G}(\sigma,w)}\,w)$ is $C^\infty$ on $N_0\times B(0,\rho_1)$ and its derivative at
+$(\sigma_0,w_0)$ has determinant $\bar J_{\sigma_0}(|w_0|^2)>0$, so it has a $C^\infty$ inverse $\mathcal L$ on an open
+neighbourhood $N$ of $(\sigma_0,z_0)$. For $(\sigma,z)\in N\cap\Omega$, $\mathcal L(\sigma,z)=(\sigma,w')$ with
+$\Psi_\sigma(w')=z$, so $w'=D_\sigma(z)$ by injectivity of $\Psi_\sigma$. Finally, from $\Psi_\sigma(D_\sigma(z))=z$ we get
+$|z|^2=\mathcal G_\sigma(D_\sigma(z))|D_\sigma(z)|^2$, i.e.\ $\pi E_\sigma(I)/I=|D_\sigma(z)|^2/|z|^2=1/\mathcal G_\sigma(D_\sigma(z))$, which is smooth
+in $(\sigma,z)$ as a composite of smooth maps.
+
+(iv) $D_\sigma$ is a diffeomorphism of $D(\mathcal A_\sigma(\infty))$ onto $\R^2$, $T_\sigma^{-1}$ a diffeomorphism of $\R^2$,
+and $F_\sigma$ a diffeomorphism of $\R^2$ onto $\mathcal V_\sigma$. By Lemma~\ref{lem:pln-rotation}(iii) and (iii) above,
+\[
+ f_\sigma^*(dx\wedge d\theta)=D_\sigma^*(T_\sigma^{-1})^*\bigl(J_\sigma\,du\wedge dv\bigr)=D_\sigma^*\bigl(\bar J_\sigma\,du\wedge dv\bigr)=\omega_\C .
+\]
+Joint smoothness follows from that of the three factors. $D_\sigma$ maps $\{\pi|z|^2=I\}$ onto
+$\{|w|^2=E_\sigma(I)\}$, which $T_\sigma^{-1}$ preserves. Finally $f_\sigma(0)=F_\sigma(0)$, and
+$Df_\sigma(0)=DF_\sigma(0)\,DT_\sigma^{-1}(0)\,DD_\sigma(0)=J_\sigma(0)^{-1/2}DF_\sigma(0)$ by Lemma~\ref{lem:pln-rotation}(iii).
+
+(v) For $|w|\le\rho_0$ and $|\zeta|\le1$, $|w\zeta|\le\rho_0$, so $\mathcal G_\sigma(w)=j$ and $\Psi_\sigma(w)=\sqrt j\,w$ on the closed disc
+of radius $\rho_0$; inverting, $D_\sigma(z)=z/\sqrt j$ for $|z|\le\sqrt j\rho_0$, and $\mathcal A_\sigma(E)=\pi jE$ for
+$E\le\rho_0^2$ by (ii). The last claim follows from Lemma~\ref{lem:pln-rotation}(iv).
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The inner map}\label{sec:pln-inner}
+
+The polar chart places the Morse rectangle into the disc of area $h$. For $y\in\mathcal Y$ let
+\begin{equation}\label{eq:pln-chart}
+ C_y(x,\theta)=-\sqrt{\frac{p^*(y)+x}\pi}\;e^{2\pi i\theta},\qquad
+ (x,\theta)\in\mathcal C_y=\{p^*(y)+x>0,\ |\theta|<\tfrac12\}.
+\end{equation}
+It has polar radius $\sqrt{(p^*+x)/\pi}$ and polar angle $2\pi\theta+\pi\in(0,2\pi)$; so $C_y$ is injective,
+$\pi|C_y(x,\theta)|^2=p^*(y)+x$, the image of $\mathcal C_y$ is $\C$ minus the closed positive real axis, and
+$C_y^*(dp\wedge d\vartheta)=dx\wedge d\theta$, i.e.\ $C_y$ is symplectic. Its centre line $\theta=0$ is the negative real
+axis, and $C_y(0)=b_y:=(-r_b(y),0)$ with $r_b(y)=\sqrt{p^*(y)/\pi}$.
+
+\begin{definition}[The inner map]\label{def:pln-inner-map}
+\lean{SymplecticPacking.Inner.Fmor, SymplecticPacking.Inner.finner, SymplecticPacking.Inner.chartC}
+\uses{lem:pln-morse-inverse, def:pln-normalisations}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ and $y\in\mathcal Y$. Apply
+the formulas of Definition~\ref{def:pln-normalisations} to the density $J_y=X_y'Y_y'$ of Lemma~\ref{lem:pln-morse-inverse}
+(parameters $\sigma=y\in\mathcal P=\mathcal Y$), and write $T_y$, $D_y$, $\mathcal A_y$, $E_y$ for its normalisations. In the slice case the claims about these maps are made on the disc $D(p^\dagger)$ of Definition~\ref{def:plc-data}
+and are proved with the constant-tail extension above. Put
+\[
+ f_y=F_y\circ T_y^{-1}\circ D_y\colon D(\mathcal A_y(\infty))\to\mathcal R_y .
+\]
+Let $E_{\rm rect}(y)\in(0,\infty]$ be the infimum of $U_y(p)-U_{\min}(y)+V_y(\theta)$ over
+$(I_U\times I_V)\setminus\bigl((0,h)\times(-\frac12,\frac12)\bigr)$ (and $+\infty$ if this set is empty), let
+$I_{\rm rect}(y)=\mathcal A_y(E_{\rm rect}(y))$ (with $\mathcal A_y(+\infty)=\mathcal A_y(\infty)$), and define the
+\emph{inner map}
+\[
+ q_{{\rm in},y}=C_y\circ f_y\colon D\bigl(I_{\rm rect}(y)\bigr)\to\C .
+\]
+We also put $c_x(y)=\sqrt{a_0(y)/b_0(y)}$ and $\mathbf L_y=\operatorname{diag}(c_x(y),c_x(y)^{-1})$.
+\end{definition}
+
+By \ref{it:pln-P1}, $U_y-U_{\min}$ is monotone on each side of $p^*$ and $V_y$ on each side of $0$, so
+$E_{\rm rect}(y)$ is the least of the values $U_y(0)-U_{\min}$, $U_y(h)-U_{\min}$, $V_y(-\frac12)$, $V_y(\frac12)$ at those of
+the points $0,h\in\R$ and $\pm\frac12$ that lie in $I_U$, respectively $I_V$; it is positive since
+$p^*(y)\in(0,h)$. By Lemma~\ref{lem:pln-morse-inverse}(iv), $\mathcal A_y(E)$ is the area of the sublevel
+$\{U_y-U_{\min}+V_y\le E\}$ and $\mathcal A_y(\infty)=|I_U|\,|I_V|$. For $E<E_{\rm rect}(y)$ this sublevel lies in
+$(0,h)\times(-\frac12,\frac12)$, so $\mathcal A_y(E)\le h$; letting $E\uparrow E_{\rm rect}(y)$ gives $I_{\rm rect}(y)\le h$.
+
+\begin{theorem}[The inner map]\label{thm:pln-inner}
+\lean{SymplecticPacking.Branch2.Planar.MorsePair.finner_symplectic, SymplecticPacking.Branch2.Planar.MorsePair.finner_smooth,
+ SymplecticPacking.Branch2.Planar.MorsePair.finner_bijective, SymplecticPacking.Inner.finner_level,
+ SymplecticPacking.Branch2.Planar.MorsePair.finner_linear, SymplecticPacking.Inner.chartC_det,
+ SymplecticPacking.Inner.chartC_moment, SymplecticPacking.Inner.chartC_injOn}
+\uses{def:pln-inner-map, lem:pln-morse-inverse, lem:pln-rotation, lem:pln-area}
+Let $(U,V)$ be an admissible potential pair. Put $\mathcal D_y^{\rm src}=\C$ for the equal-ball family and
+$\mathcal D_y^{\rm src}=D(p^\dagger)$, with $p^\dagger$ of Definition~\ref{def:plc-data}, for the slice family.
+\begin{enumerate}[label=(\alph*)]
+\item For each $y$, $f_y$ is a symplectic embedding of $\mathcal D_y^{\rm src}$ into the Morse rectangle
+ $\mathcal R_y$, and $(y,z)\mapsto f_y(z)$ is smooth on the corresponding source set. In the equal-ball case it is a diffeomorphism onto $\mathcal R_y=\R^2$. Moreover
+ $f_y(0)=0$ and $Df_y(0)=\mathbf L_y$, a diagonal matrix of determinant $1$.
+\item (Energy identity.) If $f_y(z)=(x,\theta)$, then
+ \[
+  U_y\bigl(p^*(y)+x\bigr)+V_y(\theta)=U_{\min}(y)+E_y(\pi|z|^2),
+ \]
+ so $f_y$ maps each circle $\{\pi|z|^2=I\}$ onto the level curve of $U_y(p^*+\cdot)-U_{\min}+V_y$ which encloses area $I$.
+\item The inner map $q_{{\rm in},y}$ is a symplectic embedding of $D(I_{\rm rect}(y))\cap\mathcal D_y^{\rm src}$ into
+ $D(h)\setminus[0,\infty)$, jointly smooth in $(y,z)$, with $q_{{\rm in},y}(0)=b_y$,
+ $Dq_{{\rm in},y}(0)=\mathbf A_y:=DC_y(0)\,\mathbf L_y$, and, for $f_y(z)=(x,\theta)$,
+ \[
+  \pi|q_{{\rm in},y}(z)|^2=p^*(y)+x,\qquad
+  U_y\bigl(\pi|q_{{\rm in},y}(z)|^2\bigr)+V_y(\theta)=U_{\min}(y)+E_y(\pi|z|^2).
+ \]
+ In particular $U_y(\pi|q_{{\rm in},y}(z)|^2)\le U_{\min}(y)+E_y(\pi|z|^2)$, with equality on the centre line $\theta=0$.
+\item If the pair is exactly quadratic near the minimum, then $f_y(z)=\mathbf L_yz$ for
+ $|z|\le\sqrt{j_0(y)}\,\rho_T(y)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(a) For the whole-plane family, apply Lemma~\ref{lem:pln-area}(iv) in setting (N) with
+$\mathcal P=\mathcal Y$, $\mathcal U=\mathcal Y\times\R^2$, the density $J_y$ and $F_y$
+(Lemma~\ref{lem:pln-morse-inverse}(iv)), whose image is $\mathcal V_y=\mathcal R_y$.
+For the slice family, use the constant-tail extension following
+Definition~\ref{def:pln-normalisations}. Its area and rotation normalisations are smooth and have the
+stated determinant identities by Lemmas~\ref{lem:pln-area} and~\ref{lem:pln-rotation}.
+On $D(p^\dagger)$ they agree with the original normalisations, and their Morse images stay where the
+extended density equals $J_y$. There $\det DF_y=J_y$ gives the same symplectic identity after composition.
+Thus the assertion holds on each source domain. Further $f_y(0)=F_y(0)=0$
+and $Df_y(0)=j_0^{-1/2}\operatorname{diag}(a_0,b_0)=\operatorname{diag}(\sqrt{a_0/b_0},\sqrt{b_0/a_0})=\mathbf L_y$.
+
+(b) $(u,v)=T_y^{-1}D_y(z)$ satisfies $u^2+v^2=|D_y(z)|^2=E_y(\pi|z|^2)$, since $T_y^{-1}$ preserves $|w|$
+(Lemmas~\ref{lem:pln-rotation}(ii) and~\ref{lem:pln-area}(iii)). Apply the level identity of
+Lemma~\ref{lem:pln-morse-inverse}(iv).
+
+(c) If $\pi|z|^2<I_{\rm rect}(y)$ then $E_y(\pi|z|^2)<E_{\rm rect}(y)$, so by (b) the point
+$(p^*+x,\theta)$ lies in a sublevel below $E_{\rm rect}$, hence in $(0,h)\times(-\frac12,\frac12)$; thus
+$(x,\theta)\in\mathcal C_y$ and $0<\pi|q_{{\rm in},y}(z)|^2=p^*+x<h$. The map $q_{{\rm in},y}$ is the composite of the
+symplectic embedding $f_y$ and the symplectic embedding $C_y$, smooth in $(y,z)$ because $C_y$ depends smoothly on
+$(y,x,\theta)$ through $p^*(y)$. The value and derivative at $0$ follow from (a), and the two displayed identities
+from the moment formula for $C_y$ and (b). Equality on $\theta=0$ is $V_y(0)=0$.
+
+(d) By Lemma~\ref{lem:pln-morse-inverse}(v), $J_y=j_0$ on $|w|\le\rho_T$, so by Lemma~\ref{lem:pln-area}(v)
+$f_y(z)=F_y(z/\sqrt{j_0})$ for $|z|\le\sqrt{j_0}\rho_T$, and there $F_y(w)=(a_0u,b_0v)$; hence
+$f_y(z)=j_0^{-1/2}\operatorname{diag}(a_0,b_0)z=\mathbf L_yz$.
+\end{proof}
+
+A computation from \eqref{eq:pln-chart} gives
+$DC_y(0)=\operatorname{diag}\bigl(-1/(2\pi r_b(y)),\,-2\pi r_b(y)\bigr)$, so
+\begin{equation}\label{eq:pln-A0}
+ \mathbf A_y=\operatorname{diag}\Bigl(-\frac{c_x(y)}{2\pi r_b(y)},\,-\frac{2\pi r_b(y)}{c_x(y)}\Bigr),\qquad\det\mathbf A_y=1,
+\end{equation}
+a diagonal matrix with two negative entries. The comparison inequalities that turn the energy identity into a
+rearrangement estimate depend on the particular potentials and are proved in \S\ref{sec:pll} and
+\S\ref{sec:plc}: one bounds $\mathcal A_y(E)$ from below by the area of a rectangle, which bounds $E_y(I)$ from above.
+
+%----------------------------------------------------------------------
+\subsection{Density interpolation and the charts \texorpdfstring{$C_\lambda$}{C-lambda}}\label{sec:pln-charts}
+
+The inner map is an embedding of a disc, not a map of $D(h)$ to itself, and it comes with no path to the
+identity. Each of its two nonlinear factors has an obvious linearisation at the origin: the Morse chart
+$F_y$ is deformed to the linear map $\operatorname{diag}(a_0,b_0)$ by interpolating $X_y,Y_y$ linearly with their
+linear parts, and the chart $C_y$ is deformed to its affine part by the rescaling
+$w\mapsto b_y+[C_y(\lambda w)-b_y]/\lambda$, $\lambda\to0$. The chart parameter $\lambda$ must start at $0$, so that
+the path starts at an affine map.
+
+\begin{definition}[Density family, rescaled charts and schedule]\label{def:pln-charts}
+\lean{SymplecticPacking.Qhat.Xs, SymplecticPacking.Qhat.Ys, SymplecticPacking.Qhat.Js,
+ SymplecticPacking.Qhat.Fs, SymplecticPacking.Qhat.fs, SymplecticPacking.Qhat.Lmap,
+ SymplecticPacking.Qhat.rb, SymplecticPacking.Qhat.bpt, SymplecticPacking.Qhat.Clam,
+ SymplecticPacking.Qhat.lambda0, SymplecticPacking.Qhat.lam}
+\uses{lem:pln-morse-inverse, def:pln-normalisations, def:pln-inner-map, def:pre-flat, lem:pre-flat}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$.
+\begin{enumerate}[label=(\alph*)]
+\item For $y\in\mathcal Y$ and $s\in\R$ put
+ \[
+  X_{y,s}(u)=(1-s)a_0(y)u+sX_y(u),\quad Y_{y,s}(v)=(1-s)b_0(y)v+sY_y(v),\quad
+  J_{y,s}(u,v)=X_{y,s}'(u)\,Y_{y,s}'(v),
+ \]
+ $F_{y,s}=(X_{y,s},Y_{y,s})$, and for $s\in[0,1]$ let $T_{y,s}$, $D_{y,s}$, $\mathcal A_{y,s}$, $E_{y,s}$ be the
+ normalisations of $J_{y,s}$ (Definition~\ref{def:pln-normalisations} with parameters $(y,s)\in\mathcal Y\times[0,1]$),
+ and $f_{y,s}=F_{y,s}\circ T_{y,s}^{-1}\circ D_{y,s}$ on $D(\mathcal A_{y,s}(\infty))$.
+\item For $(y,\lambda,w)$ in the open set $\mathcal W=\{(y,\lambda,w)\in\mathcal Y\times\R\times\R^2:\ \lambda w\in\mathcal C_y\}$ put
+ \[
+  C_{y,\lambda}(w)=b_y+\int_0^1DC_y(t\lambda w)\,w\,dt .
+ \]
+\item For numbers $\lambda_0\in(0,\frac12]$ and $\delta_s\in(0,\frac14]$, the \emph{schedule} is
+ \[
+  \lambda(s)=\lambda_0\,S(2s)+(1-\lambda_0)\,S\Bigl(\frac{s-1+\delta_s}{\delta_s}\Bigr),\qquad s\in[0,1].
+ \]
+\end{enumerate}
+\end{definition}
+
+Since $\mathcal C_y$ is convex and contains $0$, $\lambda w\in\mathcal C_y$ implies $t\lambda w\in\mathcal C_y$ for $t\in[0,1]$,
+so the integrand in (b) is defined and $C_{y,\lambda}$ is $C^\infty$ on $\mathcal W$. The schedule satisfies
+$\lambda(0)=0$, $\lambda(1)=1$, $\lambda(s)=\lambda_0S(2s)\le\lambda_0$ for $s\le1-\delta_s$ (the \emph{early range}),
+$\lambda=\lambda_0$ on $[\frac12,1-\delta_s]$, and $\lambda(s)\in[\lambda_0,1]$ for $s\ge1-\delta_s$ (the \emph{late range}),
+because $\delta_s\le\frac14$; $\lambda$ is smooth.
+
+\begin{lemma}[The rescaled charts]\label{lem:pln-chart-lambda}
+\lean{SymplecticPacking.Qhat.Clam_eq, SymplecticPacking.Qhat.Clam_zero_eq,
+ SymplecticPacking.Qhat.Clam_fderiv, SymplecticPacking.Qhat.Clam_det,
+ SymplecticPacking.Qhat.Clam_injOn, SymplecticPacking.Qhat.Clam_smooth}
+\uses{def:pln-charts}
+For $(y,\lambda,w)\in\mathcal W$: if $\lambda\ne0$ then $C_{y,\lambda}(w)=b_y+[C_y(\lambda w)-b_y]/\lambda$; $C_{y,0}(w)=b_y+DC_y(0)w$;
+$DC_{y,\lambda}(w)=DC_y(\lambda w)$, so $\det DC_{y,\lambda}=1$; and $C_{y,\lambda}$ is injective on
+$\{w:\lambda w\in\mathcal C_y\}$.
+\end{lemma}
+
+\begin{proof}
+For $\lambda\ne0$ the fundamental theorem of calculus gives
+\[
+ C_y(\lambda w)-C_y(0)=\int_0^1DC_y(t\lambda w)\lambda w\,dt.
+\]
+Divide by $\lambda$. The quotient formula has $w$-derivative $DC_y(\lambda w)$, and at $\lambda=0$ the formula is affine
+with linear part $DC_y(0)$. For $\lambda\ne0$, $C_{y,\lambda}$ is $C_y\circ(\lambda\,\cdot)$ followed by an affine bijection,
+and $C_y$ is injective on $\mathcal C_y$; $C_{y,0}$ is affine with $\det DC_y(0)=1$.
+\end{proof}
+
+Equivalently, with $g(\zeta)=(e^\zeta-1)/\zeta$ ($g(0)=1$) and $w=(u,v)$,
+\[
+ C_{y,\lambda}(u,v)=b_y-2\pi r_b(y)\,i\,v\,g(2\pi i\lambda v)-\frac{u\,e^{2\pi i\lambda v}}{\pi\bigl(r_b(y)+\sqrt{(p^*(y)+\lambda u)/\pi}\bigr)}
+ \qquad\text{on }\mathcal W .
+\]
+For $\lambda\ne0$ this follows from $C_y(\lambda w)-b_y=r_b(1-e^{2\pi i\lambda v})+(r_b-\sqrt{(p^*+\lambda u)/\pi})\,e^{2\pi i\lambda v}$
+and $r_b-\sqrt{(p^*+\lambda u)/\pi}=-\lambda u/\bigl(\pi(r_b+\sqrt{(p^*+\lambda u)/\pi})\bigr)$; for $\lambda=0$ it is
+$b_y+DC_y(0)w$.
+
+\begin{lemma}[The density family and the uniform energy bound]\label{lem:pln-energy}
+\lean{SymplecticPacking.Qhat.Js_expand, SymplecticPacking.Qhat.Js_pos, SymplecticPacking.Qhat.Js_zero,
+ SymplecticPacking.Qhat.fs_symplectic, SymplecticPacking.Qhat.fs_injective, SymplecticPacking.Qhat.fs_smooth,
+ SymplecticPacking.Qhat.fs_zero_eq, SymplecticPacking.Qhat.fs_deriv_zero,
+ SymplecticPacking.Qhat.fs_linear_near_zero, SymplecticPacking.Qhat.fs_eq_L_at_zero,
+ SymplecticPacking.Qhat.fs_eq_finner}
+\uses{def:pln-charts, lem:pln-morse-inverse, lem:pln-area}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$, $y\in\mathcal Y$, $s\in[0,1]$, and abbreviate
+$a_0=a_0(y)$, $b_0=b_0(y)$, $j_0=a_0b_0$.
+\begin{enumerate}[label=(\alph*)]
+\item $X_{y,s},Y_{y,s}$ are $C^\infty$ and strictly increasing, and
+ \[
+  J_{y,s}=(1-s)^2j_0+s(1-s)\bigl(a_0Y_y'+b_0X_y'\bigr)+s^2J_y\ \ge\ (1-s)^2j_0+s^2J_y>0,\qquad J_{y,s}(0)=j_0 .
+ \]
+\item For $E\ge0$,
+ \[
+  \mathcal A_{y,s}(E)\ \ge\ \pi j_0(1-s)^2E+s^2\mathcal A_y(E)\ \ge\ \mathcal A^-_y(E):=\frac{\pi j_0E\,\mathcal A_y(E)}{\pi j_0E+\mathcal A_y(E)}\quad(E>0).
+ \]
+ In particular $\mathcal A_{y,s}(\infty)=\infty$ for $s<1$, and $\mathcal A_{y,1}(\infty)=\mathcal A_y(\infty)$.
+\item (Uniform energy bound.) $\mathcal A^-_y$ is continuous and strictly increasing. If $\bar E>0$ and
+ $\mathcal A_{y,s}(\bar E)\ge p^\dagger$ for every $s\in[0,1]$ (in both families this holds for the explicit $\bar E$ of
+ Lemma~\ref{lem:pll-bounds}(d), respectively Definition~\ref{def:plc-data}), then $E_{y,s}(I)\le\bar E$ for
+ $0\le I\le p^\dagger$ and $s\in[0,1]$.
+\item $f_{y,s}$ is a symplectic embedding on the source domain $\mathcal D_y^{\rm src}$ of Theorem~\ref{thm:pln-inner}; the map $(y,s,z)\mapsto f_{y,s}(z)$ is smooth for $s\in[0,1]$ and $z\in\mathcal D_y^{\rm src}$. In the equal-ball case it is a diffeomorphism onto $\R^2$; $f_{y,s}(0)=0$ and $Df_{y,s}(0)=\mathbf L_y$ for every $s$;
+ $f_{y,0}=\mathbf L_y$ and $f_{y,1}=f_y$. If $(u,v)=T_{y,s}^{-1}D_{y,s}(z)$, then $f_{y,s}(z)=(X_{y,s}(u),Y_{y,s}(v))$ and
+ $u^2+v^2=E_{y,s}(\pi|z|^2)$.
+\item If the pair is exactly quadratic near the minimum, then $J_{y,s}=j_0$ on $|w|\le\rho_T(y)$ and
+ $f_{y,s}(z)=\mathbf L_yz$ for $|z|\le\sqrt{j_0}\,\rho_T(y)$, for every $s\in[0,1]$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $X_{y,s}'=(1-s)a_0+sX_y'$ and $Y_{y,s}'=(1-s)b_0+sY_y'$ are positive for $s\in[0,1]$ (one of the two terms is
+positive and the other nonnegative); expanding the product gives the formula, whose middle term is
+nonnegative. $X_y'(0)=a_0$ and $Y_y'(0)=b_0$ give $J_{y,s}(0)=j_0$.
+
+(b) Integrate (a) over $\{|w|^2\le E\}$: the first term gives $\pi j_0(1-s)^2E$, the middle term is nonnegative,
+and the last gives $s^2\mathcal A_y(E)$. For $\alpha,\beta>0$ the minimum of $\alpha(1-s)^2+\beta s^2$ over $s\in\R$ is
+$\alpha\beta/(\alpha+\beta)$. If $s<1$, the first term tends to $\infty$ with $E$. For $s=1$, $J_{y,1}=J_y$.
+
+(c) For $E>0$, $1/\mathcal A^-_y(E)=1/(\pi j_0E)+1/\mathcal A_y(E)$, so positivity, continuity and strict increase of
+$\mathcal A_y$ give those of $\mathcal A^-_y$. Since $\mathcal A_{y,s}$ is strictly increasing,
+$\mathcal A_{y,s}(\bar E)\ge p^\dagger\ge I$ implies $E_{y,s}(I)\le\bar E$. The gate is Lemma~\ref{lem:pll-bounds}(d) for the
+equal-ball family and is proved in Lemma~\ref{lem:plc-data} for the slice family.
+
+(d) The density $(y,s,w)\mapsto J_{y,s}(w)$ is $C^\infty$ on $\mathcal U=\mathcal Y\times\R\times\R^2$ and positive on
+$\mathcal P\times\R^2$ with $\mathcal P=\mathcal Y\times[0,1]$, and has the common positive constant germ. In the slice case apply the constant-tail extension on the common energy disc of radius $\sqrt{\bar E}$ and use normalization locality on $D(p^\dagger)$; in the equal-ball case setting (N) applies directly. $F_{y,s}$ is $C^\infty$ on $\mathcal U$, and for
+$s\in[0,1]$ it is a diffeomorphism of $\R^2$ onto $X_{y,s}(\R)\times Y_{y,s}(\R)$ with Jacobian $J_{y,s}$; for $s<1$
+both factors are onto $\R$ because the term $(1-s)a_0u$ (resp.\ $(1-s)b_0v$) is unbounded and $X_y,Y_y$ are
+increasing. Lemma~\ref{lem:pln-area}(iv), restricted by locality to the stated source domain, gives everything except the last three assertions, with
+$Df_{y,s}(0)=j_0^{-1/2}\operatorname{diag}(a_0,b_0)=\mathbf L_y$. For $s=0$ the density is the constant $j_0$, so
+$\mathcal M=0$, $T_{y,0}=\mathrm{id}$, $D_{y,0}=j_0^{-1/2}\mathrm{id}$ and $f_{y,0}=\mathbf L_y$; for $s=1$, $F_{y,1}=F_y$ and
+$f_{y,1}=f_y$. The last assertion is the computation in the proof of Theorem~\ref{thm:pln-inner}(b).
+
+(e) For $|w|\le\rho_T$, $X_y'(u)=a_0$ and $Y_y'(v)=b_0$ (Lemma~\ref{lem:pln-morse-inverse}(v)), hence
+$X_{y,s}'(u)=a_0$, $Y_{y,s}'(v)=b_0$ and $J_{y,s}(w)=j_0$; conclude as in Theorem~\ref{thm:pln-inner}(d).
+\end{proof}
+
+By (b) and (c), the energy needed to cover a disc of area $a<\mathcal A_y(\infty)$ is bounded uniformly in $s$, although
+$J_{y,s}$ is close to neither $J_{y,0}$ nor $J_{y,1}$ for intermediate $s$. The quantitative input of the isotopy is collected in the following definition. All
+entries are numbers, independent of $y$; each condition is required for every $y\in\mathcal Y$.
+
+\begin{definition}[Isotopy data]\label{def:pln-isotopy-data}
+\lean{SymplecticPacking.Qhat.Ec, SymplecticPacking.Qhat.DeltaP, SymplecticPacking.Qhat.Deltay,
+ SymplecticPacking.Qhat.Dx, SymplecticPacking.Qhat.Dy, SymplecticPacking.Qhat.delta_s,
+ SymplecticPacking.Qhat.pdag, SymplecticPacking.Qhat.Ebar, SymplecticPacking.Qhat.Xbar,
+ SymplecticPacking.Qhat.Ybar, SymplecticPacking.Qhat.Pmin, SymplecticPacking.Qhat.Pmax,
+ SymplecticPacking.Qhat.MC, SymplecticPacking.Qhat.Bstar, SymplecticPacking.Qhat.B3,
+ SymplecticPacking.Qhat.cnew, SymplecticPacking.Qhat.Rq, SymplecticPacking.Qhat.Rsupp,
+ SymplecticPacking.Qhat.Psupp, SymplecticPacking.Qhat.pon, SymplecticPacking.Qhat.pzero}
+\uses{lem:pln-morse-inverse, lem:pln-energy, def:pln-charts}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ with disc area $h$, and consider positive numbers
+\[
+ p_{\rm on},\ p_{\rm zero},\ p^\dagger,\ p^*_{\rm lo},\ p^*_{\rm hi},\ E_c,\ \Delta P,\ \Delta\theta,\ R_q,\ \delta_x,\ \delta_\theta,\
+ \delta_s,\ \bar E,\ \bar X,\ \bar Y,\ \lambda_0,\ P_{\min},\ P_{\max},\ B_{\rm lin},\ B^*,\ c_{\rm sh},
+\]
+where the radial range bounds satisfy
+\[
+ P_{\min}\le\tfrac12\min(p^*_{\rm lo},\Delta P),\qquad P_{\max}\ge\max(\tfrac32p^*_{\rm hi},h).
+\]
+From these numbers we form the \emph{derived constants}
+\begin{gather*}
+ M_C=\frac1{2\sqrt{\pi P_{\min}}}+2\sqrt{\pi P_{\max}},\\
+ R^\dagger=\sqrt{p^\dagger/\pi},\quad R_h=\sqrt{h/\pi},\quad r_b^+=\sqrt{p^*_{\rm hi}/\pi},\\
+ R_{\rm supp}=\max\bigl(R^\dagger,\ r_b^++c_{\rm sh}B_{\rm lin},\ r_b^++c_{\rm sh}B^*,\ R_q\bigr),\quad P_{\rm supp}=\pi R_{\rm supp}^2,\quad
+ p_{\rm bd}=\tfrac12(h+P_{\rm supp}).
+\end{gather*}
+The numbers are \emph{isotopy data} for the pair if, for every $y\in\mathcal Y$:
+\begin{enumerate}[label=(D\arabic*)]
+\item\label{it:pln-D1} $p_{\rm on}<p_{\rm zero}<p^\dagger$ and $p^*_{\rm lo}\le p^*(y)\le p^*_{\rm hi}<h$;
+\item\label{it:pln-D2} (endpoint margins) for all $u,v$ with $u^2<E_c$, $v^2<E_c$:
+ \[
+  \Delta P\le p^*(y)+X_y(u)\le h-\Delta P,\qquad p^*(y)+X_y(u)\le\pi R_q^2<h,\qquad |Y_y(v)|\le\tfrac12-\Delta\theta ;
+ \]
+\item\label{it:pln-D3} (interpolation error) $|a_0(y)u-X_y(u)|\le\delta_x$ and $|b_0(y)v-Y_y(v)|\le \delta_\theta$ for $u^2<E_c$, $v^2<E_c$;
+\item\label{it:pln-D4} (late range) $\delta_s\le\frac14$, $\delta_s\delta_x\le\frac12\Delta P$, $\delta_s\delta_\theta\le\frac12\Delta\theta$ and
+ either $(1-\delta_s)^2\mathcal A_y(E_c)>p^\dagger$, or the
+ uniform-energy alternative $\mathcal A_{y,s}(E_c)>p^\dagger$ for all $s\in[0,1]$;
+ the slice construction uses the latter with $E_c=\bar E$;
+\item\label{it:pln-D5} (uniform energy) $\mathcal A_{y,s}(\bar E)\ge p^\dagger$ for all $s\in[0,1]$, and
+ $\max(a_0(y)|u|,|X_y(u)|)\le\bar X$, $\max(b_0(y)|v|,|Y_y(v)|)\le\bar Y$ for $u^2\le\bar E$, $v^2\le\bar E$;
+\item\label{it:pln-D6} (early range) $\lambda_0\le\frac12$, $\lambda_0\bar X\le\frac12p^*_{\rm lo}$ and $\lambda_0\bar Y\le\frac14$;
+\item\label{it:pln-D7} (ranges of the path)
+ \begin{gather*}
+  R^\dagger\max\bigl(1,|(\mathbf A_y)_{11}|,|(\mathbf A_y)_{22}|\bigr)\le B_{\rm lin},\qquad
+  B^*\ge\min\Bigl(M_C\sqrt{\bar X^2+\bar Y^2},\ \frac{\bar X}{\sqrt{\pi p^*_{\rm lo}}}+2\pi r_b^+\bar Y\Bigr),\\
+  c_{\rm sh}\le\min\Bigl(\frac14,\ \frac{R_h-r_b^+}{8\max(R^\dagger,B_{\rm lin},B^*)}\Bigr).
+ \end{gather*}
+\end{enumerate}
+The schedule $\lambda(s)$ of Definition~\ref{def:pln-charts}(c) is formed with these $\lambda_0$ and $\delta_s$.
+\end{definition}
+
+The roles are as follows. The source disc of the inner family is $D(p^\dagger)$; the isotopy follows the inner
+family on the prescribed core $D(h-4e_q)\subset D(p_{\rm on})$ and is cut off between the areas $p_{\rm on}$ and $p_{\rm zero}$; $R_q$ bounds the radius
+of the endpoint image. $E_c$ is an energy level whose Morse coordinates are mapped by the endpoint
+strictly inside the chart, with moment margin $\Delta P$ and angular margin $\Delta\theta$; $\delta_s$ is the length
+of the late range, short enough that the interpolation error is at most half of each margin and that the
+whole source disc $D(p^\dagger)$ stays below the level $E_c$; $\bar E,\bar X,\bar Y$ are crude bounds valid for all
+$s$, used only in the early range, where the chart parameter is at most $\lambda_0$; $[P_{\min},P_{\max}]$ is the
+range of radial coordinates met by the segments in Definition~\ref{def:pln-charts}(b) and $M_C$ bounds
+$\|DC_y\|$ there; $B^*$ bounds the distance of the inner family from the centre $b_y$, $B_{\rm lin}$ bounds the linear
+segment, and $c_{\rm sh}$ shrinks all of these to at most $(R_h-r_b^+)/8$; $D(P_{\rm supp})$ is the disc outside of which
+nothing moves.
+
+\begin{lemma}[Existence and order of the data]\label{lem:pln-data}
+\lean{SymplecticPacking.Qhat.delta_s_pos, SymplecticPacking.Qhat.pdag_bounds,
+ SymplecticPacking.Qhat.cnew_pos, SymplecticPacking.Qhat.Rsupp_lt, SymplecticPacking.Qhat.Psupp_lt,
+ SymplecticPacking.Qhat.pon_bounds}
+\uses{def:pln-isotopy-data, lem:pln-energy}
+\begin{enumerate}[label=(\alph*)]
+\item The two potential families have the explicit isotopy data given in
+\S\ref{sec:pll-data} and Definition~\ref{def:plc-data}, respectively.
+\item For any isotopy data: $0<\delta_s\le\frac14$, $p^\dagger<\mathcal A_y(E_c)<h$,
+ $E_c\le E_{\rm rect}(y)$ and $p^\dagger<I_{\rm rect}(y)$ for every $y$, and
+ \[
+  R_{\rm supp}<R_h,\qquad\text{i.e.}\qquad p_{\rm on}<p^\dagger\le P_{\rm supp}<p_{\rm bd}<h .
+ \]
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) In the equal-ball family the positivity and source order are
+Lemma~\ref{lem:pll-source-order}, the pointwise and area gates are
+Lemma~\ref{lem:pll-bounds}, and the range and shrinking constants are
+Definition~\ref{def:pll-path-constants}, assembled in Lemma~\ref{lem:pll-instance}. For the slice family the
+verification is Lemma~\ref{lem:plc-data}.
+
+(b) $\delta_s>0$ is part of the data. $\mathcal A_y(E_c)>p^\dagger$ follows from either alternative of \ref{it:pln-D4}, taking $s=1$ in the uniform-energy case. If $|w|^2\le E_c'$ for
+some $E_c'<E_c$, then $u^2,v^2<E_c$, so by \ref{it:pln-D2} $F_y(w)$ lies in
+$[\Delta P-p^*,h-\Delta P-p^*]\times[-\frac12+\Delta\theta,\frac12-\Delta\theta]$; letting $E_c'\uparrow E_c$,
+$\mathcal A_y(E_c)\le(h-2\Delta P)(1-2\Delta\theta)<h$. The same inclusion shows that every point of
+$\{U_y-U_{\min}+V_y<E_c\}$ lies in $(0,h)\times(-\frac12,\frac12)$, so $E_c\le E_{\rm rect}(y)$, and then
+$I_{\rm rect}(y)\ge\mathcal A_y(E_c)>p^\dagger$. Consequently $R^\dagger<R_h$. By \ref{it:pln-D1}, $r_b^+<R_h$, and
+\ref{it:pln-D7} gives $r_b^++c_{\rm sh}\max(B_{\rm lin},B^*)\le r_b^++\frac18(R_h-r_b^+)<R_h$. By \ref{it:pln-D2}, $\pi R_q^2<h$.
+Hence $R_{\rm supp}<R_h$, $P_{\rm supp}<h$, and $P_{\rm supp}\ge\pi(R^\dagger)^2=p^\dagger$.
+\end{proof}
+
+\begin{proposition}[The common inner family]\label{prop:pln-inner-family}
+\lean{SymplecticPacking.Qhat.qinner, SymplecticPacking.Qhat.qinner_dom,
+ SymplecticPacking.Qhat.qinner_smooth, SymplecticPacking.Qhat.qinner_symplectic,
+ SymplecticPacking.Qhat.qinner_injOn, SymplecticPacking.Qhat.qinner_zero,
+ SymplecticPacking.Qhat.qinner_one, SymplecticPacking.Qhat.qinner_zero,
+ SymplecticPacking.Qhat.qinner_deriv_zero, SymplecticPacking.Qhat.A0_det,
+ SymplecticPacking.Qhat.qinner_radial, SymplecticPacking.Qhat.Es_le_Ebar,
+ SymplecticPacking.Qhat.Xs_le_Xbar, SymplecticPacking.Qhat.Ys_le_Ybar,
+ SymplecticPacking.Qhat.late_margin, SymplecticPacking.Qhat.qinner_sub_b_le,
+ SymplecticPacking.Qhat.qinner_one_norm_le}
+\uses{lem:pln-energy, lem:pln-chart-lambda, def:pln-isotopy-data, lem:pln-data, thm:pln-inner}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ with isotopy data. For $y\in\mathcal Y$, $s\in[0,1]$ and
+$z\in\bar D(p^\dagger)$ write $(u,v)=T_{y,s}^{-1}D_{y,s}(z)$.
+\begin{enumerate}[label=(\alph*)]
+\item (A priori bounds.) $u^2+v^2=E_{y,s}(\pi|z|^2)\le\bar E$, $|X_{y,s}(u)|\le\bar X$ and $|Y_{y,s}(v)|\le\bar Y$.
+\item (Late margins.) If $s\ge1-\delta_s$, then $u^2+v^2<E_c$ and
+ \[
+  \tfrac12\Delta P\le p^*(y)+X_{y,s}(u)\le h-\tfrac12\Delta P,\qquad |Y_{y,s}(v)|\le\tfrac12-\tfrac12\Delta\theta .
+ \]
+\item (The family.) For $t\in[0,1]$ the point $t\lambda(s)f_{y,s}(z)$ lies in $\mathcal C_y$ and has radial coordinate
+ $p^*(y)+t\lambda(s)X_{y,s}(u)\in[P_{\min},P_{\max}]$. Hence
+ \[
+  q^{\rm in}_{y,s}=C_{y,\lambda(s)}\circ f_{y,s}\colon D(p^\dagger)\to\C
+ \]
+ is defined, $(y,s,z)\mapsto q^{\rm in}_{y,s}(z)$ is smooth on $\mathcal Y\times[0,1]\times D(p^\dagger)$, and each
+ $q^{\rm in}_{y,s}$ is a symplectic embedding with
+ \[
+  q^{\rm in}_{y,0}(z)=b_y+\mathbf A_yz,\qquad q^{\rm in}_{y,1}=q_{{\rm in},y}|_{D(p^\dagger)},\qquad
+  q^{\rm in}_{y,s}(0)=b_y,\qquad Dq^{\rm in}_{y,s}(0)=\mathbf A_y .
+ \]
+\item (Ranges.) $|q^{\rm in}_{y,s}(z)-b_y|\le B^*$ and $|q^{\rm in}_{y,1}(z)|\le R_q$ for $z\in D(p^\dagger)$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a) By Lemma~\ref{lem:pln-energy}(d), $u^2+v^2=E_{y,s}(\pi|z|^2)$, and $E_{y,s}(\pi|z|^2)\le\bar E$ by \ref{it:pln-D5}
+and monotonicity of $\mathcal A_{y,s}$. $X_{y,s}(u)$ is a convex combination of $a_0u$ and $X_y(u)$ with $u^2\le\bar E$, so
+$|X_{y,s}(u)|\le\bar X$ by \ref{it:pln-D5}; likewise for $Y_{y,s}$.
+
+(b) By Lemma~\ref{lem:pln-energy}(b) and the first alternative of \ref{it:pln-D4}, or directly by its uniform-energy alternative,
+$\mathcal A_{y,s}(E_c)>p^\dagger\ge\pi|z|^2$, so $E_{y,s}(\pi|z|^2)<E_c$ and
+$u^2,v^2<E_c$. By \ref{it:pln-D2}, $\Delta P\le p^*+X_y(u)\le h-\Delta P$ and $|Y_y(v)|\le\frac12-\Delta\theta$. By
+\ref{it:pln-D3} and \ref{it:pln-D4}, $|X_{y,s}(u)-X_y(u)|=(1-s)|a_0u-X_y(u)|\le\delta_s\delta_x\le\frac12\Delta P$ and
+$|Y_{y,s}(v)-Y_y(v)|\le\delta_s\delta_\theta\le\frac12\Delta\theta$.
+
+(c) \emph{Early range} $s\le1-\delta_s$: $\lambda(s)\le\lambda_0$, so by (a) and \ref{it:pln-D6},
+$|t\lambda X_{y,s}(u)|\le\lambda_0\bar X\le\frac12p^*_{\rm lo}\le\frac12p^*(y)$ and $|t\lambda Y_{y,s}(v)|\le\lambda_0\bar Y\le\frac14$; the radial
+coordinate lies in $[\frac12p^*,\frac32p^*]\subset[P_{\min},P_{\max}]$. \emph{Late range} $s\ge1-\delta_s$: $\lambda\in[0,1]$, so
+$p^*+t\lambda X_{y,s}(u)$ lies between $p^*$ and $p^*+X_{y,s}(u)\in[\frac12\Delta P,h-\frac12\Delta P]$, hence in
+$[\min(p^*,\frac12\Delta P),\max(p^*,h)]\subset[P_{\min},P_{\max}]$, and $|t\lambda Y_{y,s}(v)|\le\frac12-\frac12\Delta\theta$ by (b).
+In both cases the point lies in $\mathcal C_y$, so $(y,\lambda(s),f_{y,s}(z))\in\mathcal W$.
+
+Smoothness follows from Lemma~\ref{lem:pln-energy}(d), the smoothness of $C$ on the open set $\mathcal W$
+(Definition~\ref{def:pln-charts}) and of $\lambda$. Symplecticity: $\det Dq^{\rm in}_{y,s}=\det DC_y(\lambda f_{y,s})\det Df_{y,s}=1$
+(Lemma~\ref{lem:pln-chart-lambda}). Injectivity: $f_{y,s}$ is injective, and $C_{y,\lambda}$ is injective on
+$\{w:\lambda w\in\mathcal C_y\}$. At $s=0$, $\lambda=0$ and $f_{y,0}=\mathbf L_y$, so $q^{\rm in}_{y,0}(z)=b_y+DC_y(0)\mathbf L_yz$. At
+$s=1$, $\lambda=1$, $C_{y,1}=C_y$ and $f_{y,1}=f_y$; since $p^\dagger<I_{\rm rect}(y)$ (Lemma~\ref{lem:pln-data}(b)),
+$q^{\rm in}_{y,1}=q_{{\rm in},y}$ on $D(p^\dagger)$. Since $f_{y,s}(0)=0$, $C_{y,\lambda}(0)=b_y$ and $Df_{y,s}(0)=\mathbf L_y$,
+$q^{\rm in}_{y,s}(0)=b_y$ and $Dq^{\rm in}_{y,s}(0)=DC_y(0)\mathbf L_y=\mathbf A_y$.
+
+(d) Let $w=f_{y,s}(z)=(x,\theta)$ and $\lambda=\lambda(s)$; by (a), $|x|\le\bar X$, $|\theta|\le\bar Y$. \emph{First bound.} At a
+point with radial coordinate $P$ the columns of $DC_y$ are orthogonal of lengths $1/(2\sqrt{\pi P})$ and $2\sqrt{\pi P}$,
+so $\|DC_y\|\le M_C$ for $P\in[P_{\min},P_{\max}]$; by (c) this applies along the segment in
+Definition~\ref{def:pln-charts}(b), and $|C_{y,\lambda}(w)-b_y|\le M_C|w|\le M_C\sqrt{\bar X^2+\bar Y^2}$. \emph{Second bound.} For
+$\lambda>0$ put $P=p^*+\lambda x>0$ and $\varphi=2\pi\lambda\theta$; then, with $r_b=r_b(y)$,
+\[
+ C_y(\lambda w)-b_y=r_b\bigl(1-e^{i\varphi}\bigr)+\bigl(r_b-\sqrt{P/\pi}\bigr)e^{i\varphi},\qquad
+ \bigl|r_b-\sqrt{P/\pi}\bigr|=\frac{|p^*-P|}{\pi(r_b+\sqrt{P/\pi})}\le\frac{\lambda|x|}{\sqrt{\pi p^*}},
+\]
+and $|1-e^{i\varphi}|\le|\varphi|$. Dividing by $\lambda$, $|C_{y,\lambda}(w)-b_y|\le|x|/\sqrt{\pi p^*}+2\pi r_b|\theta|\le
+\bar X/\sqrt{\pi p^*_{\rm lo}}+2\pi r_b^+\bar Y$; for $\lambda=0$, $|DC_y(0)w|\le|x|/(2\pi r_b)+2\pi r_b|\theta|$ obeys the same
+bound, since $2\pi r_b=2\sqrt{\pi p^*}\ge\sqrt{\pi p^*}$. Hence $|q^{\rm in}_{y,s}(z)-b_y|\le B^*$ by \ref{it:pln-D7}. Finally
+$\pi|q^{\rm in}_{y,1}(z)|^2=p^*+X_y(u)\le\pi R_q^2$ by \ref{it:pln-D2}, because $u^2<E_c$ by (b).
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The five-segment ordinary path}\label{sec:pln-five}
+
+The images of the inner family stay within $B^*$ of $b_y$, but $B^*$ may exceed the distance $R_h-r_b$ from $b_y$ to
+$\partial D(h)$; so $q^{\rm in}_{y,s}$ itself cannot be the isotopy. We give up area preservation for a moment: shrink by
+$c_{\rm sh}$, run the inner family inside the shrunken picture, and expand back. The ambient flow and the area correction
+of the next subsections apply to any path with the following properties.
+
+\begin{definition}[Ordinary path]\label{def:pln-ordinary-path}
+\lean{SymplecticPacking.Qhat.PathData, SymplecticPacking.Qhat.OrdinaryPath}
+Let $\mathcal Y\subset\R^d$ be open and let $p^\dagger>0$, $0<P_{\rm supp}<h$ and $0<c_{\rm sh}\le1$. An
+\emph{ordinary path} with these constants is a smooth map
+$\mathfrak e\colon\mathcal Y\times\R\times D(p^\dagger)\to\C$, $(y,t,z)\mapsto\mathfrak e_{y,t}(z)$, together with a smooth function
+$\mu\colon\R\to(0,\infty)$, such that for all $y\in\mathcal Y$ and $t\in\R$:
+\begin{enumerate}[label=(O\arabic*)]
+\item\label{it:pln-O1} $\mathfrak e_{y,t}=\mathrm{id}$ for $t\le0$ and $\mathfrak e_{y,t}=\mathfrak e_{y,1}$ for $t\ge1$;
+\item\label{it:pln-O2} $\mathfrak e_{y,t}$ is injective, $\det D\mathfrak e_{y,t}(z)=\mu_t$ for all $z$, $\mu_t\ge c_{\rm sh}^2$ and $\mu_1=1$;
+\item\label{it:pln-O3} $\pi|\mathfrak e_{y,t}(z)|^2\le P_{\rm supp}$ for all $z\in D(p^\dagger)$.
+\end{enumerate}
+\end{definition}
+
+By \ref{it:pln-O1}, $\mu_t=1$ for $t\le0$ and $\mu_t=1$ for $t\ge1$, and $\partial_t\mathfrak e_{y,t}=0$ for $t\notin(0,1)$.
+
+\begin{construction}[The five-segment path]\label{cons:pln-five-segment}
+\lean{SymplecticPacking.Qhat.Msig, SymplecticPacking.Qhat.seg, SymplecticPacking.Qhat.clock,
+ SymplecticPacking.Qhat.ordPath, SymplecticPacking.Qhat.ordPath_eq_seg, SymplecticPacking.Qhat.gammaDet}
+\uses{prop:pln-inner-family, def:pln-isotopy-data, def:pre-flat, lem:pre-flat}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ with isotopy data, and $c_{\rm sh}$ the constant of the data. For
+$y\in\mathcal Y$ and $\sigma\in[0,1]$ let
+$\mathbf M_{y,\sigma}=\mathrm{Rot}_{\pi\sigma}\operatorname{diag}\bigl(|(\mathbf A_y)_{11}|^\sigma,|(\mathbf A_y)_{22}|^\sigma\bigr)$, and for
+$z\in D(p^\dagger)$ define the five segments
+\begin{align*}
+ \mathfrak e^0_{y,\sigma}(z)&=c_{\rm sh}^\sigma z, &
+ \mathfrak e^1_{y,\sigma}(z)&=\sigma b_y+c_{\rm sh}z, &
+ \mathfrak e^2_{y,\sigma}(z)&=b_y+c_{\rm sh}\,\mathbf M_{y,\sigma}z,\\
+ \mathfrak e^3_{y,\sigma}(z)&=b_y+c_{\rm sh}\bigl(q^{\rm in}_{y,\sigma}(z)-b_y\bigr), &
+ \mathfrak e^4_{y,\sigma}(z)&=b_y+c_{\rm sh}^{1-\sigma}\bigl(q^{\rm in}_{y,1}(z)-b_y\bigr).
+\end{align*}
+Put $\mathfrak e_{y,t}=\mathfrak e^j_{y,S(5t-j)}$ for $t\in[\frac j5,\frac{j+1}5]$, $j=0,\dots,4$, $\mathfrak e_{y,t}=\mathrm{id}$ for $t\le0$
+and $\mathfrak e_{y,t}=\mathfrak e_{y,1}$ for $t\ge1$, and $\mu_t=c_{\rm sh}^{2S(5t)-2S(5t-4)}$.
+\end{construction}
+
+By \eqref{eq:pln-A0}, $\mathbf A_y=\mathrm{Rot}_\pi\operatorname{diag}(\alpha_1,\alpha_2)$ with
+$\alpha_i=|(\mathbf A_y)_{ii}|$ and $\alpha_1\alpha_2=1$. Hence $\mathbf M_{y,0}=\mathrm{Id}$, $\mathbf M_{y,1}=\mathbf A_y$,
+$\det\mathbf M_{y,\sigma}=(\alpha_1\alpha_2)^\sigma=1$, and $\|\mathbf M_{y,\sigma}\|\le\max(1,\alpha_1,\alpha_2)$.
+
+\begin{lemma}[The five-segment path is an ordinary path]\label{lem:pln-five-segment}
+\lean{SymplecticPacking.Qhat.ordPath_eq_seg, SymplecticPacking.Qhat.ordPath_smooth,
+ SymplecticPacking.Qhat.ordPath_of_nonpos, SymplecticPacking.Qhat.ordPath_of_one_le,
+ SymplecticPacking.Qhat.ordPath_injOn, SymplecticPacking.Qhat.ordPath_det,
+ SymplecticPacking.Qhat.gammaDet_bounds, SymplecticPacking.Qhat.ordPath_image,
+ SymplecticPacking.Qhat.Msig_zero, SymplecticPacking.Qhat.Msig_one, SymplecticPacking.Qhat.Msig_det,
+ SymplecticPacking.Qhat.Msig_norm_le}
+\uses{cons:pln-five-segment, prop:pln-inner-family, lem:pln-data, lem:pre-concat}
+The map $\mathfrak e$ of Construction~\ref{cons:pln-five-segment}, with $\mu$, is an ordinary path with constants
+$p^\dagger$, $P_{\rm supp}$, $h$, $c_{\rm sh}$, and $\mathfrak e_{y,1}=q^{\rm in}_{y,1}=q_{{\rm in},y}$ on $D(p^\dagger)$.
+\end{lemma}
+
+\begin{proof}
+\emph{Matching.} $\mathfrak e^0_{y,0}=\mathrm{id}$, $\mathfrak e^0_{y,1}=c_{\rm sh}z=\mathfrak e^1_{y,0}$, $\mathfrak e^1_{y,1}=b_y+c_{\rm sh}z=\mathfrak e^2_{y,0}$,
+$\mathfrak e^2_{y,1}=b_y+c_{\rm sh}\mathbf A_yz=b_y+c_{\rm sh}(q^{\rm in}_{y,0}(z)-b_y)=\mathfrak e^3_{y,0}$ (here $\lambda(0)=0$ is used),
+$\mathfrak e^3_{y,1}=\mathfrak e^4_{y,0}$, and $\mathfrak e^4_{y,1}=q^{\rm in}_{y,1}$.
+
+\emph{Smoothness.} Each segment is smooth on $\mathcal Y\times[0,1]\times D(p^\dagger)$ (Proposition~\ref{prop:pln-inner-family}(c)
+for $j=3,4$). On each interval $[\frac j5,\frac{j+1}5]$ the clock $S(5t-j)$ of Lemma~\ref{lem:pre-concat} takes values in $[0,1]$, and all its
+derivatives vanish at the endpoints. Hence all derivatives of $\mathfrak e$ containing at least one $t$-derivative vanish
+at $t\in\{0,\frac15,\dots,1\}$ from both sides, while the purely spatial derivatives agree there because consecutive
+segments match as maps. So the concatenation is smooth on $\mathcal Y\times\R\times D(p^\dagger)$
+(Lemma~\ref{lem:pre-concat}), and \ref{it:pln-O1} holds.
+
+\emph{Determinants and injectivity.} The spatial Jacobian determinants of the segments are $c_{\rm sh}^{2\sigma}$, $c_{\rm sh}^2$,
+$c_{\rm sh}^2\det\mathbf M_{y,\sigma}=c_{\rm sh}^2$, $c_{\rm sh}^2\det Dq^{\rm in}_{y,\sigma}=c_{\rm sh}^2$ and $c_{\rm sh}^{2(1-\sigma)}$; with $\sigma=S(5t-j)$ they equal
+$\mu_t$, which lies in $[c_{\rm sh}^2,1]$, and $\mu_1=1$. Segments $0,1,2$ are affine bijections; segments $3,4$ are the
+embeddings $q^{\rm in}_{y,\sigma}$ followed by affine bijections. This is \ref{it:pln-O2}.
+
+\emph{Ranges.} Let $|z|<R^\dagger$. Then $|\mathfrak e^0_{y,\sigma}(z)|<R^\dagger$, $|\mathfrak e^1_{y,\sigma}(z)|\le r_b^++c_{\rm sh}R^\dagger\le r_b^++c_{\rm sh}B_{\rm lin}$,
+$|\mathfrak e^2_{y,\sigma}(z)|\le r_b^++c_{\rm sh}B_{\rm lin}$ by \ref{it:pln-D7} and the norm bound for $\mathbf M_{y,\sigma}$, and
+$|\mathfrak e^3_{y,\sigma}(z)|\le r_b^++c_{\rm sh}B^*$ by Proposition~\ref{prop:pln-inner-family}(d). Finally
+$\mathfrak e^4_{y,\sigma}(z)=(1-\beta)b_y+\beta q^{\rm in}_{y,1}(z)$ with $\beta=c_{\rm sh}^{1-\sigma}\in[c_{\rm sh},1]$ is a convex combination of $b_y$ and
+$q^{\rm in}_{y,1}(z)$, so its modulus is at most $\max(r_b^+,R_q)$ (Proposition~\ref{prop:pln-inner-family}(d)). All these are
+at most $R_{\rm supp}$, which is \ref{it:pln-O3}. The constants satisfy $P_{\rm supp}<h$ and $0<c_{\rm sh}\le\frac14$ by
+Lemma~\ref{lem:pln-data}(b) and \ref{it:pln-D7}.
+\end{proof}
+
+Segments $2$ and $3$ stay within $(R_h-r_b^+)/8$ of $b_y$; segment $0$ stays in $\{|x|<R^\dagger\}$ and segment $1$
+in $\{|x|\le r_b^++c_{\rm sh}R^\dagger\}$; the last segment uses only convexity of the disc. Since $\mu_t$ does not depend on
+$z$ and $\mu_0=\mu_1=1$, the area correction of \S\ref{sec:pln-normal} acts on the core as the scaling
+$z\mapsto\mu_t^{-1/2}z$ and is the identity there at $t=0$ and $t=1$.
+
+%----------------------------------------------------------------------
+\subsection{The cut-off ambient flow}\label{sec:pln-flow}
+
+An ordinary path consists of embeddings of the source disc only. Push its velocity forward to the moving image,
+cut it off in the \emph{source} variable between the areas $p_{\rm on}$ and $p_{\rm zero}$, and extend by zero. Cutting off in
+the source keeps the field inside the image $\mathfrak e_{y,t}(D(p^\dagger))$, where $\mathfrak e_{y,t}^{-1}$ is defined. Fix
+$0<p_{\rm on}<p_{\rm zero}<p^\dagger$ and put $r_{\rm on}=\sqrt{p_{\rm on}/\pi}$, $r_{\rm zero}=\sqrt{p_{\rm zero}/\pi}$. The radial
+cutoff $\chi_{r_{\rm on},r_{\rm zero}}$ of Definition~\ref{def:pre-cutoff} is
+$\chi_{r_{\rm on},r_{\rm zero}}(z)=1-S\bigl((\pi|z|^2-p_{\rm on})/(p_{\rm zero}-p_{\rm on})\bigr)$; by Lemma~\ref{lem:pre-cutoff}(a) it is
+$C^\infty$, equals $1$ for $\pi|z|^2\le p_{\rm on}$ and $0$ for $\pi|z|^2\ge p_{\rm zero}$.
+
+\begin{lemma}[The ambient flow]\label{lem:pln-ambient-flow}
+\lean{SymplecticPacking.Qhat.chiCut, SymplecticPacking.Qhat.ordInv, SymplecticPacking.Qhat.ordVel,
+ SymplecticPacking.Qhat.ambientField, SymplecticPacking.Qhat.ambientFlow,
+ SymplecticPacking.Qhat.ambientField_good, SymplecticPacking.Qhat.ambientFlow_smooth,
+ SymplecticPacking.Qhat.ambientFlow_bijective, SymplecticPacking.Qhat.ambientFlow_eq_ordPath,
+ SymplecticPacking.Qhat.ambientFlow_det, SymplecticPacking.Qhat.ambientFlow_eq_id,
+ SymplecticPacking.Qhat.ambientFlow_disk, SymplecticPacking.Qhat.ambientFlow_openDisk,
+ SymplecticPacking.Qhat.ambientFlow_det_pos}
+\uses{def:pln-ordinary-path, def:pre-cutoff, lem:pre-cutoff}
+Let $\mathfrak e$ be an ordinary path and $0<p_{\rm on}<p_{\rm zero}<p^\dagger$. Let
+$\mathcal O=\{(y,t,x):x\in\mathfrak e_{y,t}(D(p^\dagger))\}$ and define
+\[
+ W_{y,t}(x)=\chi_{r_{\rm on},r_{\rm zero}}\bigl(\mathfrak e_{y,t}^{-1}(x)\bigr)\,(\partial_t\mathfrak e_{y,t})\bigl(\mathfrak e_{y,t}^{-1}(x)\bigr)\quad\text{on }\mathcal O,
+ \qquad W_{y,t}(x)=0\quad\text{otherwise}.
+\]
+Let $\phi_{y,t}$ be the flow of the time-dependent field $W_{y,t}$ with $\phi_{y,0}=\mathrm{id}$.
+\begin{enumerate}[label=(\alph*)]
+\item $W$ is $C^\infty$ on $\mathcal Y\times\R\times\C$ and vanishes for $t\notin(0,1)$ and for $\pi|x|^2>P_{\rm supp}$. Hence
+ $\phi_{y,t}$ is defined for all $t$, each $\phi_{y,t}$ is a diffeomorphism of $\C$, and $(y,t,x)\mapsto\phi_{y,t}(x)$ is $C^\infty$.
+\item $\phi_{y,t}(z)=\mathfrak e_{y,t}(z)$ for $\pi|z|^2\le p_{\rm on}$, and $\det D\phi_{y,t}(z)=\mu_t$ there.
+\item $\phi_{y,t}=\mathrm{id}$ on $\{\pi|x|^2>P_{\rm supp}\}$; $\phi_{y,t}$ maps $\bar D(P)$ onto itself for every
+ $P\ge P_{\rm supp}$ and $D(P)$ onto itself for every $P>P_{\rm supp}$, in particular $D(h)$ onto $D(h)$; and
+ $\det D\phi_{y,t}>0$ everywhere. For $t\le0$, $\phi_{y,t}=\mathrm{id}$; for $t\ge1$, $\phi_{y,t}=\phi_{y,1}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) The map $\hat{\mathfrak e}(y,t,z)=(y,t,\mathfrak e_{y,t}(z))$ is smooth and injective on the open set
+$\mathcal Y\times\R\times D(p^\dagger)$, with Jacobian determinant $\mu_t>0$; by the inverse function theorem it is a
+diffeomorphism onto the open set $\mathcal O$. Hence $(y,t,x)\mapsto\mathfrak e_{y,t}^{-1}(x)$ is smooth on $\mathcal O$, and so is $W$.
+$W$ vanishes on $\mathcal O$ outside $K=\hat{\mathfrak e}(\mathcal Y\times[0,1]\times\bar D(p_{\rm zero}))$, because $\chi_{r_{\rm on},r_{\rm zero}}(z)=0$ for
+$\pi|z|^2\ge p_{\rm zero}$ and $\partial_t\mathfrak e=0$ for $t\notin(0,1)$. The set $K$ is closed in $\mathcal Y\times\R\times\C$: if
+$(y_n,t_n,\mathfrak e_{y_n,t_n}(z_n))\to(y,t,x)$ with $y\in\mathcal Y$, $t_n\in[0,1]$, $z_n\in\bar D(p_{\rm zero})$, pass to a subsequence
+with $z_n\to z\in\bar D(p_{\rm zero})$; continuity gives $x=\mathfrak e_{y,t}(z)$. And $K\subset\mathcal O$ because $p_{\rm zero}<p^\dagger$.
+The open sets $\mathcal O$ and the complement of $K$ cover $\mathcal Y\times\R\times\C$, and $W$ is smooth on both, so $W$ is
+smooth. By \ref{it:pln-O3}, $W_{y,t}(x)=0$ for $\pi|x|^2>P_{\rm supp}$. A smooth time-dependent vector field depending smoothly
+on parameters and vanishing outside a fixed bounded set of $x$ has a global flow by diffeomorphisms, smooth in
+$(y,t,x)$.
+
+(b) For $\pi|z|^2\le p_{\rm on}$, the curve $t\mapsto\mathfrak e_{y,t}(z)$ satisfies
+$\frac d{dt}\mathfrak e_{y,t}(z)=\chi_{r_{\rm on},r_{\rm zero}}(z)\,\partial_t\mathfrak e_{y,t}(z)=W_{y,t}(\mathfrak e_{y,t}(z))$ and $\mathfrak e_{y,0}(z)=z$; by uniqueness of
+solutions it is $t\mapsto\phi_{y,t}(z)$. On the open disc $D(p_{\rm on})$ the two maps agree, so their derivatives agree and
+$\det D\phi_{y,t}=\mu_t$; on its boundary circle this follows by continuity of $\det D\phi_{y,t}$.
+
+(c) Where $W_{y,t}$ vanishes for all $t$ the constant curve is a solution, so $\phi_{y,t}=\mathrm{id}$ on $\{\pi|x|^2>P_{\rm supp}\}$.
+Since $\phi_{y,t}$ is a bijection of $\C$ fixing every point outside $\bar D(P_{\rm supp})$, it maps $\bar D(P_{\rm supp})$ onto itself,
+hence $\bar D(P)$ and $D(P)$ onto themselves for $P\ge P_{\rm supp}$, respectively $P>P_{\rm supp}$; $h>P_{\rm supp}$. The determinant
+$\det D\phi_{y,t}$ never vanishes, is continuous in $t$ and equals $1$ at $t=0$. Since $W_{y,t}=0$ for $t\notin(0,1)$, the
+flow is constant in $t$ on $(-\infty,0]$ and on $[1,\infty)$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{Area normalisation of the ambient flow}\label{sec:pln-normal}
+
+The flow $\phi_{y,t}$ has the right support and the right endpoint on the core, but it does not preserve area. We
+correct it with the normalisations of \S\ref{sec:pln-normalisation-maps}, applied to
+$G_{y,t}(w)=\phi_{y,t}(w/\sqrt{\mu_t})$, whose density is $1$ near the origin for every $t$; this lets
+Lemma~\ref{lem:pln-area}(v) apply with one radius for the whole family.
+
+\begin{lemma}[Normalisation of the whole path]\label{lem:pln-normalisation}
+\lean{SymplecticPacking.Qhat.Jphi, SymplecticPacking.Qhat.Gphi, SymplecticPacking.Qhat.Jhat,
+ SymplecticPacking.Inner.Acal, SymplecticPacking.Qhat.normalize, SymplecticPacking.Qhat.qhat,
+ SymplecticPacking.Qhat.Jhat_eq, SymplecticPacking.Qhat.Jhat_pos, SymplecticPacking.Qhat.Jhat_smooth,
+ SymplecticPacking.Qhat.Acal_eq_of_image, SymplecticPacking.Inner.Acal_bijective, SymplecticPacking.Qhat.Jhat_core,
+ SymplecticPacking.Inner.Acal_eq_of_le, SymplecticPacking.Qhat.Jhat_collar, SymplecticPacking.Qhat.Acal_collar,
+ SymplecticPacking.Qhat.qhat_smooth, SymplecticPacking.Qhat.qhat_symplectic,
+ SymplecticPacking.Qhat.qhat_bijective, SymplecticPacking.Qhat.qhat_disk,
+ SymplecticPacking.Qhat.qhat_openDisk, SymplecticPacking.Qhat.qhat_core,
+ SymplecticPacking.Qhat.qhat_common_core, SymplecticPacking.Qhat.qhat_collar,
+ SymplecticPacking.Qhat.qhat_zero, SymplecticPacking.Qhat.qhat_of_nonpos,
+ SymplecticPacking.Qhat.qhat_of_one_le}
+\uses{lem:pln-ambient-flow, lem:pln-rotation, lem:pln-area}
+Let $\mathfrak e$ be an ordinary path, $0<p_{\rm on}<p_{\rm zero}<p^\dagger$, and $\phi$ the ambient flow of
+Lemma~\ref{lem:pln-ambient-flow}. For $(y,t)\in\mathcal Y\times\R$ put
+\[
+ G_{y,t}(w)=\phi_{y,t}\bigl(w/\sqrt{\mu_t}\bigr),\qquad \hat J_{y,t}(w)=\det DG_{y,t}(w)=\frac{\det D\phi_{y,t}(w/\sqrt{\mu_t})}{\mu_t},
+\]
+let $\hat T_{y,t}$, $\hat D_{y,t}$ be the rotation and area normalisations of $\hat J_{y,t}$ (parameters $(y,t)$), and define
+\[
+ \mathcal N_{y,t}=\mu_t^{-1/2}\,\hat T_{y,t}^{-1}\circ\hat D_{y,t},\qquad
+ \hat q_{y,t}=\phi_{y,t}\circ\mathcal N_{y,t}=G_{y,t}\circ\hat T_{y,t}^{-1}\circ\hat D_{y,t}.
+\]
+\begin{enumerate}[label=(\alph*)]
+\item $\hat J$ is $C^\infty$ and positive on $\mathcal Y\times\R\times\C$; $\hat J_{y,t}(w)=1$ for $\pi|w|^2\le\mu_tp_{\rm on}$, in particular for
+ $|w|\le\rho_c=c_{\rm sh}\sqrt{p_{\rm on}/\pi}$; $\hat J_{y,t}(w)=1/\mu_t$ for $\pi|w|^2>\mu_tP_{\rm supp}$; and
+ $\mathcal A_{\hat J_{y,t}}(\mu_tP/\pi)=\operatorname{area}\phi_{y,t}(\bar D(P))$, which equals $\mu_tP$ for $P\le p_{\rm on}$ and $P$ for
+ $P\ge P_{\rm supp}$. In particular $\mathcal A_{\hat J_{y,t}}(\infty)=\infty$.
+\item Each $\hat q_{y,t}$ is a symplectic diffeomorphism of $\C$; it maps $\bar D(P)$ onto itself for every $P\ge P_{\rm supp}$ and
+ $D(P)$ onto itself for every $P>P_{\rm supp}$, in particular $D(h)$ and $\bar D(h)$.
+\item (Core.) $\hat q_{y,t}(z)=\mathfrak e_{y,t}(z/\sqrt{\mu_t})$ for $\pi|z|^2\le\mu_tp_{\rm on}$, in particular on the common core
+ $\pi|z|^2\le c_{\rm sh}^2p_{\rm on}$.
+\item (Collar.) $\hat q_{y,t}(z)=z$ for $\pi|z|^2>P_{\rm supp}$.
+\item (Smoothness.) $(y,t,z)\mapsto\hat q_{y,t}(z)$ and $(y,t,x)\mapsto\hat q_{y,t}^{-1}(x)$ are $C^\infty$ on $\mathcal Y\times\R\times\C$,
+ including $z=0$; $\hat q_{y,t}=\mathrm{id}$ for $t\le0$ and $\hat q_{y,t}=\hat q_{y,1}$ for $t\ge1$.
+\item (Endpoint.) $\hat q_{y,1}=\mathfrak e_{y,1}$ on $\bar D(p_{\rm on})$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $\det D\phi_{y,t}>0$ is smooth in $(y,t,x)$ (Lemma~\ref{lem:pln-ambient-flow}), and $\mu_t\ge c_{\rm sh}^2>0$ is smooth; the
+formula for $\hat J$ is the chain rule. If $\pi|w|^2\le\mu_tp_{\rm on}$, then $x=w/\sqrt{\mu_t}$ has $\pi|x|^2\le p_{\rm on}$, where
+$\det D\phi_{y,t}=\mu_t$ (Lemma~\ref{lem:pln-ambient-flow}(b)); so $\hat J_{y,t}(w)=1$, and $\mu_t\ge c_{\rm sh}^2$ gives the uniform
+radius $\rho_c$. If $\pi|w|^2>\mu_tP_{\rm supp}$, then $\phi_{y,t}=\mathrm{id}$ near $w/\sqrt{\mu_t}$, so $\hat J_{y,t}(w)=1/\mu_t$. Since
+$G_{y,t}$ is a diffeomorphism with Jacobian $\hat J_{y,t}$, the change of variables formula gives
+$\mathcal A_{\hat J_{y,t}}(\mu_tP/\pi)=\operatorname{area}G_{y,t}(\{\pi|w|^2\le\mu_tP\})=\operatorname{area}\phi_{y,t}(\bar D(P))$. For $P\le p_{\rm on}$,
+$\phi_{y,t}=\mathfrak e_{y,t}$ on $\bar D(P)$ with constant Jacobian $\mu_t$, so the area is $\mu_tP$; for $P\ge P_{\rm supp}$, $\phi_{y,t}$
+maps $\bar D(P)$ onto itself (Lemma~\ref{lem:pln-ambient-flow}(c)), so the area is $P$.
+
+Setting (N) applies with $\mathcal P=\mathcal Y\times\R$ (open), $\mathcal U=\mathcal P\times\R^2$ and $J=\hat J$, which equals $1$ on
+$|w|\le\rho_c$ for all parameters. By Lemmas~\ref{lem:pln-rotation} and~\ref{lem:pln-area}, $\hat T$, $\hat T^{-1}$ and $\hat D$ are
+smooth in all variables, $\hat T_{y,t}=\hat T_{y,t}^{-1}=\mathrm{id}$ on $|w|\le\rho_c$, $\hat D_{y,t}$ is a diffeomorphism of $\C$, and
+$\hat q_{y,t}=G_{y,t}\circ\hat T_{y,t}^{-1}\circ\hat D_{y,t}$ is a symplectic diffeomorphism of $\C$ onto $G_{y,t}(\C)=\C$
+(Lemma~\ref{lem:pln-area}(iv) with $F=G_{y,t}$).
+
+(d) Let $I=\pi|z|^2>P_{\rm supp}$. By (a), $\mathcal A_{\hat J_{y,t}}(\mu_tI/\pi)=I$, so $|\hat D_{y,t}(z)|^2=\mu_tI/\pi$ and, $\hat D$ being
+radial, $\hat D_{y,t}(z)=\sqrt{\mu_t}\,z$. On the circle through $w=\sqrt{\mu_t}z$ the density $\hat J_{y,t}$ is the constant $1/\mu_t$,
+so $\mathcal M_{\hat J_{y,t}}(w)=0$ and $\hat T_{y,t}^{-1}(w)=w$. Hence $\mathcal N_{y,t}(z)=z$ and $\hat q_{y,t}(z)=\phi_{y,t}(z)=z$.
+
+(b) $\hat q_{y,t}$ is a bijection of $\C$ fixing every point outside $\bar D(P_{\rm supp})$ by (d), so it maps $\bar D(P_{\rm supp})$, hence
+$\bar D(P)$ for $P\ge P_{\rm supp}$ and $D(P)$ for $P>P_{\rm supp}$, onto itself.
+
+(c) Let $\rho=\sqrt{\mu_tp_{\rm on}/\pi}$. By (a), $\hat J_{y,t}=1$ on $|w|\le\rho$, so Lemma~\ref{lem:pln-area}(v) gives
+$\hat q_{y,t}(z)=G_{y,t}(z)=\phi_{y,t}(z/\sqrt{\mu_t})$ for $|z|\le\rho$; since $\pi|z/\sqrt{\mu_t}|^2\le p_{\rm on}$, this equals
+$\mathfrak e_{y,t}(z/\sqrt{\mu_t})$ by Lemma~\ref{lem:pln-ambient-flow}(b).
+
+(e) Joint smoothness of $\hat q$ was shown in the proof of (a) (all factors are smooth in $(y,t,\cdot)$). For $t\le0$,
+$\phi_{y,t}=\mathrm{id}$ and $\mu_t=1$, so $\hat J=1$, $\hat T=\hat D=\mathrm{id}$ and $\hat q_{y,t}=\mathrm{id}$; for $t\ge1$, $\phi_{y,t}=\phi_{y,1}$ and
+$\mu_t=1$, so $\hat q_{y,t}=\hat q_{y,1}$. The map $(y,t,z)\mapsto(y,t,\hat q_{y,t}(z))$ is a smooth bijection of
+$\mathcal Y\times\R\times\C$ with Jacobian determinant $\det D\hat q_{y,t}=1$; by the inverse function theorem its inverse,
+$(y,t,x)\mapsto(y,t,\hat q_{y,t}^{-1}(x))$, is smooth.
+
+(f) is (c) for $t=1$, where $\mu_1=1$.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The Hamiltonian}\label{sec:pln-ham}
+
+A symplectic isotopy of the plane is Hamiltonian: its velocity field $\xi$ satisfies $d(\iota_\xi\omega_\C)=0$, and a closed
+one-form on the plane is exact. The primitive is written down by the radial (Poincar\'e) formula in the source
+variable, and the additive constant is fixed by evaluation at a point of the collar, where the isotopy is the identity
+and the primitive is constant.
+
+\begin{construction}[The Hamiltonian]\label{cons:pln-hamiltonian}
+\lean{SymplecticPacking.Qhat.aq, SymplecticPacking.Qhat.hq, SymplecticPacking.Qhat.pbd,
+ SymplecticPacking.Qhat.zbd, SymplecticPacking.Qhat.qhatInv, SymplecticPacking.Qhat.Hq,
+ SymplecticPacking.Qhat.Qham}
+\uses{lem:pln-normalisation}
+For an ordinary path with normalised isotopy $\hat q$, $y\in\mathcal Y$, $t\in\R$ and $z,w\in\C$, put
+\begin{gather*}
+ \mathfrak a_{y,t}(z)[w]=\omega_\C\bigl(\partial_t\hat q_{y,t}(z),\,D\hat q_{y,t}(z)w\bigr),\qquad
+ \mathfrak h_{y,t}(z)=\int_0^1\mathfrak a_{y,t}(rz)[z]\,dr,\\
+ z_{\rm bd}=\bigl(\sqrt{p_{\rm bd}/\pi},0\bigr),\quad p_{\rm bd}=\tfrac12(h+P_{\rm supp}),\qquad
+ Q_{y,t}(x)=-\bigl[\mathfrak h_{y,t}-\mathfrak h_{y,t}(z_{\rm bd})\bigr]\bigl(\hat q_{y,t}^{-1}(x)\bigr).
+\end{gather*}
+\end{construction}
+
+\begin{proposition}[$Q$ generates $\hat q$]\label{prop:pln-hamiltonian}
+\lean{SymplecticPacking.Qhat.aq_closed, SymplecticPacking.Qhat.hq_deriv,
+ SymplecticPacking.Qhat.Qham_smooth, SymplecticPacking.Qhat.Qham_support,
+ SymplecticPacking.Qhat.qhat_hamiltonian, SymplecticPacking.Qhat.qhat_interface}
+\uses{cons:pln-hamiltonian, lem:pln-normalisation}
+$Q$ is $C^\infty$ on $\mathcal Y\times\R\times\C$; $Q_{y,t}$ and all its derivatives vanish on $\{\pi|x|^2>P_{\rm supp}\}$ for every
+$(y,t)$, and $Q_{y,t}=0$ for $t\notin(0,1)$. With $\xi_{y,t}=(\partial_t\hat q_{y,t})\circ\hat q_{y,t}^{-1}$,
+\[
+ \iota_{\xi_{y,t}}\omega_\C=-dQ_{y,t},\qquad \partial_t\hat q_{y,t}=\xi_{y,t}\circ\hat q_{y,t},
+\]
+so $\hat q_{y,\cdot}$ is the isotopy generated by $Q_{y,\cdot}$ in the convention $\iota_X\omega_\C=-dQ$.
+\end{proposition}
+
+\begin{proof}
+By definition $\mathfrak a_{y,t}=\hat q_{y,t}^*(\iota_{\xi_{y,t}}\omega_\C)$. Differentiating $\hat q_{y,t}^*\omega_\C=\omega_\C$ in $t$ gives
+$\hat q_{y,t}^*\mathcal L_{\xi_{y,t}}\omega_\C=0$, so $d\iota_{\xi_{y,t}}\omega_\C=\mathcal L_{\xi_{y,t}}\omega_\C=0$ and $\mathfrak a_{y,t}$ is closed. The plane
+is star-shaped about $0$, so the radial primitive satisfies $d\mathfrak h_{y,t}=\mathfrak a_{y,t}$; it is smooth in $(y,t,z)$ because the
+integrand is. Then $-dQ_{y,t}=(\hat q_{y,t}^{-1})^*d\mathfrak h_{y,t}=\iota_{\xi_{y,t}}\omega_\C$. On the connected set
+$\{\pi|z|^2>P_{\rm supp}\}$, $\hat q_{y,t}=\mathrm{id}$ for all $t$ (Lemma~\ref{lem:pln-normalisation}(d)), so $\partial_t\hat q_{y,t}=0$ and
+$\mathfrak a_{y,t}=0$ there; hence $\mathfrak h_{y,t}$ is constant on this set, equal to $\mathfrak h_{y,t}(z_{\rm bd})$ because
+$P_{\rm supp}<p_{\rm bd}$. Therefore $Q_{y,t}$ vanishes identically on $\hat q_{y,t}(\{\pi|z|^2>P_{\rm supp}\})=\{\pi|x|^2>P_{\rm supp}\}$, with all
+derivatives. For $t\notin(0,1)$, $\partial_t\hat q_{y,t}=0$, so $\mathfrak a_{y,t}=0$ and $Q_{y,t}=0$. Smoothness of $Q$ follows from
+that of $\mathfrak h$ and of $(y,t,x)\mapsto\hat q_{y,t}^{-1}(x)$ (Lemma~\ref{lem:pln-normalisation}(e)).
+\end{proof}
+
+The radial primitive gives $\hat q_{y,t}^*(\iota_{\xi_{y,t}}\omega_\C)=+d\mathfrak h_{y,t}$ in the source. The sign of $Q$ matches the
+fibre convention $\iota_X\omega_\C=-dQ$ of \Msec{sec:cmp}, which is the convention used for the suspension in
+\Msec{sec:hdl}.
+
+%----------------------------------------------------------------------
+\subsection{The whole-disc isotopy}\label{sec:pln-isotopy}
+
+\begin{theorem}[Whole-disc Hamiltonian isotopy with prescribed endpoint on the core]\label{thm:pln-isotopy}
+\lean[needed]{SymplecticPacking.Qhat.qhat_interface, SymplecticPacking.Qhat.qhat_one_eq,
+ SymplecticPacking.Qhat.qhat_disk, SymplecticPacking.Qhat.qhat_openDisk,
+ SymplecticPacking.Qhat.qhat_of_nonpos, SymplecticPacking.Qhat.qhat_of_one_le, SymplecticPacking.Qhat.qhat_core,
+ SymplecticPacking.Qhat.qhatP, SymplecticPacking.Qhat.qhatP_spec}
+\uses{prop:pln-inner-family, lem:pln-five-segment, lem:pln-ambient-flow, lem:pln-normalisation, prop:pln-hamiltonian, thm:pln-inner}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ with disc area $h$, and let isotopy data be given
+(Definition~\ref{def:pln-isotopy-data}). Let $\hat q$ and $Q$ be obtained from the five-segment path of
+Construction~\ref{cons:pln-five-segment} by Lemma~\ref{lem:pln-normalisation}, with the levels $p_{\rm on}<p_{\rm zero}$ of the data,
+and Construction~\ref{cons:pln-hamiltonian}. Then $P_{\rm supp}<h$, and for every $y\in\mathcal Y$:
+\begin{enumerate}[label=(\alph*)]
+\item each $\hat q_{y,t}$ is a symplectic diffeomorphism of $\C$ which is the identity on $\{\pi|z|^2>P_{\rm supp}\}$ and maps
+ $\bar D(P)$ onto itself for every $P\ge P_{\rm supp}$, in particular $\bar D(h)$ and $D(h)$;
+\item $\hat q_{y,t}=\mathrm{id}$ for $t\le0$ and $\hat q_{y,t}=\hat q_{y,1}$ for $t\ge1$;
+\item (same endpoint on the core) $\hat q_{y,1}(z)=q_{{\rm in},y}(z)$ for $\pi|z|^2\le p_{\rm on}$;
+\item $Q_{y,t}$ vanishes with all derivatives on $\{\pi|x|^2>P_{\rm supp}\}$ and for $t\notin(0,1)$, and generates $\hat q_{y,t}$:
+ $\partial_t\hat q_{y,t}=\xi_{y,t}\circ\hat q_{y,t}$ with $\iota_{\xi_{y,t}}\omega_\C=-dQ_{y,t}$;
+\item (core formula) $\hat q_{y,t}(z)=\mathfrak e_{y,t}(z/\sqrt{\mu_t})$ for $\pi|z|^2\le\mu_tp_{\rm on}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:pln-five-segment} the five-segment path is an ordinary path with constants
+$p^\dagger$, $P_{\rm supp}$, $h$, $c_{\rm sh}$; $p_{\rm on}<p_{\rm zero}<p^\dagger$ by \ref{it:pln-D1}, and $P_{\rm supp}<h$ by
+Lemma~\ref{lem:pln-data}(b). Items (a), (b) and (e) are
+Lemma~\ref{lem:pln-normalisation}(b)--(e); (d) is Proposition~\ref{prop:pln-hamiltonian}. For (c),
+Lemma~\ref{lem:pln-normalisation}(f) gives $\hat q_{y,1}=\mathfrak e_{y,1}$ on $\bar D(p_{\rm on})$, and
+$\mathfrak e_{y,1}=q^{\rm in}_{y,1}=q_{{\rm in},y}$ on $D(p^\dagger)\supset\bar D(p_{\rm on})$ by Lemma~\ref{lem:pln-five-segment}.
+\end{proof}
+
+On the annulus $\{p_{\rm on}<\pi|z|^2\le h\}$ we use only $\hat q_{y,1}(\bar D(h))=\bar D(h)$:
+
+\begin{corollary}[Comparison on the whole closed disc]\label{thm:pln-full-disc}
+\lean[needed]{SymplecticPacking.Qhat.R_q_le, SymplecticPacking.Qhat.endpoint_comparison, SymplecticPacking.Qhat.full_comparison}
+\uses{thm:pln-isotopy}
+In the situation of Theorem~\ref{thm:pln-isotopy}, let $y\in\mathcal Y$, let $\Upsilon\colon[0,h]\to\R$ be any function,
+$g\colon[0,h]\to\R$ nondecreasing and $\eps\ge0$, and suppose that $\Upsilon(\pi|q_{{\rm in},y}(z)|^2)\le g(\pi|z|^2)+\eps$ whenever
+$\pi|z|^2\le p_{\rm on}$, and that $\sup_{[0,h]}\Upsilon\le g(p_{\rm on})+\eps$. Then
+\[
+ \Upsilon\bigl(\pi|\hat q_{y,1}(z)|^2\bigr)\le g(\pi|z|^2)+\eps\qquad\text{for all }z\in\bar D(h).
+\]
+\end{corollary}
+
+\begin{proof}
+For $\pi|z|^2\le p_{\rm on}$ use Theorem~\ref{thm:pln-isotopy}(c). For $p_{\rm on}<\pi|z|^2\le h$, $\hat q_{y,1}(z)\in\bar D(h)$ by
+Theorem~\ref{thm:pln-isotopy}(a), so $\Upsilon(\pi|\hat q_{y,1}(z)|^2)\le\sup\Upsilon\le g(p_{\rm on})+\eps\le g(\pi|z|^2)+\eps$.
+\end{proof}
+
+All constructions above were made with $y$ as a variable, and the data are numbers independent of $y$. The
+following theorem records the consequences used for families.
+
+\begin{theorem}[Parametrised version]\label{thm:pln-param}
+\uses{thm:pln-isotopy, lem:pln-normalisation, prop:pln-hamiltonian, prop:pln-inner-family}
+In the situation of Theorem~\ref{thm:pln-isotopy}:
+\begin{enumerate}[label=(\alph*)]
+\item the maps $(y,t,z)\mapsto\hat q_{y,t}(z)$, $(y,t,x)\mapsto\hat q_{y,t}^{-1}(x)$ and $(y,t,x)\mapsto Q_{y,t}(x)$ are $C^\infty$ on
+ $\mathcal Y\times\R\times\C$, and $(y,s,z)\mapsto q^{\rm in}_{y,s}(z)$ is smooth on $\mathcal Y\times[0,1]\times D(p^\dagger)$; the
+ numbers $p_{\rm on}$, $P_{\rm supp}$, $c_{\rm sh}$, and hence the collar $\{\pi|z|^2>P_{\rm supp}\}$, the core $\bar D(p_{\rm on})$ and the
+ common core $\bar D(c_{\rm sh}^2p_{\rm on})$, do not depend on $y$;
+\item if $\mathcal Y_0\subset\mathcal Y$ is compact, then the derivatives of order $\ge1$ of $\hat q$ and $\hat q^{-1}$, and all
+ derivatives (including order $0$) of $\hat q-\mathrm{id}$, $\hat q^{-1}-\mathrm{id}$ and $Q$, are bounded on
+ $\mathcal Y_0\times\R\times\C$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(a) is Lemma~\ref{lem:pln-normalisation}(e), Proposition~\ref{prop:pln-hamiltonian} and
+Proposition~\ref{prop:pln-inner-family}(c). (b) The maps are smooth on $\mathcal Y\times\R\times\C$ and constant in $t$ outside
+$[0,1]$, and $\hat q_{y,t}-\mathrm{id}$, $\hat q^{-1}_{y,t}-\mathrm{id}$ and $Q_{y,t}$ vanish outside $\bar D(P_{\rm supp})$. Hence each of
+the listed derivatives is a continuous function on $\mathcal Y_0\times\R\times\C$ which, outside the compact set
+$\mathcal Y_0\times[0,1]\times\bar D(P_{\rm supp})$, coincides with its value at $t=0$ or $t=1$, or equals $0$, or (for first
+derivatives of $\hat q$ and $\hat q^{-1}$) the identity matrix; so it is bounded.
+\end{proof}
+
+\begin{remark}[Explicitness]\label{rem:pln-explicit}
+Every object of this section is a defined term in the sense of \Mref{Definition}{def:intro-levels}: finite expressions in the
+potentials and their derivatives, integrals over compact domains ($\bar J$, $\mathcal M$, $\mathcal G$, the charts
+$C_{y,\lambda}$, the radial primitive), inverses of explicit bijections with nonvanishing derivative ($X_y$, $Y_y$,
+$\mathcal A_{y,s}$, $\Psi_\sigma$, $T_\sigma$, $(y,t,z)\mapsto(y,t,\mathfrak e_{y,t}(z))$, $\hat q_{y,t}$), and the flow of an explicit compactly supported vector field. The base point
+$z_{\rm bd}$, the schedule $\lambda(s)$, the clocks $S(5t-j)$ of Lemma~\ref{lem:pre-concat} and the time intervals
+$[\frac j5,\frac{j+1}5]$ are fixed. The isotopy data are the numbers of \S\ref{sec:pll} and \S\ref{sec:plc}, given by finite expressions; square roots and compact extrema occur in both constructions.
+\end{remark}
+
+Theorem~\ref{thm:pln-isotopy}, Corollary~\ref{thm:pln-full-disc} and Theorem~\ref{thm:pln-param} supply exactly the three
+properties of the fibre isotopy used in \Msec{sec:hdl}.

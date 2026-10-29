@@ -1,0 +1,230 @@
+\section{The four models}\label{sec:mdl}
+
+Theorem~\ref{thm:mech-packing} reduces the packing problem to three inputs: a toric model with handle data, a
+comparison datum for its profile, and a transfer to the target. This section describes the four models of
+Table~\ref{tab:mech-models} and states the packing theorem each one gives. The definitions, the handle data, the
+transfers and the proofs are in \Ssec{sec:cub} (dimension four), \Ssec{sec:qdr} (dimension $2n\ge6$, capacities
+below one half) and \Ssec{sec:lrg} (one large ball). Throughout, the target is $\Bo(1)$ and $\rho_i=c_i/C$.
+
+\subsection{Dimension four}\label{sec:mdl-cub}
+
+The model is the normal disc bundle associated with Biran's decomposition of $\CP^2$ along a smooth cubic
+\cite{Biran2001}, written on the cover
+$\R^2\times\C$ of the Fermat torus $\Gamma=\C/(\Z+\zeta\Z)$, $\zeta=e^{2\pi i/3}$. Theta functions give a smooth
+map $Z\colon\R^2\to\C^3$ with $|Z|=1$ and $Z_0^3+Z_1^3+Z_2^3=0$, periodic up to phase. With
+$\eta_\Gamma=\frac1{2\pi}\operatorname{Im}\sum_j\overline{Z_j}\,dZ_j$, $\sigma=d\eta_\Gamma$ and the fibre moment $p=\pi|w|^2$,
+the model form is
+\[
+ \Omega_0=\omega_V+(1-3p)\,\sigma-3\,dp\wedge\eta_\Gamma ,\qquad \int_\Gamma\sigma=3,
+\]
+so the base area at level $p$ is $3(1-3p)$ and the fibre interval must stop below $p=\frac13$; this is the
+source of the condition $3c_i<C$. We construct the transfer on truncated subbundles and do not identify its image
+with the complement of a skeleton. The integrated profile over $[0,h]$ is $3h-\frac92h^2$, which tends to
+$\frac12=\vol\CP^2$ as $h\uparrow\frac13$ (\Sref{Lemma}{lem:cub-volume}). The transfer is an explicit unit lift into
+the Fermat cone followed by the affine ball chart of the complement of a line; a cube-root symmetry and
+injectivity modulo phase make the composite well defined on the deck quotient
+(\Sref{Theorem}{thm:cub-transfer}).
+
+\begin{theorem}[Packing in dimension four]\label{thm:mdl-cub}
+Let $k\ge1$ and $0<\rho_1,\dots,\rho_k<\frac13$ with $\sum_i\rho_i^2<1$. Then there are explicit numbers
+$\rho_i<\rho_i^+<\rho_i^{\rm dom}$ and smooth maps $f_i\colon\Bo(\rho_i^{\rm dom})\to\C^2$ with symplectic derivative, injective
+on $B(\rho_i^+)$, such that the sets $f_i(B(\rho_i^+))$ are pairwise disjoint and contained in $B(1-\mu_{\rm ball})$ for some
+$\mu_{\rm ball}\in(0,1)$.
+\end{theorem}
+
+This is \Sref{Theorem}{thm:cub-packing}. For $k\ge10$ equal capacities with $\frac34<\rho\sqrt k<1$ the comparison
+datum is the linear datum of Proposition~\ref{prop:cmp-linear}; the auxiliary capacity is $a=t_0/\sqrt k$ and the
+height is $h=t_0/3$, with $t_0=(1+\rho\sqrt k)/2$, so all parameters are algebraic in $\sqrt k$ and $\rho$
+(\Sref{Remark}{rem:cub-lean}). For all other inputs, including $k=9$ and unequal capacities, the comparison datum is
+the scalar comparator of \Ssec{sec:scalar-cmp}, and the auxiliary capacities $a_i\in(\rho_i,\frac13)$ and the height
+$h<\frac13$ are the closed formulas in $\rho$ of \Sref{Lemma}{lem:cub-auxiliary}.
+
+\subsection{The four-dimensional argument in outline}\label{sec:mdl-cub-outline}
+
+In both branches the comparison datum and the auxiliary numbers form valid cubic data
+(\Sref{Definition}{def:shd4-data}), with $d_n=\frac12(h+\frac13)$, and the embedding of the $i$-th ball is the composite
+\begin{equation}\label{eq:mdl-cub-chain}
+ f_i=b_{\rm ball}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota\circ\mathsf N\circ\Phi^{-1}\circ\chi_{\mathcal A}
+ \circ\mathcal D^{-1}\circ E_i\qquad\text{on }\Bo(\hat\rho_i).
+\end{equation}
+Read from the right: $E_i$ places the ball in the $i$-th layer of the handle (disc-to-strip map, shear, inverse layer
+coordinates); $\mathcal D^{-1}$ undoes the twist, which applies the comparison isotopy $q_{f(u)}$ fibrewise over the
+annulus $\mathcal A$; $\chi_{\mathcal A}$ is the frame chart; $\Phi^{-1}$ is the inverse handle Moser map, from the final
+form back to $\Omega_0$; $\mathsf N$ passes from the torus cover to unit Fermat representatives; $\iota$, $\tau_1$,
+$\mathrm{pr}$, $\psi_1^{-1}$ are the weight-three injection, the transport from the normal cone $X_0$ to the graph $X_1$,
+the projection to $\CP^2$ and the inverse Moser return to $\omega_{\rm FS}$ (\Sref{Construction}{cons:cub-transfer});
+$b_{\rm ball}$ is the affine chart $\CP^2\setminus\{Z_0=0\}\to\Bo(1)$. With $\bar\rho_i=\frac12(\rho_i+a_i)$,
+$\delta_i=a_i-\bar\rho_i$ and $\hat\rho_i=a_i-\frac34\delta_i$,
+\[
+ \rho_i<\rho_i^+\le\bar\rho_i<\hat\rho_i<a_i<h<d_n<\tfrac13 .
+\]
+Three points of the proof are not visible in Theorem~\ref{thm:mdl-cub}; the margins they use are collected in
+Table~\ref{tab:mdl-margins}.
+
+\emph{(i) Where the vector fields are defined.} Four flows occur. Each is the flow of a field that is smooth on the
+whole ambient space and either compactly supported or of bounded speed there, and that agrees with the geometric field
+on a set which the relevant trajectories never leave. Completeness is therefore automatic, and the pullback identities
+are proved on that set.
+\begin{itemize}
+\item The comparison isotopy $q_t$ has a smooth Hamiltonian on $\C$ that vanishes for $t\notin(0,1)$ and outside the
+disc $D(P_{\rm supp})$, with $P_{\rm supp}<h$ (\Sref{Theorem}{thm:pll-inner}, \Sref{Proposition}{prop:scalar-cubic-data}).
+\item The handle Moser field $Y_t$, defined by $\iota_{Y_t}\Omega^{\rm M}_t=-\mathfrak v_t$, needs nondegeneracy of
+$\Omega^{\rm M}_t$. By the top-power identity $\Omega_\lambda^2=2\,\omega_V\wedge\kappa_\lambda$ this reduces to positivity
+of the base coefficient, and all stage forms are nondegenerate on $U=\{p<h+2\delta_m\}$,
+$\delta_m=\min((d_n-h)/4,g/100)$, where $H^*>\frac{15}{16}g-18\delta_m>0$ (\Sref{Lemmas}{lem:fer-positivity}
+and~\Snum{lem:shd4-budget}(d), \Sref{Propositions}{prop:shd4-second} and~\Snum{prop:shd4-third}). The field is multiplied by a
+cutoff $\mathfrak c(p)$, equal to one for $p\le h+\frac32\delta_m$ and to zero for $p\ge h+\frac74\delta_m$. Above
+$P_{\rm supp}$ the cut field preserves $p$, because $\iota_R\Omega^{\rm M}_t=-dp$ and $\mathfrak v_t(R)=0$ for the fibre
+rotation $R$; its base components are deck invariant, hence bounded by their maximum $C_b$ over a fundamental domain.
+Trajectories stay in compact sets, and on $\{p\le h+\delta_m\}$ the flow is that of the uncut field
+(\Sref{Proposition}{prop:shd4-moser}).
+\item The transport field (\Sref{equation}{eq:rtc-transport}) has denominators $A\,N_{\rm den}$ and $B\,N_{\rm den}$ with
+$A=1-3p_W>1-3d_n>0$, $B>0$ and $N_{\rm den}=G/A+T^2/B$. On the set $\mathcal C_*$ of points of $X_T$, $0\le T\le1$, with
+$|W|^2\le w_*=h/(d_n-h)$, one has $N_{\rm den}\ge c_*=\min(\frac32,T_0^2/d_n)$,
+$T_0=\min\bigl(1,(\sqrt6\max(1,\sqrt{w_*}))^{-1}\bigr)$: at $T=0$ the Fermat equation gives $G\ge3$, for $T\le T_0$ the
+constraint $|\mathcal F(Z)|=T|W|$ keeps $G\ge\frac32$, and for $T\ge T_0$ the term $T^2/B$ suffices
+(\Sref{Lemma}{lem:rtc-denominator}). The field is cut off where $N_{\rm den}\le c_*/2$ and outside a compact set. Along
+the uncut field $|Z|$ and $\mathcal F(Z)-TW$ are constant and $|W|^2$ does not increase, and the injection maps
+$\{p\le h\}$ into $\{|W|^2\le w_*\}$; so trajectories that start on $X_0\cap\{p\le h\}$ stay in $\mathcal C_*$ and never
+meet the cutoff (\Sref{Lemma}{lem:rtc-injection}, \Sref{Proposition}{prop:rtc-transport}).
+\item The return field has denominator $(1+\mathfrak u)(A_s+B_sG)$, and $A_s+B_sG\ge1-\frac32d_n>\frac12$ on the unit
+sphere for $s\in[0,1]$, since $\mathfrak u\le1$ (\Sref{Lemma}{lem:rtc-graph}); its cutoff at half this bound is
+inactive (\Sref{Proposition}{prop:rtc-return}).
+\end{itemize}
+The other factors are closed formulas: $\iota$ needs $p<d_n$; the layer root exists because the layer coordinate $x_i$
+is strictly increasing in $u$ with values filling $(0,h_i(p))$; $b_{\rm ball}$ needs $Z_0\ne0$, which is (ii).
+
+\emph{(ii) Injectivity and the deleted set.} The model uses only the part $\{p<h\}$ of the disc bundle and the
+transfer is defined on $\{p<d_n\}$, so the isotropic skeleton of Biran's decomposition never enters. The set to be
+avoided is the line $L=\{Z_0=0\}$, which is not contained in the affine chart. It meets the cubic in the three points
+$b_j$, over which lie the marked fibres $\widetilde{\mathcal F}$ of the cover. The argument has four steps.
+\begin{enumerate}[label=(\alph*)]
+\item The layer maps $E_i$ are injective with images over the pairwise disjoint intervals $l_i<u<r_i$, and
+$\chi_{\mathcal A}\mathcal D^{-1}$ and $\Phi^{-1}$ are diffeomorphisms common to all $i$; so the maps
+$f^N_i=\Phi^{-1}\chi_{\mathcal A}\mathcal D^{-1}E_i$ are injective with disjoint images
+(\Sref{Proposition}{prop:shd4-maps}(b)).
+\item The points $\chi_{\mathcal A}\mathcal D^{-1}E_i(X)$ lie over the square $(\frac18,\frac5{24})^2$, which meets
+none of its integral translates, and $\Phi^{-1}$ commutes with the deck maps; so no two distinct image points are
+deck equivalent (\Sref{Proposition}{prop:shd4-maps}(c)).
+\item The layers lie over $\mathcal A$, which misses the $b_j$. All three variation primitives vanish as covectors on
+$\widetilde{\mathcal F}$ (\Sref{Lemma}{lem:shd4-fibres}), so $\Phi$ fixes $\widetilde{\mathcal F}$ pointwise and the bijection
+$\Phi^{-1}$ maps its complement into itself: $f^N_i$ avoids $\widetilde{\mathcal F}$, that is, $Z_0\ne0$ on its image.
+\item Every factor of $\mathcal T_{\rm u}=\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota$ is injective on representatives and
+gauge equivariant, so $\mathcal T_{\rm u}$ is injective modulo gauge (\Sref{Lemma}{lem:rtc-injective}); every factor
+commutes with the symmetry $\mathsf r\colon Z_0\mapsto\zeta Z_0$ (\Sref{Lemma}{lem:rtc-equivariant}). An output with $Y_0=0$ is fixed by $\mathsf r$,
+so its input is fixed modulo gauge, which forces $Z_0=0$ (\Sref{Lemma}{lem:rtc-fixed}). Hence inputs with $Z_0\ne0$ have
+outputs off $L$ (\Sref{Proposition}{prop:rtc-avoid}), and, by injectivity of the Weierstrass parametrisation modulo the
+lattice, two points of the cover have the same image under $b_{\rm ball}\circ\mathcal T_{\rm u}\circ\mathsf N$ exactly when
+they are deck equivalent (\Sref{Theorem}{thm:rtc-transfer}).
+\end{enumerate}
+By (a)--(d), the maps $f_i$ are injective with pairwise disjoint images. The
+avoidance of $L$ is a consequence of symmetry and injectivity, not of an estimate.
+
+\emph{(iii) Closed balls.} No area-preserving map takes a closed disc of area $a$ into the strip
+$\{0<x<a\}\times(0,1)$, and the disc-to-strip map $\Psi_\delta$ has excess $\frac\delta2$ (\Sref{Proposition}{prop:hdl-strip}).
+The domain is therefore the open ball $\Bo(\hat\rho_i)$, on which
+$0<x<\hat\rho_i-p+\frac{\delta_i}2=a_i-p-\frac{\delta_i}4<h_i(p)$, so that $E_i$ is defined on all of it; it contains the closed
+ball $B(\bar\rho_i)\supset B(\rho_i^+)$. The images lie in $\{p<a_i\}\subset\{p<h\}$, and the Moser identity holds on the
+larger closed set $\{p\le h+\delta_m\}$, so nothing happens at the face $p=h$. The image $f_i(B(\rho_i^+))$ is compact in
+$\Bo(1)$ and hence lies in $B(1-\mu_{\rm ball})$, $\mu_{\rm ball}=\frac12\min_{\mathcal K}(1-\pi|z|^2)>0$ with $\mathcal K=\bigcup_if_i(B(\rho_i^+))$
+(\Sref{Construction}{cons:rtc-data}). In Section~\ref{sec:ham} the enlarged closed
+capacity $\rho_i^+$ and the open capacity $\rho_i^{\rm dom}$ give the radii $r_i<r_{1,i}<r_{2,i}<r_{3,i}<r_{4,i}<r'_i<\bar r_i$
+of Definition~\ref{def:ham-radii}: the Hamiltonian field equals the velocity of the isotopy on $\EB^\circ(r_{1,i})\supset\EB(r_i)$,
+the cutoff acts between $r_{1,i}$ and $r_{2,i}$, disjointness is kept on the closed balls $\EB(r_{3,i})$, and every stage is
+smooth on $\EB^\circ(r_{4,i})$ (Proposition~\ref{prop:ham-isotopy}, Lemma~\ref{lem:ham-field}). So each closed source ball
+$B(s_i,c_i)$ is carried exactly by the isotopy, onto $f_i(B(c_i))\subset f_i(B(c'_i))$, a compact subset of $\Bo(C)$; the
+room left between this set and $\partial B(C)$ is what the finite form of \S\ref{sec:eff-finite} uses.
+
+\begin{table}[ht]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}L{0.2\textwidth}L{0.29\textwidth}L{0.27\textwidth}L{0.17\textwidth}@{}}
+\toprule
+Margin & Definition; dependence & Used for & Positive by\\
+\midrule
+volume defect & $\eta_\star=1-\rho\sqrt k$ (equal); $D=1-\sum_i\rho_i^2$ (general); input & equal: $\eta_\star=(1-t_0)+\sqrt k(a-\rho)$, $\frac{\eta_\star}2$ each; general: the slacks $\delta$, $\varsigma$ & hypothesis\\
+capacity slack $a_i-\rho_i$ & $\frac{\eta_\star}{2\sqrt k}$ (equal); $\min(\frac{\varpi}8,\frac D{8(S_\rho+k)},\frac18)$ (general) & half to $\bar\rho_i$; strip excess $\frac{\delta_i}2$; $\frac{\delta_i}4$ left below $h_i$ & \Sref{Lem.}{lem:cub-auxiliary}, Rem.~\Snum{rem:rtc-equal}\\
+ball enlargement $\rho_i<\rho_i^+<\rho_i^{\rm dom}$ & $(\rho r_3^2,\rho r_4^2)$ (equal), $(\bar\rho_i,\hat\rho_i)$ (general); $\rho$, $a_i$ & closed source $B(\rho_i^+)$, open domain $\Bo(\rho_i^{\rm dom})$ & \Sref{Rem.}{rem:cub-lean}, Prop.~\Snum{prop:shd4-maps}\\
+fibre height $1-3h$ & $1-t_0=\frac{\eta_\star}2$ (equal); $3\varsigma$ (general) & $g\le\Hb(h)=3(1-3h)$; transfer margins & \Sref{Lem.}{lem:cub-auxiliary}\\
+comparison gap $\gamma=\frac{31}{32}g$ & $g=3(1-t_0)$, planar cost $4c_se_q\le\frac g{32}$ (equal); $g=\frac34d$ (general) & background $e_h=\frac g{16}$, cap excess $\le\frac g{32}$; residual $\ge\frac78g$ & Prop.~\ref{prop:cmp-linear}; \Sref{Prop.}{prop:scalar-cubic-data}, Lem.~\Snum{lem:shd4-budget}\\
+planar support $h-P_{\rm supp}$ & isotopy data of \Sref{Def.}{def:pln-isotopy-data}; equal case: $P_{\rm supp}>h-\frac{31}8e_q$ & all flows preserve $p$ above $P_{\rm supp}$ & \Sref{Lem.}{lem:pln-data}, positivity\\
+safe region $\{p<h+2\delta_m\}$ & $\delta_m=\min(\frac{d_n-h}4,\frac g{100})$; cutoff on $[h+\frac32\delta_m,h+\frac74\delta_m]$ & $H^*>\frac{15}{16}g-18\delta_m$; Moser identity on $\{p\le h+\delta_m\}$ & \Sref{Lem.}{lem:shd4-budget}(d)\\
+base speed $C_b$ & maximum over a compact fundamental set & completeness of the handle flow & positivity only\\
+transfer margins & $d_n-h=\frac12(\frac13-h)$, $1-3d_n=\frac12(1-3h)$; $h$ & $\iota$ needs $p<d_n$; $A>1-3d_n$; $w_*=\frac h{d_n-h}$ & explicit\\
+transport denominator & $N_{\rm den}\ge c_*=\min(\frac32,\frac{T_0^2}{d_n})$; $d_n$, $w_*$ & cutoff at $\frac{c_*}2$, inactive on $\mathcal C_*$ & \Sref{Lem.}{lem:rtc-denominator}\\
+return denominator & $A_s+B_sG\ge1-\frac32d_n>\frac12$; $d_n$ & cutoff at half the bound, inactive & \Sref{Lem.}{lem:rtc-graph}\\
+target boundary $\mu_{\rm ball}$ & $\frac12\min_{\mathcal K}(1-\pi|z|^2)=\frac12\min|Y_0|^2$ & passed on as compactness of $\bigcup_if_i(B(c'_i))\subset\Bo(C)$ & \Sref{Prop.}{prop:rtc-avoid}, positivity only\\
+radii $r_i<r_{1,i}<\dots<r_{4,i}<r'_i$ & $r_{\ell,i}=r_i+\frac\ell5\min(\frac14\text{centre gap},r'_i-r_i)$ & cutoff collar, disjoint closed balls, open domain & Lem.~\ref{lem:ham-radii}\\
+isotopy scale $\tau$ & $\min(\frac12,\frac{\delta_c}{2Lr_{\rm tot}})$; $L$ a maximum over compact sets & separation $|Y_i-Y_j|\ge4Lr_{\rm tot}$ & \Sref{Lem.}{lem:iso-parameters}, positivity only\\
+compilation $b_R$ & $0<b_R<\frac14(R_C-R_*)$, $R_*=\sqrt{C_0/\pi}$, $C_0<C$ by compactness & Gr\"onwall drift $<b_R$, leaving $R_*+b_R<R_C$ & Thm.~\ref{thm:eff-finite}; $C_0$ positivity only\\
+\bottomrule
+\end{tabular}
+\caption{Margins of the four-dimensional construction and of the common steps. ``Explicit'' means that the margin is a
+closed formula in the inputs; ``positivity only'' means that the proof shows the number is positive without bounding it.}
+\label{tab:mdl-margins}
+\end{table}
+
+\emph{A worked instance.} \Ssec{sec:example} substitutes $k=10$ and $\eps=\frac1{10}$ into
+Theorem~\ref{thm:intro-4d}: $R=(k/(1-\eps/4))^{1/4}$, $C=\pi R^2$, $c_i=\pi$, $s_i=(3i-3,0,0,0)$. The normalised capacity is
+$\rho=\sqrt{39}/20$, with $\rho\sqrt k=\sqrt{39/40}\in(\frac34,1)$, so the equal branch with the linear datum is taken. The
+supplement lists $t_0$, $a$, $h$, $d_n$, the comparison function $K(p)=(3\sqrt{10}-9)p$ and its gap, the enlarged capacities, the
+handle and strip constants and the margins of Table~\ref{tab:mdl-margins} for these data, and describes the composition of
+the resulting Hamiltonian, by substituting the parameters into the closed formulas.
+
+\subsection{Dimension $2n\ge6$, capacities below one half}\label{sec:mdl-small}
+
+Let $n\ge3$ and $m=n-1$. The base is a compact piece of the diagonal affine curve
+\[
+ \Sigma=\{(t,y)\in\C^{m+1}:\ y_j^2=t^2-j,\ 1\le j\le m\},\qquad \Sigma_\ell=\Sigma\cap\{|t|\le R_\ell\},
+\]
+with $\lambda=d^c\log(1+|z|^2)$, $\sigma=d\lambda$ and $R_\ell=2+\sum_jj+\ell$. The model is
+$\Sigma_\ell\times\C^m$ with $\Omega_0=\omega_V+d[(1-2|p|)\lambda]$, $|p|=\sum_j\pi|U_j|^2$, so a ball of capacity
+$a$ needs $a<\frac12$. The base area $A_\ell$ satisfies $0\le2^m-A_\ell\le2^m(m+2)/(\ell+2)$, and the limiting
+profile $2^m(1-2|p|)$ has integral $1/n!$ over $\{|p|\le\frac12\}$, the volume of $\Bo(1)$
+(\Sref{Lemmas}{lem:qdr-curve} and~\Snum{lem:qdr-volume}). The model is an explicit instance of the complete-intersection model of \cite[\S5.2]{OpenAI2026}, with a fixed
+diagonal curve in place of a generic one. The truncation loss is kept in the comparison profile.
+The transfer is one map into $\Bo(1)$: a radial injection, a horizontal transport, an inverse Moser return and an
+affine ball chart (\Sref{Theorem}{thm:qdr-transfer}).
+
+\begin{theorem}[Packing by small balls in dimension $2n\ge6$]\label{thm:mdl-qdr}
+Let $n\ge3$ and $0<\rho_1,\dots,\rho_k<\frac12$ with $\sum_i\rho_i^n<1$, and let $a_1,\dots,a_k$ be real numbers with
+$\rho_i<a_i<\frac12$ and $\sum_ia_i^n<1$, and put $\rho_i^{\rm dom}=(\rho_i+2a_i)/3$. The comparator construction of
+Theorem~\ref{thm:cmp-main} defines, from these data, smooth symplectic embeddings $f_i$ of open neighbourhoods of the
+closed balls $B(\rho_i^{\rm dom})\subset\C^n$ into $\Bo(1)$ and a rational $\zeta>0$, such that the sets
+$f_i(B(\rho_i^{\rm dom}))$ are pairwise disjoint and contained in $B(1-\zeta)$.
+\end{theorem}
+
+This is \Sref{Theorem}{thm:qdr-packing}. \Sref{Construction}{cons:ham-branch} fixes the $a_i$ by explicit
+slack increments; the further parameters of the model are those of \Sref{Lemma}{lem:qdr-auxiliary}.
+
+\subsection{One large ball}\label{sec:mdl-lrg}
+
+The quadric model accepts only capacities below one half, and the two-ball inequality allows at most one capacity
+$A\ge\frac12$; every other capacity is then below $1-A\le\frac12$. Normalise so that the input is
+\begin{equation}\label{eq:mdl-large-input}
+ A\ge\tfrac12,\qquad A^n+\sum_{i=1}^k\rho_i^n<1,\qquad A+\rho_i<1\quad(1\le i\le k).
+\end{equation}
+\emph{Valid auxiliary data} are $(a;r_1,\dots,r_k)$ with $\max(A,\frac12)<a<1$, $\rho_i<r_i<1-a$ and
+$a^n+\sum_ir_i^n<1$; they exist under \eqref{eq:mdl-large-input}, and rational ones exist as well
+(\Sref{Lemma}{lem:lrg-auxiliary}). The large ball is placed in the reserved ball
+$\Bo(a)$ and the others in the shell $S_a=\{a<\pi|y|^2<1\}$, of volume $(1-a^n)/n!$; the two-ball condition
+$A+\rho_i<1$ is what allows $\rho_i<1-a$ with $a>A$.
+
+For $n\ge4$ the second stage is a product mixed model over a finite bordered piece of the affine quadric curve,
+with a radial-integral phase lift, and the return to the shell is an explicit slit-shell formula in coupled
+coordinates (\Sref{Lemma}{lem:lrg-slit}). For $n=3$ that base would be a conic; instead we use the polynomial cubic
+model of \cite{OpenAI2026}, and the large ball is inserted by a polynomial bubble before the final return
+(\Ssec{sec:lrg-six}).
+
+\begin{theorem}[One large ball]\label{thm:mdl-lrg}
+Let $n\ge3$, let $A,\rho_1,\dots,\rho_k>0$, and let $(a;r)$ be valid auxiliary data for $(A;\rho)$. For $n\ge4$ put
+$\rho_0^{\rm dom}=(A+a)/2$ and $\rho_i^{\rm dom}=(3\rho_i+5r_i)/8$ ($i\ge1$). For $n=3$ assume moreover $a\in\Q$, let
+$A<r_0<a$ and $\rho_i<r'_i<r_i$, and put $\rho_0^{\rm dom}=r_0$, $\rho_i^{\rm dom}=r'_i$. Then there are smooth symplectic
+embeddings $f_i$ of open neighbourhoods of $B(\rho_i^{\rm dom})$ ($0\le i\le k$) into $\Bo(1)$ and a number $\zeta>0$,
+defined explicitly from these data, such that the sets $f_i(B(\rho_i^{\rm dom}))$ are pairwise disjoint and lie in
+$B(1-\zeta)$. For $n\ge4$, $f_0$ is the inclusion, $f_0(B(\rho_0^{\rm dom}))\subset\Bo(a)$ and
+$f_i(B(\rho_i^{\rm dom}))\subset S_a$ for $i\ge1$.
+\end{theorem}
+
+For $n\ge4$ this is \Sref{Theorem}{thm:lrg-high}; for $n=3$ it is \Sref{Theorem}{thm:lrg-six}.
+\Sref{Construction}{cons:ham-branch} fixes $(a;r)$, and for $n=3$ also $r'_i$ and $r_0$, by explicit formulas in $\rho$.

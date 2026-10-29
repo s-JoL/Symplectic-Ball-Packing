@@ -1,0 +1,409 @@
+\section{From embeddings to one Hamiltonian; proof of Theorem~\texorpdfstring{\ref{thm:main}}{C}}\label{sec:ham}
+
+The models of Section~\ref{sec:mdl} produce, for normalised capacities, explicit symplectic
+embeddings $f_i$ of slightly enlarged balls centred at the origin into $\Bo(1)$, with pairwise disjoint images.
+Theorem~\ref{thm:main} asks for more: the balls start at prescribed centres $s_i$, and the motion must be the
+time-one map of one Hamiltonian on $\R\times\R^{2n}$. This section supplies the missing part. We join the
+translations $u\mapsto s_i+u$ to the embeddings $f_i$ by one explicit family $F_{i,t}$ of symplectic embeddings
+whose images are pairwise disjoint at every time (\S\ref{sec:ham-isotopy}), and we write down a Hamiltonian whose
+field is the velocity of this family on the moving balls (\S\ref{sec:ham-hamiltonian}). Both steps are explicit:
+every stage is a formula, an integral, a matrix function, a maximum over a compact set, a definite description, or
+the least of finitely many angle indices.
+
+\emph{Notation.} $\EB(y,r)$ and $\EB^\circ(y,r)$ denote the closed and open Euclidean balls of radius $r$ about
+$y\in\R^{2n}$, and $\EB(r)=\EB(0,r)$; thus $B(s,c)=\EB(s,\sqrt{c/\pi})$. We write
+$\omega_0(v,w)=v^{\mathsf T}J_0w$ with $J_0=\left(\begin{smallmatrix}0&I\\-I&0\end{smallmatrix}\right)$ in the
+coordinates $(x,y)$, so that $X_H=J_0\nabla H$ and $\iota_{X_H}\omega_0=dH$. Multiplication by $i$ on
+$\C^n$, $z_j=x_j+iy_j$, is $J_\C=-J_0$. $\operatorname{Sp}(2n)$ is the group of matrices $A$ with
+$A^{\mathsf T}J_0A=J_0$, and $\|\cdot\|$ is the Euclidean operator norm.
+
+The construction rests on two observations. The first is a common Alexander trick: for $0<v\le1$ the maps
+$u\mapsto v^{-1}f_i(vu)$ are symplectic, equal $f_i$ at $v=1$, and have pairwise disjoint images as long as all
+balls use the same $v$, because the images are those of disjoint sets under one dilation. The second is that the
+Hamiltonian is computed in the source: on the round source ball the one-form $\omega_0(\dot F,DF\,\cdot)$ is
+closed, its radial primitive is an explicit integral of forward data, and a fixed radial cutoff in the source,
+pushed forward, localises it.
+
+\subsection{The embeddings in each case}\label{sec:ham-embeddings}
+
+\begin{definition}[Normalisation]\label{def:ham-normalise}
+Let $C>0$ and $c\in(0,\infty)^k$. The \emph{normalised capacities} are $\rho_i=c_i/C$. For a map $f^\natural$
+defined on a subset of $\R^{2n}$, its \emph{physical rescaling} is $f(u)=\sqrt C\,f^\natural(u/\sqrt C)$.
+\end{definition}
+
+The dilation $\delta(z)=z/\sqrt C$ maps $B(s,c)$ onto $B(s/\sqrt C,c/C)$ and $\Bo(C)$ onto $\Bo(1)$, and
+$(n,k,C,c)$ is admissible if and only if $(n,k,1,\rho)$ is, since both conditions of
+Definition~\ref{def:intro-admissible} are homogeneous. The physical rescaling is $\delta^{-1}\circ f^\natural\circ\delta$,
+so $Df(u)=Df^\natural(u/\sqrt C)$; it is symplectic, injective or of disjoint images exactly when $f^\natural$ is.
+The models are built for normalised capacities, and their embeddings enter the construction only through the
+physical rescaling.
+
+\Sref{Construction}{cons:ham-branch} defines for admissible normalised data
+$(n,k,1,\rho)$ the \emph{normalised embeddings} $f^\natural_i$ together with an enlarged closed capacity $\rho_i^+$ and an open
+domain capacity $\rho_i^{\rm dom}$, $\rho_i<\rho_i^+<\rho_i^{\rm dom}$. It is a case distinction: (i) $n=2$, the cubic
+model, with the linear datum when $k\ge10$, the capacities are equal and $\frac34<\rho\sqrt k<1$, and the scalar
+comparator otherwise; (ii) $n\ge3$ and all $\rho_i<\frac12$, the quadric model; (iii) $n\ge4$ and one $\rho_j\ge\frac12$,
+the shell model; (iv) $n=3$ and one $\rho_j\ge\frac12$, the polynomial cubic model with the bubble. In each case the
+auxiliary capacities of the model theorem are closed formulas in $\rho$, built from arithmetic, finite minima and
+maxima, square roots (in case (i)) and, in case (iv), one integer floor and one ceiling; for instance in case (ii)
+\[
+ a_i=\rho_i+\min\Big(\frac{1/2-\rho_i}{2},\frac{1-\sum_j\rho_j^n}{2nk}\Big),\qquad
+ (\rho_i^+,\rho_i^{\rm dom})=\Big(\frac{2\rho_i+a_i}3,\frac{\rho_i+2a_i}3\Big).
+\]
+The supplement checks that these data satisfy the hypotheses of the model theorems.
+
+\begin{definition}[Embedding datum]\label{def:ham-datum}
+\lean{SymplecticPacking.General.EmbeddingData, SymplecticPacking.General.EmbeddingSpec}
+Let $n\ge1$, $k\ge1$, $C>0$ and $c\in(0,\infty)^k$. An \emph{embedding datum} for $(n,k,C,c)$ consists of numbers
+$c'_i,\bar c_i$ with $c_i<c'_i<\bar c_i$ and maps $f_i\colon\Bo(\bar c_i)\to\R^{2n}$ such that
+\begin{enumerate}[label=(\roman*)]
+\item $f_i$ is $C^\infty$ and $Df_i(u)\in\operatorname{Sp}(2n)$ for all $u\in\Bo(\bar c_i)$;
+\item $f_i$ is injective on $B(c'_i)$;
+\item the sets $f_i(B(c'_i))$, $1\le i\le k$, are pairwise disjoint and contained in $\Bo(C)$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[The embeddings]\label{prop:ham-embeddings}
+\uses{cons:ham-branch, thm:cub-packing, thm:qdr-packing, thm:lrg-high, thm:lrg-six}
+Let $(n,k,C,c)$ be admissible, $\rho=c/C$, and let $f^\natural_i$, $\rho_i^+$ and $\rho_i^{\rm dom}$ be given by
+\Sref{Construction}{cons:ham-branch}. Put
+\[
+ c'_i=C\rho_i^+,\qquad \bar c_i=C\rho_i^{\rm dom},\qquad f_i(u)=\sqrt C\,f^\natural_i(u/\sqrt C).
+\]
+Then $(c'_i,\bar c_i,f_i)$ is an embedding datum for $(n,k,C,c)$, and $\bigcup_if_i(B(c'_i))$ is a compact subset of
+$\Bo(C)$.
+\end{proposition}
+
+\begin{proof}
+In each case $\rho_i<\rho_i^+<\rho_i^{\rm dom}$, and the model theorem gives exactly the properties required on these
+balls. In case (i), \Sref{Theorem}{thm:cub-packing} states them for the displayed pairs. In cases (ii)--(iv) the model
+theorems (\Sref{Theorems}{thm:qdr-packing}, \Snum{thm:lrg-high} and~\Snum{thm:lrg-six}) give smooth symplectic embeddings
+of open neighbourhoods of $B(\rho_i^{\rm dom})$ with pairwise disjoint images of $B(\rho_i^{\rm dom})$ in $B(1-\zeta)$: in
+case (ii) $\rho_i^{\rm dom}=(\rho_i+2a_i)/3$; in case (iii) $\rho_i^{\rm dom}=(3\rho_i+5r_i)/8$ for $i\ne j$, while the
+distinguished ball is placed by the inclusion, which is symplectic and injective on all of $\C^n$ and maps
+$B(\rho_j^+)=B((A+a)/2)$ into $\Bo(a)$, disjoint from the shell $S_a$ containing the other images; in case (iv)
+$\rho_i^{\rm dom}=r'_i$ for $i\ne j$ and $\rho_j^{\rm dom}=r_0$, with $r'_i$ and $r_0$ of \Sref{Construction}{cons:ham-branch}. Since $B(\rho_i^+)\subset\Bo(\rho_i^{\rm dom})\subset B(\rho_i^{\rm dom})$,
+this is smoothness and the symplectic identity on $\Bo(\rho_i^{\rm dom})$ and injectivity, pairwise disjointness and
+target containment on $B(\rho_i^+)$. Physical rescaling preserves these properties, because
+$Df_i(u)=Df_i^\natural(u/\sqrt C)$. The union is a finite union of continuous images of compact sets.
+\end{proof}
+
+\subsection{A common symplectic isotopy}\label{sec:ham-isotopy}
+
+In this subsection we fix $n\ge1$, an embedding datum $(c'_i,\bar c_i,f_i)$ for $(n,k,C,c)$, and centres
+$s_1,\dots,s_k$ such that the closed balls $B(s_i,c_i)$ are pairwise disjoint. The isotopy runs through four kinds
+of stages. The round balls are first translated, along a collision-free route, to far-apart centres $Y_i$; there
+the linear map is deformed from $I$ to $A_i=Df_i(0)$ in $\operatorname{Sp}(2n)$; then the shape is deformed from
+$Y_i+A_iu$ to $\tau^{-1}f_i(\tau u)$ with the centre fixed, for a small scale $\tau$
+(\Sref{Definition}{def:iso-parameters}); finally the common Alexander parameter $v$ runs from $\tau$ to $1$. All proofs are
+in \Ssec{sec:iso}; here we give the definitions and the statements used later.
+
+\begin{definition}[Radii]\label{def:ham-radii}
+\lean{SymplecticPacking.General.Ham.Isotopy.capRadius, SymplecticPacking.General.Ham.Isotopy.centreGap, SymplecticPacking.General.Ham.Isotopy.radStep, SymplecticPacking.General.Ham.Isotopy.rad, SymplecticPacking.General.Ham.Isotopy.domRad}
+\uses{def:ham-datum}
+Put $r_i=\sqrt{c_i/\pi}$, $r'_i=\sqrt{c'_i/\pi}$, $\bar r_i=\sqrt{\bar c_i/\pi}$,
+\[
+\begin{gathered}
+ \delta_{\rm sep}=\begin{cases}\min_{i\ne j}\big(|s_i-s_j|-r_i-r_j\big),&k\ge2,\\ 1,&k=1,\end{cases}\\
+ \delta_i=\min\big(\tfrac{\delta_{\rm sep}}4,\ r'_i-r_i\big),\qquad r_{\ell,i}=r_i+\tfrac{\ell}{5}\delta_i\quad(\ell=1,\dots,4).
+\end{gathered}
+\]
+\end{definition}
+
+\begin{lemma}[Radii]\label{lem:ham-radii}
+\lean{SymplecticPacking.General.Ham.Isotopy.dist_gt_of_ballsDisjoint, SymplecticPacking.General.Ham.Isotopy.centreGap_pos, SymplecticPacking.General.Ham.Isotopy.radStep_pos, SymplecticPacking.General.Ham.Isotopy.source_lt_rad_one, SymplecticPacking.General.Ham.Isotopy.rad_four_lt, SymplecticPacking.General.Ham.Isotopy.isoInput, SymplecticPacking.General.Ham.Isotopy.targetIsoInput}
+\uses{def:ham-radii, S-def:iso-hyp}
+$\delta_{\rm sep}>0$, $\delta_i>0$, $r_i<r_{1,i}<r_{2,i}<r_{3,i}<r_{4,i}<r'_i<\bar r_i$, and
+\begin{equation}\label{eq:ham-start-sep}
+ |s_i-s_j|>r_{3,i}+r_{3,j}\qquad(i\ne j).
+\end{equation}
+Consequently $f_i$ is $C^\infty$ with symplectic derivative on $\EB^\circ(\bar r_i)$, injective on $\EB(r_{4,i})$, and the sets
+$f_i(\EB(r_{4,i}))$ are pairwise disjoint and contained in $\EB^\circ(R_0)$, $R_0=\sqrt{C/\pi}$: the data form an isotopy
+input (\Sref{Definition}{def:iso-hyp}).
+\end{lemma}
+
+\begin{proof}
+If $|s_i-s_j|\le r_i+r_j$, the point $s_i+\frac{r_i}{r_i+r_j}(s_j-s_i)$ lies in $\EB(s_i,r_i)\cap\EB(s_j,r_j)$; so
+$|s_i-s_j|>r_i+r_j$ for $i\ne j$, and $\delta_{\rm sep}>0$. Since $c'_i>c_i$, $\delta_i>0$, and the $r_{\ell,i}$ increase with $\ell$;
+$r_{4,i}<r_i+\delta_i\le r'_i<\bar r_i$. For $i\ne j$,
+$r_{3,i}+r_{3,j}=r_i+r_j+\frac35(\delta_i+\delta_j)\le r_i+r_j+\frac{3\delta_{\rm sep}}{10}<r_i+r_j+\delta_{\rm sep}\le|s_i-s_j|$. The rest follows from
+Definition~\ref{def:ham-datum}, because $\EB^\circ(\bar r_i)=\Bo(\bar c_i)$, $\EB(r_{4,i})\subset B(c'_i)$ and $\Bo(C)=\EB^\circ(R_0)$.
+\end{proof}
+
+The ball $\EB^\circ(r_{4,i})$ is the open source domain of every stage, the images of the closed balls $\EB(r_{3,i})$ are
+kept pairwise disjoint, and the cutoff of \S\ref{sec:ham-hamiltonian} interpolates between $r_{1,i}$ and $r_{2,i}$.
+Table~\ref{tab:mdl-margins} lists these radii with the other margins of the construction, from the capacity slack of
+the model to the compilation margin $b_R$ of the finite form.
+
+The four kinds of stages are given by explicit formulas in \Ssec{sec:iso}; we describe them only so far as the
+later arguments use them. The \emph{route} (\Sref{Definition}{def:iso-route}) translates the round balls to centres
+$Y_i=y_i/\tau$, $y_i=f_i(0)$: each ball first rises in the $x_1$-direction to a level given by the rank of its starting
+height, then in the $y_1$-direction to a level given by the rank of its target height, then all balls move straight to
+their targets, and the two offsets are removed in reverse order; ranks are compatible with heights, so the balls
+$\EB(r_{3,i})$ stay disjoint (\Sref{Lemma}{lem:iso-route}). The \emph{linear stage} is $Y_i+M_{i,\sigma}u$, where
+$\sigma\mapsto M_{i,\sigma}$ is an explicit smooth path in $\operatorname{Sp}(2n)$ from $I$ to $A_i=Df_i(0)$, obtained from a
+polar decomposition, a Cayley logarithm and a shear (\Sref{Definition}{def:iso-linear-path}). The \emph{shape stage} is
+$Y_i+\kappa_{i,\tau\sigma}(u)$ with $\kappa_{i,v}(u)=\int_0^1Df_i(\vartheta vu)\,u\,d\vartheta$, which runs from $Y_i+A_iu$ to
+$\tau^{-1}f_i(\tau u)$. The \emph{tail} is $T_{i,v}(u)=v^{-1}f_i(vu)$ for $v$ from $\tau$ to $1$; a single dilation acts on all
+images at once, so disjointness is preserved, and $T_{i,1}=f_i$ (\Sref{Lemma}{lem:iso-tail}). The scale $\tau\in(0,\frac12]$ is
+given by a formula in a bound $L$ for $\|Df_i\|$ and $|M_{i,\sigma}u|$ on $\EB(r_{3,i})$, a maximum of a continuous function over a
+compact set, and in the minimal distance of the points $y_i$, so that the balls $\EB(Y_i,Lr_{\rm tot})$ are pairwise
+disjoint (\Sref{Definition}{def:iso-parameters}). The stages occupy the eight slots $[\frac m8,\frac{m+1}8]$ of $[0,1]$ and are
+joined by flat clocks $S(8t-m)$, with $S$ the flat step; on each slot the defining sum $F_{i,t}$ reduces to one stage
+(\Sref{Construction}{cons:iso-isotopy} and \Sref{Lemma}{lem:iso-concat}).
+
+\begin{proposition}[The common symplectic isotopy]\label{prop:ham-isotopy}
+\lean{SymplecticPacking.General.Ham.Isotopy.IsoInput.commonIsotopy, SymplecticPacking.General.Ham.Isotopy.IsoInput.contDiffOn_isoF, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_sympl, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_injOn, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_disj, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_bounded, SymplecticPacking.General.Ham.Isotopy.TargetIsoInput.isoF_norm_le}
+\uses{lem:ham-radii, S-cons:iso-isotopy, S-prop:iso-common}
+\begin{enumerate}[label=(\alph*)]
+\item $(t,u)\mapsto F_{i,t}(u)$ is $C^\infty$ on $\R\times\EB^\circ(r_{4,i})$; $F_{i,0}(u)=s_i+u$, $F_{i,1}=f_i$;
+ $F_{i,t}=F_{i,0}$ for $t\le0$ and $F_{i,t}=F_{i,1}$ for $t\ge1$;
+\item $D_uF_{i,t}(u)\in\operatorname{Sp}(2n)$ for all $t$ and $u\in\EB^\circ(r_{4,i})$;
+\item each $F_{i,t}$ is injective on $\EB(r_{3,i})$, and for every $t$ the sets $F_{i,t}(\EB(r_{3,i}))$, $1\le i\le k$, are
+ pairwise disjoint;
+\item $F_{i,t}(\EB(r_{3,i}))\subset\EB(R_F)$ for all $i,t$, for the explicit radius $R_F$ of \Sref{Proposition}{prop:iso-common}.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:ham-radii} the data form an isotopy input, and \Sref{Proposition}{prop:iso-common} gives (a)--(d).
+On each slot it suffices to check (b)--(d) for one stage. Route slots are translations, with disjoint images by the rank
+argument. The linear and shape slots have symplectic derivatives $M_{i,\sigma}$ and $Df_i(\tau\sigma u)$ and images in the
+pairwise disjoint balls $\EB(Y_i,Lr_{\rm tot})$. The tail slot has derivative $Df_i(vu)$ and disjoint images because one
+dilation $y\mapsto v^{-1}y$ is applied to the disjoint sets $f_i(v\EB(r_{3,i}))\subset f_i(\EB(r_{4,i}))$.
+\end{proof}
+
+\subsection{The Hamiltonian}\label{sec:ham-hamiltonian}
+
+Let $F$ be the isotopy of \Sref{Construction}{cons:iso-isotopy}. Only properties (a)--(d) of
+Proposition~\ref{prop:ham-isotopy}, with the radii $r_{1,i}<r_{2,i}<r_{3,i}<r_{4,i}$, are used below.
+
+\begin{definition}[Source one-form and primitive]\label{def:ham-source-primitive}
+\lean{SymplecticPacking.General.Ham.sourceOneForm, SymplecticPacking.General.Ham.sourcePrimitive}
+\uses{prop:ham-isotopy}
+For $t\in\R$, $u\in\EB^\circ(r_{4,i})$ and $w\in\R^{2n}$,
+\[
+ \mathfrak a_{i,t}(u)[w]=\omega_0\big(\dot F_{i,t}(u),D_uF_{i,t}(u)w\big),\qquad
+ \mathfrak h_{i,t}(u)=\int_0^1\mathfrak a_{i,t}(\vartheta u)[u]\,d\vartheta ,
+\]
+where $\dot F=\partial_tF$.
+\end{definition}
+
+\begin{lemma}[$\mathfrak a_{i,t}$ is closed]\label{lem:ham-closed}
+\lean{SymplecticPacking.General.Ham.dOneForm_symm, SymplecticPacking.General.Ham.sourceOneForm_eq}
+\uses{def:ham-source-primitive}
+The bilinear form $(w,w')\mapsto D_u\mathfrak a_{i,t}(u)[w][w']$ is symmetric; that is, $d_u\mathfrak a_{i,t}=0$.
+\end{lemma}
+
+\begin{proof}
+Write $F=F_{i,t}$ and $\partial_l=\partial/\partial u_l$. The coefficient of $du_l\wedge du_m$ in $d_u\mathfrak a_{i,t}$ is
+\[
+ \partial_l\,\omega_0(\dot F,\partial_mF)-\partial_m\,\omega_0(\dot F,\partial_lF)
+ =\omega_0(\partial_l\dot F,\partial_mF)+\omega_0(\partial_lF,\partial_m\dot F)
+ =\partial_t\big[\omega_0(\partial_lF,\partial_mF)\big],
+\]
+since the terms $\omega_0(\dot F,\partial_l\partial_mF)$ and $\omega_0(\dot F,\partial_m\partial_lF)$ cancel and
+$\partial_l\dot F=\partial_t\partial_lF$. By Proposition~\ref{prop:ham-isotopy}(b), $\omega_0(\partial_lF,\partial_mF)=\omega_0(e_l,e_m)$
+does not depend on $t$.
+\end{proof}
+
+\begin{lemma}[Radial primitive]\label{lem:ham-poincare}
+\lean{SymplecticPacking.General.Ham.hasFDerivAt_sourcePrimitive, SymplecticPacking.General.Ham.contDiffOn_sourcePrimitive, SymplecticPacking.General.Ham.deriv_time_eq_zero}
+\uses{lem:ham-closed}
+$(t,u)\mapsto\mathfrak h_{i,t}(u)$ is $C^\infty$ on $\R\times\EB^\circ(r_{4,i})$, $\mathfrak h_{i,t}(0)=0$,
+$d_u\mathfrak h_{i,t}=\mathfrak a_{i,t}$, and $\mathfrak h_{i,t}\equiv0$ for $t\notin(0,1)$.
+\end{lemma}
+
+\begin{proof}
+The integrand is $C^\infty$ in $(\vartheta,t,u)$, so $\mathfrak h$ is smooth and may be differentiated under the
+integral. For $w\in\R^{2n}$, by Lemma~\ref{lem:ham-closed},
+\[
+ d_u\mathfrak h_{i,t}(u)[w]=\int_0^1\big(\vartheta\,D\mathfrak a_{i,t}(\vartheta u)[u][w]+\mathfrak a_{i,t}(\vartheta u)[w]\big)\,d\vartheta
+ =\int_0^1\frac{d}{d\vartheta}\big(\vartheta\,\mathfrak a_{i,t}(\vartheta u)[w]\big)\,d\vartheta=\mathfrak a_{i,t}(u)[w].
+\]
+For $t\notin(0,1)$, $F_{i,\cdot}(u)$ is constant on $(-\infty,0]$ or on $[1,\infty)$ and smooth, so $\dot F_{i,t}=0$ and
+$\mathfrak a_{i,t}=0$.
+\end{proof}
+
+The primitive is fixed by $\mathfrak h_{i,t}(0)=0$. This matters after the cutoff: adding a time-dependent constant
+$c(t)$ would contribute $c(t)\,d\chi_i$ to $d(\chi_i\mathfrak h_{i,t})$, so the field in the transition collar would
+depend on that choice.
+
+\begin{definition}[Source cutoff and the Hamiltonian of an embedding datum]\label{def:ham-H}
+\lean{SymplecticPacking.General.Ham.radialCutoff, SymplecticPacking.General.Ham.pushforward, SymplecticPacking.General.Ham.ofIsotopy, SymplecticPacking.HamEnd.hamiltonianOfEmbeddings}
+\uses{lem:ham-poincare, S-lem:pre-cutoff, S-lem:iso-pushforward}
+Let $\chi_i=\chi_{r_{1,i},r_{2,i}}$ be the radial cutoff $\chi_{r,r'}(u)=1-S\big((|u|^2-r^2)/(r'^2-r^2)\big)$, so
+$\chi_i=1$ on $\EB(r_{1,i})$ and $\chi_i=0$ outside $\EB^\circ(r_{2,i})$ (\Sref{Lemma}{lem:pre-cutoff}). Put
+$H_i(t,y)=\chi_i(u)\,\mathfrak h_{i,t}(u)$ if $u$ is the unique point of $\EB(r_{3,i})$ with $F_{i,t}(u)=y$, and
+$H_i(t,y)=0$ if there is no such unique point; and $H_{\mathfrak E}=\sum_{i=1}^kH_i$, where $\mathfrak E$ denotes the embedding
+datum together with the centres. The unique preimage is a definite description (Definition~\ref{def:intro-the}).
+\end{definition}
+
+By Proposition~\ref{prop:ham-isotopy}(c) the first case applies exactly when $y\in F_{i,t}(\EB(r_{3,i}))$.
+
+\begin{lemma}[Smoothness and support]\label{lem:ham-smooth}
+\lean[needed]{SymplecticPacking.General.Ham.ofIsotopy_smooth, SymplecticPacking.General.Ham.ofIsotopy_compactSupport, SymplecticPacking.General.Ham.ofIsotopy_eq_zero_of_time}
+\uses{def:ham-H, prop:ham-isotopy, S-lem:iso-pushforward}
+Each $H_i$ is $C^\infty$ on $\R\times\R^{2n}$; $H_i(t,\cdot)$ vanishes outside $F_{i,t}(\EB(r_{2,i}))$ and vanishes
+identically for $t\notin(0,1)$. Hence $H_{\mathfrak E}$ is $C^\infty$, vanishes for $t\notin(0,1)$, and $H_{\mathfrak E}(t,\cdot)$
+vanishes outside the compact set $K_H=\bigcup_i\bigcup_{t\in[0,1]}F_{i,t}(\EB(r_{2,i}))\subset\EB(R_F)$.
+\end{lemma}
+
+\begin{proof}
+The map $E_i(t,u)=(t,F_{i,t}(u))$ is $C^\infty$ on $\R\times\EB^\circ(r_{4,i})$, injective on $\R\times\EB(r_{3,i})$,
+and its derivative $\left(\begin{smallmatrix}1&0\\\dot F&D_uF\end{smallmatrix}\right)$ is invertible. By the inverse function
+theorem $O_1=E_i(\R\times\EB^\circ(r_{3,i}))$ is open and $E_i^{-1}$ is smooth on it, and
+$H_i=(\chi_i\mathfrak h_i)\circ E_i^{-1}$ there. The set $Z=E_i(\R\times\EB(r_{2,i}))$ is the union of
+$(-\infty,0]\times F_{i,0}(\EB(r_{2,i}))$, $E_i([0,1]\times\EB(r_{2,i}))$ and $[1,\infty)\times F_{i,1}(\EB(r_{2,i}))$
+(Proposition~\ref{prop:ham-isotopy}(a)), hence closed, and $Z\subset O_1$. On $\R^{1+2n}\setminus Z$ we have $H_i=0$:
+either $y$ has no preimage in $\EB(r_{3,i})$, or its preimage lies outside $\EB(r_{2,i})$, where $\chi_i=0$. The two
+open sets cover, so $H_i$ is smooth (in full: \Sref{Lemma}{lem:iso-pushforward}). Vanishing for $t\notin(0,1)$ is
+Lemma~\ref{lem:ham-poincare}. $K_H$ is compact as a finite union of continuous images of compact sets ($F$ is constant in
+$t$ outside $[0,1]$), and lies in $\EB(R_F)$ by Proposition~\ref{prop:ham-isotopy}(d).
+\end{proof}
+
+\begin{lemma}[The field on the moving balls]\label{lem:ham-field}
+\lean{SymplecticPacking.General.Ham.hamVF_ofIsotopy_image}
+\uses{lem:ham-smooth, lem:ham-poincare}
+For all $t\in\R$, $u\in\EB^\circ(r_{1,i})$ and $w\in\R^{2n}$,
+\[
+ d_yH_{\mathfrak E}(t,F_{i,t}(u))[w]=\omega_0\big(\dot F_{i,t}(u),w\big),\qquad\text{hence}\qquad
+ X_{H_{\mathfrak E}}(t,F_{i,t}(u))=\dot F_{i,t}(u).
+\]
+\end{lemma}
+
+\begin{proof}
+Since $|u|<r_{1,i}$, we have $H_i(t,F_{i,t}(x))=\mathfrak h_{i,t}(x)$ for $x$ near $u$. Differentiating and using
+Lemma~\ref{lem:ham-poincare}, $d_yH_i(t,F_{i,t}(u))\circ D_uF_{i,t}(u)=\mathfrak a_{i,t}(u)=\omega_0(\dot F_{i,t}(u),D_uF_{i,t}(u)\,\cdot)$,
+and $D_uF_{i,t}(u)$ is invertible. For $j\ne i$, $H_j(t,\cdot)$ vanishes outside $F_{j,t}(\EB(r_{2,j}))$, which is disjoint from
+the set $F_{i,t}(\EB^\circ(r_{3,i}))$ by Proposition~\ref{prop:ham-isotopy}(c); this set is open, since $F_{i,t}$ is an injective
+local diffeomorphism on the open ball, and contains $F_{i,t}(u)$. So $d_yH_j(t,F_{i,t}(u))=0$. Since $\omega_0(X_H,w)=dH[w]$
+and $\omega_0$ is nondegenerate, $X_{H_{\mathfrak E}}=\dot F_{i,t}(u)$.
+\end{proof}
+
+\begin{lemma}[Integral curves]\label{lem:ham-curves}
+\lean{SymplecticPacking.General.Ham.exists_integralCurve, SymplecticPacking.General.Ham.ofIsotopy_exists_curve', SymplecticPacking.General.Ham.ofIsotopy_flow', SymplecticPacking.General.Ham.ofIsotopy_spec}
+\uses{lem:ham-field, lem:ham-smooth}
+Let $H=H_{\mathfrak E}$. Through every point of $\R^{2n}$ passes an integral curve $\gamma\colon\R\to\R^{2n}$ of $X_H$ with
+$\gamma(0)$ that point. If $|u|<r_{1,i}$ and $\gamma\colon[0,1]\to\R^{2n}$ is an integral curve of $X_H$ with
+$\gamma(0)=s_i+u$, then $\gamma(t)=F_{i,t}(u)$ for all $t\in[0,1]$.
+\end{lemma}
+
+\begin{proof}
+$X_H=J_0\nabla H$ is $C^\infty$ and vanishes outside $[0,1]\times K_H$ (Lemma~\ref{lem:ham-smooth}), so $D_yX_H$ is bounded and
+$X_H$ is globally Lipschitz in $y$, uniformly in $t$. By the Picard--Lindel\"of theorem integral curves exist for all
+time and are unique. The curve $t\mapsto F_{i,t}(u)$ starts at $s_i+u$ and is an integral curve by Lemma~\ref{lem:ham-field}.
+\end{proof}
+
+\begin{theorem}[The Hamiltonian realises the isotopy]\label{thm:ham-flow}
+\lean{SymplecticPacking.General.packingFlow_diffeomorphism, SymplecticPacking.General.packingFlow_integral}
+\uses{lem:ham-curves, lem:ham-field, prop:ham-isotopy}
+Let $H=H_{\mathfrak E}$. The flow $\phi^t_H$ is defined for all $t\in\R$ and consists of symplectic diffeomorphisms of
+$\R^{2n}$, and
+\[
+ \phi^t_H(s_i+u)=F_{i,t}(u)\qquad(u\in\EB(r_i),\ t\in\R,\ 1\le i\le k).
+\]
+In particular $\phi^1_H(B(s_i,c_i))=f_i(B(c_i))$, and these sets are pairwise disjoint and contained in $\Bo(C)$.
+\end{theorem}
+
+\begin{proof}
+By the proof of Lemma~\ref{lem:ham-curves} the flow is global; the time-dependent flow of a Hamiltonian field consists of
+symplectic diffeomorphisms. Since $\EB(r_i)\subset\EB^\circ(r_{1,i})$, Lemma~\ref{lem:ham-field} holds for all $t\in\R$ at
+$u\in\EB(r_i)$, so $t\mapsto F_{i,t}(u)$ is the integral curve through $s_i+u$. At $t=1$, $F_{i,1}=f_i$ on
+$\EB^\circ(r_{4,i})\supset\EB(r_i)=B(c_i)$, and $B(c_i)\subset B(c'_i)$.
+\end{proof}
+
+On the collar $F_{i,t}(\EB(r_{2,i})\setminus\EB(r_{1,i}))$ the field $X_H$ need not equal $\dot F_{i,t}$; trajectories
+starting in $B(s_i,c_i)$ stay in $F_{i,t}(\EB(r_i))$ and never meet it.
+
+\begin{proposition}[Hamiltonian of an embedding datum]\label{prop:ham-end}
+\lean{SymplecticPacking.HamEnd.hamiltonian_end}
+\uses{lem:ham-radii, prop:ham-isotopy, lem:ham-smooth, lem:ham-curves}
+Let $n\ge1$, let $(c'_i,\bar c_i,f_i)$ be an embedding datum for $(n,k,C,c)$, and let $s_1,\dots,s_k$ be centres such
+that the closed balls $B(s_i,c_i)$ are pairwise disjoint. Then the Hamiltonian $H_{\mathfrak E}$ of
+Definition~\ref{def:ham-H} satisfies $\Pack(n,k,C,c,s)$.
+\end{proposition}
+
+\begin{proof}
+Condition (a) of Definition~\ref{def:intro-spec} is Lemma~\ref{lem:ham-smooth} with $K=\EB(R_F)$. For (b), let
+$z=s_i+u\in B(s_i,c_i)$, so $|u|\le r_i<r_{1,i}$. Lemma~\ref{lem:ham-curves} gives an integral curve on $\R$ through $z$,
+and every integral curve $\gamma$ on $[0,1]$ with $\gamma(0)=z$ has $\gamma(1)=F_{i,1}(u)=f_i(u)\in f_i(B(c'_i))\subset\Bo(C)$.
+\end{proof}
+
+\begin{definition}[The Hamiltonian $H{[n,k,C,c,s]}$]\label{def:ham-H-final}
+\uses{cons:ham-branch, prop:ham-embeddings, S-cons:iso-isotopy, def:ham-H}
+On admissible input with pairwise disjoint closed source balls, let $\mathfrak E$ be the embedding datum of
+Proposition~\ref{prop:ham-embeddings}, together with the centres $s_i$, and put
+$H[n,k,C,c,s]=H_{\mathfrak E}$ (Definition~\ref{def:ham-H}).
+\end{definition}
+\subsection{Proof of Theorem~\texorpdfstring{\ref{thm:main}}{C} and of the corollaries}\label{sec:ham-proof-main}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}\textup{(i)}]
+Let $H=H[n,k,C,c,s]$ with the hypotheses of Theorem~\ref{thm:main}, and let $\mathfrak E$ be the datum of
+Definition~\ref{def:ham-H-final}. By Lemma~\ref{lem:ham-smooth}, $H$ is $C^\infty$, vanishes for $t\notin(0,1)$, and vanishes
+outside $\R\times K$ with the explicit compact set $K=\EB(R_F)$. By Proposition~\ref{prop:ham-end}, $H$ satisfies
+$\Pack(n,k,C,c,s)$. By Theorem~\ref{thm:ham-flow}, $\phi^1_H(B(s_i,c_i))=f_i(B(c_i))$; these sets are pairwise disjoint and lie
+in the compact subset $\bigcup_if_i(B(c'_i))$ of $\Bo(C)$ (Proposition~\ref{prop:ham-embeddings}).
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}\textup{(ii)}]
+Every entry of Table~\ref{tab:ham-explicit} is one of the operations of Definition~\ref{def:intro-levels}; the only search
+in it is the least of $n+1$ angle indices in the linear path. The same definition applies to all
+$(n,k,C,c,s)$.
+\end{proof}
+
+\begin{table}[ht]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}L{0.27\textwidth}L{0.4\textwidth}L{0.27\textwidth}@{}}
+\toprule
+Ingredient & Operation of Definition~\ref{def:intro-levels} & Where shown\\
+\midrule
+hypotheses; branch & case distinctions on propositions ($n=2$; some $\rho_j\ge\frac12$; for $n=2$, $k\ge10$, equal $\rho_i=\rho$ and $\frac34<\rho\sqrt k<1$) & Def.~\ref{def:ham-H-final}, \Sref{Cons.}{cons:ham-branch}\\
+branch margins & arithmetic, finite minima and maxima, square roots, an integer floor and ceiling & \Sref{Cons.}{cons:ham-branch}\\
+model embeddings $f^\natural_i$, $\rho_i^+$ & model formulas and compact flow parameters; in dimension six, integer weights and explicit polynomial lifts & Thms.~\ref{thm:mdl-cub}, \ref{thm:mdl-qdr}, \ref{thm:mdl-lrg}; \Sref{Prop.}{prop:lrg-six-polynomials}\\
+$c'_i$, $\bar c_i$, $f_i$ & arithmetic; composition with a dilation & Prop.~\ref{prop:ham-embeddings}\\
+radii $r_{\ell,i}$ & square roots; finite minima; arithmetic & Lem.~\ref{lem:ham-radii}\\
+linear path $M_{i,\sigma}$ & positive square root (definite description); inverses by the adjugate formula; least of $n+1$ angle indices; $\sin$, $\cos$ & \Sref{Lem.}{lem:iso-linear-path}\\
+$L$, $\delta_c$, $r_{\rm tot}$, $\tau$, $Y_i$ & maxima of continuous functions over compact sets; finite minima; arithmetic & \Sref{Lem.}{lem:iso-parameters}\\
+route $z_i$ & ranks (counts of propositions); arithmetic & \Sref{Lem.}{lem:iso-route}\\
+shape, tail, clocks & integral over $[0,1]$; composition; the flat step & \Sref{Lem.}{lem:iso-shape}, \Snum{lem:iso-tail}\\
+$H_{\mathfrak E}$ & integral over $[0,1]$; radial cutoff; definite description of the unique preimage & Def.~\ref{def:ham-H}, Lem.~\ref{lem:ham-smooth}\\
+\bottomrule
+\end{tabular}
+\caption{The construction of $H[n,k,C,c,s]$ by the operations of level L1.}
+\label{tab:ham-explicit}
+\end{table}
+
+Part (iii) of Theorem~\ref{thm:main} is Theorem~\ref{thm:eff-algorithm}.
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-sy}]
+Let $n\ge3$. Suppose $\Psi$ is a symplectic embedding of a neighbourhood of $\bigsqcup_iB(s_i,c_i)$ into $\Bo(C)$. The
+image of the compact set $\bigsqcup_iB(s_i,c_i)$ is compact, hence contained in $B(C')$ for some $C'<C$. Symplectic
+embeddings preserve $\omega_0^n$, so $\sum_ic_i^n/n!=\vol\Psi(\bigsqcup_iB(s_i,c_i))\le C'^n/n!<C^n/n!$. For $i\ne j$,
+$\Psi$ restricts to a symplectic embedding of the union of the interiors of $B(s_i,c_i)$ and $B(s_j,c_j)$ into
+$\Bo(C'')$ for any $C''\in(C',C)$, and Gromov's two-ball theorem \cite{Gromov1985} gives $c_i+c_j\le C''<C$. Conversely,
+if both inequalities hold, then $(n,k,C,c)$ is admissible and Theorem~\ref{thm:main}(i) applies to $H=H[n,k,C,c,s]$. The
+global symplectic diffeomorphism $\phi^1_H$ maps each $B(s_i,c_i)$ into $\Bo(C)$, so its restriction to the open
+neighbourhood $(\phi^1_H)^{-1}(\Bo(C))$ of $\bigsqcup_iB(s_i,c_i)$ is a symplectic embedding into $\Bo(C)$.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-equal}]
+All $c_i=c$, and $\sum_ic_i^n=kc^n<C^n$. If $n\ge3$, then $2^nc^n\le kc^n<C^n$, so $c_i+c_j=2c<C$. If $n=2$, then
+$9c^2\le kc^2<C^2$, so $3c<C$. Thus $(n,k,C,c)$ is admissible and Theorem~\ref{thm:main}(i) applies. The images are
+pairwise disjoint and $\phi^1_H$ preserves volume, so they fill the fraction $k\vol B(c)/\vol B(C)=kc^n/C^n$ of $B(C)$,
+and $kc^n/C^n>1-\eps$ by hypothesis.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-epoch}]
+Here $n=2$, $c_i=\pi$, so $B(s_i,\pi)$ is the closed Euclidean unit ball about $s_i=(3i-3,0,0,0)$; distinct centres are at
+distance at least $3>2$, so these balls are pairwise disjoint. Let $C=\pi R^2$ with $R^4=k/(1-\eps/2)$. Then
+$\sum_ic_i^2=k\pi^2<\pi^2R^4=C^2$ since $1-\eps/2<1$, and $3c_i<C$ since $R^4>k\ge9$. Theorem~\ref{thm:main}(i) applies,
+and $\Bo(\pi R^2)$ is the open Euclidean ball of radius $R$ about the origin. Finally $k/R^4=1-\eps/2>1-\eps$.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-cone4}]
+Let $V=\sum_ic_i^2$ and $C=C_\eps$, so $V/C^2=1-\eps/2$. Then $V<C^2$, and $3c_i\le V^{1/2}<C$. So $(2,k,C,c)$ is
+admissible and Theorem~\ref{thm:main}(i) applies; as in the proof of Corollary~\ref{thm:main-equal} the images fill the
+fraction $V/C^2=1-\eps/2$ of $B(C)$.
+\end{proof}

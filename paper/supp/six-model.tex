@@ -1,0 +1,332 @@
+\section{Dimension six: the polynomial model}\label{sec:sxm}
+
+We use the cubic and quadric polynomials of \cite{OpenAI2026}. The finite list of
+coefficients is fixed explicitly; all later choices concern positive margins, inverse
+roots and flows on compact sets. We retain the convention
+$d^c=i(\bar\partial-\partial)/(4\pi)$.
+Thus the Hopf primitive at a nonzero vector $Z$ is
+\[
+ \lambda_c(Z)=\frac{c}{2\|Z\|^2}\operatorname{Im}\langle Z,dZ\rangle
+             =\pi c\,d^c\log\|Z\|^2.
+\]
+Only this primitive and its exterior derivative enter the affine construction.
+
+\subsection{The curve and the parameters}\label{sec:sxm-curve}
+
+\begin{lemma}[Affine cubic coordinates]\label{lem:sxm-curve}
+\lean{OAI.PackingSufficiencySupport.CubicModel.endQuotient_zeroEnd,OAI.PackingSufficiencySupport.CubicModel.endQuotient_homogeneous,OAI.PackingSufficiencySupport.CubicModel.endRegular,OAI.PackingSufficiencySupport.CubicModel.endRegular_contDiffAt,OAI.PackingSufficiencySupport.CubicModel.endRegular_ne_zero}
+Let $f(v,w)=vw(v-w)+w-2v$ and
+$C=\{(v,w)\in\C^2:vw\ne0,\ f(v,w)=0\}$.
+The affine curve $C$ is identified with
+\[
+ \Sigma=\{(t,y_1,y_2):y_1^2=t^2-1,\ y_2^2=t^2-2\}
+\]
+by $(v,w)=(y_1-t,y_2-t)$ in the chart $u=1$.
+The inverse is
+\[
+ t=-\frac{v^2+1}{2v},\qquad y_1=t+v,\qquad y_2=t+w.
+\]
+Its four ends, in homogeneous coordinate notation, have limits
+$[0:1:0],[0:0:1],[0:1:1],[1:0:0]$.
+\end{lemma}
+
+\begin{proof}
+The two equations on $\Sigma$ imply $v,w\ne0$ and $f(v,w)=0$.
+Conversely $f=0$ and $vw\ne0$ give the displayed inverse by substitution.
+The four sign choices in the end coordinates of Lemma~\ref{lem:vtr-square}, with $m=2$, give the stated limits. The formulas are holomorphic on their affine domains; smoothness follows from the explicit quadric charts.
+\end{proof}
+
+Write $s=1-a$, $b=(2-a)/3$ and
+$V=1-a^3-\sum_i r_i^3>0$, with $a\in\Q$, $1/2<a<1$ and $r_i<s$.
+For a nonempty smaller family let $R=\max_i r_i$; the empty family needs no cubic model.
+
+\begin{lemma}[Explicit truncation parameters]\label{lem:sxm-parameters}
+Set
+\[
+ \mu=\min(s-R,(2a-1)/6,V/100),\qquad
+ M=\lceil1/\mu\rceil+1,\qquad \delta_0=1/M,
+\]
+\[
+ h_1=s-\delta_0,\quad e=s-\delta_0/2,\quad d_1=s+\delta_0/2,
+ \quad h_2=b-\delta_0,\quad d_2=b-\delta_0/2.
+\]
+Then these parameters satisfy \eqref{eq:lrg-six-parameters} and
+$\int_\Delta H_0>\sum_i r_i^3/6$.
+For any integer $Q\ge0$ one may take
+\[
+ L=(Q+1)\operatorname{den}(a)\operatorname{den}(e)\operatorname{den}(d_2),
+ \quad A_*=Le,\ B_*=Ld_2,\ D=L(2-a),\ S_*=L(1-a).
+\]
+These are integers, $L>Q$, and
+$0<A_*<S_*\le B_*$, $A_*\le B_*$, $3B_*<D$, $3S_*<D$, $2S_*<L$.
+\end{lemma}
+
+\begin{proof}
+All three entries defining $\mu$ are positive and $0<\delta_0<\mu$.
+Also $b-s=(2a-1)/3>2\delta_0$, which gives every ordering assertion.
+Expanding the integrated-profile formula of Lemma~\ref{lem:lrg-six-profile} at
+$(h_1,h_2)=(s-\delta_0,b-\delta_0)$ gives
+\[
+ \int_\Delta H_0\ge(1-a^3)/6-3\delta_0.
+\]
+Indeed, let $I(h_1,h_2)$ be that formula. Then
+$\partial_{h_1}I=\frac92(b-h_1)^2-\frac92(b-h_2)^2-(s-h_1)^2$ and $\partial_{h_2}I=9h_1(b-h_2)$. On the segment from $(s,b)$ to
+$(s-\delta_0,b-\delta_0)$, $0\le b-h_2\le\delta_0<\frac1{12}$, $0<h_1\le s<\frac12$ and $b<\frac12$, so
+$|\partial_{h_1}I|<2$ and $|\partial_{h_2}I|<1$. Hence $I(h_1,h_2)\ge I(s,b)-3\delta_0$, and $I(s,b)=(1-a^3)/6$
+(Lemma~\ref{lem:lrg-six-profile}).
+Since $3\delta_0<3V/100<V/6$, the required integral is positive.
+The denominator product clears the three rational denominators. The integer
+inequalities follow by multiplying $0<e<s<d_2<b$ by $L$ and using $a>1/2$.
+\end{proof}
+
+\subsection{The fixed coefficient list}\label{sec:sxm-weights}
+
+\begin{definition}[Central potential and physical primitive]\label{def:sxm-data}
+Use the integers of Lemma~\ref{lem:sxm-parameters} and set
+\[
+ \Lambda=\{k\in\Z_{\ge0}^2:k_1\le A_*,\ k_1+k_2\le B_*\},\quad
+ d_k=D-3|k|,\quad m_k=(S_*-|k|)_+.
+\]
+For $d>m\ge0$ let
+\[
+ q_{d,m}=(1,v^{d-m},w^{d-m},v^{d-m}w^m,v^mw^{d-m}),\quad a_k=\|q_{d_k,m_k}\|^2.
+\]
+For $r=(r_1,r_2)\ge0$ define
+\[
+ Z_a(r)=\sum_{k\in\Lambda}a_kr_1^{k_1}r_2^{k_2},\qquad
+ \mathsf M_a(r)_j=r_j\partial_{r_j}\log Z_a(r).
+\]
+For $P\ge0$ with $P_1<A_*$ and $P_1+P_2<B_*$, let $r_a(P)$ be the unique
+nonnegative solution of $\mathsf M_a(r)=P$, and set
+\[
+ \vartheta_k(y,P)=\frac{a_k(y)r_a(P)_1^{k_1}r_a(P)_2^{k_2}}{Z_a(r_a(P))},\qquad
+ \beta_{d,m}=\frac1L d^c\log\|q_{d,m}\|^2,
+\]
+\[
+ \Gamma(p)=\sum_{k\in\Lambda}\vartheta_k(y,Lp)\,\beta_{d_k,m_k},\qquad
+ \Omega_{\rm phys}=\omega_{\C^2}+d[\Gamma(p(z))],\quad p_j(z)=\pi|z_j|^2.
+\]
+In the last differential $p$ varies with $z$; the primitive is horizontal in the base
+variable. The toric coordinates of the central potential are related to these physical
+coordinates by the radial disk map of Lemma~\ref{lem:sxm-weights}.
+\end{definition}
+
+\begin{lemma}[Radial coordinates]\label{lem:sxm-weights}
+The inverse $r_a(P)$ exists and is unique on the stated lower trapezoid.
+The functions defining the radial disk map and its inverse are smooth across both axes.
+The central potential \eqref{eq:lrg-six-potential}, expressed in physical coordinates,
+has the form $\Omega_{\rm phys}$ of Definition~\ref{def:sxm-data}.
+At fixed $p$ its base curvature $d_\Sigma\Gamma(p)$ is positive.
+\end{lemma}
+
+\begin{proof}
+For positive radii put $r_j=e^{x_j}$. Then $\mathsf M_a$ is the gradient of
+$\log\sum_k a_ke^{\langle k,x\rangle}$.
+Its Hessian is the covariance matrix of $k$, which is positive definite because
+$(0,0),(1,0),(0,1)$ occur. Its gradient maps onto the interior of the trapezoid:
+strict convexity gives uniqueness, and subtraction of $\langle P,x\rangle$ is
+coercive when $P$ is interior. On an axis the same argument in one variable applies.
+Write $\mathsf M_a(r)_j=r_j s_j(a,r)$. The polynomials giving the numerators of
+$s_j$ have positive coefficients and include a positive constant. Thus $s_j>0$
+on the closed quadrant. The disk map is
+\[
+ (z_1,z_2)\longmapsto(\sqrt{s_1(a,|z|^2)}z_1,
+                            \sqrt{s_2(a,|z|^2)}z_2).
+\]
+Its inverse is obtained by the unique quadrant root, and its derivative is invertible
+also on the axes; the parameter implicit-function theorem gives joint smoothness.
+The bridge from physical to cone coordinates uses the inverse disk map:
+\[
+ \Xi(y,z)=\bigl(y,\mathsf R_{a(y)}^{-1}(\sqrt{\pi L}\,z)\bigr),
+\]
+where $\mathsf R_a$ is the displayed radial disk map. For a prescribed compact
+source this formula is multiplied away from a neighbourhood of that source by
+a plateau inside the two outer moment faces.
+Differentiating the logarithmic potential separates the angular primitive
+$\sum_j p_jd\theta_j$ from the horizontal primitive $\Gamma(p)$.
+Reduction of the positive central Kähler form gives positivity of the base form.
+The radial disk pullback identity includes the vanishing angular terms on the axes.
+\end{proof}
+
+\subsection{Explicit homogeneous lifts}\label{sec:sxm-lift}
+
+Put
+\[
+ Q(X)=X_0X_1-X_2X_3,\qquad \mathsf q(u,v,w)=(vw,u^2,uv,uw).
+\]
+For a plane monomial $v^Jw^K$ with $J,K\le n$, define
+\[
+ \alpha=(J+K-n)_+,\quad \beta=n+\alpha-J-K,\quad
+ \gamma=J-\alpha,\quad \nu=K-\alpha,
+ \qquad \mathcal L_n(v^Jw^K)=X_0^\alpha X_1^\beta X_2^\gamma X_3^\nu,
+\]
+and extend $\mathcal L_n$ linearly to polynomials satisfying those separate degree
+bounds. All four exponents are nonnegative integers.
+
+\begin{lemma}[Polynomial lifts and vanishing orders]\label{lem:sxm-lift}
+For $k\in\Lambda$ and each entry $q_i$ put
+\[
+ P_{k,i}(X)=Q(X)^{k_1}\mathcal L_{L-2k_1}(f^{k_2}q_{d_k,m_k,i})(X).
+\]
+This is a homogeneous polynomial of degree $L$, vanishing to order at least $L-S_*$
+at $o=[1:0:0:0]$. If
+\[
+ P_{t,\delta}(X)_{k,i}=\delta^{-k_1}t^{-k_2}P_{k,i}(X),\qquad
+ T_\delta(v,w,z)=(v,w,vw+\delta z),
+\]
+then $P_{t,\delta}(vw+\delta z,1,v,w)$ has a polynomial extension in $\delta$ at zero,
+with value
+\[
+ z^{k_1}(f(v,w)/t)^{k_2}q_{d_k,m_k,i}(v,w).
+\]
+\end{lemma}
+
+\begin{proof}
+The exponent identities are
+$\alpha+\gamma=J$, $\alpha+\nu=K$,
+$2\beta+\gamma+\nu=2n-J-K$ and
+$\alpha+\beta+\gamma+\nu=n$.
+Hence $\mathcal L_n(v^Jw^K)(\mathsf q(u,v,w))=u^{2n-J-K}v^Jw^K$.
+Since $2m_k\le d_k$, each coefficient monomial has separate degrees at most
+$d_k-m_k$ and total degree at most $d_k$.
+The separate degrees of $f^{k_2}q_i$ are at most $2k_2+d_k-m_k$, while its total
+degree is at most $3k_2+d_k$.
+Writing $n=L-2k_1$, the integer inequalities give
+\[
+ 2k_2+d_k-m_k\le n,\quad L-S_*-k_1\le n,\quad
+ 3k_2+d_k+(L-S_*-k_1)\le2n.
+\]
+The last two imply $\beta+\gamma+\nu\ge L-S_*-k_1$ for every monomial in its lift.
+The factor $Q^{k_1}$ contributes another $k_1$ to the order at $o$.
+The homogeneity follows from $2k_1+n=L$.
+Finally $Q(vw+\delta z,1,v,w)=\delta z$, so the negative powers of $\delta$ cancel
+term by term. At zero use $\mathsf q(1,v,w)=(vw,1,v,w)$.
+\end{proof}
+
+\subsection{Area and exhaustion}\label{sec:sxm-bordered}
+
+In the diagonal-quadric coordinates set
+$\Sigma_l=\{|t|\le5+l\}$, $l\in\Z_{\ge0}$.
+These are compact, nested bordered surfaces exhausting $C$; the explicit handle and
+its dual form lie in $|t|<3$, hence in $\operatorname{int}\Sigma_0$.
+Let $H_l(p)=\int_{\Sigma_l}d_\Sigma\Gamma(p)$.
+
+\begin{proposition}[Area profile with a quantitative tail]\label{prop:sxm-bordered}
+\lean{SymplecticPacking.BranchLarge3.cubicAreaError_le_tail, SymplecticPacking.BranchLarge3.cubicAreaModulusFormula_spec}
+On $\Delta$ one has
+\[
+ 0\le H_0(p)-H_l(p)\le E_l\quad(l\ge32),\qquad
+ H_0(p)=9(b-|p|)-2(s-|p|)_+.
+\]
+Put $R_*=1/16$ and fix the end cutoff
+\[
+ \chi_{\rm end}(q)=S\!\left(\frac{q+R_*}{R_*/2}\right)
+             \left[1-S\!\left(\frac{q-R_*/2}{R_*/2}\right)\right].
+\]
+Let $K=1+\max(0,\sup_{q\in\R}|\chi_{\rm end}'(q)|)$,
+let $M_*$ bound the finitely many regular end primitives, and let $B_{\log}$ bound the
+absolute logarithms of the regular coefficient norms, on the four end discs
+$|\zeta|^2\le R_*$. These bounds are the maxima plus one.
+With $q_*=|c|(2B_{\log}+\#\Lambda)$ and $c=1/(L\pi)$, one may take
+\[
+ E_l=64KR_*M_*\sqrt{\frac{R_*}{l+1}}
+       +\frac{16q_*KR_*}{-\log(R_* /(l+1))}.
+\]
+In particular, if $C_*=1+64KR_*M_*+16q_*KR_*$ and $\eta>0$, then
+\[
+ \mathfrak m(\eta)=\max\left(32,\left\lceil(2C_*/\eta)^2\right\rceil,
+                            \left\lceil e^{2C_*/\eta}\right\rceil\right)
+\]
+satisfies $|H_l-H_0|<\eta$ for $l\ge\mathfrak m(\eta)$, uniformly on $\Delta$.
+\end{proposition}
+
+\begin{proof}
+We write $\Omega_p$ for the base form $d_\Sigma\Gamma(p)$ and $\Gamma_p$ for its primitive, a convex combination of
+the weighted Fubini--Study primitives of the five homogeneous coefficients, with weights the selection
+probabilities below. The proof has five steps.
+
+\emph{Step 1: end orders.} At the ends $[0{:}1{:}0]$, $[0{:}0{:}1]$, $[0{:}1{:}1]$, $[1{:}0{:}0]$ one has
+$(v,w)\sim(-2t,-1/t)$, $(-1/(2t),-2t)$, $(-2t,-2t)$, $(-1/(2t),-1/t)$ as $t\to\infty$ (Lemma~\ref{lem:sxm-curve}). The pole
+orders of the five entries of $q_{d,m}$ are read from
+\[
+ (u^d,u^mv^{d-m},u^mw^{d-m},v^{d-m}w^m,v^mw^{d-m}).
+\]
+so the maximal order is $o=d-m$ at the marked ends $[0{:}1{:}0]$, $[0{:}0{:}1]$, $o=d$ at $[0{:}1{:}1]$ and $o=0$ at
+$[1{:}0{:}0]$ (recall $2m\le d$). Steps 2--5 show that the total curvature is $H_0(p)$, with the stated rate.
+
+\emph{Step 2: end charts.} The curve has four ends, indexed by the sign choices $\varepsilon\in\{\pm\}^2$ of the two
+square roots $y_j=\pm t\sqrt{1-j\,t^{-2}}$. On each end use $\zeta=t^{-1}$. If $|\zeta|^2\le R_*=\frac1{16}$, then
+$|j\zeta^2|\le\frac18$ for $j=1,2$, so $\operatorname{Re}(1-j\zeta^2)\ge\frac78>0$; the principal roots
+$\sqrt{1-j\zeta^2}$ are smooth and nonvanishing, and the end map $\zeta\mapsto(t,y)$ is a diffeomorphism of the
+punctured disc $\{0<|\zeta|^2\le R_*\}$ onto a neighbourhood of the end. On this disc every coefficient is
+$\zeta^{-o}$ times a smooth nonvanishing function of $\zeta$, where $o$ is its end order from Step 1.
+
+\emph{Step 3: decomposition on an end.} On the punctured disc of end $\varepsilon$,
+\[
+ \Gamma_p=\beta_{\varepsilon}-\tfrac12\,d_{\varepsilon}\,d\theta,\qquad d\theta=\text{the angular form of }\zeta,
+\]
+where $\beta_\varepsilon$ is the selection-weighted sum of the regular parts of the coefficient primitives, a smooth
+one-form with $\|\beta_\varepsilon\|\le M_*$, and $d_\varepsilon(\zeta)=c\sum_k\pi_k(\zeta)\,o_k(\varepsilon)$ is the residue: the
+average of the weighted end orders $o_k(\varepsilon)$ under the selection probabilities $\pi_k(\zeta)$. The probabilities are the weights $\pi_k=\vartheta_k(y,Lp)$ of Definition~\ref{def:sxm-data}; they are positive, sum to one
+and have mean $\sum_k\pi_kk=Lp$. The decomposition holds because $d^c\log a_k=d^c\log c_k-o_k\,d^c\log|\zeta|^2$ with
+$c_k=|\zeta|^{2o_k}a_k$ smooth and positive and $d^c\log|\zeta|^2=d\theta/(2\pi)$; thus
+$\beta_\varepsilon=L^{-1}\sum_k\pi_kd^c\log c_k$ and $\|\beta_\varepsilon\|\le M_*$.
+
+\emph{Step 4: the residue.} Put $\ell=-\log|\zeta|^2>0$ and $P=Lp$. On end $\varepsilon$ write
+$a_k=c_k\,|\zeta|^{-2o_k}=c_ke^{\ell o_k}$, with $c_k>0$ the regular coefficient norm of Step 2, so $|\log c_k|\le B_{\log}$.
+The selection probabilities $\pi_k\propto a_kr^k$, $r=r_a(P)$, have mean $\sum_k\pi_kk=P$. They are the unique maximiser of
+\[
+ \mathcal J(\mu)=\sum_k\mu_k\log a_k-\sum_k\mu_k\log\mu_k
+\]
+over probability vectors $\mu$ on $\Lambda$ with $\sum_k\mu_kk=P$: $\mathcal J$ is strictly concave, and the Lagrange condition
+$\log\mu_k=\log a_k+\langle x,k\rangle+\text{const}$ at an interior critical point is the defining form $\pi_k\propto a_kr^k$ with
+$r_j=e^{x_j}$ (if some $P_j=0$, the same holds on the face $k_j=0$).
+
+At the ends $[1{:}0{:}0]$ and $[0{:}1{:}1]$ the order $o_k$ is $0$, resp.\ $d_k=D-3|k|$, an affine function of $k$, so
+$d_\varepsilon=c\sum_k\pi_ko_k$ is $c$ times this affine function at $P$; this is $c_\varepsilon$, with no error. At the two
+marked ends $o_k=d_k-m_k$ with $m_k=(S_*-|k|)_+$. Let $A(k)=S_*-|k|$ if $|P|<S_*$ and $A=0$ otherwise; then $A$ is affine,
+$A(k)\le m_k$ on $\Lambda$ and $A(P)=(S_*-|P|)_+$. Put $e_k=m_k-A(k)\ge0$. The set $F=\{k\in\Lambda:e_k=0\}$ consists of the
+lattice points of the polygon $\{k\ge0,\ k_1\le A_*,\ |k|\le S_*\}$, resp.\ $\{k\ge0,\ k_1\le A_*,\ S_*\le|k|\le B_*\}$, whose
+vertices are integral; since $P_1<A_*$ and $|P|<B_*$, $P$ lies in this polygon, so some probability vector $\nu$ supported on
+$F$ has mean $P$. Since $\log a_k=\log c_k+\ell(d_k-A(k))-\ell e_k$ and $d_k-A(k)$ is affine, $\sum_k\mu_k\ell(d_k-A(k))$ is the same
+for all admissible $\mu$, and $\mathcal J(\pi)\ge\mathcal J(\nu)$ gives
+\[
+ \ell\sum_k\pi_ke_k\le\sum_k(\pi_k-\nu_k)\log c_k-\sum_k\pi_k\log\pi_k+\sum_k\nu_k\log\nu_k\le2B_{\log}+\log\#\Lambda .
+\]
+As $\sum_k\pi_ke_k=\sum_k\pi_km_k-(S_*-|P|)_+$, and Jensen's inequality for the convex function $k\mapsto m_k$ gives the lower bound,
+\[
+ 0\le\sum_k\pi_km_k-(S_*-L|p|)_+\le\frac{2B_{\log}+\#\Lambda}{-\log|\zeta|^2}.
+\]
+With $c_\varepsilon=c\,(d(p)-h(p))$ at the marked ends, $d(p)=D-3L|p|$, $h(p)=(S_*-L|p|)_+$, this is
+\[
+ |d_\varepsilon(\zeta)-c_\varepsilon|\le\frac{q_*}{-\log|\zeta|^2},\qquad q_*=|c|\,(2B_{\log}+\#\Lambda),
+\]
+uniformly in $p\in\Delta$. The limiting orders are $d-h$, $d-h$, $d$ and $0$, so
+$\pi\sum_\varepsilon c_\varepsilon=L^{-1}(3d(p)-2h(p))=H_0(p)$.
+
+\emph{Step 5: the cutoff and Stokes.} Let $\chi_l(\zeta)=\chi_{\rm end}((l+1)|\zeta|^2)$ on each end disc and
+$\psi_l=1-\chi_l$ on the curve, extended by $1$ off the ends. Since $\chi_{\rm end}=1$ on $[-R_*/2,R_*/2]$, $\psi_l$
+vanishes where $(l+1)|t|^{-2}<R_*/2=\frac1{32}$, that is for $|t|^2>32(l+1)$. For $l\ge32$ the radius
+$R_l=5+l$ of $\Sigma_l$ satisfies $R_l^2\ge(l+3)^2\ge32(l+1)$, because $(l+3)^2-32(l+1)=l^2-26l-23\ge0$ for
+$l\ge27$. Hence $\operatorname{supp}\psi_l\subset\Sigma_l$. On each end, $d\psi_l$ is supported in the annulus
+$A_l=\{R_*/(2(l+1))\le|\zeta|^2\le R_*/(l+1)\}$, and $|\chi_{\rm end}'|\le K$. Stokes' theorem gives
+\[
+ \int_\Sigma\psi_l\,\Omega_p=-\int_\Sigma d\psi_l\wedge\Gamma_p
+ =\sum_\varepsilon\int_{A_l}\Big(d\chi_l\wedge\beta_\varepsilon-\tfrac12d_\varepsilon\,d\chi_l\wedge d\theta\Big).
+\]
+For the first term, $|d\chi_l|\le2K(l+1)|\zeta|$ and the area of $A_l$ is at most $\pi R_*/(l+1)$, so it contributes at
+most $16KR_*M_*\sqrt{R_*/(l+1)}$ on each end. For the second, $-\frac12\int_{A_l}d\chi_l\wedge d\theta=\pi$, since $\chi_l$ is radial and decreasing on $A_l$ in the orientation induced from $\Sigma$, because
+$\chi_l$ runs once between its boundary values $1$ and $0$ across the annulus; so replacing $d_\varepsilon$ by
+$c_\varepsilon$ produces $\pi c_\varepsilon$ with an error
+at most $4KR_*\,q_*/(-\log(R_*/(l+1)))$ by Step 4, since $|\zeta|^2\le R_*/(l+1)$ on $A_l$. Summing over the four ends,
+\[
+ \Big|\int_\Sigma\psi_l\,\Omega_p-H_0(p)\Big|\le
+ 64KR_*M_*\sqrt{\frac{R_*}{l+1}}+\frac{16q_*KR_*}{-\log(R_*/(l+1))}=E_l .
+\]
+Since $E_l\to0$ and $\psi_l\uparrow1$, monotone convergence gives $\int_\Sigma\Omega_p=H_0(p)$. As $\Omega_p$ is positive,
+$0\le\psi_l\le1$ and $\operatorname{supp}\psi_l\subset\Sigma_l$, we get $\int_\Sigma\psi_l\Omega_p\le H_l(p)\le H_0(p)$, and therefore
+$0\le H_0(p)-H_l(p)\le E_l$.
+
+For $l\ge\mathfrak m(\eta)$ the first term of $E_l$ is at most $C_*/(4\sqrt{l+1})<\eta/2$ and the second at most
+$C_*/\log(16(l+1))<\eta/2$, which proves the uniform modulus.
+\end{proof}

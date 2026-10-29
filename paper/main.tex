@@ -1,0 +1,63 @@
+\documentclass[11pt]{amsart}
+\input{macros}
+\hypersetup{
+  pdftitle={Explicit Hamiltonian ball packings in every dimension},
+  pdfauthor={Liang Song},
+  pdfsubject={Explicit symplectic ball packings and Lean 4 formal verification},
+  pdfkeywords={symplectic geometry, Hamiltonian dynamics, ball packing, Lean 4},
+  pdflang={en-US}
+}
+\usepackage{tikz}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\externaldocument[S-]{build/supplement}[supplement.pdf]
+
+\title[Explicit Hamiltonian ball packings]{Explicit Hamiltonian ball packings in every dimension}
+\author{Liang Song}
+\email{sl12160010@gmail.com}
+\thanks{Final version 1.0.0, 29 October 2026. DOI:
+\href{https://doi.org/10.5281/zenodo.23756576}{10.5281/zenodo.23756576}.}
+\date{}
+
+\begin{document}
+\begin{abstract}
+Biran's packing stability theorem gives nearly full packings of the four-ball by any $k\ge9$ equal balls. We
+construct the motion. For every $k\ge10$ and $\eps\in(0,1)$, one construction defines a smooth compactly
+supported Hamiltonian $H_{k,\eps}$ on $\R\times\R^4$ whose time-one map carries the closed unit balls centred at
+$(3i-3,0,0,0)$ into the ball of radius $R=(k/(1-\eps/4))^{1/4}$, filling the fraction $1-\eps/4$. This gives a
+mathematical solution to the construction problem posed by Epoch AI. The two main ingredients are a linear
+comparison function for which the increasing rearrangement of the profile defect is exactly linear, in place of a
+contraction fixed point, and a return from the Fermat cubic disc-bundle model to the ball, in which a cube-root symmetry proves
+avoidance of the line at infinity. The construction develops the twisted disc-bundle mechanism of a 2026 preprint
+of OpenAI and proves four-ball packing stability without $J$-holomorphic curves or Seiberg--Witten theory. In
+dimension $2n\ge6$ it realises every packing allowed by the volume and two-ball inequalities, and in dimension
+four every packing with $\sum_i c_i^2<C^2$ and $3c_i<C$. We also prove robustness under perturbation with an explicit
+margin and give a terminating algorithm whose output is a rational polynomial times a fixed cutoff. The main theorems are
+verified in Lean~4.
+\end{abstract}
+\maketitle
+
+\input{main/introduction}
+\input{main/mechanism}
+\input{main/comparison}
+\input{main/handle}
+\input{main/models}
+\input{main/hamiltonian}
+\input{main/effective}
+\input{main/verification}
+
+\section*{Authorship and the role of AI}
+
+Liang Song is the sole author and is responsible for the manuscript and its release. The mathematics, the Lean
+formalisation and the text were produced by AI systems, including GPT-6.1 Sol (OpenAI), Claude Opus 5.5
+(Anthropic) and other models, working in a research environment designed and directed by Liang Song, who chose the
+problem, assembled the literature and context given to the systems, designed the verification pipeline and made
+the editorial decisions. Every statement marked [Lean:~\dots] is checked by the Lean kernel, for the problem as stated
+in \texttt{verification/Problem.lean} from Mathlib alone, and the build fails if any axiom beyond \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound} is used. Explicitness and the uniformity of the algorithm are
+checked by two metaprograms, which are not themselves verified (Section~\ref{sec:ver}).
+
+\bibliographystyle{amsalpha}
+\bibliography{refs}
+
+\end{document}

@@ -1,0 +1,122 @@
+\section{Formal verification}\label{sec:ver}
+\begingroup\sloppy
+
+The Lean~4 development \cite{LeanRepo,Lean4} uses the toolchain \texttt{v4.34.1}, Mathlib \cite{Mathlib2020} at
+the tag of the same name, and the unmodified Lean library accompanying \cite{OpenAI2026}. That library contributes lemmas and a few generic
+differential-geometric operators (exterior derivative, chart differential); the definitions of the Hamiltonian and of
+the algorithms belong to the development, and none of the library's packing constructions or existence results is
+used. The entry
+point is five short files in \texttt{verification/}: \texttt{Problem.lean} defines the problem using Mathlib alone;
+\texttt{Algorithm.lean} exposes the top level of the construction; \texttt{Statement.lean} states correctness of the
+construction; \texttt{Computability.lean} and \texttt{EpochComputability.lean} state correctness and termination of the
+finite-output algorithms. Theorems in \texttt{verification/} have no namespace; other names are relative to
+\texttt{SymplecticPacking}.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}L{0.2\textwidth}L{0.74\textwidth}@{}}
+\toprule
+Statement & Lean \\
+\midrule
+Theorem~\ref{thm:intro-4d} & \texttt{four\_dim\_theorem}, with \texttt{General.epochRadiusQ},
+ \texttt{General.epochHamiltonianQ} \\
+Proposition~\ref{thm:intro-stability} & \texttt{four\_dim\_stability} \\
+Theorem~\ref{thm:main}(i) & \texttt{main\_theorem}, \texttt{main\_time\_support}, \texttt{main\_support\_radius}; for the
+ flow, \texttt{flow\_is\_integral\_curve}, \texttt{flow\_symplectic\_diffeomorphism}, \texttt{flow\_images\_disjoint} \\
+Theorem~\ref{thm:main}(ii) & \texttt{\#check\_explicit General.packingHamiltonian} (a metaprogram, see below) \\
+Theorem~\ref{thm:main}(iii) & \texttt{original\_name\_algorithm}, with \texttt{\#check\_constructive} on the machine;
+ finite form: \texttt{General.Compile.main\_finite} \\
+Corollaries~\ref{thm:main-sy}--\ref{thm:main-cone4} & \texttt{neighbourhood\_criterion},
+ \texttt{flow\_neighbourhood\_embedding}; \texttt{equal\_balls}; \texttt{epoch\_packing}, \texttt{epoch\_theorem\_ten},
+ \texttt{epoch\_name\_algorithm}, \texttt{epoch\_name\_algorithm\_packing}; \texttt{unequal\_cone} \\
+embeddings, by case & $n=2$: \texttt{Branch2.embeddingsEq\_spec} (linear datum), \texttt{Branch2.embeddingsGen\_spec}
+ (scalar comparator); $n\ge3$: \texttt{BranchSmall.embeddings\_spec} (all $c_i<\frac C2$),
+ \texttt{BranchLarge3.embeddings\_spec} ($n=3$, one $c_j\ge\frac C2$), \texttt{BranchLargeHigh.embeddings\_spec}
+ ($n\ge4$, one $c_j\ge\frac C2$) \\
+\bottomrule
+\end{tabular}
+\caption{Formal counterparts of the main statements. Every case of \Sref{Construction}{cons:ham-branch} is covered
+by \texttt{main\_theorem} and by the same algorithm theorems.}
+\label{tab:ver-coverage}\label{tab:ver-levels}
+\end{table}
+
+\subsection*{The statement}
+
+Phase space is $\texttt{Problem.E}~n=\texttt{EuclideanSpace}\ \R\ (\texttt{Fin}\ (2n))$, coordinates $j<n$ and $n+j$
+being $x_{j+1}$ and $y_{j+1}$ (named $q$ and $p$ in the file); \texttt{omega0} and \texttt{hamVF} give $\omega_0=\sum_jdx_j\wedge dy_j$ and
+$X_H=(\partial_yH,-\partial_xH)$, so $\iota_{X_H}\omega_0=dH$. \texttt{capBall}~$s$~$c=\{z:\pi\|z-s\|^2\le c\}$ and
+\texttt{capBallOpen} is its strict version. \texttt{Admissible}, \texttt{BallsDisjoint} and \texttt{PackingSpec} are
+Definitions~\ref{def:intro-admissible} and~\ref{def:intro-spec} and the disjointness hypothesis, field by field;
+\texttt{PackingSpec} quantifies over every integral curve on $[0,1]$, so it does not depend on a chosen solution.
+\texttt{EpochSpecR} is the problem as posed, with the closed Euclidean unit balls about
+\texttt{epochCenter}~$i=(3i,0,0,0)$, $0\le i<k$ (the centre $s_{i+1}$), and the closed target of radius $R$.
+
+Each theorem is a statement about the defined term. \texttt{Algorithm.lean} shows by \texttt{rfl} that
+\texttt{General.packingHamiltonian} is \texttt{HamEnd.hamiltonianOfEmbeddings} applied to
+\texttt{General.selectEmbeddings}, the case distinction of \Sref{Construction}{cons:ham-branch}, and that the Epoch
+Hamiltonian is its instance with $C=\pi R^2$. The Lean statements agree with the paper, with these differences of
+form: \texttt{equal\_balls} does not assume $\eps>0$; \texttt{four\_dim\_stability} also records $R<R'$;
+\texttt{four\_dim\_theorem} contains both \texttt{EpochSpecR} and the packing specification; the algorithm theorems
+assert \texttt{Nat.RecursiveIn} relative to the oracles given by the input names, and that one program serves every
+input is certified by \texttt{\#check\_constructive}; \texttt{flow\_neighbourhood\_embedding} uses the neighbourhood
+$(\phi^1_H)^{-1}(\Bo(C))$ and holds for every $n\ge2$.
+
+\subsection*{What is verified}
+
+The kernel checks the theorems of \texttt{Statement.lean}, \texttt{Computability.lean} and
+\texttt{EpochComputability.lean} and all their dependencies in the development, the vendored library and Mathlib. The
+trusted base is the kernel, the definitions in \texttt{Problem.lean} and the axioms \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound}; a command fails the build if the transitive axiom set of any of
+these theorems contains anything else, in particular \texttt{sorryAx}.
+
+Since Mathlib's real numbers use classical choice, axioms cannot distinguish a formula from an arbitrary existential
+witness. Explicitness (level L1) and uniformity (level L3) are therefore checked by two metaprograms, which are not
+themselves verified. \texttt{\#check\_explicit} traverses the non-proof dependency closure of a definition, through
+project, vendored and Mathlib definitions, and accepts case distinctions on propositions, least-element searches over
+integers, rationals and finite data with a non-classical decision procedure, uses of choice inside an explicit allow-list of Mathlib definitions
+(\texttt{SymplecticPacking/Explicit/Whitelist.lean}), and definite descriptions after unique existence over types without a discrete factor. The $26$
+definite descriptions reached from \texttt{General.packingHamiltonian} (inverses, roots and critical points, linear
+solves, matrix square roots, solutions of ordinary differential equations, extrema and measures) are listed in Appendix~\Snum{sec:xpl}. The command is applied to \texttt{General.packingHamiltonian}, the Epoch Hamiltonians, the support
+radius, the case embeddings and the algorithm terms. \texttt{\#check\_constructive} is stricter: the computational
+closure may contain no classical constant at all, including classical decidability. It is applied to the two oracle
+machines, so each is one fixed program in its oracle streams and cannot branch on an undecidable property of the
+reals they name. \texttt{test/ExplicitTest.lean} contains terms both commands must reject, among them a search for the
+least index whose enumerated Hamiltonian satisfies the specification, the same search wrapped as a unique pair in
+$\N\times\R$, and a machine branching on $x<\frac13$ for a real $x$.
+
+\emph{Independence.} The file \texttt{verification/Audit/Independence.lean} runs the command
+\texttt{\#assert\_construction\_independence}, which traverses types, definitions and proof bodies of the packing, stability,
+flow, corollary and algorithm theorems and fails if they reach the vendored packing predicate or existence theorems, the
+holomorphic-line and two-ball obstruction proofs, or the curve-analysis modules of the vendored library. The converse
+in Corollary~\ref{thm:main-sy} is checked separately: it may use the classical obstructions, but no sufficiency
+theorem. A positive control detects its dependence on \texttt{adapted\_affine\_line}, and a regression test detects a
+two-ball obstruction hidden inside a wrapper. The vendored declarations used are listed by
+\texttt{verification/Audit/VendoredUsage.lean} (Appendix~\Snum{sec:xpl-vendored}): explicit charts, forms, primitives, Moser
+fields and model coefficients.
+
+Further statements carry source tags naming related Lean declarations; \texttt{verification/PAPER-INDEX.md} indexes
+them, and the build checks that every tagged name exists and depends only on the three axioms.
+The visible label \emph{full statement verified} denotes the full mathematical statement, up to the presentation
+differences described above. The label \emph{needed consequence verified} denotes only the version used by the
+construction, not every assertion or the entire domain of the printed statement. Appendix~\Snum{sec:xpl-interface}
+records these restrictions, including return identities along smooth unit-vector families, transfer properties along
+the constructed embeddings, and the coarser Hamiltonian support bound. An unqualified source tag is a reference,
+without a full-coverage claim.
+The scope labels are editorial correspondences for readers to review; the kernel checks the Lean statements.
+The main correctness theorems concern the defined Hamiltonian and depend on every step of the construction.
+
+\subsection*{Reproduction}
+
+With Elan, Node.js and Tectonic installed, \texttt{lake exe cache get} followed by \texttt{bash scripts/verify.sh}
+builds or incrementally checks the development with all axiom, explicitness, uniformity and independence gates, runs the
+regression tests and the paper-tag check, and compiles both papers; every stage is fatal. The development is released
+under Apache-2.0; the vendored library keeps its licence and notices.
+The repository includes a short reviewer guide, \texttt{REVIEW.md}, and an optional project cache.
+After building, \texttt{bash scripts/check\_kernel.sh} replays the complete proof closure of
+\texttt{verification/Kernel.lean} into a fresh environment using the pinned toolchain's
+\texttt{leanchecker}; this checks stored proof terms with the same Lean kernel.
+A source rebuild from an empty project build directory checks elaboration without the project cache.
+
+\endgroup

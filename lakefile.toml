@@ -1,0 +1,35 @@
+name = "SymplecticPacking"
+version = "1.0.0"
+defaultTargets = ["SymplecticPacking", "verification"]
+# Lake builds modules in parallel; one thread per Lean process keeps memory use bounded.
+weakLeanArgs = ["-j1"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.34.1"
+
+[[lean_lib]]
+name = "SymplecticPacking"
+
+# Vendored, unmodified OpenAI BallPacking library (Apache-2.0, see vendor/NOTICE).
+[[lean_lib]]
+name = "OAI"
+srcDir = "vendor"
+globs = ["OAI.Geometry.BallPacking.+"]
+
+# Verification entry: Mathlib-only problem statement and the top-level theorems.
+[[lean_lib]]
+name = "verification"
+globs = ["verification.+"]
+
+# Checker regression suites: Lake checks them in parallel and invalidates their
+# cached results whenever a suite or any imported audit changes.
+[[lean_lib]]
+name = "test"
+globs = ["test.+"]

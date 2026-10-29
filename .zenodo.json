@@ -1,0 +1,34 @@
+{
+  "title": "Explicit Hamiltonian ball packings in every dimension",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "publication_date": "2026-10-29",
+  "license": "Apache-2.0",
+  "creators": [
+    {
+      "name": "Song, Liang"
+    }
+  ],
+  "description": "<p>For every k ≥ 10 and ε ∈ (0,1), we define one explicit smooth compactly supported Hamiltonian on ℝ × ℝ⁴ whose time-one map carries the k closed unit balls centred at (3i−3,0,0,0) into the ball of radius (k/(1−ε/4))<sup>1/4</sup>, with an explicit stability margin: a mathematical solution to Epoch AI's symplectic ball packing problem. The same construction realises every ball packing allowed by the volume and two-ball inequalities in dimension 2n ≥ 6 and the packings with Σc<sub>i</sub>² &lt; C² and 3c<sub>i</sub> &lt; C in dimension four, and proves Biran's packing stability for B⁴ without J-holomorphic curves. A uniform terminating algorithm outputs a rational polynomial times a fixed cutoff with the same packing property.</p><p>Contains the paper, its supplement with complete proofs, and a Lean 4 formalisation of the main packing, stability and algorithm theorems.</p><p>Source and verification instructions: <a href=\"https://github.com/s-JoL/Symplectic-Ball-Packing\">Symplectic-Ball-Packing</a>. The algorithm theorem does not assert a practical runtime bound.</p>",
+  "keywords": [
+    "symplectic ball packing",
+    "packing stability",
+    "Hamiltonian dynamics",
+    "explicit constructions",
+    "Lean 4",
+    "formal verification"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/openai/math",
+      "relation": "references",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing",
+      "relation": "references",
+      "resource_type": "other"
+    }
+  ],
+  "doi": "10.5281/zenodo.23756576"
+}

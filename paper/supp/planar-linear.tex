@@ -1,0 +1,985 @@
+%======================================================================
+\section{The explicit inner map for equal balls}\label{sec:pll}
+
+We construct the fibre isotopy $(q_t)$ used in \Mref{Proposition}{prop:cmp-linear}: an explicit compactly
+supported Hamiltonian isotopy of the disc $\bar D(h)$ whose endpoint $q$ satisfies
+$\Rcal_{\rm tent}(\pi|q(z)|^2)\le\pi|z|^2+4e_q$ on $\bar D(h)$ (Theorem~\ref{thm:pll-inner}). The isotopy is the
+output of \S\ref{sec:pln} for one potential pair $(\tilde R,\tilde V)$: $\tilde R$ is a hyperbolic smoothing of the
+tent $\Rcal_{\rm tent}$, and $\tilde V$ is a quadratic angular potential with a steep step at $\theta=\pm\frac12$. Both
+potentials are made exactly quadratic near their minima. Consequently the Morse chart, its density and both
+normalisations of \S\ref{sec:pln} are linear near the origin, and the inner map equals the linear symplectic map
+$\mathbf L=\operatorname{diag}(c_x,c_y)$ on an explicit disc (Proposition~\ref{prop:pll-inner-map}); this gives
+smoothness at the origin with no further argument. The error $4e_q$ has two sources: on the core, the smoothing
+of the tent and the mean of the angular potential (Proposition~\ref{prop:pll-comparison}); outside it, an annulus
+of area $4e_q$ on which only $q(\bar D(h))=\bar D(h)$ is used.
+
+\subsection{Setting and conventions}\label{sec:pll-setting}
+
+\emph{Parameters.} Fix an integer $k\ge10$ (so $\sqrt k>3$) and $t_0\in(\frac78,1)$ (in the equal-capacity branch
+$t_0=\frac12(1+\rho\sqrt k)$, Remark~\ref{rem:rtc-equal}), and let
+\[
+ a=\frac{t_0}{\sqrt k},\qquad h=\frac{t_0}3,\qquad A=\frac ha,\qquad B=\frac h{h-a}
+\]
+be as in \Msec{sec:cmp-linear}. By \Msec{sec:cmp-linear} and Lemma~\ref{lem:fcp-AB}, $0<a<h$, $A,B>0$,
+\[
+ \frac1A+\frac1B=1\quad(\text{equivalently }A+B=AB),\qquad \frac hA=a,\qquad \frac hB=h-a .
+\]
+The tent is $\Rcal_{\rm tent}(x)=A(a-x)$ for $x\le a$ and $\Rcal_{\rm tent}(x)=B(x-a)$ for $x\ge a$ ($x\in\R$); it is
+the function $\Lambda$ of \Msec{sec:cmp-linear}, convex, with $\Rcal_{\rm tent}(0)=\Rcal_{\rm tent}(h)=h$ and
+$\Rcal_{\rm tent}(a)=0$. By \Mref{Lemma}{lem:cmp-tent-sublevel}, for every level $\beta\ge0$,
+\begin{equation}\label{eq:pll-sublevel}
+ \{x\in\R:\Rcal_{\rm tent}(x)\le\beta\}=\Bigl[a-\frac\beta A,\ a+\frac\beta B\Bigr],
+\end{equation}
+an interval of length $\beta$, contained in $[0,h]$ if $\beta\le h$; in particular $\{\Rcal_{\rm tent}<h\}=(0,h)$.
+Throughout, $e=e_q$ is the number of Definition~\ref{def:fcp-eq}. The estimates below use only $0<a<h$, $A,B>0$,
+Lemma~\ref{lem:fcp-AB} and $0<e\le h/100$.
+
+\emph{The fibre.} The fibre is the plane $\C$ with the area form $\omega_2$ and moment $p(\zeta)=\pi|\zeta|^2$.
+$D(P_0)=\{\pi|\zeta|^2<P_0\}$ is the open disc of \emph{area} $P_0$ and $\bar D(P_0)$ its closure. A map between
+open subsets of the plane is symplectic if its Jacobian determinant is identically $1$. As in \S\ref{sec:pln},
+three planes occur: the \emph{source} plane with coordinate $z$; the \emph{Morse plane} with coordinate
+$w=(u,v)$, in which the potentials become $u^2+v^2$; and the \emph{rectangle coordinates} $(x,\theta)$, where $x$
+is a shifted moment and $\theta$ an angle. In the notation of \S\ref{sec:pln} the parameter domain is a point
+($d=0$), $I_U=I_V=\R$,
+$U(p)=\tilde R(p-p^*)$ and $V=\tilde V$ (Construction~\ref{cons:pll-morse}), and we work in the shifted moment
+$x=p-p^*$. Fibre Hamiltonians $Q$ use $\iota_\Xi\omega_2=-dQ$. $S$ is the flat step of
+Definition~\ref{def:pre-flat}; by Lemma~\ref{lem:pre-flat} it is $C^\infty$ and nondecreasing, $S=0$ on
+$(-\infty,0]$, $S=1$ on $[1,\infty)$, all its derivatives vanish at $0$ and at $1$, and $S(x)+S(1-x)=1$, so
+$S(\frac12)=\frac12$. $\mathrm{Rot}_\phi$ is the rotation by the angle $\phi$.
+
+\subsection{Constants and the hyperbola}\label{sec:pll-constants}
+
+On $\R$ we have $\Rcal_{\rm tent}(p)=m_-(p-a)+m_+|p-a|$ with the two constants $m_\pm$ below
+(Lemma~\ref{lem:pll-close}). The corner at $p=a$ is smoothed by a hyperbola of width $\eta_{\rm w}$, chosen so that the
+smoothing error is $\eta_{\rm w} m_+=e/8$. The shift $x^*$ moves the minimum of the smoothed function to $x=0$, and $p^*$
+is the minimum point in the moment variable. $\alpha_0$ and $e$ are the second derivatives at $0$ of the two
+potentials.
+
+\begin{definition}[Constants]\label{def:pll-constants}
+\lean{SymplecticPacking.Params.m, SymplecticPacking.Params.n, SymplecticPacking.Params.r,
+SymplecticPacking.Params.eta, SymplecticPacking.Params.xstar,
+SymplecticPacking.Params.pstar, SymplecticPacking.Params.delta}
+\uses{def:fcp-eq}
+\begin{gather*}
+ m_-=\frac{B-A}{2},\quad m_+=\frac{A+B}{2},\quad r=\sqrt{AB},\\
+ \eta_{\rm w}=\frac{e}{8m_+},\quad
+ x^*=-\frac{m_-\eta_{\rm w}}{r},\quad p^*=a+x^*,\quad \delta=\frac e8 .
+\end{gather*}
+\end{definition}
+
+\begin{definition}[Curvatures and linear constants]\label{def:pll-curvatures}
+\lean{SymplecticPacking.Params.alpha0, SymplecticPacking.Inner.a0, SymplecticPacking.Inner.b0,
+SymplecticPacking.Inner.j0, SymplecticPacking.Inner.cx, SymplecticPacking.Inner.cy,
+SymplecticPacking.Inner.cx_mul_cy}
+\uses{def:pll-constants}
+\begin{gather*}
+ \alpha_0=\frac{r^3}{\eta_{\rm w} m_+^2},\qquad
+ a_0=\sqrt{2/\alpha_0},\qquad b_0=\sqrt{2/e},\qquad j_0=a_0b_0,\\
+ c_x=\sqrt{a_0/b_0},\qquad c_y=1/c_x,\qquad \mathbf L=\operatorname{diag}(c_x,c_y).
+\end{gather*}
+\end{definition}
+
+\begin{lemma}[Relations between the constants]\label{lem:pll-constants}
+\lean{SymplecticPacking.Params.r_sq_eq_two_n,
+SymplecticPacking.Params.n_sq_sub_m_sq,
+SymplecticPacking.Params.r_le_n,
+SymplecticPacking.Params.alpha0_eq,
+SymplecticPacking.Inner.abs_m_lt_n}
+\uses{def:pll-constants, def:pll-curvatures, lem:fcp-AB}
+$r^2=2m_+=m_+^2-m_-^2$, hence $0<r\le m_+$ and $|m_-|<m_+$; moreover $\alpha_0=8r^3/(em_+)=16r/e$,
+$\eta_{\rm w} m_+=\delta$, $a_0=\sqrt{e/(8r)}$, $j_0=1/(2\sqrt r)$ and $c_x^4=e^2/(16r)$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:fcp-AB}, $r^2=AB=A+B=2m_+$, and $m_+^2-m_-^2=AB=r^2$. As $A,B>0$, $|m_-|<m_+$ and $r\le m_+$. Then
+$\alpha_0=r^3\cdot8m_+/(em_+^2)=8r^3/(em_+)=8r\cdot r^2/(em_+)=16r/e$, and $\eta_{\rm w} m_+=e/8$. Hence
+$a_0^2=2/\alpha_0=e/(8r)$, $j_0^2=a_0^2b_0^2=(e/(8r))(2/e)=1/(4r)$ and $c_x^4=a_0^2/b_0^2=(e/(8r))(e/2)=e^2/(16r)$.
+\end{proof}
+
+\begin{definition}[The hyperbola and its inverse]\label{def:pll-hyperbola}
+\lean{SymplecticPacking.Params.Rmorse, SymplecticPacking.Inner.Xinv}
+\uses{def:pll-constants}
+For real $x$ and $u$ put
+\[
+ R(x)=m_-(x^*+x)+m_+\sqrt{(x^*+x)^2+\eta_{\rm w}^2}-\eta_{\rm w} r,\qquad
+ X(u)=\frac{-m_-u^2+m_+u\sqrt{u^2+2\eta_{\rm w} r}}{r^2}.
+\]
+\end{definition}
+
+\begin{lemma}[The hyperbola]\label{lem:pll-hyperbola}
+\lean{SymplecticPacking.Params.Rmorse_zero, SymplecticPacking.Params.Rmorse_nonneg,
+SymplecticPacking.Inner.Rmorse1_zero, SymplecticPacking.Inner.Rmorse2_zero, SymplecticPacking.Inner.Rmorse2_pos,
+SymplecticPacking.Inner.Rmorse_contDiff, SymplecticPacking.Inner.Rmorse_ge}
+\uses{def:pll-hyperbola, lem:pll-constants}
+$R$ is $C^\infty$ and strictly convex, $R(0)=R'(0)=0$, $R''(0)=\alpha_0>0$, $R\ge0$, and $R(x)\to+\infty$ as
+$x\to\pm\infty$. In particular $0$ is the unique minimum point of $R$, and it is nondegenerate.
+\end{lemma}
+
+\begin{proof}
+Write $\xi=x^*+x$. Since $(x^*)^2+\eta_{\rm w}^2=\eta_{\rm w}^2(m_-^2+r^2)/r^2=(\eta_{\rm w} m_+/r)^2$,
+\[
+ R(0)=-\frac{m_-^2\eta_{\rm w}}{r}+\frac{m_+^2\eta_{\rm w}}{r}-\eta_{\rm w} r=\frac{\eta_{\rm w}(m_+^2-m_-^2)}{r}-\eta_{\rm w} r=0 .
+\]
+$R'(x)=m_-+m_+\xi/\sqrt{\xi^2+\eta_{\rm w}^2}$, so $R'(0)=m_-+m_+(-m_-\eta_{\rm w}/r)/(\eta_{\rm w} m_+/r)=0$, and
+$R''(x)=m_+\eta_{\rm w}^2/(\xi^2+\eta_{\rm w}^2)^{3/2}>0$, with $R''(0)=m_+\eta_{\rm w}^2(r/(\eta_{\rm w} m_+))^3=r^3/(\eta_{\rm w} m_+^2)=\alpha_0$.
+Nonnegativity also follows from Cauchy--Schwarz:
+$\eta_{\rm w} r-m_-\xi\le\sqrt{m_-^2+r^2}\sqrt{\xi^2+\eta_{\rm w}^2}=m_+\sqrt{\xi^2+\eta_{\rm w}^2}$. Finally
+$R(x)\ge(m_+-|m_-|)|\xi|-\eta_{\rm w} r$, and $m_+-|m_-|>0$.
+\end{proof}
+
+\begin{lemma}[$X$ inverts $R$]\label{lem:pll-hyperbola-inverse}
+\lean{SymplecticPacking.Inner.Rmorse_Xinv, SymplecticPacking.Inner.Xinv_strictMono,
+SymplecticPacking.Inner.Xinv_deriv_pos, SymplecticPacking.Inner.Xinv_sign, SymplecticPacking.Inner.Xinv_unique,
+SymplecticPacking.Inner.Xinv_deriv_zero, SymplecticPacking.Inner.Xinv_smooth,
+SymplecticPacking.Inner.Xinv_tendsto_atTop, SymplecticPacking.Inner.Xinv_tendsto_atBot}
+\uses{lem:pll-hyperbola, def:pll-hyperbola}
+$X$ is a $C^\infty$ diffeomorphism of $\R$ with $X'>0$, $\operatorname{sign}X(u)=\operatorname{sign}u$ and
+$R(X(u))=u^2$. For $u\ne0$, $X(u)$ is the only solution of $R(x)=u^2$ with the sign of $u$. Moreover
+$X'(0)=\sqrt{2/\alpha_0}=a_0$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:pll-hyperbola}, for $u\ne0$ the equation $R(x)=u^2$ has exactly two solutions, one positive and
+one negative. Any solution satisfies $m_+\sqrt{\xi^2+\eta_{\rm w}^2}=u^2+\eta_{\rm w} r-m_-\xi$ ($\xi=x^*+x$); squaring and using
+$m_+^2-m_-^2=r^2$,
+\[
+ r^2\xi^2+2m_-(u^2+\eta_{\rm w} r)\xi+m_+^2\eta_{\rm w}^2-(u^2+\eta_{\rm w} r)^2=0 .
+\]
+Since $m_-^2+r^2=m_+^2$ and $(u^2+\eta_{\rm w} r)^2-r^2\eta_{\rm w}^2=u^2(u^2+2\eta_{\rm w} r)$, the roots are
+$\xi=[-m_-(u^2+\eta_{\rm w} r)\pm m_+|u|\sqrt{u^2+2\eta_{\rm w} r}]/r^2$, that is,
+$x_\pm=[-m_-u^2\pm m_+|u|\sqrt{u^2+2\eta_{\rm w} r}]/r^2$. As $m_+\sqrt{u^2+2\eta_{\rm w} r}>m_+|u|\ge|m_-||u|$, $x_+>0>x_-$ for
+$u\ne0$. Hence the positive solution is $x_+$, the negative one is $x_-$, both are given by $X(u)$ according to the
+sign of $u$, and $X(0)=0$. Thus $R(X(u))=u^2$ and $\operatorname{sign}X(u)=\operatorname{sign}u$. $X$ is $C^\infty$
+because $2\eta_{\rm w} r>0$. Differentiating, $R'(X(u))X'(u)=2u$; for $u\ne0$, $R'(X(u))$ has the sign of $u$, so
+$X'(u)>0$; and $X'(0)=m_+\sqrt{2\eta_{\rm w} r}/r^2>0$ with $X'(0)^2=2m_+^2\eta_{\rm w}/r^3=2/\alpha_0$. Finally
+$X(u)\sim(m_+-m_-)u^2/r^2\to+\infty$ as $u\to+\infty$ and $X(u)\sim-(m_++m_-)u^2/r^2\to-\infty$ as $u\to-\infty$, so
+$X$ is a bijection of $\R$ with positive derivative, hence a diffeomorphism.
+\end{proof}
+
+\begin{lemma}[Comparison of $R$ with the tent]\label{lem:pll-close}
+\lean{SymplecticPacking.Params.Rcal_eq, SymplecticPacking.Params.Rmorse_close}
+\uses{lem:pll-hyperbola, lem:pll-constants}
+$\Rcal_{\rm tent}(p)=m_-(p-a)+m_+|p-a|$ for all real $p$, and
+\begin{equation}\label{eq:pll-close}
+ \bigl|R(p-p^*)-\Rcal_{\rm tent}(p)\bigr|\le\delta=\frac e8\qquad(p\in\R).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+For $p\le a$, $m_-(p-a)-m_+(p-a)=-A(p-a)$; for $p\ge a$, $(m_-+m_+)(p-a)=B(p-a)$. With
+$\xi=p-a=x^*+(p-p^*)$,
+\[
+ R(p-p^*)-\Rcal_{\rm tent}(p)=m_+\bigl(\sqrt{\xi^2+\eta_{\rm w}^2}-|\xi|\bigr)-\eta_{\rm w} r\in[-\eta_{\rm w} r,\ \eta_{\rm w}(m_+-r)],
+\]
+because $0\le\sqrt{\xi^2+\eta_{\rm w}^2}-|\xi|\le\eta_{\rm w}$. Since $0<r\le m_+$, the absolute value is at most
+$\eta_{\rm w} m_+=\delta$.
+\end{proof}
+
+\begin{lemma}[Position of the minimum]\label{lem:pll-pstar}
+\lean{SymplecticPacking.Params.pstar_mem}
+\uses{lem:pll-close, lem:pll-hyperbola, M-lem:cmp-tent-sublevel}
+$0<p^*<h$.
+\end{lemma}
+
+\begin{proof}
+Take $p=p^*$ in \eqref{eq:pll-close} and use $R(0)=0$ and $\Rcal_{\rm tent}\ge0$:
+$\Rcal_{\rm tent}(p^*)\le e/8\le h/800<h$. By \eqref{eq:pll-sublevel}, $\{\Rcal_{\rm tent}<h\}=(0,h)$.
+\end{proof}
+
+\subsection{Potentials exactly quadratic near the origin}\label{sec:pll-morse}
+
+Near its minimum, $R$ is $\frac12\alpha_0x^2$ up to a cubic error $g_R$. We replace $R$ by its quadratic part on
+$|x|\le\eps_R$ and interpolate with a cutoff on $\eps_R\le|x|\le2\eps_R$. The scale $\eps_R$ is chosen so small that
+the change of $R$ is far below $e$ and the cutoff creates no new critical point (Lemmas~\ref{lem:pll-Rtilde-close}
+and~\ref{lem:pll-Rtilde-mono}). The angular potential $\tilde V$ is the quadratic $e\theta^2/2$ plus a smooth step of
+height $2h$ supported in a band of width $w_V$ at $\theta=\pm\frac12$. The step confines the level sets used below to
+$|\theta|<\frac12$ (Lemma~\ref{lem:pll-wall}(c)) and adds at most $e/5$ to the mean of $\tilde V$
+(Lemma~\ref{lem:pll-mean}).
+
+\begin{construction}[The potential pair]\label{cons:pll-morse}
+\lean{SymplecticPacking.Inner.psiR, SymplecticPacking.Inner.Cpsi, SymplecticPacking.Inner.epsR,
+SymplecticPacking.Inner.kappaR, SymplecticPacking.Inner.deltaPrime, SymplecticPacking.Inner.gcub,
+SymplecticPacking.Inner.Rtilde, SymplecticPacking.Inner.SigmaR, SymplecticPacking.Inner.Xtilde,
+SymplecticPacking.Inner.uEps, SymplecticPacking.Inner.wV, SymplecticPacking.Inner.cV,
+SymplecticPacking.Inner.argV, SymplecticPacking.Inner.stV, SymplecticPacking.Inner.Vtilde,
+SymplecticPacking.Inner.yc, SymplecticPacking.Inner.sigmaV, SymplecticPacking.Inner.SigmaV,
+SymplecticPacking.Inner.Ytilde, SymplecticPacking.Inner.vEps, SymplecticPacking.Inner.K3}
+\uses{def:pre-flat, lem:pre-flat, def:pll-constants, def:pll-curvatures, def:pll-hyperbola}
+\emph{Radial potential.} Put
+\[
+ \psi_R(t)=1-S\Bigl(\frac{t^2-1}{3}\Bigr)\quad(t\in\R),\qquad C_\psi=\sup_{t\in\R}|\psi_R'(t)|,\qquad
+ K_3=\frac{m_+}{\eta_{\rm w}^2},
+\]
+\[
+ \eps_R=\frac{e\,r^3}{256\,m_+^4\,(1+C_\psi)},\qquad
+ \kappa_R=\frac{e}{196608}=\frac{e}{3\cdot2^{16}},\qquad \delta'=\delta+\kappa_R=\frac e8+\kappa_R,
+\]
+$g_R(x)=\frac12\alpha_0x^2-R(x)$ and
+\[
+ \tilde R(x)=R(x)+\psi_R(x/\eps_R)\,g_R(x)=\tfrac12\alpha_0x^2-\bigl(1-\psi_R(x/\eps_R)\bigr)g_R(x)\qquad(x\in\R).
+\]
+Let $\Sigma_R(x)=\operatorname{sign}(x)\sqrt{\tilde R(x)}$, let $\tilde X=\Sigma_R^{-1}$ (a bijection of $\R$ by
+Lemma~\ref{lem:pll-quadratic}), and put $u_\eps=\sqrt{\alpha_0/2}\,\eps_R$.
+
+\emph{Angular potential.} Put $w_V=e/(20h)$, $c_V=1-2w_V$, and for real $\theta$
+\[
+ \mathrm{st}(\theta)=S\Bigl(\frac{4\theta^2-c_V^2}{1-c_V^2}\Bigr),\qquad
+ \tilde V(\theta)=\frac{e\,\theta^2}{2}+2h\,\mathrm{st}(\theta),\qquad
+ \theta_c=\frac12\sqrt{c_V^2+\frac{1-c_V^2}2}\, .
+\]
+Let $\sigma_V(\theta)=\mathrm{st}(\theta)/\theta^2$ for $\theta\ne0$ and $\sigma_V(0)=0$, put
+$\Sigma_V(\theta)=\theta\sqrt{e/2+2h\,\sigma_V(\theta)}$, let $\tilde Y=\Sigma_V^{-1}$ (a bijection of $\R$ by
+Lemma~\ref{lem:pll-wall}), and put $v_\eps=\sqrt{e/2}\,(\frac12-w_V)$ and $\rho_T=\min(u_\eps,v_\eps)$.
+\end{construction}
+
+The function $\psi_R$ is $C^\infty$, even, nonincreasing in $|t|$, with values in $[0,1]$; $\psi_R(t)=1$ for
+$|t|\le1$ (there $(t^2-1)/3\le0$) and $\psi_R(t)=0$ for $|t|\ge2$ (there $(t^2-1)/3\ge1$). Since $\psi_R'$ is
+continuous and vanishes outside $[-2,2]$, $C_\psi$ is the maximum of $|\psi_R'|$ over $[-2,2]$, a real number in
+$[0,\infty)$. Only the inequality $|\psi_R'|\le C_\psi$ enters the proofs (Lemma~\ref{lem:pll-Rtilde-mono}); the
+value of $C_\psi$ enters the construction through $\eps_R$. Thus $\tilde R(x)=\frac12\alpha_0x^2$ for
+$|x|\le\eps_R$ and $\tilde R(x)=R(x)$ for $|x|\ge2\eps_R$. Since $e\le h/100$, $w_V\le1/2000$ and $c_V\in(0,1)$.
+The argument of $S$ in $\mathrm{st}$ is $\le0$ for $|\theta|\le\frac12-w_V$ (i.e.\ $4\theta^2\le c_V^2$) and $\ge1$ for
+$|\theta|\ge\frac12$; so $\mathrm{st}=0$ on $|\theta|\le\frac12-w_V$, $\mathrm{st}=1$ on $|\theta|\ge\frac12$, and
+$\mathrm{st}$ is even and nondecreasing in $|\theta|$.
+
+\begin{lemma}[Third derivative and Taylor bounds]\label{lem:pll-taylor}
+\lean{SymplecticPacking.Inner.Rmorse3, SymplecticPacking.Inner.K3, SymplecticPacking.Inner.Rmorse_deriv3_le,
+SymplecticPacking.Inner.gcub_zero, SymplecticPacking.Inner.gcub1_zero, SymplecticPacking.Inner.gcub2_zero,
+SymplecticPacking.Inner.gcub2_abs_le, SymplecticPacking.Inner.gcub_abs_le,
+SymplecticPacking.Inner.epsR_mul_K3}
+\uses{cons:pll-morse, lem:pll-hyperbola, lem:pll-constants}
+\begin{enumerate}[label=(\roman*)]
+\item With $\xi=x^*+x$,
+ \[
+  R'''(x)=-3m_+\eta_{\rm w}^2\xi\,(\xi^2+\eta_{\rm w}^2)^{-5/2},\qquad |R'''(x)|\le K_3\quad(x\in\R).
+ \]
+\item $g_R(0)=g_R'(0)=g_R''(0)=0$ and $|g_R'''|\le K_3$; hence $|g_R'(x)|\le K_3x^2/2$ and
+ $|g_R(x)|\le K_3|x|^3/6$.
+\item $K_3\,\eps_R=\alpha_0/\bigl(32(1+C_\psi)\bigr)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) Differentiate $R''(x)=m_+\eta_{\rm w}^2(\xi^2+\eta_{\rm w}^2)^{-3/2}$. Substituting $\xi=\eta_{\rm w}\tau$ gives
+\[
+ |R'''(x)|=(3m_+/\eta_{\rm w}^2)\varphi(|\tau|),\qquad
+ \varphi(\tau)=\tau(1+\tau^2)^{-5/2}\quad(\tau\ge0).
+\]
+Since
+\[
+ \varphi'(\tau)=(1+\tau^2)^{-7/2}(1-4\tau^2),
+\]
+$\varphi$ is maximal at $\tau=\frac12$, where
+\[
+ \varphi(\tfrac12)=\tfrac12(\tfrac45)^{5/2}=\frac{16}{25\sqrt5}.
+\]
+Hence $3\varphi\le\frac{48}{25\sqrt5}<1$, because
+$48^2=2304<3125=25^2\cdot5$, and $|R'''|\le K_3$.
+
+(ii) By Lemma~\ref{lem:pll-hyperbola}, $R(0)=R'(0)=0$ and $R''(0)=\alpha_0$, so $g_R(0)=g_R'(0)=g_R''(0)=0$, and
+$g_R'''=-R'''$. Integrating three times from $0$: $|g_R''(x)|\le K_3|x|$, $|g_R'(x)|\le K_3x^2/2$,
+$|g_R(x)|\le K_3|x|^3/6$.
+
+(iii) $\eta_{\rm w}=e/(8m_+)$ gives $K_3=64m_+^3/e^2$, and $\alpha_0=8r^3/(em_+)$ by Lemma~\ref{lem:pll-constants}. So
+\[
+ K_3\eps_R=\frac{64m_+^3}{e^2}\cdot\frac{e\,r^3}{256\,m_+^4(1+C_\psi)}=\frac{r^3}{4em_+(1+C_\psi)}
+ =\frac{8r^3}{em_+}\cdot\frac1{32(1+C_\psi)}=\frac{\alpha_0}{32(1+C_\psi)} .\qedhere
+\]
+\end{proof}
+
+\begin{lemma}[Closeness]\label{lem:pll-Rtilde-close}
+\lean{SymplecticPacking.Inner.Rtilde_close, SymplecticPacking.Inner.Rtilde_Rcal_close}
+\uses{lem:pll-taylor, lem:pll-close}
+For all real $x$ and $p$,
+\begin{equation}\label{eq:pll-Rtilde-close}
+ |\tilde R(x)-R(x)|\le\kappa_R,\qquad
+ \bigl|\tilde R(p-p^*)-\Rcal_{\rm tent}(p)\bigr|\le\delta'=\frac e8+\kappa_R .
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+$\tilde R-R=\psi_R(x/\eps_R)\,g_R$ vanishes for $|x|\ge2\eps_R$, and $0\le\psi_R\le1$. For $|x|\le2\eps_R$,
+Lemma~\ref{lem:pll-taylor}(ii),(iii) give
+\[
+ |\tilde R(x)-R(x)|\le|g_R(x)|\le\frac{K_3(2\eps_R)^3}6=\frac43K_3\eps_R\cdot\eps_R^2
+ =\frac{\alpha_0\eps_R^2}{24(1+C_\psi)} .
+\]
+With $\alpha_0=8r^3/(em_+)$ and $\eps_R^2=e^2r^6/(2^{16}m_+^8(1+C_\psi)^2)$ this equals
+\[
+ \frac{8\,e\,r^9}{24\cdot2^{16}\,m_+^9(1+C_\psi)^3}
+ =\frac{e}{3\cdot2^{16}}\Bigl(\frac r{m_+}\Bigr)^9\frac1{(1+C_\psi)^3}\le\kappa_R,
+\]
+since $0<r\le m_+$ and $C_\psi\ge0$. The second inequality follows from the first and \eqref{eq:pll-close}.
+\end{proof}
+
+\begin{lemma}[Monotonicity]\label{lem:pll-Rtilde-mono}
+\lean{SymplecticPacking.Inner.Rtilde_smooth, SymplecticPacking.Inner.Rtilde_mono,
+SymplecticPacking.Inner.Rtilde_deriv_near, SymplecticPacking.Inner.Rtilde_strictMonoOn,
+SymplecticPacking.Inner.Rtilde_strictAntiOn, SymplecticPacking.Inner.Rtilde_zero,
+SymplecticPacking.Inner.Rtilde_pos, SymplecticPacking.Inner.Rtilde_tendsto_atTop,
+SymplecticPacking.Inner.Rtilde_tendsto_atBot}
+\uses{lem:pll-taylor, lem:pll-hyperbola}
+$\tilde R$ is $C^\infty$, and $\operatorname{sign}(x)\,\tilde R'(x)>0$ for every $x\ne0$; more precisely
+$\operatorname{sign}(x)\tilde R'(x)\ge\frac{91}{96}\alpha_0|x|$ for $0<|x|\le2\eps_R$. Consequently $\tilde R$ is
+strictly decreasing on $(-\infty,0]$ and strictly increasing on $[0,\infty)$, $\tilde R(0)=0$, $\tilde R(x)>0$
+for $x\ne0$, and $\tilde R(x)\to+\infty$ as $x\to\pm\infty$.
+\end{lemma}
+
+\begin{proof}
+$\tilde R$ is $C^\infty$ because $R$, $\psi_R$ and $g_R$ are, and
+\[
+ \tilde R'(x)=\alpha_0x-\bigl(1-\psi_R(x/\eps_R)\bigr)g_R'(x)+\eps_R^{-1}\psi_R'(x/\eps_R)\,g_R(x).
+\]
+Let $0<|x|\le2\eps_R$. By Lemma~\ref{lem:pll-taylor},
+$|g_R'(x)|\le K_3x^2/2\le K_3\eps_R|x|=\alpha_0|x|/(32(1+C_\psi))\le\alpha_0|x|/32$, and
+\[
+ \bigl|\eps_R^{-1}\psi_R'(x/\eps_R)g_R(x)\bigr|\le\frac{C_\psi}{\eps_R}\cdot\frac{K_3|x|(2\eps_R)^2}{6}
+ =\frac23\cdot\frac{C_\psi}{1+C_\psi}\cdot\frac{\alpha_0|x|}{32}\le\frac{\alpha_0|x|}{48}.
+\]
+Since $0\le1-\psi_R\le1$,
+$\operatorname{sign}(x)\tilde R'(x)\ge\alpha_0|x|\bigl(1-\frac1{32}-\frac1{48}\bigr)=\frac{91}{96}\alpha_0|x|$.
+For $|x|>2\eps_R$, $\tilde R=R$ near $x$, and $\operatorname{sign}(x)R'(x)>0$ because $R$ is strictly convex with
+$R'(0)=0$. Hence $\tilde R$ is strictly monotone on each half-line with minimum $\tilde R(0)=0$, and
+$\tilde R=R\to\infty$ as $|x|\to\infty$.
+\end{proof}
+
+
+Near $0$ the signed square root of $\tilde R$ is the linear function $\sqrt{\alpha_0/2}\,x$, so the inverse $\tilde X$
+is obtained without differentiating the square root of a function that vanishes at $0$.
+
+\begin{lemma}[$\tilde X$ inverts $\tilde R$ and is linear near $0$]\label{lem:pll-quadratic}
+\lean{SymplecticPacking.Inner.SigmaR_smooth, SymplecticPacking.Inner.SigmaR_deriv_pos,
+SymplecticPacking.Inner.SigmaR_linear, SymplecticPacking.Inner.SigmaR_strictMono,
+SymplecticPacking.Inner.SigmaR_Xtilde, SymplecticPacking.Inner.Xtilde_SigmaR, SymplecticPacking.Inner.Xtilde_smooth,
+SymplecticPacking.Inner.Xtilde_deriv_pos, SymplecticPacking.Inner.Xtilde_sign, SymplecticPacking.Inner.Rtilde_Xtilde,
+SymplecticPacking.Inner.Xtilde_linear, SymplecticPacking.Inner.Xtilde_deriv_closed,
+SymplecticPacking.Inner.Xtilde_eq_Xinv, SymplecticPacking.Inner.Xtilde_abs_le}
+\uses{cons:pll-morse, lem:pll-Rtilde-mono, lem:pll-hyperbola-inverse}
+\begin{enumerate}[label=(\roman*)]
+\item $\Sigma_R$ is a $C^\infty$ diffeomorphism of $\R$ with $\Sigma_R'>0$, and
+ $\Sigma_R(x)=\sqrt{\alpha_0/2}\,x$ for $|x|\le\eps_R$.
+\item $\tilde X$ is a $C^\infty$ diffeomorphism of $\R$ with $\tilde X'>0$,
+ $\operatorname{sign}\tilde X(u)=\operatorname{sign}u$ and $\tilde R(\tilde X(u))=u^2$.
+\item $\tilde X(u)=a_0u$ for $|u|\le u_\eps$; in particular $\tilde X'(u)=a_0$ there.
+\item If $|X(u)|\ge2\eps_R$ or $|\tilde X(u)|\ge2\eps_R$, then $\tilde X(u)=X(u)$. Hence
+ \[
+  |\tilde X(u)|\le\max\bigl(|X(u)|,2\eps_R\bigr)\le|X(u)|+2\eps_R\qquad(u\in\R).
+ \]
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) The open sets $(-\eps_R,\eps_R)$, $(0,\infty)$, $(-\infty,0)$ cover $\R$. On the first,
+$\tilde R=\alpha_0x^2/2$, so $\Sigma_R(x)=\sqrt{\alpha_0/2}\,x$ (also on the closed interval, by continuity). On the
+second, $\tilde R>0$ (Lemma~\ref{lem:pll-Rtilde-mono}), so $\Sigma_R=\sqrt{\tilde R}$ is $C^\infty$ with
+$\Sigma_R'=\tilde R'/(2\sqrt{\tilde R})>0$; on the third $\Sigma_R=-\sqrt{\tilde R}$ and
+$\Sigma_R'=-\tilde R'/(2\sqrt{\tilde R})>0$. Since $\Sigma_R^2=\tilde R\to\infty$ at $\pm\infty$ and $\Sigma_R$ has
+the sign of $x$, $\Sigma_R$ is a strictly increasing bijection of $\R$, hence a $C^\infty$ diffeomorphism by the
+inverse function theorem. (ii) $\tilde X'=1/\Sigma_R'(\tilde X)>0$, $\tilde X$ has the sign of $u$, and
+$\tilde R(\tilde X(u))=\Sigma_R(\tilde X(u))^2=u^2$. (iii) For $|u|\le u_\eps$, $|a_0u|\le a_0u_\eps=\eps_R$, so
+$\Sigma_R(a_0u)=\sqrt{\alpha_0/2}\,a_0u=u$. (iv) If $|X(u)|\ge2\eps_R$, then $\tilde R(X(u))=R(X(u))=u^2$ with $X(u)$
+of the sign of $u$ (Lemma~\ref{lem:pll-hyperbola-inverse}), so $\Sigma_R(X(u))=u$ and $X(u)=\tilde X(u)$. If
+$|\tilde X(u)|\ge2\eps_R$, then $R(\tilde X(u))=\tilde R(\tilde X(u))=u^2$ with $\tilde X(u)$ of the sign of $u$,
+so $\tilde X(u)=X(u)$ by the uniqueness in Lemma~\ref{lem:pll-hyperbola-inverse} (for $u=0$ both vanish). The bound
+follows by distinguishing $|\tilde X(u)|<2\eps_R$ and $|\tilde X(u)|\ge2\eps_R$.
+\end{proof}
+
+
+\begin{lemma}[The angular wall and its signed inverse]\label{lem:pll-wall}
+\lean{SymplecticPacking.Inner.contDiff_Vtilde, SymplecticPacking.Inner.Vtilde_neg,
+SymplecticPacking.Inner.Vtilde_nonneg, SymplecticPacking.Inner.Vtilde_quadratic, SymplecticPacking.Inner.Vtilde_ge,
+SymplecticPacking.Inner.Vtilde_mono, SymplecticPacking.Inner.Vtilde_half, SymplecticPacking.Inner.Vtilde_half_gt,
+SymplecticPacking.Inner.yc_bounds, SymplecticPacking.Inner.Vtilde_le_lt_yc, SymplecticPacking.Inner.contDiff_SigmaV,
+SymplecticPacking.Inner.SigmaV_neg, SymplecticPacking.Inner.SigmaV_deriv_pos, SymplecticPacking.Inner.SigmaV_strictMono,
+SymplecticPacking.Inner.SigmaV_sq, SymplecticPacking.Inner.abs_SigmaV_ge, SymplecticPacking.Inner.SigmaV_linear,
+SymplecticPacking.Inner.Vtilde_Ytilde, SymplecticPacking.Inner.Ytilde_odd, SymplecticPacking.Inner.Ytilde_smooth,
+SymplecticPacking.Inner.Ytilde_deriv_pos, SymplecticPacking.Inner.Ytilde_deriv_even,
+SymplecticPacking.Inner.abs_Ytilde_le, SymplecticPacking.Inner.Ytilde_linear}
+\uses{cons:pll-morse, lem:pre-flat}
+\begin{enumerate}[label=(\alph*)]
+\item $\tilde V$ is $C^\infty$, even and nonnegative, $\tilde V(\theta)=e\theta^2/2$ for $|\theta|\le\frac12-w_V$,
+ $\tilde V(\theta)\ge e\theta^2/2$ for all $\theta$, and $\tilde V'(\theta)\ge e\theta>0$ for $\theta>0$; in particular $\tilde V$ is strictly
+ increasing in $|\theta|$.
+\item $\tilde V(\pm\frac12)=e/8+2h>h$.
+\item $\frac12-w_V<\theta_c<\frac12$, and if $\tilde V(\theta)\le h-2e$, then $\mathrm{st}(\theta)<\frac12$ and $|\theta|<\theta_c$.
+\item $\Sigma_V$ is an odd $C^\infty$ diffeomorphism of $\R$ with $\Sigma_V'>0$, $\Sigma_V^2=\tilde V$,
+ $|\Sigma_V(\theta)|\ge\sqrt{e/2}\,|\theta|$, and $\Sigma_V(\theta)=\sqrt{e/2}\,\theta$ for $|\theta|\le\frac12-w_V$.
+\item $\tilde Y$ is an odd $C^\infty$ diffeomorphism of $\R$, $\tilde Y'>0$ is even,
+ $\tilde V(\tilde Y(v))=v^2$, $|\tilde Y(v)|\le b_0|v|$, and $\tilde Y(v)=b_0v$ for $|v|\le v_\eps$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $\mathrm{st}$ is $C^\infty$ (a composite of $S$ with a polynomial), even, zero on $|\theta|\le\frac12-w_V$, and
+$\mathrm{st}'(\theta)\ge0$ for $\theta>0$. Hence $\tilde V'(\theta)=e\theta+2h\,\mathrm{st}'(\theta)\ge e\theta$ for $\theta>0$; the other claims are
+immediate. (b) $\mathrm{st}(\pm\frac12)=S(1)=1$. (c) $\theta_c^2=\frac14\cdot\frac{c_V^2+1}2$ lies strictly between
+$c_V^2/4=(\frac12-w_V)^2$ and $\frac14$, since $0<c_V<1$. If $\tilde V(\theta)\le h-2e$, then
+$2h\,\mathrm{st}(\theta)\le\tilde V(\theta)<h$, so $\mathrm{st}(\theta)<\frac12$. As $S$ is nondecreasing and $S(\frac12)=\frac12$,
+the argument of $S$ is $<\frac12$: $4\theta^2<c_V^2+(1-c_V^2)/2=4\theta_c^2$. (d) $\sigma_V$ is $C^\infty$: it vanishes on
+$|\theta|<\frac12-w_V$, and it is a quotient of $C^\infty$ functions on $\theta\ne0$; these open sets cover $\R$. So
+$\gamma_V=\sqrt{e/2+2h\sigma_V}$ is $C^\infty$, even and $\ge\sqrt{e/2}$, and $\Sigma_V=\theta\gamma_V$ is odd and
+$C^\infty$, with $|\Sigma_V(\theta)|\ge\sqrt{e/2}\,|\theta|$ and $\Sigma_V^2=e\theta^2/2+2h\,\mathrm{st}=\tilde V$. On
+$|\theta|\le\frac12-w_V$, $\gamma_V=\sqrt{e/2}$. For $\theta>0$, $\Sigma_V=\sqrt{\tilde V}$ with $\tilde V>0$, so
+$\Sigma_V'=\tilde V'/(2\sqrt{\tilde V})>0$ by (a); by oddness $\Sigma_V'>0$ for $\theta<0$, and
+$\Sigma_V'(0)=\sqrt{e/2}$. A strictly increasing proper $C^\infty$ function with positive derivative is a $C^\infty$
+diffeomorphism of $\R$. (e) $\tilde Y$ is odd because $\Sigma_V$ is, $\tilde Y'=1/\Sigma_V'(\tilde Y)>0$ is even
+as the derivative of an odd function, $\tilde V(\tilde Y(v))=\Sigma_V(\tilde Y(v))^2=v^2$, and
+$|v|=|\Sigma_V(\tilde Y(v))|\ge\sqrt{e/2}\,|\tilde Y(v)|$. For $|v|\le v_\eps$, $|b_0v|\le\frac12-w_V$, so
+$\Sigma_V(b_0v)=\sqrt{e/2}\,b_0v=v$.
+\end{proof}
+
+\begin{lemma}[The equal-ball potential pair]\label{lem:pll-pair}
+\uses{def:pln-potential-pair, lem:pln-morse-inverse, lem:pll-pstar, lem:pll-Rtilde-mono, lem:pll-quadratic,
+lem:pll-wall}
+Let $d=0$, $I_U=I_V=\R$, $U(p)=\tilde R(p-p^*)$ and $V=\tilde V$. Then $(U,V)$ is an admissible potential pair with
+disc area $h$ (Definition~\ref{def:pln-potential-pair}), with minimum point $p^*$ and minimum value $m=0$, and it is
+exactly quadratic near the minimum with $\eps_U=\eps_R$ and $\eps_V=\frac12-w_V$. Its objects in
+Lemma~\ref{lem:pln-morse-inverse} are $X_y=\tilde X$, $Y_y=\tilde Y$, $a_0(y)=a_0$, $b_0(y)=b_0$, $j_0(y)=j_0$,
+$\rho_T(y)=\rho_T$, and $\mathbf L_y=\mathbf L$ in Definition~\ref{def:pln-inner-map}.
+\end{lemma}
+
+\begin{proof}
+\ref{it:pln-P1}: $p^*\in(0,h)$ by Lemma~\ref{lem:pll-pstar}. By Lemma~\ref{lem:pll-Rtilde-mono},
+$U'(p)(p-p^*)=\tilde R'(x)\,x>0$ for $x=p-p^*\ne0$, and $U''(p^*)=\tilde R''(0)=\alpha_0>0$ because
+$\tilde R=\frac12\alpha_0x^2$ on $|x|\le\eps_R$. By Lemma~\ref{lem:pll-wall}(a), $\tilde V(0)=0$, $\tilde V''(0)=e>0$,
+and $\tilde V'(\theta)\ge e\theta>0$ for $\theta>0$; since $\tilde V$ is even, $\tilde V'$ is odd, so
+$\tilde V'(\theta)\,\theta>0$ for $\theta\ne0$. \ref{it:pln-P2}: $\tilde R(x)\to+\infty$ as $x\to\pm\infty$
+(Lemma~\ref{lem:pll-Rtilde-mono}) and $\tilde V(\theta)\ge e\theta^2/2$. Further $m=U(p^*)=\tilde R(0)=0$;
+$U(p)=\frac12\alpha_0(p-p^*)^2$ for $|p-p^*|\le\eps_R$, and $\tilde V(\theta)=\frac e2\theta^2$ for $|\theta|\le\frac12-w_V$.
+
+The signed square root of Lemma~\ref{lem:pln-morse-inverse}(ii) is
+$\operatorname{sign}(x)\sqrt{U(p^*+x)-m}=\operatorname{sign}(x)\sqrt{\tilde R(x)}=\Sigma_R(x)$, so $X_y=\Sigma_R^{-1}=\tilde X$.
+By Lemma~\ref{lem:pll-wall}(d), $\Sigma_V$ is odd, increasing and $\Sigma_V^2=\tilde V$, so $\Sigma_V$ is the signed square
+root of $\tilde V$ and $Y_y=\tilde Y$. Then $a_0(y)=\sqrt{2/U''(p^*)}=\sqrt{2/\alpha_0}=a_0$ and
+$b_0(y)=\sqrt{2/\tilde V''(0)}=\sqrt{2/e}=b_0$, hence $j_0(y)=j_0$ and $\mathbf L_y=\operatorname{diag}(c_x,1/c_x)=\mathbf L$.
+Finally $\eps_R/a_0=\sqrt{\alpha_0/2}\,\eps_R=u_\eps$ and $(\frac12-w_V)/b_0=v_\eps$, so
+$\rho_T(y)=\min(u_\eps,v_\eps)=\rho_T$.
+\end{proof}
+
+\subsection{The inner map}\label{sec:pll-inner-map}
+
+\begin{lemma}[The Morse chart and its density]\label{lem:pll-morse-density}
+\lean{SymplecticPacking.Inner.Fmor,
+SymplecticPacking.Inner.Jmor,
+SymplecticPacking.Branch2.Planar.MorsePair.Fmor_smooth,
+SymplecticPacking.Branch2.Planar.MorsePair.Fmor_bijective,
+SymplecticPacking.Branch2.Planar.MorsePair.Fmor_det,
+SymplecticPacking.Inner.Jmor_pos,
+SymplecticPacking.Inner.Jmor_smooth,
+SymplecticPacking.Inner.Jmor_const,
+SymplecticPacking.Inner.Fmor_level,
+SymplecticPacking.Inner.Acal_eq_disk,
+SymplecticPacking.Branch2.Planar.MorsePair.Acal_eq_area,
+SymplecticPacking.Inner.Acal_tendsto,
+SymplecticPacking.Inner.SigmaR_Xtilde,
+SymplecticPacking.Inner.Xtilde_SigmaR,
+SymplecticPacking.Inner.SigmaV_Ytilde,
+SymplecticPacking.Inner.Ytilde_SigmaV}
+\uses{lem:pll-quadratic, lem:pll-wall, lem:pll-pair, lem:pln-morse-inverse}
+Put $F_{\rm mor}(u,v)=(\tilde X(u),\tilde Y(v))$, $J(u,v)=\tilde X'(u)\tilde Y'(v)$ and
+$\mathcal A_J(E)=\int_{|w|^2\le E}J(w)\,dw$ for $E\ge0$. Then $F_{\rm mor}$ is a $C^\infty$ diffeomorphism of $\R^2$
+with inverse $(\Sigma_R,\Sigma_V)$, $J>0$ is $C^\infty$, $J(w)=j_0$ for $|w|\le\rho_T$,
+$F_{\rm mor}^*(dx\wedge d\theta)=J\,du\wedge dv$, $\tilde R(\tilde X(u))+\tilde V(\tilde Y(v))=u^2+v^2$, and
+$\mathcal A_J(E)=\operatorname{area}\{(x,\theta):\tilde R(x)+\tilde V(\theta)\le E\}\to\infty$ as $E\to\infty$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:pll-pair}, $F_{\rm mor}$ and $J$ are the Morse chart $F_y$ and its density $J_y$ of
+Lemma~\ref{lem:pln-morse-inverse}(iv) for the pair $(U,V)$, whose Morse rectangle is $\R^2$; that lemma gives all
+claims except the constant value near $0$ and the limit, and (v) gives $J=j_0$ on $|w|\le\rho_T$. Directly: if
+$|w|\le\rho_T$ then $|u|\le u_\eps$ and $|v|\le v_\eps$, so $\tilde X'(u)=a_0$ and $\tilde Y'(v)=b_0$ by
+Lemmas~\ref{lem:pll-quadratic}(iii) and~\ref{lem:pll-wall}(e). Since $\tilde R$ and $\tilde V$ are proper and
+nonnegative, the sublevel sets exhaust $\R^2$, and $\mathcal A_J(E)\to\infty$.
+\end{proof}
+
+Let $T_J$, $D_J$, $E_J$ be the rotation normalisation, the area normalisation and the inverse of $\mathcal A_J$
+for the density $J$ (Definition~\ref{def:pln-normalisations}), and $\bar J$ the circle mean of $J$.
+
+\begin{definition}[The inner map]\label{def:pll-inner-map}
+\lean{SymplecticPacking.Inner.finner}
+\uses{lem:pll-morse-density, lem:pll-pair, def:pln-inner-map, def:pln-normalisations}
+$f=F_{\rm mor}\circ T_J^{-1}\circ D_J$. By Lemma~\ref{lem:pll-pair} this is the map $f_y$ of
+Definition~\ref{def:pln-inner-map} for the pair $(U,V)$.
+\end{definition}
+
+\begin{proposition}[The inner map; exactly linear at the origin]\label{prop:pll-inner-map}
+\lean{SymplecticPacking.Branch2.Planar.MorsePair.finner_symplectic,
+SymplecticPacking.Branch2.Planar.MorsePair.finner_smooth,
+SymplecticPacking.Branch2.Planar.MorsePair.finner_bijective,
+SymplecticPacking.Inner.finner_level,
+SymplecticPacking.Inner.Trot_eq_id_of_const,
+SymplecticPacking.Inner.Darea_eq_of_const,
+SymplecticPacking.Branch2.Planar.MorsePair.finner_linear,
+SymplecticPacking.Inner.contDiffOn_param_inverse,
+SymplecticPacking.Qhat.fs_eq_finner,
+SymplecticPacking.Qhat.fs_deriv_zero}
+\uses{def:pll-inner-map, lem:pll-morse-density, lem:pll-pair, lem:pll-constants, thm:pln-inner,
+lem:pln-rotation, lem:pln-area}
+\leavevmode\par
+\begin{enumerate}[label=(\alph*)]
+\item The map $f$ is a smooth diffeomorphism of the plane, and
+ \[
+  f^*(dx\wedge d\theta)=\omega_2.
+ \]
+ If $f(z)=(x,\theta)$, then $\tilde R(x)+\tilde V(\theta)=E_J(\pi|z|^2)$.
+\item On $\{|w|\le\rho_T\}$, $\bar J=j_0$ and $T_J=T_J^{-1}=\mathrm{id}$; $\mathcal A_J(E)=\pi j_0E$ for
+ $E\le\rho_T^2$, $E_J(I)=I/(\pi j_0)$ for $I\le\pi j_0\rho_T^2$, and $D_J(z)=z/\sqrt{j_0}$ for
+ $|z|\le\sqrt{j_0}\,\rho_T$.
+\item For $|z|\le\sqrt{j_0}\,\rho_T$,
+ \[
+  f(z)=\operatorname{diag}\bigl(a_0/\sqrt{j_0},\,b_0/\sqrt{j_0}\bigr)z=\operatorname{diag}(c_x,c_y)\,z=\mathbf Lz,
+ \]
+ a linear map with $\det\mathbf L=1$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:pll-pair}, $(U,V)$ is an admissible potential pair, exactly quadratic near the minimum, with
+$\mathcal A_J(\infty)=\infty$ (Lemma~\ref{lem:pll-morse-density}) and Morse rectangle $\R^2$. (a) is
+Theorem~\ref{thm:pln-inner}(a),(b), with $m=0$ and $U(p^*+x)=\tilde R(x)$. (b) Since $J=j_0$ on $\{|w|\le\rho_T\}$
+(Lemma~\ref{lem:pll-morse-density}), the circle mean is $\bar J=j_0$ there, and Lemma~\ref{lem:pln-rotation}(iv) gives
+$T_J=T_J^{-1}=\mathrm{id}$ there; Lemma~\ref{lem:pln-area}(v) gives $\mathcal A_J(E)=\pi j_0E$ for $E\le\rho_T^2$ and
+$D_J(z)=z/\sqrt{j_0}$ for $|z|\le\sqrt{j_0}\,\rho_T$, and inverting the first formula gives $E_J$. (c) is
+Theorem~\ref{thm:pln-inner}(d) with $\mathbf L_y=\mathbf L$ (Lemma~\ref{lem:pll-pair}); directly, $w=z/\sqrt{j_0}$
+has $|w|\le\rho_T$, so $f(z)=F_{\rm mor}(w)=(a_0u,b_0v)$ by (b) and Lemmas~\ref{lem:pll-quadratic}(iii)
+and~\ref{lem:pll-wall}(e), and $a_0/\sqrt{j_0}=\sqrt{a_0/b_0}=c_x$, $b_0/\sqrt{j_0}=1/c_x=c_y$.
+\end{proof}
+
+\subsection{The physical chart and the comparison}\label{sec:pll-chart}
+
+The chart $C_{\rm ph}$ cuts the fibre disc along the positive real axis; its centre line $\theta=0$ is the negative
+real axis. The comparison has two parts: the moment of $C_{\rm ph}f(z)$ is controlled by the area estimate
+$E_J(I)\le I+d_0$, and on the source disc of area $p_+=h-15e/4$ the sublevel sets stay strictly inside the chart, so
+$C_{\rm ph}f$ is defined there.
+
+\begin{definition}[Physical chart]\label{def:pll-chart}
+\lean{SymplecticPacking.Inner.chartC, SymplecticPacking.Inner.chartDom, SymplecticPacking.Qhat.rb,
+SymplecticPacking.Qhat.bpt}
+\uses{def:pll-constants, lem:pll-pair}
+Let $\mathcal U=\{(x,\theta)\in\R^2:p^*+x>0,\ |\theta|<\tfrac12\}$ and
+\begin{equation}\label{eq:pll-chart}
+ C_{\rm ph}(x,\theta)=-\sqrt{\frac{p^*+x}{\pi}}\;e^{2\pi i\theta}\qquad((x,\theta)\in\mathcal U).
+\end{equation}
+Put $r_b=\sqrt{p^*/\pi}$ and $b=C_{\rm ph}(0)=(-r_b,0)$. For the pair of Lemma~\ref{lem:pll-pair} these are the chart
+$C_y$, its domain $\mathcal C_y$, and $r_b(y)$, $b_y$ of \eqref{eq:pln-chart}.
+\end{definition}
+
+\begin{lemma}[The physical chart]\label{lem:pll-physical-chart}
+\lean{SymplecticPacking.Inner.chartC_det,
+SymplecticPacking.Inner.chartC_moment,
+SymplecticPacking.Inner.chartC_injOn,
+SymplecticPacking.Branch2.Planar.hasFDerivAt_chart,
+SymplecticPacking.Qhat.Clam_fderiv,
+SymplecticPacking.Qhat.Clam_hasFDerivAt_zero}
+\uses{def:pll-chart, lem:pll-pstar}
+$\mathcal U$ is convex and contains $0$. $C_{\rm ph}$ is a $C^\infty$ injective map on $\mathcal U$ with
+$\det DC_{\rm ph}=1$, i.e.\ $C_{\rm ph}^*\omega_2=dx\wedge d\theta$, and $p(C_{\rm ph}(x,\theta))=p^*+x$. In particular
+$C_{\rm ph}$ maps $\mathcal U\cap\{x<h-p^*\}$ into $D(h)$. At a point with $p^*+x=P$ the columns of $DC_{\rm ph}$ are
+orthogonal, of lengths $1/(2\sqrt{\pi P})$ and $2\sqrt{\pi P}$, and
+$DC_{\rm ph}(0)=\operatorname{diag}\bigl(-\frac1{2\pi r_b},\,-2\pi r_b\bigr)$.
+\end{lemma}
+
+\begin{proof}
+$0\in\mathcal U$ by Lemma~\ref{lem:pll-pstar}, and $\mathcal U$ is an intersection of half-planes. $C_{\rm ph}$ has
+polar radius $\rho_C=\sqrt{(p^*+x)/\pi}$ and polar angle $2\pi\theta+\pi\in(0,2\pi)$, which gives injectivity and the
+moment. The area form is $\rho_C\,d\rho_C\wedge d(2\pi\theta)=\frac1{2\pi}d(p^*+x)\wedge2\pi\,d\theta=dx\wedge d\theta$.
+With $P=p^*+x$, $\partial_xC_{\rm ph}=-\frac{1}{2\sqrt{\pi P}}e^{2\pi i\theta}$ and
+$\partial_\theta C_{\rm ph}=-2\pi i\sqrt{P/\pi}\,e^{2\pi i\theta}$, which are orthogonal with the stated lengths; at $0$,
+$e^{2\pi i\theta}=1$ and $\sqrt{\pi p^*}=\pi r_b$.
+\end{proof}
+
+\begin{definition}[Comparison constants]\label{def:pll-comparison-constants}
+\lean{SymplecticPacking.Inner.muV, SymplecticPacking.Params.d0, SymplecticPacking.Params.pplus,
+SymplecticPacking.Params.Ec}
+\uses{cons:pll-morse}
+$\mu_V=\int_{-1/2}^{1/2}\tilde V(\theta)\,d\theta$, $d_0=\delta'+\mu_V$, $p_+=h-15e/4$, and $E_c=h-2e$.
+\end{definition}
+
+\begin{lemma}[Size of the comparison constants]\label{lem:pll-mean}
+\lean{SymplecticPacking.Inner.muV_le, SymplecticPacking.Inner.muV_lt, SymplecticPacking.Params.d0_lt,
+SymplecticPacking.Params.two_deltaPrime_add_muV_lt, SymplecticPacking.Params.pplus_pos,
+SymplecticPacking.Params.pplus_lt_Ec_sub_d0}
+\uses{def:pll-comparison-constants, lem:pll-wall}
+$\mu_V\le e/24+e/5=29e/120<7e/24$. Moreover $d_0<5e/12$, $2\delta'+\mu_V<13e/24$, $p_+>0$, and $E_c-d_0>p_+$.
+\end{lemma}
+
+\begin{proof}
+$\int_{-1/2}^{1/2}e\theta^2/2\,d\theta=e/24$. The function $\mathrm{st}$ takes values in $[0,1]$ and vanishes on
+$|\theta|\le\frac12-w_V$, so $\int_{-1/2}^{1/2}2h\,\mathrm{st}\le2h\cdot2w_V=e/5$. Hence
+$\mu_V\le5e/120+24e/120=29e/120<7e/24$. Since $\kappa_R=e/196608<e/40$,
+\[
+ d_0\le\frac{15e}{120}+\frac{29e}{120}+\kappa_R<\frac{50e}{120}=\frac{5e}{12},\qquad
+ 2\delta'+\mu_V\le\frac{59e}{120}+2\kappa_R<\frac{65e}{120}=\frac{13e}{24}.
+\]
+As $e\le h/100$, $15e/4<h$, so $p_+>0$; and $E_c-d_0>h-2e-5e/12=h-29e/12>h-45e/12=p_+$.
+\end{proof}
+
+The area lower bound is a slicing argument: for each angle $\theta$, the $x$-slice of
+$\{\tilde R+\tilde V\le E\}$ contains the slice of $\{\Rcal_{\rm tent}(p^*+x)\le E-\delta'-\tilde V(\theta)\}$, an
+interval of length $E-\delta'-\tilde V(\theta)$; integrating over $\theta$ loses the mean $\mu_V$ and the smoothing
+error $\delta'$.
+
+\begin{lemma}[Area lower bound]\label{lem:pll-area}
+\lean{SymplecticPacking.Inner.Acal_ge}
+\uses{lem:pll-morse-density, lem:pll-Rtilde-close, M-lem:cmp-tent-sublevel, lem:pll-mean}
+$\mathcal A_J(E)\ge E-d_0$ for all $E\ge0$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:pll-morse-density}, $\mathcal A_J(E)$ is the area of $\{\tilde R(x)+\tilde V(\theta)\le E\}$. For
+fixed $\theta$ with $|\theta|\le\frac12$, \eqref{eq:pll-Rtilde-close} gives
+$\tilde R(x)\le\Rcal_{\rm tent}(p^*+x)+\delta'$, so the $x$-section contains
+$\{x:\Rcal_{\rm tent}(p^*+x)\le E-\delta'-\tilde V(\theta)\}$, an interval of length $(E-\delta'-\tilde V(\theta))_+$
+by \eqref{eq:pll-sublevel}. Integrating over $\theta\in[-\frac12,\frac12]$,
+$\mathcal A_J(E)\ge\int_{-1/2}^{1/2}(E-\delta'-\tilde V(\theta))_+\,d\theta\ge\int_{-1/2}^{1/2}(E-\delta'-\tilde V(\theta))\,d\theta
+=E-d_0$.
+\end{proof}
+
+\begin{proposition}[Comparison and chart containment]\label{prop:pll-comparison}
+\lean{SymplecticPacking.Inner.Einv_le_add_d0, SymplecticPacking.Inner.comparison_five,
+SymplecticPacking.Qhat.qinner_dom, SymplecticPacking.Qhat.fs_eq_finner, SymplecticPacking.Qhat.lam_one, SymplecticPacking.Params.pplus_add_d0_lt}
+\uses{prop:pll-inner-map, lem:pll-physical-chart, lem:pll-area, lem:pll-mean, lem:pll-pstar,
+lem:pll-Rtilde-close, lem:pll-Rtilde-mono, lem:pll-wall}
+Let $z\in\C$, $I=\pi|z|^2$, and suppose that $f(z)\in\mathcal U$. Then $E_J(I)\le I+d_0$ and
+\begin{equation}\label{eq:pll-comparison}
+ \Rcal_{\rm tent}\bigl(p(C_{\rm ph}f(z))\bigr)\le I+2\delta'+\mu_V<I+\frac{13e}{24}.
+\end{equation}
+Moreover, if $I\le p_+$ then $E_J(I)\le p_++d_0<h-\delta'$ and
+$f(z)\in\{(x,\theta):-p^*<x<h-p^*,\ |\theta|<\frac12\}$; thus $C_{\rm ph}f$ is defined on $\bar D(p_+)$, takes
+values in $\{0<p<h\}$, and satisfies \eqref{eq:pll-comparison} there.
+\end{proposition}
+
+\begin{proof}
+Let $f(z)=(x,\theta)$ and $E=E_J(I)$. By Lemma~\ref{lem:pll-area}, $I=\mathcal A_J(E)\ge E-d_0$. By
+Proposition~\ref{prop:pll-inner-map}(a), $\tilde R(x)\le\tilde R(x)+\tilde V(\theta)=E$. By
+Lemma~\ref{lem:pll-physical-chart} and \eqref{eq:pll-Rtilde-close},
+$\Rcal_{\rm tent}(p(C_{\rm ph}f(z)))=\Rcal_{\rm tent}(p^*+x)\le\tilde R(x)+\delta'\le I+d_0+\delta'=I+2\delta'+\mu_V$,
+and $2\delta'+\mu_V<13e/24$ by Lemma~\ref{lem:pll-mean}.
+
+Let $I\le p_+$. Then $E\le p_++d_0<h-15e/4+5e/12=h-10e/3<h-\delta'$. At $x=-p^*$ and $x=h-p^*$ (moments $0$ and
+$h$) we have $\Rcal_{\rm tent}=h$, hence $\tilde R\ge h-\delta'>E$ by \eqref{eq:pll-Rtilde-close}. Since $\tilde R$
+decreases strictly on $(-\infty,0]$ and increases strictly on $[0,\infty)$ (Lemma~\ref{lem:pll-Rtilde-mono}) and
+$0\in(-p^*,h-p^*)$ (Lemma~\ref{lem:pll-pstar}), the sublevel set $\{\tilde R\le E\}$ is an interval contained in
+$(-p^*,h-p^*)$. At the angular boundary $\tilde V(\pm\frac12)=e/8+2h>E$, and $\tilde V$ is even and increasing in
+$|\theta|$ (Lemma~\ref{lem:pll-wall}), so $\{\tilde V\le E\}\subset(-\frac12,\frac12)$. Since $\tilde R(x)\le E$ and
+$\tilde V(\theta)\le E$, $f(z)$ lies in the stated rectangle, and the first part applies.
+\end{proof}
+
+The error $13e/24$ consists of the smoothing error $\delta'$, which occurs twice (in the area estimate and in the
+comparison of $\tilde R$ with $\Rcal_{\rm tent}$), and the mean $\mu_V$ of the angular potential; the quadratic
+modification at the origin contributes only $2\kappa_R=e/98304$.
+
+\subsection{The data of the whole-disc isotopy}\label{sec:pll-data}
+
+Theorem~\ref{thm:pln-isotopy} turns $C_{\rm ph}f$ into a compactly supported Hamiltonian isotopy of $D(h)$ whose
+endpoint equals $C_{\rm ph}f$ on a core disc, once isotopy data (Definition~\ref{def:pln-isotopy-data}) are supplied.
+This subsection supplies them.
+
+\begin{definition}[The density family]\label{def:pll-density}
+\lean{SymplecticPacking.Qhat.a0, SymplecticPacking.Qhat.b0, SymplecticPacking.Qhat.j0,
+ SymplecticPacking.Qhat.Xs, SymplecticPacking.Qhat.Ys, SymplecticPacking.Qhat.Js,
+ SymplecticPacking.Qhat.Fs, SymplecticPacking.Qhat.fs, SymplecticPacking.Qhat.K0,
+ SymplecticPacking.Qhat.Lmap}
+\uses{def:pll-curvatures, cons:pll-morse, def:pll-inner-map, def:pln-charts, lem:pll-pair}
+For $s\in\R$ let
+\[
+ X_s(u)=(1-s)a_0u+s\tilde X(u),\qquad Y_s(v)=(1-s)b_0v+s\tilde Y(v),\qquad J_s(u,v)=X_s'(u)\,Y_s'(v),
+\]
+$F_s=(X_s,Y_s)$, and let $\mathcal A_s$, $E_s=\mathcal A_s^{-1}$, $T_{J_s}$, $D_{J_s}$ and
+$f_s=F_s\circ T_{J_s}^{-1}\circ D_{J_s}$ be the objects of Definition~\ref{def:pln-charts}(a) for the pair of
+Lemma~\ref{lem:pll-pair}. Put $K_0=\pi j_0$ and $\kappa_J=K_0/(1+K_0)$.
+\end{definition}
+
+\begin{lemma}[Positivity and area growth]\label{lem:pll-density-area}
+\lean{SymplecticPacking.Qhat.Js_expand, SymplecticPacking.Qhat.Js_pos, SymplecticPacking.Qhat.Js_zero,
+ SymplecticPacking.Qhat.As_ge, SymplecticPacking.Qhat.Es_le}
+\uses{def:pll-density, lem:pll-area, lem:pll-morse-density, lem:pln-energy}
+For all $s\in[0,1]$:
+\begin{enumerate}[label=(\alph*)]
+\item $J_s=(1-s)^2j_0+s(1-s)\bigl(a_0\tilde Y'(v)+b_0\tilde X'(u)\bigr)+s^2J>0$;
+\item $J_s(w)=j_0$ for $|w|\le\rho_T$ (this holds for every $s\in\R$);
+\item for all $E\ge0$, $\mathcal A_s(E)\ge[K_0(1-s)^2+s^2]E-s^2d_0\ge\kappa_JE-d_0$.
+\end{enumerate}
+In particular $\mathcal A_s$ is an increasing bijection of $[0,\infty)$, and for every $I_0\ge0$,
+$E_s(I)\le(I_0+d_0)/\kappa_J$ whenever $0\le I\le I_0$.
+\end{lemma}
+
+\begin{proof}
+(a) is Lemma~\ref{lem:pln-energy}(a). (b) For $|w|\le\rho_T$, $\tilde X'(u)=a_0$ and $\tilde Y'(v)=b_0$
+(Lemma~\ref{lem:pll-morse-density}), hence $X_s'(u)=a_0$, $Y_s'(v)=b_0$. (c) By Lemma~\ref{lem:pln-energy}(b),
+$\mathcal A_s(E)\ge K_0(1-s)^2E+s^2\mathcal A_J(E)$, and $\mathcal A_J(E)\ge E-d_0$ by Lemma~\ref{lem:pll-area}. The
+minimum of $K_0(1-s)^2+s^2$ over $s\in\R$ is $K_0/(1+K_0)$, and $s^2d_0\le d_0$. $\mathcal A_s$ is continuous and
+strictly increasing with $\mathcal A_s(0)=0$ because $J_s>0$, and $\mathcal A_s(E)\to\infty$ by (c). If
+$\mathcal A_s(E)=I\le I_0$, then $\kappa_JE-d_0\le I_0$.
+\end{proof}
+
+$E_c=h-2e$ is the energy level below which the Morse coordinates are mapped a fixed distance away from the slit and
+the boundary: points with $u^2,v^2<E_c$ have moments $p^*+\tilde X(u)$ in $[c_P/A,\,h-c_P/B]$, where
+$c_P=2e-\delta'$, and angles $|\tilde Y(v)|<\theta_c$ (Lemma~\ref{lem:pll-bounds}). $\Delta P$ and $\Delta\theta$ are
+the resulting margins. $\tilde M_X(E)$ bounds $|\tilde X(u)|$ for $u^2\le E$, and $D_x,D_y$ bound the interpolation
+errors below the level $E_c$. The interpolation parameter $s\in[0,1]$ has an \emph{early range} $s\le1-\delta_s$, where
+the chart parameter $\lambda(s)$ of Definition~\ref{def:pln-charts}(c) is at most $\lambda_0$, and a \emph{late range}
+$s\ge1-\delta_s$. The length $\delta_s$ of the late range is chosen so that the interpolation error is at most half of
+each margin there and the whole source disc $D(p^\dagger)$ lies below the level $E_c$. $\bar E$, $\bar X$, $\bar Y$ are
+crude bounds valid for all $s$.
+
+\begin{definition}[Constants of the common source disc]\label{def:pll-source-constants}
+\lean{SymplecticPacking.Qhat.Ec, SymplecticPacking.Qhat.DeltaP,
+ SymplecticPacking.Qhat.Deltay, SymplecticPacking.Qhat.QX, SymplecticPacking.Qhat.QXt,
+ SymplecticPacking.Qhat.Dx,
+ SymplecticPacking.Qhat.Dy, SymplecticPacking.Qhat.delta_s, SymplecticPacking.Qhat.pdag,
+ SymplecticPacking.Qhat.Ebar, SymplecticPacking.Qhat.Xbar, SymplecticPacking.Qhat.Ybar,
+ SymplecticPacking.Qhat.Rq}
+\uses{def:pll-density, def:pll-comparison-constants, cons:pll-morse}
+Put $c_P=2e-\delta'$ and, for $E\ge0$,
+\begin{align*}
+ \Delta P&=\frac{c_P}{\max(A,B)}, & \Delta\theta&=\tfrac12-\theta_c,\\
+ M_X(E)&=\frac{|m_-|E+m_+\sqrt{E(E+2\eta_{\rm w} r)}}{r^2}, & \tilde M_X(E)&=M_X(E)+2\eps_R,\\
+ D_x&=a_0\sqrt{E_c}+\tilde M_X(E_c), & D_y&=b_0\sqrt{E_c}+\theta_c,\qquad R_q=\sqrt{\bigl(h-c_P/B\bigr)/\pi},
+\end{align*}
+\[
+ \delta_s=\min\Bigl(\frac14,\ \frac12\Bigl[1-\sqrt{\tfrac{p_+}{E_c-d_0}}\Bigr],\
+ \frac{\Delta P}{2D_x},\ \frac{\Delta\theta}{2D_y}\Bigr),\qquad
+ p^\dagger=\tfrac12\bigl[p_++(1-\delta_s)^2(E_c-d_0)\bigr],
+\]
+\[
+ \bar E=\frac{p^\dagger+d_0}{\kappa_J},\qquad \bar X=\max\bigl(a_0\sqrt{\bar E},\,\tilde M_X(\bar E)\bigr),
+ \qquad \bar Y=b_0\sqrt{\bar E}.
+\]
+\end{definition}
+
+\begin{lemma}[Order of the constants]\label{lem:pll-source-order}
+\lean{SymplecticPacking.Qhat.delta_s_pos, SymplecticPacking.Qhat.pdag_bounds}
+\uses{def:pll-source-constants, lem:pll-wall, lem:pll-mean}
+$0<c_P<h$, all four entries of the minimum defining $\delta_s$ are positive, so $0<\delta_s\le\frac14$, and
+\[
+ p_+<p^\dagger<(1-\delta_s)^2(E_c-d_0)<h .
+\]
+\end{lemma}
+
+\begin{proof}
+$c_P=15e/8-\kappa_R$ lies in $(0,h)$. $\theta_c<\frac12$ by Lemma~\ref{lem:pll-wall}(c), so $\Delta\theta>0$;
+$\Delta P>0$; $D_x,D_y>0$. By Lemma~\ref{lem:pll-mean}, $E_c-d_0>p_+>0$, so $0<\sqrt{p_+/(E_c-d_0)}<1$ and the
+second entry is positive. Next $1-\delta_s\ge\frac12(1+\sqrt{p_+/(E_c-d_0)})>\sqrt{p_+/(E_c-d_0)}$, so
+$(1-\delta_s)^2(E_c-d_0)>p_+$, and $p^\dagger$ is the midpoint of these two numbers. Finally
+$(1-\delta_s)^2(E_c-d_0)<E_c<h$.
+\end{proof}
+
+\begin{lemma}[Bounds for the instance]\label{lem:pll-bounds}
+\lean{SymplecticPacking.Qhat.abs_Xinv_le,
+SymplecticPacking.Qhat.abs_Xtilde_le_QXt,
+SymplecticPacking.Qhat.abs_Ytilde_le_b0,
+SymplecticPacking.Qhat.endpoint_margin,
+SymplecticPacking.Inner.Vtilde_le_lt_yc,
+SymplecticPacking.Qhat.pdag_bounds,
+SymplecticPacking.Qhat.As_ge,
+SymplecticPacking.Inner.Acal_ge}
+\uses{lem:pll-density-area, lem:pll-source-order, lem:pll-quadratic, lem:pll-wall, lem:pll-Rtilde-close,
+lem:pll-area, M-lem:cmp-tent-sublevel, lem:fcp-AB}
+\begin{enumerate}[label=(\alph*)]
+\item For all real $u$, $|X(u)|\le M_X(u^2)$ and $|\tilde X(u)|\le\tilde M_X(u^2)$; $\tilde M_X$ is increasing. For all
+ $u,v$ with $u^2\le\bar E$, $v^2\le\bar E$:
+ \[
+  \max\bigl(a_0|u|,|\tilde X(u)|\bigr)\le\bar X,\qquad \max\bigl(b_0|v|,|\tilde Y(v)|\bigr)\le\bar Y .
+ \]
+\item For all $u,v$ with $u^2<E_c$ and $v^2<E_c$:
+ \[
+  \Delta P\le\frac{c_P}A\le p^*+\tilde X(u)\le h-\frac{c_P}B=\pi R_q^2\le h-\Delta P,\qquad
+  |\tilde Y(v)|<\theta_c=\tfrac12-\Delta\theta .
+ \]
+\item For all $u,v$ with $u^2<E_c$ and $v^2<E_c$: $|a_0u-\tilde X(u)|\le D_x$ and $|b_0v-\tilde Y(v)|\le D_y$.
+\item $(1-\delta_s)^2\mathcal A_J(E_c)>p^\dagger$, and $\mathcal A_s(\bar E)\ge p^\dagger$ for every $s\in[0,1]$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) From the formula for $X$, $|X(u)|\le(|m_-|u^2+m_+|u|\sqrt{u^2+2\eta_{\rm w} r})/r^2=M_X(u^2)$, and
+$|\tilde X(u)|\le|X(u)|+2\eps_R\le\tilde M_X(u^2)$ by Lemma~\ref{lem:pll-quadratic}(iv); $M_X$ is increasing. If
+$u^2\le\bar E$, then $a_0|u|\le a_0\sqrt{\bar E}\le\bar X$ and $|\tilde X(u)|\le\tilde M_X(\bar E)\le\bar X$. If
+$v^2\le\bar E$, then $|\tilde Y(v)|\le b_0|v|\le b_0\sqrt{\bar E}=\bar Y$ by Lemma~\ref{lem:pll-wall}(e).
+
+(b) $\tilde R(\tilde X(u))=u^2<E_c$, so \eqref{eq:pll-Rtilde-close} gives
+$\Rcal_{\rm tent}(p^*+\tilde X(u))<E_c+\delta'=h-c_P$. As $0<c_P<h$ (Lemma~\ref{lem:pll-source-order}),
+\eqref{eq:pll-sublevel} with $\beta=h-c_P$ and $h/A=a$, $h/B=h-a$ (Lemma~\ref{lem:fcp-AB}) gives
+\[
+ p^*+\tilde X(u)\in\bigl[a-(h-c_P)/A,\ a+(h-c_P)/B\bigr]=\bigl[c_P/A,\ h-c_P/B\bigr].
+\]
+Since $\Delta P=c_P/\max(A,B)$ is at most $c_P/A$ and $c_P/B$, the outer inequalities follow, and
+$h-c_P/B=\pi R_q^2$ by definition. Next $\tilde V(\tilde Y(v))=v^2<E_c=h-2e$, so $|\tilde Y(v)|<\theta_c$ by
+Lemma~\ref{lem:pll-wall}(c).
+
+(c) $|a_0u-\tilde X(u)|\le a_0|u|+|\tilde X(u)|\le a_0\sqrt{E_c}+\tilde M_X(E_c)=D_x$ by (a), and
+$|b_0v-\tilde Y(v)|\le b_0\sqrt{E_c}+\theta_c=D_y$ by (b).
+
+(d) By Lemmas~\ref{lem:pll-area} and~\ref{lem:pll-source-order},
+$(1-\delta_s)^2\mathcal A_J(E_c)\ge(1-\delta_s)^2(E_c-d_0)>p^\dagger$. By Lemma~\ref{lem:pll-density-area}(c),
+$\mathcal A_s(\bar E)\ge\kappa_J\bar E-d_0=p^\dagger$.
+\end{proof}
+
+The core $D(p_{\rm on})$, on which the isotopy ends at $C_{\rm ph}f$, must contain the region $\{I\le h-4e\}$ where the
+comparison is used, and the cutoff must be complete before the edge $p^\dagger$ of the source disc; the levels below
+satisfy $h-4e<p_{\rm on}<p_{\rm zero}<p_+<p^\dagger$.
+
+\begin{definition}[Cutoff levels]\label{def:pll-cutoff}
+\lean{SymplecticPacking.Qhat.pon, SymplecticPacking.Qhat.pzero, SymplecticPacking.Qhat.chiCut}
+\uses{def:pre-flat}
+Put $p_{\rm on}=h-\frac{31e}8$ and $p_{\rm zero}=h-\frac{61e}{16}$. The source cutoff of \S\ref{sec:pln-flow} is
+then $\chi(I)=1-S\bigl((I-p_{\rm on})/(p_{\rm zero}-p_{\rm on})\bigr)$.
+\end{definition}
+
+\begin{lemma}[Cutoff levels]\label{lem:pll-cutoff}
+\lean{SymplecticPacking.Qhat.pon_bounds, SymplecticPacking.Qhat.chiCut_eq_one,
+ SymplecticPacking.Qhat.chiCut_eq_zero}
+\uses{def:pll-cutoff, lem:pll-source-order, lem:pre-flat}
+$0<h-4e<p_{\rm on}<p_{\rm zero}<p_+<p^\dagger$; $\chi=1$ on $I\le p_{\rm on}$ and $\chi=0$ on $I\ge p_{\rm zero}$.
+\end{lemma}
+
+\begin{proof}
+$h-4e>0$ since $e\le h/100$; $4>\frac{31}8>\frac{61}{16}>\frac{15}4$, and $p_+<p^\dagger$ by
+Lemma~\ref{lem:pll-source-order}. The values of $\chi$ follow from $S=0$ on $(-\infty,0]$ and $S=1$ on $[1,\infty)$.
+\end{proof}
+
+\begin{definition}[Constants of the path]\label{def:pll-path-constants}
+\lean{SymplecticPacking.Qhat.lambda0, SymplecticPacking.Qhat.Pmin, SymplecticPacking.Qhat.Pmax,
+ SymplecticPacking.Qhat.MC, SymplecticPacking.Qhat.Bstar, SymplecticPacking.Qhat.Rdag, SymplecticPacking.Qhat.Rh,
+ SymplecticPacking.Qhat.B3, SymplecticPacking.Qhat.cnew, SymplecticPacking.Qhat.Rsupp,
+ SymplecticPacking.Qhat.Psupp}
+\uses{def:pll-source-constants, def:pll-cutoff, lem:pll-physical-chart, def:pln-isotopy-data}
+Put $P_{\min}=\frac12\min(p^*,\Delta P)$ and $P_{\max}=\max(\frac32p^*,h)$, and let $M_C$, $R^\dagger$, $R_h$, $r_b^+$,
+$R_{\rm supp}$, $P_{\rm supp}$ and $p_{\rm bd}$ be the derived constants of Definition~\ref{def:pln-isotopy-data}, formed
+with $p^*_{\rm lo}=p^*_{\rm hi}=p^*$ (so $r_b^+=r_b$), the numbers $\Delta P$, $p^\dagger$, $R_q$ of
+Definition~\ref{def:pll-source-constants}, and the numbers $B_3$, $B^*$, $c=c_{\rm new}$ below. Let $\mathbf A_0=DC_{\rm ph}(0)\,\mathbf L=\operatorname{diag}\bigl(-\frac{c_x}{2\pi r_b},\,-2\pi r_bc_y\bigr)$
+and put
+\begin{gather*}
+ \lambda_0=\min\Bigl(\frac12,\ \frac{p^*}{2\bar X},\ \frac1{4\bar Y}\Bigr),\qquad
+ B_3=R^\dagger\max\bigl(1,|(\mathbf A_0)_{11}|,|(\mathbf A_0)_{22}|\bigr),\\
+ B^*=\min\Bigl(M_C\sqrt{\bar X^2+\bar Y^2},\ \frac{\bar X}{\sqrt{\pi p^*}}+2\pi r_b\bar Y\Bigr),\qquad
+ c_{\rm new}=\min\Bigl(\frac14,\ \frac{R_h-r_b}{8\max(R^\dagger,B_3,B^*)}\Bigr).
+\end{gather*}
+\end{definition}
+
+\begin{lemma}[Isotopy data for the equal-ball pair]\label{lem:pll-instance}
+\uses{lem:pll-pair, def:pln-isotopy-data, def:pll-source-constants, def:pll-path-constants, def:pll-cutoff,
+lem:pll-pstar, lem:pll-cutoff, lem:pll-source-order, lem:pll-bounds, lem:pll-physical-chart, eq:pln-A0}
+For the admissible potential pair $U(p)=\tilde R(p-p^*)$, $V=\tilde V$ of Lemma~\ref{lem:pll-pair}, the numbers
+\[
+ p_{\rm on},\ p_{\rm zero},\ p^\dagger,\ p^*_{\rm lo}=p^*_{\rm hi}=p^*,\ E_c,\ \Delta P,\ \Delta\theta,\ R_q,\ D_x,\ D_y,\
+ \delta_s,\ \bar E,\ \bar X,\ \bar Y,\ \lambda_0,\ B_3,\ B^*,\ c=c_{\rm new}
+\]
+of Definitions~\ref{def:pll-comparison-constants}, \ref{def:pll-source-constants}, \ref{def:pll-cutoff}
+and~\ref{def:pll-path-constants} are isotopy data in the sense of Definition~\ref{def:pln-isotopy-data}. In the
+notation of that definition, $X_y=\tilde X$, $Y_y=\tilde Y$, $\mathcal A_y=\mathcal A_J$, $\mathcal A_{y,s}=\mathcal A_s$
+and $\mathbf A_y=\mathbf A_0$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:pll-pair}, $X_y=\tilde X$, $Y_y=\tilde Y$, $a_0(y)=a_0$, $b_0(y)=b_0$ and $\mathbf L_y=\mathbf L$;
+hence the density $J_{y,s}$ of Definition~\ref{def:pln-charts}(a) is $J_s$, so $\mathcal A_{y,s}=\mathcal A_s$ and
+$\mathcal A_{y,1}=\mathcal A_J$; and by \eqref{eq:pln-A0} and Definition~\ref{def:pll-chart},
+$\mathbf A_y=DC_{\rm ph}(0)\mathbf L=\mathbf A_0$.
+
+\emph{Positivity.} $p_{\rm on}>h-4e>0$ (Lemma~\ref{lem:pll-cutoff}), and $p_{\rm zero}$, $p^\dagger$ are larger;
+$p^*>0$ (Lemma~\ref{lem:pll-pstar}); $E_c=h-2e>0$; $\Delta P,\Delta\theta,D_x,D_y,\delta_s>0$
+(Lemma~\ref{lem:pll-source-order}); $R_q>0$ because $c_P<h$ and $B=h/(h-a)>1$; $\bar E>0$, hence $\bar X\ge a_0\sqrt{\bar E}>0$
+and $\bar Y>0$; so $\lambda_0>0$, $B_3\ge R^\dagger>0$ and $B^*>0$; and $c_{\rm new}>0$ because $R_h>r_b$, i.e.\ $p^*<h$.
+
+\ref{it:pln-D1}: $p_{\rm on}<p_{\rm zero}<p^\dagger$ by Lemma~\ref{lem:pll-cutoff}, and $p^*<h$ by
+Lemma~\ref{lem:pll-pstar}.
+
+\ref{it:pln-D2}: Lemma~\ref{lem:pll-bounds}(b), since $|\tilde Y(v)|<\theta_c=\frac12-\Delta\theta$.
+
+\ref{it:pln-D3}: Lemma~\ref{lem:pll-bounds}(c).
+
+\ref{it:pln-D4}: $\delta_s\le\frac14$, $\delta_sD_x\le\frac12\Delta P$ and $\delta_sD_y\le\frac12\Delta\theta$ because
+$\delta_s$ is the minimum in Definition~\ref{def:pll-source-constants}; $(1-\delta_s)^2\mathcal A_J(E_c)>p^\dagger$ is
+Lemma~\ref{lem:pll-bounds}(d).
+
+\ref{it:pln-D5}: $\mathcal A_s(\bar E)\ge p^\dagger$ for $s\in[0,1]$ is Lemma~\ref{lem:pll-bounds}(d), and the bounds for
+$u^2\le\bar E$, $v^2\le\bar E$ are Lemma~\ref{lem:pll-bounds}(a).
+
+\ref{it:pln-D6}: $\lambda_0\le\frac12$, $\lambda_0\bar X\le\frac12p^*$ and $\lambda_0\bar Y\le\frac14$ because $\lambda_0$
+is the minimum in Definition~\ref{def:pll-path-constants}.
+
+\ref{it:pln-D7}: with $p^*_{\rm lo}=p^*_{\rm hi}=p^*$, $r_b^+=r_b$, $B_{\rm lin}=B_3$ and $\mathbf A_y=\mathbf A_0$, the
+three conditions hold with equality by the definitions of $B_3$, $B^*$ and $c_{\rm new}$; and $P_{\min},P_{\max}$ satisfy
+the range conditions of Definition~\ref{def:pln-isotopy-data} with equality.
+\end{proof}
+
+\subsection{The isotopy and the comparison on the closed disc}\label{sec:pll-main}
+
+Let $(\hat q_t)_{t\in\R}$ and $(Q_t)_{t\in\R}$ be the isotopy and the Hamiltonian that Theorem~\ref{thm:pln-isotopy}
+assigns to the pair of Lemma~\ref{lem:pll-pair} with the data of Lemma~\ref{lem:pll-instance}
+(Lemma~\ref{lem:pln-normalisation} and Construction~\ref{cons:pln-hamiltonian}), and let $P_{\rm supp}$ be the derived
+constant of Definition~\ref{def:pll-path-constants}.
+
+\begin{theorem}[The explicit inner map and its isotopy]\label{thm:pll-inner}
+\lean{SymplecticPacking.Qhat.qhatP,
+SymplecticPacking.Qhat.qhatInvP,
+SymplecticPacking.Qhat.QhamP,
+SymplecticPacking.Qhat.qhatP_spec,
+SymplecticPacking.Qhat.qhat_of_nonpos,
+SymplecticPacking.Qhat.qhat_of_one_le,
+SymplecticPacking.Qhat.qhat_disk,
+SymplecticPacking.Qhat.qhat_openDisk,
+SymplecticPacking.Qhat.qhat_one_eq,
+SymplecticPacking.Qhat.qhat_one_eq,
+SymplecticPacking.Qhat.qinner_one,
+SymplecticPacking.Qhat.qinner_dom,
+SymplecticPacking.Inner.comparison_five,
+SymplecticPacking.Qhat.endpoint_comparison,
+SymplecticPacking.Qhat.endpoint_comparison, SymplecticPacking.Qhat.qhat_one_eq,
+SymplecticPacking.Qhat.Rcal_q_le}
+\uses{lem:pll-pair, lem:pll-instance, thm:pln-isotopy, thm:pln-param, lem:pln-normalisation, prop:pln-hamiltonian,
+lem:pln-data, def:pln-inner-map, thm:pln-full-disc, prop:pll-comparison, def:pll-inner-map, def:pll-chart,
+def:pll-path-constants, lem:pll-cutoff}
+Let $k\ge10$ and $t_0\in(\frac78,1)$, with $h$, $\Rcal_{\rm tent}$ and $e_q$ as defined in \S\ref{sec:pll-setting}. Let
+$q_t=\hat q_t$ ($t\in\R$) and $q=q_1$. The family $(q_t)$, its Hamiltonian $(Q_t)$ and the number $P_{\rm supp}$ have
+the following properties.
+\begin{enumerate}[label=(\alph*)]
+\item Each $q_t$ is a symplectic diffeomorphism of $\C$, and $(t,z)\mapsto q_t(z)$, $(t,\zeta)\mapsto q_t^{-1}(\zeta)$
+ are $C^\infty$ on $\R\times\C$; $q_t=\mathrm{id}$ for $t\le0$ and $q_t=q_1$ for $t\ge1$.
+\item $P_{\rm supp}<h$; for every $t$, $q_t=\mathrm{id}$ on $\{\pi|z|^2>P_{\rm supp}\}$, and $q_t$ maps $\bar D(P')$ onto
+ itself for every $P'\ge P_{\rm supp}$, in particular $\bar D(h)$ and $D(h)$ onto themselves.
+\item $Q$ is $C^\infty$ on $\R\times\C$, $Q_t$ vanishes with all its derivatives on $\{\pi|\zeta|^2>P_{\rm supp}\}$ for
+ every $t$, $Q_t=0$ for $t\notin(0,1)$, and $q_t$ is the isotopy generated by $Q_t$: $\partial_tq_t=\Xi_t\circ q_t$
+ with $\iota_{\Xi_t}\omega_2=-dQ_t$.
+\item $q$ equals $C_{\rm ph}\circ f$ on $\bar D(p_{\rm on})$, $p_{\rm on}=h-\frac{31}8e_q$; in particular on
+ $\bar D(h-4e_q)$.
+\item For every $z\in\bar D(h)$, with $I=\pi|z|^2$,
+ \begin{equation}\label{eq:pll-full-comparison}
+  \Rcal_{\rm tent}\bigl(p(q(z))\bigr)\le I+4e_q .
+ \end{equation}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+By Lemmas~\ref{lem:pll-pair} and~\ref{lem:pll-instance}, Theorem~\ref{thm:pln-isotopy} applies with $d=0$.
+
+(a) Symplecticity, bijectivity and the behaviour for $t\le0$ and $t\ge1$ are Theorem~\ref{thm:pln-isotopy}(a),(b);
+joint smoothness of $(t,z)\mapsto q_t(z)$ and $(t,\zeta)\mapsto q_t^{-1}(\zeta)$ is Lemma~\ref{lem:pln-normalisation}(e)
+(equivalently Theorem~\ref{thm:pln-param}(a)).
+
+(b) $P_{\rm supp}<h$ is Lemma~\ref{lem:pln-data}(b) (also part of Theorem~\ref{thm:pln-isotopy}); the rest is
+Theorem~\ref{thm:pln-isotopy}(a).
+
+(c) Smoothness of $Q$ on $\R\times\C$ is Proposition~\ref{prop:pln-hamiltonian} (equivalently
+Theorem~\ref{thm:pln-param}(a)); the support properties and the generating equation are
+Theorem~\ref{thm:pln-isotopy}(d), with $\Xi_t=\xi_{y,t}$.
+
+(d) By Theorem~\ref{thm:pln-isotopy}(c), $q(z)=q_{{\rm in},y}(z)$ for $\pi|z|^2\le p_{\rm on}$, and by
+Definition~\ref{def:pln-inner-map}, Definition~\ref{def:pll-inner-map} and Definition~\ref{def:pll-chart},
+$q_{{\rm in},y}=C_{\rm ph}\circ f$ on $D(I_{\rm rect}(y))$, which contains $\bar D(p_{\rm on})$ because
+$p_{\rm on}<p^\dagger<I_{\rm rect}(y)$ (Lemmas~\ref{lem:pll-cutoff} and~\ref{lem:pln-data}(b)). Since
+$h-4e_q<p_{\rm on}$ (Lemma~\ref{lem:pll-cutoff}), this is (d).
+
+(e) Apply Corollary~\ref{thm:pln-full-disc} with $\Upsilon=\Rcal_{\rm tent}|_{[0,h]}$, $g(I)=I+4e_q$ and $\eps=0$. If
+$\pi|z|^2\le p_{\rm on}$, then $\pi|z|^2<p_+$ (Lemma~\ref{lem:pll-cutoff}), so by (d) and
+Proposition~\ref{prop:pll-comparison}, $\Upsilon(\pi|q_{{\rm in},y}(z)|^2)<\pi|z|^2+13e_q/24\le g(\pi|z|^2)$. Since
+$\Rcal_{\rm tent}$ is convex, $\sup_{[0,h]}\Upsilon=\max(\Rcal_{\rm tent}(0),\Rcal_{\rm tent}(h))=h<p_{\rm on}+4e_q=g(p_{\rm on})$.
+The corollary gives \eqref{eq:pll-full-comparison}.
+\end{proof}
+
+The bound $4e_q$ is needed only on the annulus $\{p_{\rm on}<\pi|z|^2\le h\}$, on which only $q(\bar D(h))=\bar D(h)$
+is used; on the core the error is below $13e_q/24$. With $c_s$ and $g$ as in \Msec{sec:cmp-linear}, the error costs $4c_se_q\le g/32$ in
+\Mref{Proposition}{prop:cmp-linear} (Lemma~\ref{lem:fcp-margin}): the gap drops from $g$ to $\frac{31}{32}g$, a relative loss of at most
+$1/32$, uniformly in $k$ and $t_0$.

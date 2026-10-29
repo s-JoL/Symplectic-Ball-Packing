@@ -1,0 +1,78 @@
+% Shared preamble of main.tex and supplement.tex. Load after the document class.
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\allowdisplaybreaks[1]
+\usepackage[margin=1.1in]{geometry}
+\setlength{\emergencystretch}{1em}
+\usepackage{booktabs,longtable}
+\usepackage{xr-hyper}
+\usepackage[hidelinks]{hyperref}
+\usepackage{refcount}
+\usepackage{enumitem}
+
+% ---------------------------------------------------------------- theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+% Lettered results A--G of the introduction.
+\newtheorem{maintheorem}{Theorem}
+\newtheorem{mainproposition}[maintheorem]{Proposition}
+\newtheorem{maincorollary}[maintheorem]{Corollary}
+\renewcommand{\themaintheorem}{\Alph{maintheorem}}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{construction}[theorem]{Construction}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% ---------------------------------------------------------------- notation
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Hb}{H_{\mathrm b}}            % base area profile
+\newcommand{\Pb}{P_{\mathrm b}}            % unused area
+\newcommand{\Bo}{B^{\circ}}                % open capacity ball
+\newcommand{\EB}{\mathbb{B}}               % Euclidean ball (radius)
+\newcommand{\Pack}{\mathrm{Pack}}          % packing specification
+\newcommand{\Hfin}{H_{\mathrm{fin}}}
+\newcommand{\defdesc}{\operatorname{the}}   % definite description (never \the, a TeX primitive)
+\DeclareMathOperator{\vol}{vol}
+
+% ---------------------------------------------------------------- Lean / blueprint annotations
+% Unqualified \lean{...} records references without a claim of complete coverage.
+% Optional [full] / [needed] classify coverage in the PDF and generated paper index.
+% These are editorial scope annotations, not a machine check of paper/Lean equivalence.
+\newcommand{\leancoveragefull}{full statement verified}
+\newcommand{\leancoverageneeded}{needed consequence verified}
+\newcommand{\lean}[2][]{\if\relax\detokenize{#1}\relax\else
+  \ifcsname leancoverage#1\endcsname\else
+    \PackageError{paper}{Unknown Lean coverage `#1'}{Use full or needed.}\fi
+  \par\nobreak\noindent{\footnotesize\upshape[Lean: \csname leancoverage#1\endcsname.]\par}\nobreak
+  \fi\ignorespaces}
+% Main-result counterparts agree up to the presentation differences in Section~\ref{sec:ver}.
+\newcommand{\leanmark}[1]{\par\nobreak\noindent
+  {\footnotesize\upshape\raggedright[Lean: full statement verified; \texttt{#1}]\par}\nobreak}
+\newcommand{\uses}[1]{}
+\newcommand{\proves}[1]{}
+
+% ---------------------------------------------------------------- cross-document references
+% Numbers of the other document carry a prefix: S for the supplement, M for the main text.
+% In the main text: \Sref{Lemma}{lem:shd-foo} -> "Lemma S6.3"; \Ssec{sec:shd} -> "\S S6".
+% In the supplement: \Mref{Lemma}{lem:eff-gronwall} -> "Lemma M7.1"; the lettered results of
+% the main text keep their letters: \Mref{Theorem}{thm:main} -> "Theorem C".
+% The second argument is the label WITHOUT the S-/M- prefix.
+\makeatletter
+\DeclareRobustCommand{\Mprefix}[1]{\edef\@Mref{\getrefnumber{M-#1}}\expandafter\@Mprefix\@Mref\@nil}
+\def\@Mprefix#1#2\@nil{\ifnum`#1<`A M\fi}
+\makeatother
+\newcommand{\Snum}[1]{\href[page=\getpagerefnumber{S-#1}]{supplement.pdf}{S\ref*{S-#1}}}
+\newcommand{\Mnum}[1]{\href[page=\getpagerefnumber{M-#1}]{main.pdf}{\Mprefix{#1}\ref*{M-#1}}}
+\newcommand{\Sref}[2]{#1~\Snum{#2}}
+\newcommand{\Ssec}[1]{\S\Snum{#1}}
+\newcommand{\Mref}[2]{#1~\Mnum{#2}}
+\newcommand{\Msec}[1]{\S\Mnum{#1}}

@@ -1,0 +1,260 @@
+\section{Dimension four: the cubic model}\label{sec:cub}
+
+Here $n=2$ and the target is $\Bo(1)$. We construct the normal disc-bundle model associated with a smooth cubic
+in $\CP^2$, as in Biran's decomposition \cite{Biran2001}, and a transfer of its truncated regions to the ball.
+The bundle has degree $9$ over the cubic. The base is a fixed hexagonal torus with an explicit periodic area density
+of integral three. The model is written on its cover $\R^2\times\C$, with two explicit deck maps.
+Its horizontal coefficient is $1-3p$, so the fibre interval stops below $p=1/3$; this gives the condition $3c_i<C$.
+The integrated profile tends to $1/2$ as the height tends to $1/3$.
+An explicit unit lift satisfying the Fermat equation supplies the transport and return. A cube-root symmetry,
+together with injectivity modulo phase, ensures that the final ball chart is defined.
+
+\subsection{The model}
+
+Let $\zeta=e^{2\pi i/3}$ and let $\Gamma=(\R/\Z)^2$, identified with
+$\C/(\Z+\zeta\Z)$ by $(u,v)\mapsto u+\zeta v$.
+The theta formulas in \S\ref{sec:fer-torus} give a smooth map $Z:\R^2\to\C^3$ with
+\[
+ |Z|=1,\quad Z_0^3+Z_1^3+Z_2^3=0,\quad
+ Z(u+1,v)=-Z(u,v),\quad Z(u,v+1)=\phi(u,v)Z(u,v),\quad |\phi|=1.
+\]
+Representatives related by $(Z,U)\mapsto(e^{i\chi}Z,e^{3i\chi}U)$ are called gauge equivalent.
+Forms are evaluated on the cover and on horizontal unit representatives.
+
+\begin{definition}[The cubic cover model]\label{def:cub-model}
+\lean{SymplecticPacking.Return.Ncoord,SymplecticPacking.Bundle.Omega0loc,SymplecticPacking.Embed.deckU,SymplecticPacking.Embed.deckV,
+SymplecticPacking.Bundle.pE}
+Use the deck maps
+\[
+ T_u(u,v,w)=(u+1,v,-w),\qquad T_v(u,v,w)=(u,v+1,\phi(u,v)^3w)
+\]
+on $\widetilde N=\R^2\times\C$; $N$ denotes these cover data with their deck identification.
+Put
+\[
+ p=\pi|w|^2,\quad \eta=\frac{1}{2\pi}\operatorname{Im}\sum_j\overline{Z_j(u,v)}\,dZ_j(u,v),\quad
+ \sigma=d\eta,\quad \alpha=\frac{d\arg w}{2\pi}-3\eta,
+\]
+\[
+ \Omega_0=\sigma+d(p\alpha)
+ =\omega_V+(1-3p)\sigma-3dp\wedge\eta,\quad
+ \Delta=[0,h],\quad 0<h<1/3,\quad \Hb(p)=3(1-3p).
+\]
+The expression $p\,d\arg w/(2\pi)=\frac12\operatorname{Im}(\bar w\,dw)$ makes the form smooth at $w=0$.
+The marked set $\mathcal Z$ consists of the three torus points at which $Z_0=0$; its inverse image in the cover is
+$\widetilde{\mathcal Z}=\mathcal Z+\Z^2$, using the three representatives given below.
+The cover-to-representative map is $\mathsf N(u,v,w)=(Z(u,v),w)$.
+\end{definition}
+
+The deck transformations preserve $p$ and $\Omega_0$ and map $\mathsf N$ to gauge-equivalent pairs.
+The density $\sigma=\sigma_\Gamma(u,v)du\wedge dv$ is smooth, periodic and strictly positive, with
+\[
+ \int_0^1\int_0^1\sigma_\Gamma(u,v)\,du\,dv=3
+\]
+(Lemma~\ref{lem:fer-sigma}). In particular $\Omega_0$ is nondegenerate for $p<1/3$.
+The construction uses these cover identities directly.
+
+\begin{lemma}[Integrated profile]\label{lem:cub-volume}
+For $0<h<1/3$,
+\[
+ \int_0^h\Hb(p)\,dp=3h-\frac92h^2,\qquad
+ \frac12-\int_0^h\Hb(p)\,dp=\frac12(1-3h)^2.
+\]
+Thus this scalar budget tends to $1/2$ as $h\uparrow1/3$.
+\end{lemma}
+\begin{proof}
+Integrate the affine function $3-9p$ and complete the square.
+\end{proof}
+
+
+\subsection{Handle data}
+
+\emph{Torus coordinates.} Let $\zeta=e^{2\pi i/3}$ and $\Lambda_0=\Z+\zeta\Z$. The Weierstrass parametrisation
+\[
+ \Phi_\Gamma(z)=\big[\,2c_F\,\wp(z):-(1+d_F\,\wp'(z)):-(1-d_F\,\wp'(z))\,\big],\qquad z=u+\zeta v,\ (u,v)\in\R^2,
+\]
+with $\Phi_\Gamma(0)=[0:1:-1]$, $\wp=\wp_{\Lambda_0}$, $g_3=g_3(\Lambda_0)\neq0$, $c_F=g_3^{-1/3}$ and
+$d_F=(3g_3)^{-1/2}$, is injective modulo the lattice as a map to gauge classes of Fermat vectors. An explicit theta lift $Z(u,v)$ without poles makes $\sigma$ a smooth form on $(\R/\Z)^2$ and $Z^*\eta_H$ a smooth form on
+$\R^2$ with explicit lattice periods; the base data below are smooth (\S\ref{sec:fer}). In these
+coordinates $\nu=du\wedge dv$ is a positive area form with $\int\nu=1$, and
+\[
+ \mathcal Z=\{b_1,b_2,b_3\},\qquad b_1=(0,0),\quad b_2=(\tfrac13,\tfrac23),\quad b_3=(\tfrac23,\tfrac13).
+\]
+(The point $b_1$ is $\Phi_\Gamma(0)=[0:1:-1]$; $b_2$, $b_3$ are the two zeros of $\wp$, which are the non-lattice
+fixed points of $z\mapsto\zeta z$.)
+
+\begin{proposition}[Handle data on the cubic]\label{prop:cub-handle}
+\lean{SymplecticPacking.Bundle.torusPoint, SymplecticPacking.Bundle.bpoints, SymplecticPacking.Bundle.Z0_eq_zero_iff, SymplecticPacking.Bundle.annulusPlus, SymplecticPacking.Bundle.annulus, SymplecticPacking.Bundle.bB, SymplecticPacking.Bundle.betaB, SymplecticPacking.Bundle.stripB, SymplecticPacking.Bundle.zetaJ, SymplecticPacking.Bundle.supports, SymplecticPacking.Bundle.Pprim, SymplecticPacking.Bundle.Pprim_periodic, SymplecticPacking.Bundle.d_Pprim, SymplecticPacking.Bundle.frameA, SymplecticPacking.Bundle.lambdaC_descends, SymplecticPacking.Bundle.d_lambdaC, SymplecticPacking.Bundle.angularForm_frameA}
+\uses{def:cub-model, M-def:hdl-handle-data, prop:fer-handle, lem:fer-frame}
+In the torus coordinates $(u,v)$ the following are handle data for the cubic model
+$(\Gamma,N,[0,h],\Omega_0,\mathcal Z)$ (\Mref{Definition}{def:hdl-handle-data}):
+\begin{enumerate}[label=(\alph*)]
+\item the annuli $\mathcal A=\{\frac18\le u\le\frac5{24}\}\subset\mathcal A^+=\{\frac1{12}\le u\le\frac14\}$ with handle
+coordinates $(s,v)=(12u-\frac32,\,v)$, so that $\mathcal A=[0,1]\times\R/\Z$ and $\mathcal A^+=[-\frac12,\frac32]\times\R/\Z$;
+\item the dual band $\mathcal B=\{\frac19<v<\frac29\}$, containing the closed clock band $[\frac18,\frac5{24}]$; its active intersection with $\mathcal A^+$ is $[\frac1{12},\frac14]\times[\frac18,\frac5{24}]$, with $v_-=\frac18$, $v_+=\frac5{24}$;
+\item the closed one-form $\beta=b(v)\,dv$, $b=\varphi/\int_0^1\varphi$, where
+$\varphi(v)=a_{\rm flat}(v-\frac18)\,a_{\rm flat}(\frac5{24}-v)$ on $[0,1]$, extended $1$-periodically, with
+$a_{\rm flat}(x)=e^{-1/x}$ for $x>0$ and $a_{\rm flat}(x)=0$ for $x\le0$;
+\item the area form $\nu=du\wedge dv=\frac1{12}\,ds\wedge dv$, so $c_\nu=\frac1{12}$;
+\item the primitive operator $P_\Gamma$: for a smooth function $\mathfrak b$ on $(\R/\Z)^2$ with $\int\mathfrak b\,\nu=0$,
+\[
+\begin{aligned}
+ P_\Gamma(\mathfrak b\,\nu)&=A_0\,dv-B_0\,du,\\
+ A_0(u,v)&=\int_0^u\big(\mathfrak b(s',v)-\mathfrak b_0(v)\big)ds',\\
+ \mathfrak b_0(v)&=\int_0^1\mathfrak b(s',v)\,ds',\qquad B_0(v)=\int_0^v\mathfrak b_0(t)\,dt;
+\end{aligned}
+\]
+\item the unitary frame $(Z_0/|Z_0|)^3$ of $N$ over $\mathcal A^+$, with fibre coordinate $w_{\mathcal A}$ defined by
+$U=(Z_0/|Z_0|)^3w_{\mathcal A}$, angle $\theta_{\mathcal A}=\arg w_{\mathcal A}/2\pi$, and the toric one-form
+\[
+ \Gamma_{\mathcal A}(p)=(1-3p)\,\lambda_\Gamma,\qquad \lambda_\Gamma=\eta_H-\frac1{2\pi}\,d\arg Z_0 ,
+\]
+so that $\Omega_0=\omega_V+d\Gamma_{\mathcal A}$ on $N|_{\mathcal A^+}$, with $\omega_V=dp\wedge d\theta_{\mathcal A}$;
+\item the coordinate discs $U_j$ of radius $\frac1{100}$ about $b_j$ in the centred coordinates
+$(u-u(b_j),v-v(b_j))$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a), (b) The maps $u\mapsto12u-\frac32$ and $v\mapsto v$ identify the closed bands as stated, and $ds\wedge dv=12\,du\wedge dv$ is
+positive. Modulo $1$, the $u$-coordinates $0,\frac13,\frac23$ of the $b_j$ have distance at least $\frac1{12}$ from
+$[\frac1{12},\frac14]$, and their $v$-coordinates $0,\frac23,\frac13$ have positive distance from $[\frac19,\frac29]$;
+so $\mathcal A^+$ and $\mathcal B$ avoid $\mathcal Z$. The base is closed, so there is no boundary collar.
+(c) $\varphi$ is smooth on $\R$ because $a_{\rm flat}$ is flat at $0$; it vanishes outside $[\frac18,\frac5{24}]\subset(0,1)$ and is
+positive exactly on $(\frac18,\frac5{24})$. Hence $b\ge0$ is smooth and $1$-periodic, $b>0$ exactly on $(v_-,v_+)$,
+$\int_0^1b=1$, $\operatorname{supp}\beta\subset\mathcal B$, $\beta$ is closed because it depends on $v$ only, and
+$\int_{\{s\}\times\R/\Z}\beta=1$.
+(d) is the positivity of $\nu$ (\S\ref{sec:fer}).
+(e) $A_0$ and $B_0$ are $1$-periodic because $\int_0^1(\mathfrak b-\mathfrak b_0)\,ds'=0$ and $\int_0^1\mathfrak b_0=\int\mathfrak b\,\nu=0$,
+and $d(A_0\,dv-B_0\,du)=(\mathfrak b-\mathfrak b_0)\,du\wedge dv+\mathfrak b_0\,du\wedge dv=\mathfrak b\,\nu$; the operator is linear and
+preserves smooth dependence on parameters, with all jets, by differentiation under the integral sign. The support
+condition of \Mref{Definition}{def:hdl-handle-data}(e) is void on a closed base.
+(f) $\mathcal Z=\{b_1,b_2,b_3\}$ is disjoint from $\mathcal A^+$ by (a), so $Z_0\ne0$ on $\mathcal A^+$ and the frame
+is defined there. The identity $\Omega_0=\omega_V+d\Gamma_{\mathcal A}$ is Lemma~\ref{lem:fer-frame}: $\lambda_\Gamma$ is basic
+with $d\lambda_\Gamma=\sigma$, and $\arg U=3\arg Z_0+\arg w_{\mathcal A}$ gives $\alpha=d\theta_{\mathcal A}-3\lambda_\Gamma$. The form
+$\Gamma_{\mathcal A}$ is a smooth family of base one-forms depending on $p$, hence toric.
+(g) The $b_j$ have mutual distance at least $\frac13$ in the flat metric of the torus, and by (a), (b) distance at least
+$\frac1{12}$ from $\mathcal A^+\cup\mathcal B$; both bounds exceed $\frac2{100}$. So the closed discs $\overline U_j$ are disjoint from
+each other and from $\mathcal A^+\cup\mathcal B$.
+\end{proof}
+
+The base is closed, so there is no collar ($\chi_\partial=0$) and no finite atlas: the primitive operator is the global
+operator $P_\Gamma$ of (e), and the correction region of \Mref{Definition}{def:hdl-handle-data}(d) is the whole torus, on
+which $\kappa(p)=(1-3p)\sigma\ge(1-3h)\sigma$ for $p\le h$. The background is $e_h\nu$ (Definition~\ref{def:fer-kappa}). The
+twist, the three paths, the Moser map and the layer maps over these data are constructed in \S\ref{sec:shd-four}.
+
+\subsection{Transfer into the ball}
+
+The transfer is constructed by a deformation to the normal cone, following the scheme of \cite{OpenAI2026}.
+It embeds each working region $\{p<h\}$, away from the marked fibres and modulo deck identification, into the
+ball. Let $\mathcal F(Z)=Z_0^3+Z_1^3+Z_2^3$ and consider the family
+$X_T=\{\mathcal F(Z)=TW\}$, where $W$ has weight three. For $T=1$ the equation says $W=\mathcal F(Z)$, so $X_1$ is a graph
+over $\CP^2$. For $T=0$ it says $\mathcal F(Z)=0$ with $W$ free, so $X_0$ is the total space of the normal bundle
+$\mathcal O(3)|_E$ of the cubic $E$, which is the disc-bundle model. One Kähler potential $\Phi_E$ restricts to
+all fibres $X_T$. The weight-three injection places the model in $X_0$ with its own form; the transport is the
+$\Omega_E$-orthogonal lift of $\partial_T$ on a bounded region, and carries its points from
+$X_0$ to $X_1$ preserving the restricted forms; projection identifies $X_1$
+with $\CP^2$, where the restricted form is $\omega_{\rm FS}$ plus the exact term $d_n\,dd^c\log(1+\mathfrak u)$; and
+the Moser return removes that term. Both vector fields are given in closed form, with denominators bounded below
+for $0\le T\le1$ and $0\le s\le1$. To land in $\Bo(1)=\CP^2\setminus\{Z_0=0\}$ the image must avoid the line
+$\{Z_0=0\}$. Every step commutes with the symmetry $\mathsf r\colon Z_0\mapsto\zeta Z_0$, whose fixed points in $\CP^2$ are that line
+and the point $[1:0:0]$. A map that commutes with $\mathsf r$ and is injective modulo gauge sends non-fixed points to
+non-fixed points, so the model over $E\setminus\{Z_0=0\}$ is carried off the line
+(Proposition~\ref{prop:rtc-avoid}).
+
+\begin{construction}[The cubic transfer]\label{cons:cub-transfer}
+\uses{def:cub-model, cons:rtc-injection}
+Fix $h<d_n<1/3$. Use pairs $(Z,W)$ with $|Z|=1$, with the gauge relation
+$(Z,W)\sim(e^{i\chi}Z,e^{3i\chi}W)$.
+The ambient form is defined on horizontal representatives by the potential
+\[
+ \Phi_E(Z,W)=\log|Z|^2+d_n\log(1+|W|^2/|Z|^6),\qquad \Omega_E=dd^c\Phi_E.
+\]
+The constraint is $X_T=\{(Z,W):|Z|=1,\ \mathcal F(Z)=TW\}$.
+In unit representatives put $p_W=d_n|W|^2/(1+|W|^2)$, $A=1-3p_W$ and $B=d_n/(1+|W|^2)^2$. For $\|Z\|=1$ put
+$f=\mathcal F(Z)$, $\mathbf n=3\bar Z^{2}-3\bar fZ$ (with $\bar Z^2=(\bar Z_0^2,\bar Z_1^2,\bar Z_2^2)$), $G=\|\mathbf n\|^2$,
+$N_{\rm den}=G/A+T^2/B$ and $\mathfrak u=|\mathcal F(Z)|^2/\|Z\|^6$. The transfer is the composite of the following four maps.
+\begin{enumerate}[label=(\arabic*)]
+\item The \emph{weight-three injection} $\iota[Z,U]=[Z,\sqrt\pi\,U/\sqrt{d_n-p}]$ for unit pairs with $p<d_n$.
+\item The \emph{transport} $\tau_1$, the time-one map, from $T=0$ to $T=1$, of the field
+\[
+ \dot Z=\frac{W\,\mathbf n}{A\,N_{\rm den}},\qquad \dot W=-\frac{T\,W}{B\,N_{\rm den}},\qquad \dot T=1
+\]
+on unit representatives in the gauge $Z^\dagger\dot Z=0$.
+\item The projection $\mathrm{pr}(Z,W)=Z$ from the graph constraint at $T=1$.
+\item The \emph{Moser return} $\psi_1^{-1}$, where $\psi_s$ is the unit-representative flow of
+\[
+ Y_s=-\frac{d_n}{2}\,\frac{f\,\mathbf n}{(1+\mathfrak u)(A_s+B_sG)},\qquad A_s=1-3sd_n\frac{\mathfrak u}{1+\mathfrak u},\quad
+ B_s=\frac{sd_n}{(1+\mathfrak u)^2},
+\]
+with the graph forms $\omega^{\rm gr}_s=\omega_{\rm FS}+s\,d_n\,dd^c\log(1+\mathfrak u)$, $0\le s\le1$.
+\end{enumerate}
+Finally set $\mathsf r Z=(\zeta Z_0,Z_1,Z_2)$ and $\mathsf r(Z,W)=(\mathsf r Z,W)$. This preserves the central constraint and the gauge relation.
+\end{construction}
+
+The ball chart $b_{\rm ball}$ (Lemma~\ref{lem:rtc-ball-chart}) is applied to the output of $\psi_1^{-1}$. The resulting
+cover transfer $\mathcal T=b_{\rm ball}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota\circ\mathsf N$ is
+defined on $\{p<h\}$ off the marked fibres, pulls $\omega_0$ back to $\Omega_0$ and identifies exactly the deck-equivalent
+points (Theorem~\ref{thm:cub-transfer} in \S\ref{sec:rtc-transfer}); the avoidance of the line $\{Z_0=0\}$ is
+Proposition~\ref{prop:rtc-avoid}.
+
+\subsection{The packing}
+
+The balls of capacities $\rho_i$ have total volume $\frac12\sum_i\rho_i^2$. The integrated profile is
+$\frac12-\frac12(1-3h)^2$ (Lemma~\ref{lem:cub-volume}). We enlarge each $\rho_i$ by a slack $\delta$ to an auxiliary capacity
+$a_i$ and choose $h$ so that the scalar budget after subtracting the enlarged ball capacities stays positive;
+this budget is $\int_0^h\Pb$. As $\sum_i\rho_i^2\uparrow1$, the slack $\delta$, the defect $\frac13-h$ and the mean of $\Pb$
+tend to zero.
+
+\begin{lemma}[Auxiliary capacities]\label{lem:cub-auxiliary}
+\lean{SymplecticPacking.Branch2.delta, SymplecticPacking.Branch2.aux, SymplecticPacking.Branch2.zeta,
+SymplecticPacking.Branch2.height, SymplecticPacking.Branch2.tau, SymplecticPacking.Branch2.Pb,
+SymplecticPacking.Branch2.Hyp.rho_lt_aux, SymplecticPacking.Branch2.Hyp.aux_lt_height,
+SymplecticPacking.Branch2.Hyp.auxMax_lt_tau_mul, SymplecticPacking.Branch2.Hyp.tau_mul_lt_height,
+SymplecticPacking.Branch2.Hyp.height_lt_third, SymplecticPacking.Branch2.Hyp.tau_pos, SymplecticPacking.Branch2.Hyp.tau_lt_one,
+SymplecticPacking.Branch2.Hyp.sum_aux_sq_add_lt, SymplecticPacking.Branch2.Hyp.Pb_concave,
+SymplecticPacking.Branch2.Hyp.Pb_continuous, SymplecticPacking.Branch2.Hyp.integral_Pb, SymplecticPacking.Branch2.Hyp.Pb_outer}
+\uses{def:cub-model, lem:cub-volume}
+Let $k\ge1$ and $0<\rho_1,\dots,\rho_k<\frac13$ with $\sum_i\rho_i^2<1$. Put $S_\rho=\sum_i\rho_i$, $D=1-\sum_i\rho_i^2$,
+$\varpi=\frac13-\max_i\rho_i$,
+\[
+ \delta=\min\Big(\frac{\varpi}8,\ \frac{D}{8(S_\rho+k)},\ \frac18\Big),\qquad a_i=\rho_i+\delta,\qquad
+ D_a=1-\sum_ia_i^2,
+\]
+\[
+ \varsigma=\min\Big(\frac{\frac13-a_{\max}}2,\ \frac{D_a}{12}\Big),\qquad h=\frac13-\varsigma,\qquad
+ \tau_\Delta=\frac{a_{\max}+h}{2h},
+\]
+with $a_{\max}=\max_ia_i$, and let $\Pb(p)=\Hb(p)-\sum_i(a_i-p)_+$ on $\Delta=[0,h]$. Then:
+\begin{enumerate}[label=(\roman*)]
+\item $\rho_i<a_i\le a_{\max}<\tau_\Delta h<h<\frac13$, and $0<\tau_\Delta<1$;
+\item $\sum_ia_i^2+(1-3h)^2<1$;
+\item $\Pb$ is continuous, concave and piecewise affine with breakpoints in $\{a_1,\dots,a_k\}$, and
+\[
+ \int_0^h\Pb(p)\,dp=\frac{1-\sum_ia_i^2-(1-3h)^2}{2}>0 ;
+\]
+\item $\Pb(p)=\Hb(p)\ge3(1-3h)>0$ for $p\in[\tau_\Delta h,h]$.
+\end{enumerate}
+If the $\rho_i$ are rational, so are $\delta$, $a_i$, $\varsigma$, $h$, $\tau_\Delta$ and the breakpoints and values of $\Pb$.
+\end{lemma}
+
+\begin{proof}
+(ii) and positivity of $D_a$. Since $\delta\le\frac18$,
+$\sum_ia_i^2-\sum_i\rho_i^2=2S_\rho\delta+k\delta^2\le\delta(2S_\rho+k)\le2\delta(S_\rho+k)\le D/4$, so $D_a\ge\frac34D>0$; also
+$D_a\le1$. Then $(1-3h)^2=9\varsigma^2\le9D_a^2/144=D_a^2/16<D_a$, i.e.\ $\sum_ia_i^2+(1-3h)^2<1$.
+
+(i) $\delta>0$ gives $a_i>\rho_i$, and $a_{\max}\le\max_i\rho_i+\varpi/8<\frac13$, so $\varsigma>0$ and $h<\frac13$. Further
+$h\ge\frac13-\frac12(\frac13-a_{\max})=\frac12(\frac13+a_{\max})>a_{\max}$. Hence $\tau_\Delta h=\frac12(a_{\max}+h)$ lies strictly
+between $a_{\max}$ and $h$, and $0<\tau_\Delta<1$.
+
+(iii) $\Hb$ is affine and each $-(a_i-p)_+$ is concave and piecewise affine with the single breakpoint $a_i$. Since
+$a_i<h$, $\int_0^h(a_i-p)_+\,dp=a_i^2/2$, and $\int_0^h\Hb=3h-\frac92h^2=\frac12\big(1-(1-3h)^2\big)$ by
+Lemma~\ref{lem:cub-volume}. Positivity is (ii).
+
+(iv) For $p\ge\tau_\Delta h>a_{\max}$ every $(a_i-p)_+$ vanishes, and $\Hb(p)=3(1-3p)\ge3(1-3h)$.
+
+Rationality is clear from the formulas.
+\end{proof}
+
+With these data the packing in the model and the transfer give the four-dimensional embeddings,
+Theorem~\ref{thm:cub-packing} in \S\ref{sec:rtc-packing}; the parameters of the equal-capacity branch are in
+Remark~\ref{rem:rtc-equal}.

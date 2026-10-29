@@ -1,0 +1,186 @@
+\section{A checking route}\label{sec:guide}
+\begingroup\sloppy
+\newcommand{\Spp}[2]{pp.~\pageref{#1}--\pageref{#2}}
+
+This section lists, in the order of the construction, the statements that have to be checked for
+\Mref{Theorem}{thm:intro-4d}, and with it \Mref{Theorem}{thm:main}(i) for $n=2$ and \Mref{Corollary}{thm:main-epoch};
+then the steps that replace the four-dimensional ones for $n\ge3$, which complete \Mref{Theorem}{thm:main}. Each step
+gives its input and output, where it is proved, and what it adds to the existence proofs it replaces. Numbers with the
+prefix M refer to the main text, as do the lettered results A--G; numbers without prefix refer to this supplement. The conventions used at each
+interface are in Table~\ref{tab:pre-interfaces}, and Table~\ref{tab:guide-lean} at the end of this section lists the
+Lean declarations of each step; the full list of source tags is \texttt{verification/PAPER-INDEX.md}.
+
+\subsection*{Organisation and reading budget}
+
+After the conventions of \S\ref{sec:pre}, the sections fall into four groups: the comparison data and the planar maps
+(\S\S\ref{sec:fcp}--\ref{sec:plc}); the four-dimensional model, the handle construction, the strip and layer maps and the
+return to the ball (\S\S\ref{sec:cub}--\ref{sec:rtc}), where \S\S\ref{sec:shd}, \ref{sec:str} and~\ref{sec:native-toric}
+also contain the bordered handle used for $n\ge3$; the models in dimension $2n\ge6$ (\S\S\ref{sec:qdr}--\ref{sec:sxr});
+and the global construction, the worked instance, the finite form and the algorithm
+(\S\S\ref{sec:brd}--\ref{sec:alg}).
+
+\emph{For \Mref{Theorem}{thm:intro-4d}} (equal balls, the linear datum) a reader needs \S\ref{sec:pre}
+(\Spp{sec:pre}{sec:fcp}), \S\ref{sec:fcp-equal} (\Spp{sec:fcp-equal}{sec:pln}), \S\S\ref{sec:pln} and~\ref{sec:pll}
+(\Spp{sec:pln}{sec:scalar-cmp}; in \S\ref{sec:pln} only the equal-ball family), \S\S\ref{sec:cub} and~\ref{sec:fer}
+(\Spp{sec:cub}{sec:shd}), \S\S\ref{sec:shd-four}--\ref{sec:shd-shear} (\Spp{sec:shd-four}{sec:str}),
+\S\S\ref{sec:str-morse}--\ref{sec:str-balls} (\Spp{sec:str-morse}{sec:str-layer-coords}), \S\ref{sec:rtc}
+(\Spp{sec:rtc}{sec:qdr}), and \S\S\ref{sec:brd}--\ref{sec:iso} (\Spp{sec:brd}{sec:example}). The worked instance of
+\S\ref{sec:example} follows the same data numerically. The other four-dimensional inputs of \Mref{Theorem}{thm:main} add
+the scalar comparator of \S\ref{sec:scalar-cmp} (\Spp{sec:scalar-cmp}{sec:plc}).
+
+\emph{For \Mref{Theorem}{thm:main} with $n\ge3$} a reader needs, besides \S\S\ref{sec:pre}, \ref{sec:brd} and~\ref{sec:iso}:
+the comparator, \S\S\ref{sec:fcp-setting}--\ref{sec:fcp-one} (\Spp{sec:fcp}{sec:fcp-equal}); the planar maps, \S\ref{sec:pln}
+for the slice family (\Spp{sec:pln}{sec:pll}), Lemma~\ref{lem:scalar-wells} with the wells \eqref{eq:scalar-quadratic-well}
+(p.~\pageref{lem:scalar-wells}) and \S\ref{sec:plc} (\Spp{sec:plc}{sec:cub}); the bordered handle,
+\S\S\ref{sec:shd-primitive}--\ref{sec:shd-proof} and~\ref{sec:shd-shear} (\Spp{sec:shd}{sec:shd-four},
+\Spp{sec:shd-shear}{sec:str}), \S\S\ref{sec:str} and~\ref{sec:native-toric} (\Spp{sec:str}{sec:rtc}); the ball chart,
+Lemma~\ref{lem:rtc-ball-chart} (p.~\pageref{lem:rtc-ball-chart}), and Lemma~\ref{lem:efd-search}
+(p.~\pageref{lem:efd-search}), which supplies the rational auxiliary data; and the models,
+\S\S\ref{sec:qdr}--\ref{sec:vtr} for capacities below one half (\Spp{sec:qdr}{sec:lrg}), \S\ref{sec:lrg-high}
+and \S\ref{sec:two} for one large ball and $n\ge4$ (\Spp{sec:lrg-high}{sec:lrg-six}, \Spp{sec:two}{sec:sxm}), and
+\S\S\ref{sec:lrg-six}, \ref{sec:sxm} and~\ref{sec:sxr} for one large ball and $n=3$ (\Spp{sec:lrg-six}{sec:two},
+\Spp{sec:sxm}{sec:brd}); the opening of \S\ref{sec:lrg} (p.~\pageref{sec:lrg}) serves both. Part (iii) of
+\Mref{Theorem}{thm:main} adds \S\S\ref{sec:efd}--\ref{sec:alg} (\Spp{sec:efd}{sec:xpl}).
+
+\subsection{The four-dimensional chain}\label{sec:guide-four}
+
+The data are $n=2$ and admissible $(2,k,C,c)$, i.e.\ $\sum_ic_i^2<C^2$ and $3c_i<C$. The data of
+\Mref{Theorem}{thm:intro-4d}, and those of \Mref{Corollary}{thm:main-epoch} with $k\ge10$ and $\eps<\frac78$, are equal
+capacities $\pi$ with $\frac34<\rho\sqrt k<1$, $\rho=\pi/C$; for them steps F2--F4 take the linear form, and for all
+other data the scalar form. The scalar route (Proposition~\ref{prop:scalar-cubic-data}) also covers equal capacities;
+the linear route is kept for its closed form, in which every parameter is an algebraic expression in $\sqrt k$ and
+$\rho$ (\Mref{Remark}{rem:cmp-small-k}, Remark~\ref{rem:rtc-equal}).
+
+\begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,itemsep=3pt]
+\item \emph{Normalisation and case selection.} In: $(2,k,C,c)$ admissible. Out: $\rho_i=c_i/C<\frac13$ with
+ $\sum_i\rho_i^2<1$, and the choice of the linear or the scalar datum. Proved: \Mref{Definition}{def:ham-normalise},
+ Construction~\ref{cons:ham-branch}.
+\item \emph{Auxiliary capacities and profile.} In: $\rho$. Out: $a_i\in(\rho_i,\frac13)$, height $h<\frac13$,
+ $\tau_\Delta$, and the concave function $\Pb=\Hb-\sum_i(a_i-p)_+$ on $[0,h]$ with $\int_0^h\Pb>0$. Proved:
+ Lemma~\ref{lem:cub-auxiliary}; equal case Remark~\ref{rem:rtc-equal} ($a=t_0/\sqrt k$, $h=t_0/3$). New: closed
+ formulas, rational for rational $\rho$ in the general case.
+\item \emph{Comparison function.} In: $\Pb$. Out: a convex function $K$ and a gap $g>0$ for the rearrangement
+ inequality. Proved: \Mref{Proposition}{prop:cmp-linear} (linear, $K(p)=(3\sqrt k-9)p$); Proposition~\ref{prop:scalar-cmp-gap}
+ (scalar). New: a finite iterate with an explicit gap in place of the fixed point of the rearrangement contraction of
+ \cite{OpenAI2026}; in the linear case no iteration.
+\item \emph{Planar realisation.} In: $K$, $F=K-\Pb$, $g$. Out: valid cubic data (Definition~\ref{def:shd4-data}): a
+ Hamiltonian isotopy $q_t$ of $(\C,\omega_\C)$, with generator $Q_t$ supported in $\{\pi|z|^2\le P_{\rm supp}\}$,
+ $P_{\rm supp}<h$, satisfying \eqref{eq:shd4-comparison}. Proved: Theorems~\ref{thm:pll-inner} and~\ref{thm:pln-isotopy}
+ (linear); Propositions~\ref{prop:scalar-planar-realisation} and~\ref{prop:scalar-cubic-data} (scalar). New: the
+ area-preserving map is built from Morse charts of an explicit convex potential, and its Hamiltonian is a radial source
+ primitive.
+\item \emph{Model and handle data.} In: $h<d_n<\frac13$. Out: the cubic cover model $(\R^2\times\C,\Omega_0)$ with
+ deck maps, marked fibres, annulus and dual one-form. Proved: Definition~\ref{def:cub-model},
+ Propositions~\ref{prop:cub-handle} and~\ref{prop:fer-handle}. New: an explicit theta lift $Z$ of the Fermat torus, so that
+ Biran's disc bundle \cite{Biran2001} is given by formulas on the cover.
+\item \emph{Handle.} In: valid cubic data and the model. Out: maps $f^N_i$ on $\Bo(\hat\rho_i)$ into
+ $\{p<h\}$ of the cover with $(f^N_i)^*\Omega_0=\omega_0$, injective, with disjoint images and no two image points
+ deck equivalent. Proved: \S\ref{sec:shd-four} (Propositions~\ref{prop:shd4-second}, \ref{prop:shd4-third},
+ \ref{prop:shd4-moser} and~\ref{prop:shd4-maps}) with the strip map, Proposition~\ref{prop:hdl-strip}; outline in
+ \Mref{Remark}{rem:hdl-four}. New: the three Moser paths have explicit primitives that vanish on the marked fibres and are
+ invariant under the deck maps.
+\item \emph{Transfer.} In: compact subsets of $\{p<h\}$ off the marked fibres. Out: $\mathcal T$ into $\Bo(1)$
+ with $\mathcal T^*\omega_0=\Omega_0$, identifying exactly deck-equivalent points, with a compact margin.
+ Proved: Theorem~\ref{thm:rtc-transfer} (\S\ref{sec:rtc}). New: injection, transport and Moser return are explicit
+ flows; a cube-root symmetry keeps the image off the line removed by the ball chart.
+\item \emph{Embeddings.} In: steps F6 and F7. Out: normalised embeddings $f^\natural_i$ on $\Bo(\rho_i^{\rm dom})$,
+ injective on $B(\rho_i^+)$, with disjoint images in $B(1-m)$. Proved: Theorem~\ref{thm:cub-packing}; statement
+ \Mref{Theorem}{thm:mdl-cub}.
+\item \emph{Common isotopy.} In: the rescaled embedding datum (\Mref{Proposition}{prop:ham-embeddings}) and centres with
+ disjoint closed balls. Out: $F_{i,t}$, symplectic, with disjoint images at every time, from $u\mapsto s_i+u$ to $f_i$.
+ Proved: \Mref{Proposition}{prop:ham-isotopy}, Proposition~\ref{prop:iso-common}. New: an explicit route, an explicit path
+ in $\operatorname{Sp}(2n)$ and a common Alexander tail, the same in every dimension.
+\item \emph{Hamiltonian.} In: $F_{i,t}$. Out: $H_{\mathfrak E}$, smooth, supported in $(0,1)\times\EB(R_F)$, with
+ $X_H=\dot F_{i,t}$ on the moving balls, satisfying $\Pack$. Proved: \Mref{Definition}{def:ham-H},
+ \Mref{Lemma}{lem:ham-field}, \Mref{Proposition}{prop:ham-end}, \Mref{Theorem}{thm:ham-flow}. New: the Hamiltonian is the
+ pushforward of a cut-off radial primitive computed in the source balls.
+\item \emph{Statements.} $H[2,k,C,c,s]=H_{\mathfrak E}$ (\Mref{Definition}{def:ham-H-final}); \Mref{Theorem}{thm:main}(i)
+ for $n=2$, \Mref{Theorem}{thm:intro-4d} and \Mref{Corollary}{thm:main-epoch} follow after checking admissibility
+ (\Msec{sec:ham-proof-main}).
+\item \emph{Finite form and algorithm} (only for \Mref{Theorem}{thm:main}(iii)). In: any $H$ satisfying $\Pack$. Out:
+ $(B,P)$ with $\beta_BP$ satisfying $\Pack$, and a machine that finds such a pair from input names. Proved:
+ \Mref{Theorem}{thm:eff-finite} (Theorem~\ref{thm:cpl-final}), \Mref{Theorem}{thm:eff-algorithm} (Theorems~\ref{thm:alg-main}
+ and~\ref{thm:certificate-sound}). New: a sound rational Euler certificate, and termination proved from the explicit
+ $H$ rather than from an existence theorem.
+\end{enumerate}
+
+\subsection{The higher-dimensional branches}\label{sec:guide-high}
+
+For $n\ge3$ step F1 normalises in the same way, with the conditions $\sum_i\rho_i^n<1$ and $\rho_i+\rho_j<1$, and the
+case distinction of Construction~\ref{cons:ham-branch} selects one of three branches. Steps F9--F12 are unchanged, and
+steps F2--F8 are replaced as follows.
+
+\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,itemsep=3pt]
+\item \emph{Comparison datum on a polytope.} In: a rational downward polytope $\Delta$ and a concave minorant $P$.
+ Out: $K$ and a Hamiltonian isotopy of $\C^m$ preserving $V_\Delta$, Poisson-commuting with the face moments on a
+ collar, with gap $\gamma$. Proved: \Mref{Theorems}{thm:cmp-main} and~\Mnum{thm:cmp-realisation}; the lift is
+ Theorem~\ref{thm:plc-lift} (\S\S\ref{sec:plc} and~\ref{sec:pln}). New: a finite polyhedral iterate with log-sum-exp
+ smoothing and an explicit realisation of each coordinate rearrangement.
+\item \emph{Packing in a model.} In: a model input with handle data and collar bounds, a comparison datum, and
+ $\rho_i<a_i$ with the profile minorant. Out: embeddings $\psi_i$ of $B(\rho_i)$ into $\operatorname{int}V_\Delta(E)$.
+ Proved: \Mref{Theorem}{thm:mech-packing} in \Msec{sec:hdl-proof} and Theorem~\ref{thm:shd-packing}
+ (Propositions~\ref{prop:shd-first-path}--\ref{prop:shd-moser}, \ref{prop:str-layer} and~\ref{prop:str-embeddings}); the
+ composition with the transfer is \Mref{Proposition}{prop:mech-assembly}. New: Moser maps given by explicit fields on a
+ bordered base with a finite atlas.
+\item \emph{All $\rho_i<\frac12$.} In: $\rho$ with $\sum_i\rho_i^n<1$. Out: embeddings into $\Bo(1)$ with disjoint images.
+ The diagonal affine quadric curve, \S\S\ref{sec:qdr} and~\ref{sec:vtr}. Proved: transfer
+ Theorem~\ref{thm:qdr-transfer}; embeddings Theorem~\ref{thm:qdr-packing}, statement \Mref{Theorem}{thm:mdl-qdr}. New: a
+ fixed explicit curve in place of a generic complete intersection, and a transfer by explicit flows.
+\item \emph{One $\rho_j\ge\frac12$, $n\ge4$.} In: $A=\rho_j$ and valid auxiliary data. Out: the identity on the large ball
+ and embeddings of the others into the shell $S_a$. The mixed model and the slit-shell return, \S\S\ref{sec:lrg-high}
+ and~\ref{sec:two}. Proved: Lemma~\ref{lem:lrg-slit}, Theorem~\ref{thm:lrg-high}; statement \Mref{Theorem}{thm:mdl-lrg}. New: the
+ return to the shell about the reserved ball is a closed formula.
+\item \emph{One $\rho_j\ge\frac12$, $n=3$.} In: $A=\rho_j$ and valid rational auxiliary data. Out: embeddings into $\Bo(1)$
+ with disjoint images. The polynomial cubic model and the bubble, \S\S\ref{sec:lrg-six}, \ref{sec:sxm}
+ and~\ref{sec:sxr}. Proved: transfer Proposition~\ref{prop:sxr-transport}; Theorem~\ref{thm:lrg-six}. New: an area profile with a
+ quantitative tail (Proposition~\ref{prop:sxm-bordered}) and a polynomial bubble that inserts the large ball.
+\end{enumerate}
+Steps F9--F12 then give \Mref{Theorem}{thm:main}(i) and \Mref{Corollaries}{thm:main-sy} and~\Mnum{thm:main-equal}.
+
+\subsection{What the formal proof covers}\label{sec:guide-trust}
+
+The scope of the Lean verification, the trusted base and the unverified metaprograms are described in \Msec{sec:ver};
+the explicitness check and the formal statements whose form differs from the text are in Appendix~\ref{sec:xpl}.
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}p{0.08\textwidth}>{\raggedright\arraybackslash}p{0.86\textwidth}@{}}
+\caption{Lean declarations for the steps above. Names are relative to \texttt{SymplecticPacking}, except the theorems of
+\texttt{verification/}, which have no namespace.}\label{tab:guide-lean}\\
+\toprule
+step & Lean declarations\\\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ (continued)}\\
+\toprule
+step & Lean declarations\\\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{Continued on the next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+F1 & \texttt{General.selectEmbeddings}, \texttt{Branch2.EqualCase}\\
+F2 & \texttt{Branch2.aux}, \texttt{Branch2.height}, \texttt{Branch2.Hyp.integral\_Pb}; \texttt{Params.t0}, \texttt{Params.a},
+ \texttt{Params.h}\\
+F3 & \texttt{Params.K\_sub\_F\_ge}; \texttt{Branch2.Cmp.Input.Kcmp}, \texttt{Branch2.Cmp.Input.Hyp.Kcmp\_gap}\\
+F4 & \texttt{Qhat.Cubic.qhatP\_spec}, \texttt{Qhat.qhat\_interface}, \texttt{Qhat.K\_sub\_F\_q\_ge};
+ \texttt{Branch2.Hyp.cubicDataOf\_valid}\\
+F5 & \texttt{Bundle.Omega0loc}, \texttt{Embed.deckU}, \texttt{Embed.deckV}, \texttt{Bundle.annulus}\\
+F6 & \texttt{Handle.Cubic.handleMoser}, \texttt{Strip.Cubic.fN\_symplectic}, \texttt{Strip.Cubic.fN\_disjoint}, \texttt{Strip.Cubic.fN\_avoid\_fibres}\\
+F7 & \texttt{Return.compositeT\_pullback}, \texttt{Return.compositeT\_inj\_mod\_gauge}, \texttt{Return.avoid\_L\_compact},
+ \texttt{Return.ballChart\_symplectic\_rep}\\
+F8 & \texttt{Branch2.embeddings2\_spec}, \texttt{Branch2.embeddingsEq\_spec}, \texttt{Branch2.embeddingsGen\_spec}\\
+F9 & \texttt{General.Ham.Isotopy.IsoInput.commonIsotopy}, \texttt{\dots isoF\_sympl}, \texttt{\dots isoF\_disj}\\
+F10 & \texttt{HamEnd.hamiltonianOfEmbeddings}, \texttt{General.Ham.hamVF\_ofIsotopy\_image}, \texttt{HamEnd.hamiltonian\_end}\\
+F11 & \texttt{main\_theorem}, \texttt{four\_dim\_theorem}, \texttt{epoch\_packing}, \texttt{epoch\_theorem} in
+ \texttt{verification/Statement.lean}\\
+F12 & \texttt{General.Compile.main\_finite}, \texttt{original\_name\_algorithm}, \texttt{epoch\_name\_algorithm}\\
+H1 & \texttt{HighDim.CmpInput.comparatorDatum}, \texttt{HighDim.ComparisonDatum}, \texttt{HighDim.PlanarGen.Input}\\
+H2 & the tags of Theorem~\ref{thm:shd-packing} in \texttt{PAPER-INDEX.md}; composition \texttt{HighDim.assembly\_spec}\\
+H3 & \texttt{BranchSmall.vectorTransfer\_spec}, \texttt{BranchSmall.embeddings\_spec}\\
+H4 & \texttt{BranchLargeHigh.shell\_pullback}, \texttt{BranchLargeHigh.embeddings\_spec}\\
+H5 & \texttt{BranchLarge3.cubicTransfer\_spec}, \texttt{BranchLarge3.embeddings\_spec}; corollaries
+ \texttt{main\_theorem}, \texttt{neighbourhood\_criterion}, \texttt{equal\_balls}\\
+\end{longtable}
+}
+\endgroup
