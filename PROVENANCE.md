@@ -15,6 +15,14 @@ The archived provenance record identifies the original publication commit, rathe
 the current `main` commit. Zenodo's creation/publication timestamps are service records.
 A Git commit date alone is not an independent timestamp.
 
+The compatibility branch `v1.0.0` preserves previously shared source-file links, including
+the [reviewer guide](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/v1.0.0/REVIEW.md).
+It points to the identity-corrected publication commit
+[`baf33f27ba2d4eae32dcae795d5c9a79a39ad368`](https://github.com/s-JoL/Symplectic-Ball-Packing/commit/baf33f27ba2d4eae32dcae795d5c9a79a39ad368),
+whose tree is identical to the original publication tree. This branch is not a release tag.
+The former GitHub release page is unavailable; use the version DOI above for the archived
+publication files. The paper and formalisation have not changed.
+
 The Zenodo record contains the two PDFs, the verified source-and-PDF archive,
 `verification.json`, `PUBLICATION-PROVENANCE.json`, `SHA256SUMS`, and an OpenTimestamps
 proof `PUBLICATION-PROVENANCE.json.ots`. The provenance record binds the Git commit and
