@@ -47,10 +47,16 @@ decided by rational arithmetic for rational input and semi-decided from names ot
 
 \begin{proof}
 Under \eqref{eq:lrg-input} the point $(a,r)=(A,\rho)$ satisfies the strict
-inequalities $a^n+\sum r_i^n<1$ and $a+r_i<1$, and $A\ge\frac12$. These inequalities persist on a
-neighbourhood $U$ of $(A,\rho)$, and the set of rational points of $U$ with $a>\max(A,\frac12)$ and $r_i>\rho_i$
-is a nonempty open set (if $A=\frac12$ both lower bounds on $a$ coincide), so it contains rational points. Every
-point of it is a valid tuple, because $a+r_i<1$ is $r_i<s$. The last assertion is Lemma~\ref{lem:efd-search}.
+inequalities $a<1$, $a^n+\sum r_i^n<1$ and $a+r_i<1$, and $A\ge\frac12$. By continuity these inequalities
+persist on an open neighbourhood $U\subset\R^{k+1}$ of $(A,\rho)$. Define the real open set
+\[
+ V=U\cap\{(a,r):a>\max(A,\tfrac12),\ r_i>\rho_i\ (1\le i\le k)\}.
+\]
+For sufficiently small $\eta>0$, the point $(A+\eta,\rho_1+\eta,\dots,\rho_k+\eta)$ belongs to $U$ and,
+since $A\ge\frac12$, also to $V$. Thus $V$ is nonempty and contains a rational tuple by density of
+$\Q^{k+1}$ in $\R^{k+1}$. Every point of $V$ is valid, because $a+r_i<1$ is $r_i<s$; conversely the
+set of all valid tuples is open, being defined by strict continuous inequalities. The last assertion is
+Lemma~\ref{lem:efd-search}.
 \end{proof}
 
 The theorems below take valid auxiliary data as input. In dimension six the reserved capacity $a$ must also be

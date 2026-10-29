@@ -144,10 +144,13 @@ Rem.~\ref{rem:rtc-equal} & the equal-capacity data form the structure \texttt{Pa
  cubic data, so both cases pass through \texttt{Branch2.cubicEmbeddings\_spec}, the map $u\mapsto\sqrt C\,f_i(u/\sqrt C)$. The data of
  \Mref{Theorem}{thm:intro-4d} are those of \texttt{General.epochHamiltonianQ}, and \texttt{General.epochQ\_equalCase} proves
  \texttt{Branch2.EqualCase} for them\\
-support of $H$ (\Msec{sec:ham}) & the Lean counterparts state less: by \texttt{General.Ham.ofIsotopy\_compactSupport}, and by
- \texttt{main\_support\_radius} for $H[n,k,C,c,s]$, the Hamiltonian vanishes outside $\R\times K$ for a closed Euclidean ball $K$,
- of radius \texttt{General.packingSupportRadius} in the latter. The finer descriptions of the support by the sets
- $F_{i,t}(B(r_{2,i}))$ and by $K_H\subset B(R_F)$ are proved in the text and not formalised\\
+support of $H$ (\Msec{sec:ham}) & \texttt{General.Ham.isotopySupport} is the union of
+ $F_{i,t}(B(r_{2,i}))$ over $i$ and $t\in[0,1]$; \texttt{isotopySupport\_compact} proves compactness and
+ \texttt{ofIsotopy\_support\_precise} proves that $H$ vanishes outside it, under the common-isotopy hypotheses.
+ For $H[n,k,C,c,s]$, \texttt{General.packingSupportSet\_compact},
+ \texttt{packingHamiltonian\_support\_precise} and \texttt{packingSupportSet\_subset\_radius} give the compact
+ swept set $K_H$ and its containment in the closed ball of radius \texttt{General.packingSupportRadius}.
+ The resulting vanishing outside that ball is also stated by \texttt{main\_support\_radius}\\
 \end{longtable}
 }
 

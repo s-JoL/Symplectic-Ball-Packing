@@ -8,13 +8,18 @@ Paper, complete supplement, and Lean 4 proofs by Liang Song.
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23756576.svg)](https://doi.org/10.5281/zenodo.23756576)
 
-Final version **1.0.0**, 29 October 2026. [Archived publication and files](https://doi.org/10.5281/zenodo.23756576) ·
-[Publication and provenance](PROVENANCE.md).
+Version **1.0.1**, 29 October 2026. [Archived publication and files](https://doi.org/10.5281/zenodo.23763498) ·
+[Fixed release](https://github.com/s-JoL/Symplectic-Ball-Packing/releases/tag/v1.0.1) · [Publication and provenance](PROVENANCE.md).
 
-For the archived version, use the [fixed source tree](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/baf33f27ba2d4eae32dcae795d5c9a79a39ad368)
-and [fixed reviewer guide](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/baf33f27ba2d4eae32dcae795d5c9a79a39ad368/REVIEW.md).
-The former GitHub `v1.0.0` release page is unavailable; the DOI archive remains the download
-and citation record. Its paper, supplement, formalisation and verification receipts are unchanged.
+This revision corrects two supplementary arguments and three documentation/comment issues;
+Lean definitions, theorem statements and proofs are unchanged. See the
+[revision notes](PROVENANCE.md#changes-from-100). The optional proof cache and verification
+receipts correspond to this version.
+
+For fixed links, use the [source tree](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/v1.0.1)
+and [reviewer guide](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/v1.0.1/REVIEW.md).
+The [original 1.0.0 DOI archive](https://doi.org/10.5281/zenodo.23756576) remains available;
+its former GitHub release page is unavailable.
 
 [Paper](paper/main.pdf) · [Supplement](paper/supplement.pdf) · [Reviewer guide](REVIEW.md) · [中文导读](README.zh-CN.md) · [Formal statements](verification/Statement.lean)
 
@@ -131,7 +136,7 @@ mathematical problem remains an essential part of human review.
 ## Citation, authorship, and reuse
 
 Use [`CITATION.cff`](CITATION.cff) to cite *Explicit Hamiltonian ball packings in every dimension*.
-The version DOI is [10.5281/zenodo.23756576](https://doi.org/10.5281/zenodo.23756576).
+The version DOI is [10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498).
 Liang Song is the sole author and is responsible for the manuscript. The mathematics, Lean
 formalisation, and text were produced with AI systems in a research environment designed and
 directed by Liang Song. The manuscript records the authorship and AI contribution in full.

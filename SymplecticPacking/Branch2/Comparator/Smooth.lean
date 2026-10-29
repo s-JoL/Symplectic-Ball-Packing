@@ -12,10 +12,10 @@ this formalisation (it is defined through `sInf`). It is smoothed in two explici
 2. **Mollification** with the explicit bump `β(t) = expNegInvGlue(1 - t²)` (support `[-1,1]`):
    `K(p) = (∫β)⁻¹ ∫_{-1}^{1} K^ext(p - w t) β(t) dt`; `C^∞`, convex, `|K - K^ext| ≤ M w`.
 
-(The paper smooths the polyhedral `K_N = max_r ℓ_r` by log-sum-exp, `lem:fcp-smoothing`; that
-needs the finite affine pieces of `K_N`, which are produced by Fourier–Motzkin elimination at
-level L2/L3. At level L1 the mollifier is the simpler explicit choice; both give a smooth convex
-`K` with `|K - K_N| < d/32`.)
+This is the scalar mollifier construction in the supplement, `sec:scalar-iteration`,
+`eq:scalar-mollifier` and `prop:scalar-cmp-gap`. The general finite-dimensional polyhedral
+comparator instead uses log-sum-exp (`lem:fcp-smoothing`); that is a separate construction
+and is not the definition of `smoothK` in this scalar branch.
 -/
 
 noncomputable section

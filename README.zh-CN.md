@@ -3,13 +3,15 @@
 **Symplectic Ball Packing（辛球填充）**包含一篇数学论文、完整补充证明，以及 Lean 4 形式化证明。
 作者为 Liang Song。英文论文标题是 *Explicit Hamiltonian ball packings in every dimension*。
 
-最终版本 **1.0.0**，公开日期 **2026 年 10 月 29 日**。
-DOI：[10.5281/zenodo.23756576](https://doi.org/10.5281/zenodo.23756576)。
-[固定版本与存证核验](PROVENANCE.md)列出发布记录、文件哈希和时间戳的核验方法。
+版本 **1.0.1**，公开日期 **2026 年 10 月 29 日**。
+DOI：[10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498)。
+[固定发布](https://github.com/s-JoL/Symplectic-Ball-Packing/releases/tag/v1.0.1) · [固定版本与存证核验](PROVENANCE.md)。
 
-归档版本另有[固定源码入口](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/baf33f27ba2d4eae32dcae795d5c9a79a39ad368)和
-[固定审阅指南](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/baf33f27ba2d4eae32dcae795d5c9a79a39ad368/REVIEW.md)。
-原 GitHub `v1.0.0` Release 页面已移除，下载和引用请使用上述 DOI；归档中的论文、补充材料、形式化证明和核验回执均未改变。
+本次修正附录的两处论证及三处文档或注释，Lean 定义、定理陈述和证明未改动。
+[修订说明](PROVENANCE.md#changes-from-100)列出具体更正；可选证明缓存和核验回执均更新为对应本版。
+
+固定入口：[源码](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/v1.0.1) · [审阅指南](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/v1.0.1/REVIEW.md)。
+原 [1.0.0 DOI 归档](https://doi.org/10.5281/zenodo.23756576)继续保留，原 GitHub Release 页面已移除。
 
 [主论文](paper/main.pdf) · [补充材料](paper/supplement.pdf) · [专家审阅入口](REVIEW.md) · [英文说明与核验命令](README.md)
 

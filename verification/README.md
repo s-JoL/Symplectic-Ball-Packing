@@ -205,6 +205,10 @@ configuration, and all cache-part checksums before restoring project artifacts. 
 uses the toolchain's native `leantar` format. It excludes Mathlib, generated C setup files,
 executables, local logs, and repository history; see [`cache/README.md`](../cache/README.md).
 
+The bundled cache and the release's kernel-replay receipt are regenerated for 1.0.1.
+A later source change, including a Lean comment change, invalidates the raw source digest;
+use a source build or regenerate the cache instead of reusing an earlier receipt.
+
 ```sh
 lake exe cache get
 python3 scripts/project_cache.py restore
@@ -225,6 +229,11 @@ sources by elaboration. Mathlib's official dependency cache is used in both rout
 independent project-source workflow is `.github/workflows/full-build.yml`.
 
 **Continuous integration.** `.github/workflows/verify.yml` runs source checks, all Lean and
-audit targets, all checker regressions, fresh kernel replay, and both papers, using the
-bundled project cache. Its artifacts contain PDFs and verification logs. The source workflow
-omits the project cache and saves the same evidence. Neither workflow publishes a release.
+audit targets, all checker regressions, and both papers. It restores the bundled project
+cache when its source digest matches; otherwise it builds from source. Fresh kernel replay
+is **not enabled by default**, including on that source-build fallback: a successful default
+CI run is not evidence of fresh kernel replay. Its artifacts contain PDFs and verification
+logs. The manually dispatched `.github/workflows/full-build.yml` omits the project cache
+and enables fresh kernel replay; `.github/workflows/kernel-replay.yml` explicitly enables
+replay while allowing the project cache. Those runs save the replay evidence as well.
+None of these workflows publishes a release.

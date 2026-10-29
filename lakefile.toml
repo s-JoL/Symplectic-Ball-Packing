@@ -1,5 +1,5 @@
 name = "SymplecticPacking"
-version = "1.0.0"
+version = "1.0.1"
 defaultTargets = ["SymplecticPacking", "verification"]
 # Lake builds modules in parallel; one thread per Lean process keeps memory use bounded.
 weakLeanArgs = ["-j1"]

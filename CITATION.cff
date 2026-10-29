@@ -1,12 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 title: "Explicit Hamiltonian ball packings in every dimension"
-version: "1.0.0"
-doi: "10.5281/zenodo.23756576"
+version: "1.0.1"
+doi: "10.5281/zenodo.23763498"
 date-released: "2026-10-29"
 license: Apache-2.0
 repository-code: "https://github.com/s-JoL/Symplectic-Ball-Packing"
-url: "https://doi.org/10.5281/zenodo.23756576"
+url: "https://doi.org/10.5281/zenodo.23763498"
 authors:
   - family-names: Song
     given-names: Liang
