@@ -5,6 +5,8 @@ Liang Song, *Explicit Hamiltonian ball packings in every dimension*, version **1
 
 - Version DOI: [10.5281/zenodo.23756576](https://doi.org/10.5281/zenodo.23756576).
 - Deposited files and repository metadata: [Zenodo record](https://zenodo.org/records/23756576).
+- Fixed source tree: [identity-corrected publication commit](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/baf33f27ba2d4eae32dcae795d5c9a79a39ad368).
+- Fixed reviewer guide: [guide at the publication commit](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/baf33f27ba2d4eae32dcae795d5c9a79a39ad368/REVIEW.md).
 - Citation metadata: [CITATION.cff](CITATION.cff). Mathematical and formal scope: [REVIEW.md](REVIEW.md).
 
 Use the version DOI when citing this final version. The current `main` branch is a
@@ -22,6 +24,13 @@ It points to the identity-corrected publication commit
 whose tree is identical to the original publication tree. This branch is not a release tag.
 The former GitHub release page is unavailable; use the version DOI above for the archived
 publication files. The paper and formalisation have not changed.
+
+Both the original publication commit and the identity-corrected commit have Git tree
+`7d20dc4221190aecf89b3dff49e674db750f8f9c`. Later changes on `main` update access and
+metadata documentation; the fixed commit above is the source reference for the DOI archive.
+The archived README and provenance guide retain historical GitHub release links. Those
+links have been superseded by the DOI and fixed-commit links on this page and in the
+Zenodo record's access update; the archived files and their hashes have been preserved.
 
 The Zenodo record contains the two PDFs, the verified source-and-PDF archive,
 `verification.json`, `PUBLICATION-PROVENANCE.json`, `SHA256SUMS`, and an OpenTimestamps

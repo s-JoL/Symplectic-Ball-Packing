@@ -11,6 +11,11 @@ Paper, complete supplement, and Lean 4 proofs by Liang Song.
 Final version **1.0.0**, 29 October 2026. [Archived publication and files](https://doi.org/10.5281/zenodo.23756576) ·
 [Publication and provenance](PROVENANCE.md).
 
+For the archived version, use the [fixed source tree](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/baf33f27ba2d4eae32dcae795d5c9a79a39ad368)
+and [fixed reviewer guide](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/baf33f27ba2d4eae32dcae795d5c9a79a39ad368/REVIEW.md).
+The former GitHub `v1.0.0` release page is unavailable; the DOI archive remains the download
+and citation record. Its paper, supplement, formalisation and verification receipts are unchanged.
+
 [Paper](paper/main.pdf) · [Supplement](paper/supplement.pdf) · [Reviewer guide](REVIEW.md) · [中文导读](README.zh-CN.md) · [Formal statements](verification/Statement.lean)
 
 ## What this work does
