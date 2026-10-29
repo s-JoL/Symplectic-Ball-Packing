@@ -8,8 +8,8 @@ Paper, complete supplement, and Lean 4 proofs by Liang Song.
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23756576.svg)](https://doi.org/10.5281/zenodo.23756576)
 
-Final version **1.0.0**, 29 October 2026. [Archived publication](https://doi.org/10.5281/zenodo.23756576) ·
-[Frozen release](https://github.com/s-JoL/Symplectic-Ball-Packing/releases/tag/v1.0.0) · [Publication and provenance](PROVENANCE.md).
+Final version **1.0.0**, 29 October 2026. [Archived publication and files](https://doi.org/10.5281/zenodo.23756576) ·
+[Publication and provenance](PROVENANCE.md).
 
 [Paper](paper/main.pdf) · [Supplement](paper/supplement.pdf) · [Reviewer guide](REVIEW.md) · [中文导读](README.zh-CN.md) · [Formal statements](verification/Statement.lean)
 
