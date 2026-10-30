@@ -78,6 +78,16 @@ classical obstructions, including the holomorphic-line two-ball obstruction.
   [中文导读](README.zh-CN.md). The [paper-to-Lean index](verification/PAPER-INDEX.md) locates
   individual supporting results without reading the entire development.
 
+## Fixed-input executable example
+
+[`examples/k10.py`](examples/k10.py) implements the fixed `k=10`, `ε=0.1`
+construction as a native scalar Hamiltonian and an analytic trajectory evaluator
+for all ten source balls. The target radius is `73/40`, giving density greater than `0.9`. See
+[`examples/README.md`](examples/README.md) for commands and verification scope.
+This fixed-input implementation has not passed the full Epoch AI interface and
+performance acceptance and does not have a Python-to-Lean refinement proof.
+It is a development addition after the archived v1.0.1 publication.
+
 ## Verify
 
 Requirements: [Elan](https://github.com/leanprover/elan), Node.js 22 or newer, Python 3.11 or

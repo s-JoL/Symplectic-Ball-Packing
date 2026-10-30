@@ -23,7 +23,7 @@ PUBLIC_FILES = (
     "README.md", "README.zh-CN.md", "REVIEW.md", "PROVENANCE.md", "cache/README.md", ".gitattributes", "LICENSE", "NOTICE", "CITATION.cff", ".zenodo.json", ".gitignore",
     "lakefile.toml", "lake-manifest.json", "lean-toolchain", "SymplecticPacking.lean",
 )
-PUBLIC_DIRS = ("SymplecticPacking", "verification", "vendor", "scripts", "test", ".github")
+PUBLIC_DIRS = ("SymplecticPacking", "verification", "vendor", "scripts", "test", ".github", "examples")
 
 
 def sha256(data: bytes) -> str:

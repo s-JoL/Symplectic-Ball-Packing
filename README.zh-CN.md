@@ -15,6 +15,14 @@ DOI：[10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498)。
 
 [主论文](paper/main.pdf) · [补充材料](paper/supplement.pdf) · [专家审阅入口](REVIEW.md) · [英文说明与核验命令](README.md)
 
+## 固定输入的程序示例
+
+[`examples/k10.py`](examples/k10.py) 实现了固定 `k=10、ε=0.1` 的可执行程序，
+提供一个全局标量 Hamiltonian，以及十个源球的解析轨迹求值。目标半径为 `73/40`，填充率大于 `0.9`。
+运行方法、轨迹与 Hamilton 方程的关系及有限执行检查见 [`examples/README.md`](examples/README.md)。
+这是固定输入的原生数值实现，尚未通过完整 Epoch AI 接口与性能验收，尚无 Python 到 Lean 的形式化精化证明。
+这是 v1.0.1 存证之后的开发内容，不属于已存证的 v1.0.1 发布。
+
 ## 一分钟理解
 
 可以把问题想成“按特定的几何规则，把很多小球移动到一个大球里”。这里的规则来自哈密顿动力学，
