@@ -35,7 +35,7 @@ if [[ $mode != --paper ]]; then
 set -euo pipefail
 log=$1
 for entry in verification/Statement.lean verification/Computability.lean \
-  verification/EpochComputability.lean verification/Audit/Independence.lean \
+  verification/EpochComputability.lean verification/Executable.lean verification/Audit/Independence.lean \
   verification/Audit/PaperTags.lean test/ExplicitTest.lean \
   test/DependencyAuditTest.lean test/AxiomCheckTest.lean; do
   name=${entry//\//-}

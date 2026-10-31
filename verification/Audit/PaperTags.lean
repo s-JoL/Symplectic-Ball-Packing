@@ -159,6 +159,7 @@ import SymplecticPacking.Compile
 import SymplecticPacking.Complex.ArgPrinciple
 import SymplecticPacking.E4
 import SymplecticPacking.Effective.AlgebraicComplex
+import SymplecticPacking.Effective.ExecutablePacking
 import SymplecticPacking.Effective.Family
 import SymplecticPacking.Effective.FiniteGrid
 import SymplecticPacking.Effective.Integral

@@ -9,10 +9,15 @@ From the repository root:
 
 ```sh
 lake exe cache get
-python3 scripts/project_cache.py restore
 bash scripts/verify.sh --lean
 bash scripts/check_kernel.sh
 ```
+
+The bundled cache is for the archived proof sources. The current executable
+algorithm adds Lean modules, so its source digest differs: build current project
+sources with the commands above. `python3 scripts/project_cache.py restore` is
+optional on matching revisions; a source mismatch exits with code 2 before
+extracting anything. CI automatically chooses a source build in that case.
 
 The project cache contains `.olean`, `.ilean`, generated C, artifact hashes, and freshness
 traces. It excludes Mathlib's dependency cache, executables, the multi-gigabyte `.setup.json`

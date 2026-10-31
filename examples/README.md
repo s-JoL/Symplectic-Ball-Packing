@@ -1,4 +1,13 @@
-# Fixed k=10, epsilon=0.1 executable program
+# Executable programs
+
+For **all `k>=10`, `0<epsilon<1`**, use [`packing.py`](packing.py).
+The [uniform program guide](PACKING.md) gives the full proof contract, runtime
+entry points and independent verification commands. Compilation is a terminating
+reference search without a practical time or resource bound.
+
+The remainder of this page documents the separate fixed-input implementation.
+
+## Fixed k=10, epsilon=0.1 executable program
 
 [`k10.py`](k10.py) implements the fixed-input construction: one scalar global
 Hamiltonian `H(t,x)` and its analytically parametrized motion of ten closed unit
@@ -9,7 +18,8 @@ The target radius is `73/40`, with volume fraction
 This is a native fixed-input program alongside the mathematical construction
 on main. It is not a full Epoch AI submission: general inputs, the required
 single-file/PyTorch differentiation interface, performance limits and official
-acceptance are outside this commit. It is subsequent to the archived v1.0.1
+acceptance are outside this fixed-input example. General inputs are implemented
+by the separate uniform program above. Both are subsequent to the archived v1.0.1
 publication.
 
 ## Run

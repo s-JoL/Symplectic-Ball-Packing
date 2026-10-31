@@ -56,7 +56,7 @@ regardless of the transparency setting. It changes which proofs the
 elaborator finds, not what is accepted: every proof term is checked by the kernel, which does not
 use transparency settings.
 
-## Reading order (five entry files, about 580 lines)
+## Reading order
 
 1. `Problem.lean` — phase space `ℝ^{2n}` with coordinates `(q, p)` (the paper's `(x, y)`), `ω₀ = Σ dqⱼ ∧ dpⱼ`, the
    Hamiltonian vector field (`ι_{X_H} ω₀ = dH`), capacity balls `{π‖y−s‖² ≤ c}`, `Admissible`,
@@ -67,6 +67,10 @@ use transparency settings.
    each stated for the exact terms of `Algorithm.lean`.
 4. `Computability.lean`, `EpochComputability.lean` — the algorithm. `Computability.lean` also
    shows, by `rfl`, how an output code decodes to `β_B · P`.
+5. `Executable.lean` — axiom and constructive-runtime checks for the compiled total
+   reference algorithm `NativePacking.solveRational` / `solveName`. Its return type
+   carries the full `EpochSpecR` proof. See [the executable guide](../examples/PACKING.md)
+   for execution, interpreter correspondence and the absence of a practical runtime bound.
 
 `PackingSpec n k C c s H` requires: `H` is jointly `C^∞`; one compact set contains the
 support of `H(t,·)` for all `t`; every source point has a global integral curve; and *every*
@@ -192,11 +196,11 @@ entry, including all axiom, explicitness, uniformity and independence gates, run
 regression tests in `test/`, and compiles both papers. Every stage is fatal. The
 regression suites are Lake targets, so they run alongside independent build jobs and
 reuse their checked artifacts until a source or dependency changes. The verification script
-also re-elaborates the three main statement/algorithm entries, the paper-tag and independence
+also re-elaborates the main statement/algorithm entries including `Executable.lean`, the paper-tag and independence
 gates, and all three regression suites from source, even when their build artifacts were restored.
 
-**Cost of the build.** A build from an empty `.lake/build` takes several hours; with the
-prebuilt project cache below it takes minutes. Once built, `lake build` reuses `.lake/build`
+**Cost of the build.** A build from an empty `.lake/build` takes several hours; a matching
+prebuilt project cache can reduce that to minutes. Once built, `lake build` reuses `.lake/build`
 and rebuilds only the modules whose sources changed.
 
 **Faster check with the bundled project cache.** `python3 scripts/project_cache.py restore`
@@ -208,6 +212,9 @@ executables, local logs, and repository history; see [`cache/README.md`](../cach
 The bundled cache and the release's kernel-replay receipt are regenerated for 1.0.1.
 A later source change, including a Lean comment change, invalidates the raw source digest;
 use a source build or regenerate the cache instead of reusing an earlier receipt.
+The executable-algorithm additions therefore require the current source-build route
+above. The following optional cache route applies only to revisions matching the
+bundled manifest; restoration exits with code 2 on a source mismatch.
 
 ```sh
 lake exe cache get

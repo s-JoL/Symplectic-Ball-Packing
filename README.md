@@ -40,8 +40,8 @@ R = (k / (1 − ε/4))^(1/4),     occupied volume fraction = k/R^4 = 1 − ε/4 
 
 The formulas work for all admissible inputs. A separate uniform computability theorem gives
 a terminating algorithm with finite output, a rational polynomial times a fixed smooth
-cutoff. This is a mathematical construction and computability result; the algorithm has no
-practical runtime bound. The paper explains its relation to Epoch AI's
+cutoff. The executable reference implementation below runs this finite-certificate search;
+the algorithm has no practical runtime bound. The paper explains its relation to Epoch AI's
 [program submission requirements](https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing).
 
 ## Results at a glance
@@ -78,6 +78,22 @@ classical obstructions, including the holomorphic-line two-ball obstruction.
   [中文导读](README.zh-CN.md). The [paper-to-Lean index](verification/PAPER-INDEX.md) locates
   individual supporting results without reading the entire development.
 
+## Uniform executable algorithm
+
+[`examples/packing.py`](examples/packing.py) compiles every integer `k ≥ 10` and
+`ε ∈ (0,1)` to a finite rational-polynomial-times-cutoff global Hamiltonian.
+[`verification/Executable.lean`](verification/Executable.lean) checks the computable
+total algorithm and its full closed-ball, actual-time-one-flow and strict-density
+contract. Epsilon, query coordinates and time may be supplied as refining real names;
+exact rational strings are supported directly. The numerical interpreter provides
+rigorous values, complete spatial gradients and actual ambient flow enclosures.
+
+See [`examples/PACKING.md`](examples/PACKING.md) for commands, the termination and
+interpreter correspondence arguments, tests and trust boundaries. Dense compilation
+may be astronomically slow. There is no practical resource bound or Python-to-Lean
+formal refinement proof, and no claim of Epoch's interface/performance or official
+acceptance. This executable addition is subsequent to the archived v1.0.1 publication.
+
 ## Fixed-input executable example
 
 [`examples/k10.py`](examples/k10.py) implements the fixed `k=10`, `ε=0.1`
@@ -99,12 +115,16 @@ all Lean dependencies are pinned in `lean-toolchain` and `lake-manifest.json`.
 git clone https://github.com/s-JoL/Symplectic-Ball-Packing.git
 cd Symplectic-Ball-Packing
 lake exe cache get                      # official Mathlib dependency cache
-python3 scripts/project_cache.py restore # optional, checksum-checked project cache
 bash scripts/verify.sh --lean            # source checks, all Lean targets and audit regressions
 ```
 
 Success ends with `VERIFY PASS`. The script re-elaborates the main review entries, paper-tag
 axiom gates, independence gate, and checker regressions even after a cache restore.
+The bundled project cache belongs to the archived proof sources and does not match
+the new executable-algorithm modules. The commands above build current project sources
+using only Mathlib's cache. On a revision matching its manifest, the optional
+`python3 scripts/project_cache.py restore` can accelerate that build; a mismatch
+exits with code 2 and requires the source-build route.
 The cache is an acceleration artifact: a cache hit alone
 does not re-check an imported proof. For kernel replay, after the build run:
 

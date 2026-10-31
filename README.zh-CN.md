@@ -15,6 +15,21 @@ DOI：[10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498)。
 
 [主论文](paper/main.pdf) · [补充材料](paper/supplement.pdf) · [专家审阅入口](REVIEW.md) · [英文说明与核验命令](README.md)
 
+## 任意合法 k、ε 的完整参考程序
+
+[`examples/packing.py`](examples/packing.py) 提供所有整数 `k≥10`、`0<ε<1`
+的统一可执行算法，输出有限有理多项式乘固定光滑截断函数的全局 Hamiltonian。
+[`verification/Executable.lean`](verification/Executable.lean) 核验实际可编译的
+总定义，其返回值带有全部闭源球、实际时间一流和严格密度的完整证明。
+ε、查询坐标和时间支持有效的可细化实数名；命令行直接接受精确有理字符串。
+同一个输出函数提供严格值、完整梯度及实际 Hamiltonian 流的区间求值。
+
+运行入口、全参数终止性、解释器对应论证与独立核验命令见
+[`程序说明`](examples/PACKING.md)。该参考算法不设时间或资源上限，普通高密度
+输入的穷举可能极其漫长。Python 求值器有数学对应论证和执行测试，尚无
+Python 到 Lean 的形式化精化证明；没有声称通过 Epoch 接口、性能或官方验收。
+这些程序内容在 v1.0.1 存证之后加入，不属于该已存证发布。
+
 ## 固定输入的程序示例
 
 [`examples/k10.py`](examples/k10.py) 实现了固定 `k=10、ε=0.1` 的可执行程序，

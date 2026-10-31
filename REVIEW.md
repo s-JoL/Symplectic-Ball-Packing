@@ -47,6 +47,11 @@ before assessing the stated result.
 4. [`verification/Computability.lean`](verification/Computability.lean) and
    [`verification/EpochComputability.lean`](verification/EpochComputability.lean): input names,
    one uniform machine, finite output, halting, and certified packing.
+5. [`verification/Executable.lean`](verification/Executable.lean): the compiled
+   total reference algorithm, with constructive-runtime and axiom gates. Its
+   [program guide](examples/PACKING.md) connects the finite output to the actual
+   value, gradient and flow interpreter, explains all-input termination, and
+   provides runnable checks. These executable additions postdate v1.0.1.
 
 For a particular geometric step, use [`PAPER-INDEX.md`](verification/PAPER-INDEX.md) to find its
 Lean declarations, and the [supplement](paper/supplement.pdf) for the complete mathematical
@@ -78,5 +83,7 @@ replay adds a check of stored proof terms. A clean source build is the route for
 that the supplied sources elaborate to accepted proofs without the project's binary cache.
 
 These checks do not certify novelty, exposition, the paper-to-formal-statement interpretation,
-or a practical numerical implementation. Those remain explicit review questions. There is
+or a practical runtime bound or a formal refinement proof of the Python interpreter.
+The executable interpreter's correspondence and interval-flow convergence arguments
+are in the program guide and remain explicit review questions. There is
 no claimed successful time-bounded Epoch program submission in this repository's main line.
