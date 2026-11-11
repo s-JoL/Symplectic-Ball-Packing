@@ -1,5 +1,31 @@
 # Publication and provenance
 
+## Version 1.1.0
+
+Liang Song, version **1.1.0**, 11 November 2026. Version 1.1.0 reorganises the work for reading. The
+all-version DOI [10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575) resolves to the latest
+version; the version DOI of 1.1.0 is assigned by Zenodo on deposit. The record keeps the series title *Explicit Hamiltonian ball packings in every
+dimension*, the title of version 1.0.1; the three papers carry their own titles.
+
+1. The single paper of 1.0.1 is split and shortened. **Paper I** (`paper/p1`) gives the shortest complete
+   route to the equal-ball theorem in the four-ball (Theorem A, robustness, the Epoch data for k ≥ 10).
+   **Paper II** (`paper/p2`) contains the general theorem for all admissible data in every dimension, the
+   corollaries (Siegel–Yao criterion, Biran's k ≥ 9, a cone of unequal balls, full Epoch data) and the
+   finite-output algorithm. No theorem or proof of 1.0.1 is removed.
+2. **Paper III** (`paper/p3`), *Elementary packings of the four-ball and their limits*, is new. It is not
+   formalised. **`program/`** is new: a numerical implementation for the Epoch interface built from
+   Paper III's constructions, with numerical (not proved) correctness.
+3. Corrected citation: Traynor, *Symplectic packing constructions*, J. Differential Geom. **42**
+   (1995), 411–429 (1.0.1 cited a duplicate record).
+4. The executable reference implementations added to `main` after 1.0.1 (`examples/packing.py`,
+   `examples/k10.py`, `verification/Executable.lean`) are not part of 1.1.0. They remain in the Git
+   history.
+5. **Lean sources, statements and proofs are byte-identical to 1.0.1**, as are the Lake package
+   version and the optional project cache. The paper-tag index is regenerated from the new sources
+   and names the same 1240 declarations.
+
+## Version 1.0.1
+
 Liang Song, *Explicit Hamiltonian ball packings in every dimension*, version **1.0.1**,
 29 October 2026. The archive includes the manuscript, supplement and Lean development.
 
@@ -9,12 +35,11 @@ Liang Song, *Explicit Hamiltonian ball packings in every dimension*, version **1
 - Fixed GitHub release: [v1.0.1](https://github.com/s-JoL/Symplectic-Ball-Packing/releases/tag/v1.0.1).
 - Fixed source tree: [v1.0.1](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/v1.0.1).
 - Fixed reviewer guide: [guide at v1.0.1](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/v1.0.1/REVIEW.md).
-- Citation metadata: [CITATION.cff](CITATION.cff). Mathematical and formal scope: [REVIEW.md](REVIEW.md).
 
-Use the version DOI when citing this version. The all-version DOI resolves to the latest
-published version. A later change to `main` does not alter the fixed release or DOI files.
+Use the version DOI when citing a version. The all-version DOI resolves to the latest
+published version. A later change to `main` does not alter a fixed release or its DOI files.
 
-## Changes from 1.0.0
+### Changes from 1.0.0
 
 1. The six-dimensional relative Moser paragraph now uses the compact support bound
    `‖X‖² ≤ 6`: the correction has `|X₀|² ≤ 2` and `‖X′‖² ≤ 4`. The Lean support bound was already 6.
@@ -34,7 +59,7 @@ Lean build, axiom/explicitness/independence audits, regression tests, both paper
 and a fresh kernel replay bound to the current proof sources and compiled objects.
 Default CI remains a separate check and does not itself imply fresh kernel replay.
 
-## Checking this release
+### Checking the 1.0.1 release
 
 The matching GitHub and Zenodo downloads contain `main.pdf`, `supplement.pdf`,
 `symplectic-ball-packing-1.0.1.zip`, `verification.json`, `PUBLICATION-PROVENANCE.json`,
@@ -59,7 +84,7 @@ records a separate replay of the imported declaration closure into a fresh Lean 
 The receipt identifies the exact source and compiled-object digests and pinned toolchain;
 it is not evidence that a later working tree was checked.
 
-## Original 1.0.0 archive and compatibility links
+### Original 1.0.0 archive and compatibility links
 
 The original [version DOI](https://doi.org/10.5281/zenodo.23756576) and its seven files
 remain unchanged. Its former GitHub release page and tag were removed after a Git

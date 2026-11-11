@@ -1,0 +1,310 @@
+\section{The layer maps}\label{p2:sec-str}
+
+This section proves the layer step of the handle construction: one ball is placed in each layer of the handle, and the
+maps $\psi_i=\Phi^{-1}\circ\mathcal D^{-1}\circ E_i$ are symplectic embeddings with pairwise disjoint images in the interior
+of the model (Proposition~\ref{prop:str-embeddings}). The disc-to-strip map and the enlarged capacities are constructed
+in \PoneRef{sec:str} and recalled in \S\ref{p2:sec-quoted}; the ball estimate is \S\ref{sec:str-balls}.
+
+\medskip\noindent\emph{Conventions.} On $\C\ni z$ we write $\omega_\C=dx\wedge dy$ for $z=x+iy$ and $I=\pi|z|^2$;
+recall $dx\wedge dy=dI\wedge d\theta$ with $\theta=\arg z/2\pi$. The strip $(0,\infty)\times(0,1)$ carries coordinates
+$(x,T)$ and the area form $dx\wedge dT$. We write $\C^n=\C\times\C^m\ni(z_{\rm b},z_{\rm f})$,
+$\varpi=\pi|z_{\rm b}|^2$ and $p=p(z_{\rm f})$, so that $\omega_0=\omega_\C(z_{\rm b})+\omega_V(z_{\rm f})$ and
+$B(c)=\{\varpi+|p|\le c\}$, $\Bo(c)=\{\varpi+|p|<c\}$.
+
+\subsection{The ball estimate}\label{sec:str-balls}
+
+We work in the situation of \Mref{Theorem}{thm:mech-packing} with $n\ge3$: a model input (\Mref{Definition}{def:mech-model}) of rank $m=n-1$ with handle data (Definition~\ref{def:hdl-handle-data}), capacities $a_1,\dots,a_k>0$ with $\{p\in\R^m_{\ge0}:|p|\le a_i\}\subset\tau_\Delta\Delta$ for some $\tau_\Delta<1$, a function $P$, a comparison datum $(K,q)$ with gap $\gamma>0$, and $\rho_i<a_i$. The outer faces of $\Delta$ are $\{\langle b_\nu,p\rangle=\ell_\nu\}$, $1\le\nu\le N$, $\ell_\nu>0$. The caps $h_i$ are those of (\ref{eq:hdl-caps}) with $\rho_i^\sharp=\hat\rho_i$ (Definition~\ref{I:def:str-enlarged}); by Proposition~\ref{prop:hdl-layers}(i) each $h_i$ is smooth on $\R^m$ and
+
+\begin{equation}\label{eq:str-cap}
+ 0\le h_i(p),\qquad (a_i+\hat\rho_i)/2-|p|\le h_i(p)\qquad(p\in\R^m).
+\end{equation}
+
+\begin{lemma}[Interior of the fibre polytope]\label{lem:str-int}
+\uses{def:mech-model}
+Let $V_\Delta=\{w\in\C^m:\langle b_\nu,p(w)\rangle\le\ell_\nu\ \text{for all }\nu\}$. Then
+\begin{equation}\label{eq:str-int}
+ \operatorname{int}V_\Delta=\{w\in\C^m:\langle b_\nu,p(w)\rangle<\ell_\nu\ \text{for all }\nu\},
+\end{equation}
+and $\{w:|p(w)|\le a_i\}\subset\operatorname{int}V_\Delta$ for $1\le i\le k$.
+\end{lemma}
+
+\begin{proof}
+The right side of \eqref{eq:str-int} is open and contained in $V_\Delta$. If $\langle b_\nu,p(w)\rangle=\ell_\nu>0$, then $\langle b_\nu,p((1+t)w)\rangle=(1+t)^2\ell_\nu>\ell_\nu$ for $t>0$, so $w$ is not interior. If $|p(w)|\le a_i$, then $p(w)\in\tau_\Delta\Delta$, so $\langle b_\nu,p(w)\rangle\le\tau_\Delta\ell_\nu<\ell_\nu$.
+\end{proof}
+
+
+
+\begin{lemma}[Ball estimate]\label{lem:str-ball}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.thinPlanar_bound,
+SymplecticPacking.HighDim.ToricPackingStages.smoothCap_ge,
+SymplecticPacking.Strip.Cubic.x_lt_hi}
+\uses{prop:str-strip, def:str-enlarged, lem:str-int, prop:hdl-layers}
+Let $1\le i\le k$, $(z_{\rm b},z_{\rm f})\in\C\times\C^m$, $\varpi=\pi|z_{\rm b}|^2$, $p=p(z_{\rm f})$, and let $x$ be the first
+component of $\Psi_{\varepsilon_i}(z_{\rm b})$.
+\begin{enumerate}[label=(\alph*)]
+\item If $\varpi+|p|\le a_i-\delta_i$, then
+\begin{equation}\label{eq:str-ball}
+ x<\varpi+\frac{\delta_i}{16}\le a_i-|p|-\frac{15\delta_i}{16}
+ \le h_i(p)-\frac{11\delta_i}{16}<h_i(p)-\frac{\delta_i}2 .
+\end{equation}
+\item If $\varpi+|p|\le\bar\rho_i$, then $x<a_i-|p|-\frac{11\delta_i}{16}\le h_i(p)-\frac{7\delta_i}{16}<h_i(p)-\frac{\delta_i}4$.
+\item If $\varpi+|p|<\hat\rho_i$, then $x<a_i-|p|-\frac{7\delta_i}{16}\le h_i(p)-\frac{3\delta_i}{16}<h_i(p)$.
+\end{enumerate}
+In each case $|p|<a_i$, hence $z_{\rm f}\in\operatorname{int}V_\Delta$.
+\end{lemma}
+
+\begin{proof}
+By \eqref{I:eq:str-x-bound}, $x<\varpi+\varepsilon_i/2=\varpi+\delta_i/16$, and in (a), (b), (c) respectively $\varpi\le a_i-|p|-\delta_i$, $\varpi\le a_i-|p|-\frac34\delta_i$, $\varpi<a_i-|p|-\frac12\delta_i$. The cap comparison is \eqref{eq:str-cap} in the form $a_i-\delta_i/4-|p|\le h_i(p)$. Finally $|p|\le\varpi+|p|<a_i$; apply Lemma~\ref{lem:str-int}.
+\end{proof}
+
+\subsection{Layer coordinates}\label{sec:str-layer-coords}
+
+We use the objects of \S\ref{p2:sec-machine-hdl} and \S\ref{p2:sec-shd}. In the product coordinates of
+Definition~\ref{def:hdl-handle-data}, $E|_{\mathcal A^+}\cong\mathcal A^+\times\C^m$ with base coordinates $(s,v)$ and fibre
+coordinate $w$, and $\omega_V=\sum_jdp_j\wedge d\theta_j$. The one-form $\beta$ equals $b(v)\,dv$ on $\mathcal A^+$, where $b\ge0$
+is smooth, $b>0$ exactly on $(v_-,v_+)$ and $\int b=1$. The layer intervals $I_j=[l_j,r_j]\subset(0,1)$,
+$1\le j\le k$, and the residual interval $I_*$ are pairwise disjoint, with flat steps $\varsigma_j$ rising from $0$ to $1$ across
+$I_j$ ($\varsigma_j'\ge0$). By Proposition~\ref{prop:shd-layer-path}, the final coefficient $G_{\rm f}$ satisfies, on
+$I_i\times\C^m$,
+\begin{equation}\label{eq:str-Gf}
+ G_{\rm f}(s,w)=A_i(p(w))+\varsigma_i(s)h_i(p(w)),\qquad A_i=J+\sum_{j<i}h_j ,
+\end{equation}
+where $J=K-H^*=K-\Hb+\epsilon_{\rm sm}$ is the collar coefficient of \eqref{eq:hdl-caps}. $K$ is smooth near $\Delta$
+(\Mref{Definition}{def:mech-datum}) and the $h_j$ are smooth on $\R^m$. So are, near $\Delta$, $\Hb(p)=\int_{\Sigma_\ell}\kappa(p)$
+and $\epsilon_{\rm sm}(p)=\int_{\Sigma_\ell}\kappa_{\rm sm}(p)$: $\kappa(p)$ extends smoothly in $p$ (\Mref{Definition}{def:mech-model}),
+$\kappa_{\rm sm}(p)$ is $\chi_\partial\kappa(p)$ plus the $p$-independent form $(1-\chi_\partial)e_\Lambda\Lambda$ by
+\eqref{eq:hdl-ksm}, and $\Sigma_\ell$ is compact, so one may differentiate under the integral sign. Hence $A_i$ is smooth
+on an open neighbourhood $W$ of $\Delta$ in $\R^m$. Write $\Lambda=a_\Lambda(s,v)\,ds\wedge dv$ with $a_\Lambda>0$ on $\mathcal A^+$ and put
+$\ell_0(s,v)=e_\Lambda a_\Lambda(s,v)>0$. On $E|_{\mathcal A}$, over a neighbourhood of $V_\Delta$, the twisted form is
+given by \eqref{eq:hdl-final} (Proposition~\ref{prop:shd-layer-path}),
+\begin{equation}\label{eq:str-pre}
+ \Omega_{\rm pre}=\omega_V+e_\Lambda\Lambda+d(G_{\rm f}\beta)=\omega_V+\ell_0(s,v)\,ds\wedge dv+d(G_{\rm f}\beta),\qquad
+ \Omega_{\rm final}=\mathcal D^*\Omega_{\rm pre}.
+\end{equation}
+The $i$-th layer is the open set
+\[
+ \Lambda_i=\{(s,v,w):l_i<s<r_i,\ v_-<v<v_+,\ w\in\operatorname{int}V_\Delta\}\subset E|_{\mathcal A}.
+\]
+
+On $\Lambda_i$ only the $i$-th step moves; $T$ integrates $\beta$, and $x_i$ integrates the background area in $s$ plus the
+height $\varsigma_ih_i$ of that step.
+
+\begin{construction}[Layer coordinates]\label{cons:str-layer-coords}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.layerCoord,
+SymplecticPacking.HighDim.ToricPackingStages.layerDensity,
+SymplecticPacking.Strip.Tcoord, SymplecticPacking.Strip.Cubic.layerX}
+\uses{M-def:hdl-handle-data, M-prop:hdl-layers}
+Let $T(v)=\int_{v_-}^vb(t)\,dt$ for $v_-<v<v_+$, an increasing diffeomorphism onto $(0,1)$ with $dT=\beta$, and $v(T)$ its
+inverse. For $0<s<1$, $0<T<1$ and $p\in\R^m$ put
+\begin{align*}
+ \ell(s,T)&=\frac{\ell_0(s,v(T))}{b(v(T))},&
+ L_i(s,T)&=\int_{l_i}^s\ell(u,T)\,du,\\
+ x_i(s,T,p)&=L_i(s,T)+\varsigma_i(s)h_i(p),&
+ x_i^+(T,p)&=x_i(r_i,T,p).
+\end{align*}
+On $\Lambda_i$ the layer chart is
+\[
+ \kappa_i(s,v,w)=\big(x_i(s,T(v),p(w)),\,T(v),\,w\big),
+\]
+and
+\[
+ \mathcal U_i=\big\{(x,T,w)\in\R\times(0,1)\times\operatorname{int}V_\Delta:\ 0<x<x_i^+(T,p(w))\big\}.
+\]
+\end{construction}
+
+\begin{lemma}[Layer root]\label{lem:str-layer-root}
+\lean{SymplecticPacking.Strip.Cubic.layerX_deriv, SymplecticPacking.Strip.Cubic.layerRoot,
+ SymplecticPacking.Strip.Cubic.layerRoot_existsUnique, SymplecticPacking.Strip.Cubic.layerRoot_mem,
+ SymplecticPacking.Strip.Cubic.layerChart_layerCoord, SymplecticPacking.Strip.Cubic.layerCoord_layerChart,
+ SymplecticPacking.Strip.Cubic.contDiffAt_layerCoord, SymplecticPacking.Strip.Cubic.layerChart_smooth,
+SymplecticPacking.HighDim.ToricPackingStages.layerChartInv_local_spec}
+\uses{cons:str-layer-coords}
+\begin{enumerate}[label=(\roman*)]
+\item $x_i$ is smooth on $(0,1)\times(0,1)\times\R^m$, and
+$\partial_sx_i=\ell(s,T)+\varsigma_i'(s)h_i(p)\ge\ell(s,T)>0$. Moreover $x_i(l_i,T,p)=0$ and
+$x_i^+(T,p)=L_i(r_i,T)+h_i(p)>h_i(p)$.
+\item For $0<T<1$, $w\in\operatorname{int}V_\Delta$ and $0<x<x_i^+(T,p(w))$ there is a unique
+$s=\sigma_i(x,T,p(w))\in(l_i,r_i)$ with $x_i(s,T,p(w))=x$. This root is smooth as a function
+of $(x,T,w)$ on that open domain, including the fibre coordinate axes.
+\item $\kappa_i$ is a diffeomorphism of $\Lambda_i$ onto $\mathcal U_i$, with inverse
+$(x,T,w)\mapsto\big(\sigma_i(x,T,p(w)),\,v(T),\,w\big)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) $v(T)$ is smooth because $T'(v)=b(v)>0$ on $(v_-,v_+)$, so $L_i$ is smooth, as are $\varsigma_i$ and $h_i$; and
+$\varsigma_i'\ge0$, $h_i\ge0$ by \eqref{eq:str-cap}. At $s=l_i$, $L_i=\varsigma_i=0$; at $s=r_i$, $\varsigma_i=1$ and
+$L_i(r_i,T)>0$ because $\ell>0$ and $r_i>l_i$.
+(ii) By (i), $s\mapsto x_i(s,T,p)$ is strictly increasing on $[l_i,r_i]$ from $0$ to $x_i^+(T,p)$, which gives existence and
+uniqueness of the root in $(l_i,r_i)$. The domain is open since $x_i^+$ and $p(w)$ are continuous, and near each point the
+implicit function theorem ($\partial_sx_i>0$) gives a smooth local solution, equal to the root by uniqueness; $p(w)$ is smooth
+in Cartesian coordinates, so this holds at the axes too.
+(iii) $\kappa_i$ is smooth since $p(w)$ is smooth in Cartesian coordinates. For fixed $(v,w)$ the first component increases
+strictly from $0$ to $x_i^+(T(v),p(w))$ as $s$ runs over $(l_i,r_i)$, and $T$ is a bijection $(v_-,v_+)\to(0,1)$; hence
+$\kappa_i$ is a bijection $\Lambda_i\to\mathcal U_i$, $\mathcal U_i$ is open, and the inverse is the stated map, which is smooth
+by (ii).
+\end{proof}
+
+\begin{lemma}[The form on a layer]\label{lem:str-layer-form}
+\lean{SymplecticPacking.Strip.Cubic.Gf_on_layer, SymplecticPacking.Strip.Cubic.layer_form,
+SymplecticPacking.HighDim.ToricPackingStages.weightedLayerMap_spec}
+\uses{cons:str-layer-coords, M-prop:hdl-layers}
+On $\Lambda_i$, $\Omega_{\rm pre}=\omega_V+dx_i\wedge dT+dA_i(p)\wedge dT$, where $x_i=x_i(s,T(v),p(w))$; equivalently
+$(\kappa_i^{-1})^*\Omega_{\rm pre}=\omega_V+dx\wedge dT+dA_i(p)\wedge dT$ on $\mathcal U_i$.
+\end{lemma}
+
+\begin{proof}
+On $\Lambda_i$ we have $\beta=dT$ and $ds\wedge dv=b^{-1}ds\wedge dT$. Since $\beta$ is closed and $G_{\rm f}$ does not depend on
+$v$, \eqref{eq:str-pre} and \eqref{eq:str-Gf} give
+\[
+ \Omega_{\rm pre}=\omega_V+\ell(s,T)\,ds\wedge dT+\big(\varsigma_i'h_i\,ds+dA_i+\varsigma_i\,dh_i\big)\wedge dT ,
+\]
+with $A_i$, $h_i$ evaluated at $p(w)$. On the other hand
+$dx_i\wedge dT=\big(\partial_sL_i+\varsigma_i'h_i\big)\,ds\wedge dT+\varsigma_i\,dh_i\wedge dT$, because the $dT$-component of $dx_i$
+drops out, and $\partial_sL_i=\ell(s,T)$. Subtracting gives the claim.
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The layer maps}\label{sec:str-layer-maps}
+
+The term $dA_i(p)\wedge dT$ is removed by the multi-angle shear
+$\mathrm{Sh}_{A_i}(x,T,w)=(x,T,\mathrm{Sh}_{A_i,T}(w))$ of Lemma~\ref{I:lem:hdl-shear}, applied with $A=A_i$ on $W$:
+\[
+ \mathrm{Sh}_{A_i,T}(w)_j=\exp\big(-2\pi i\,T\,\partial_jA_i(p(w))\big)\,w_j\qquad(1\le j\le m).
+\]
+It preserves $x$, $T$ and $p$, hence maps $\mathcal U_i$ diffeomorphically onto itself (its inverse, the same formula with
+$+2\pi i$, also preserves $\mathcal U_i$), and
+$\mathrm{Sh}_{A_i}^*\big(\omega_V+dx\wedge dT+dA_i(p)\wedge dT\big)=\omega_V+dx\wedge dT$.
+
+\begin{construction}[Layer maps]\label{cons:str-layer-map}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.weightedLayerMap,
+SymplecticPacking.HighDim.RawToricModel.layerMapsOf, SymplecticPacking.Strip.Cubic.layerMap}
+\uses{cons:str-map, def:str-enlarged, lem:str-layer-root, lem:hdl-shear}
+For $1\le i\le k$ and $(z_{\rm b},z_{\rm f})\in\Bo(\hat\rho_i)$ put $(x,T)=\Psi_{\varepsilon_i}(z_{\rm b})$, $p=p(z_{\rm f})$ and
+\[
+ E_i(z_{\rm b},z_{\rm f})=\Big(\sigma_i(x,T,p),\ v(T),\ \mathrm{Sh}_{A_i,T}(z_{\rm f})\Big)
+ =\kappa_i^{-1}\circ\mathrm{Sh}_{A_i}\circ(\Psi_{\varepsilon_i}\times\mathrm{id})\,(z_{\rm b},z_{\rm f}) .
+\]
+\end{construction}
+
+\begin{proposition}[Layer maps]\label{prop:str-layer}
+\lean{SymplecticPacking.HighDim.ToricPackingStages.weightedLayerMap_spec,
+SymplecticPacking.HighDim.ToricPackingStages.layerMapsOf_spec_of_normal_form,
+SymplecticPacking.HighDim.RawModelAgreement.native_layerMaps_spec,
+SymplecticPacking.Strip.Cubic.layerMap_symplectic,
+SymplecticPacking.Strip.Cubic.layerMap_disjoint}
+\uses{cons:str-layer-map, lem:str-ball, lem:str-layer-root, lem:str-layer-form, prop:str-strip, lem:hdl-shear}
+For $1\le i\le k$:
+\begin{enumerate}[label=(\roman*)]
+\item $E_i$ is well defined and smooth on $\Bo(\hat\rho_i)$, which contains $B(\bar\rho_i)\supset B(a_i-\delta_i)$, and is a
+diffeomorphism onto an open subset of $\Lambda_i$, with inverse
+\[
+ E_i^{-1}(s,v,w)=\Big(\Psi_{\varepsilon_i}^{-1}\big(x_i(s,T,p(w)),\,T\big),\ \mathrm{Sh}_{A_i,T}^{-1}(w)\Big),\qquad T=T(v);
+\]
+\item $E_i^*\Omega_{\rm pre}=\omega_0$;
+\item $E_i(\Bo(\hat\rho_i))$ lies over the base rectangle $(l_i,r_i)\times(v_-,v_+)\subset\mathcal A$ and in
+$\{|p|<a_i\}\subset\operatorname{int}V_\Delta$;
+\item on $B(\bar\rho_i)$ the coordinate $x=x_i\circ E_i$ satisfies $x<h_i(p)-\delta_i/4$, and on $B(a_i-\delta_i)$ it satisfies
+$x<h_i(p)-\delta_i/2$; the set $E_i(B(\bar\rho_i))$ is a compact subset of $\Lambda_i$;
+\item the images $E_i(\Bo(\hat\rho_i))$, $1\le i\le k$, are pairwise disjoint.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) By Lemma~\ref{lem:str-ball}(c), for $(z_{\rm b},z_{\rm f})\in\Bo(\hat\rho_i)$ we have $z_{\rm f}\in\operatorname{int}V_\Delta$ and
+$0<x<h_i(p)<x_i^+(T,p)$ (Lemma~\ref{lem:str-layer-root}(i)), and $0<T<1$ by \eqref{I:eq:str-x-bound}. Hence the
+diffeomorphism $\Psi_{\varepsilon_i}\times\mathrm{id}$ of $\C\times\C^m$ onto $(0,\infty)\times(0,1)\times\C^m$
+(Proposition~\ref{I:prop:str-strip}(i)) maps $\Bo(\hat\rho_i)$ onto an open subset of $\mathcal U_i$; $\mathrm{Sh}_{A_i}$ is a
+diffeomorphism of $\mathcal U_i$ onto itself, and $\kappa_i^{-1}$ one of $\mathcal U_i$ onto $\Lambda_i$
+(Lemma~\ref{lem:str-layer-root}(iii)). Composing the three inverses gives the formula, as $\mathrm{Sh}_{A_i,T}^{-1}$ preserves $p$.
+The inclusions of balls hold because $a_i-\delta_i<\bar\rho_i<\hat\rho_i$.
+
+(ii) By Lemmas~\ref{lem:str-layer-form} and~\ref{I:lem:hdl-shear} and Proposition~\ref{I:prop:str-strip}(i),
+\begin{align*}
+ E_i^*\Omega_{\rm pre}
+ &=(\Psi_{\varepsilon_i}\times\mathrm{id})^*\mathrm{Sh}_{A_i}^*
+      \big(\omega_V+dx\wedge dT+dA_i(p)\wedge dT\big)\\
+ &=(\Psi_{\varepsilon_i}\times\mathrm{id})^*\big(\omega_V+dx\wedge dT\big)\\
+ &=\omega_V(z_{\rm f})+\omega_\C(z_{\rm b})=\omega_0 .
+\end{align*}
+
+(iii) $\sigma_i(x,T,p)\in(l_i,r_i)$, $v(T)\in(v_-,v_+)$, and the fibre component has the same $p$ as $z_{\rm f}$, with $|p|<a_i$
+by Lemma~\ref{lem:str-ball}.
+
+(iv) The two bounds are Lemma~\ref{lem:str-ball}(b) and (a), since $x_i\circ E_i$ is the first component of
+$\Psi_{\varepsilon_i}(z_{\rm b})$ and the shear preserves $p$. The closed ball $B(\bar\rho_i)$ is compact and contained in the domain of
+the continuous map $E_i$, whose values lie in $\Lambda_i$.
+
+(v) The $s$-components of points of different images lie in the disjoint open intervals $(l_i,r_i)$.
+\end{proof}
+
+For $(z_{\rm b},z_{\rm f})\in B(\bar\rho_i)$, Proposition~\ref{I:prop:str-strip}(iv) with $I_{\max}=\bar\rho_i$ and
+$b_{\rm st}=\varepsilon_i/\pi$ bounds $\Psi_{\varepsilon_i}(z_{\rm b})$ away from $x=0$ and $T\in\{0,1\}$ by explicit constants, and
+$|p|\le\bar\rho_i<a_i$; these margins enter the effective data of \S\ref{sec:efd}.
+
+%----------------------------------------------------------------------
+\subsection{Undoing the twist and the Moser map}\label{sec:str-embeddings}
+
+To pass from $(\Lambda_i,\Omega_{\rm pre})$ to $(E,\Omega)$ we undo the twist $\mathcal D$ and the Moser map $\Phi$.
+
+\begin{lemma}[The twist and the Moser map]\label{lem:str-DPhi}
+\uses{prop:shd-layer-path, prop:shd-moser, M-prop:hdl-faces}
+\begin{enumerate}[label=(\roman*)]
+\item[(D)] The twist $\mathcal D(s,v,w)=(s,v,q_{f(s)}(w))$ restricts to a diffeomorphism of
+$\{(s,v,w)\in E|_{\mathcal A}:w\in\operatorname{int}V_\Delta\}$ onto itself which fixes base points, with inverse
+$\mathcal D^{-1}(s,v,w)=(s,v,q_{f(s)}^{-1}(w))$, and $(\mathcal D^{-1})^*\Omega_{\rm final}=\Omega_{\rm pre}$ there.
+\item[($\Phi$)] $\Phi=\Phi_2\circ\Phi_1\circ\Phi_0$ is a diffeomorphism of $E$ which maps $V_\Delta(E)$ and its interior
+$\operatorname{int}V_\Delta(E)$ onto themselves, and $\Phi^*\Omega_{\rm final}=\Omega$ on $V_\Delta(E)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(D) The map $(t,w)\mapsto q_t(w)$ is smooth and each $q_t$ is a diffeomorphism of $\C^m$ with $q_t(V_\Delta)=V_\Delta$
+(\Mref{Definition}{def:mech-datum}), hence $q_t(\operatorname{int}V_\Delta)=\operatorname{int}V_\Delta$. So $\mathcal D$ and the
+displayed inverse are mutually inverse smooth maps of the stated set into itself fixing base points, and
+$(\mathcal D^{-1})^*\Omega_{\rm final}=\Omega_{\rm pre}$ since $\Omega_{\rm final}=\mathcal D^*\Omega_{\rm pre}$ by \eqref{eq:str-pre}.
+
+($\Phi$) Each $\Phi_j$ is the time-one map of a compactly supported smooth vector field, hence a diffeomorphism of $E$. By
+Propositions~\ref{prop:hdl-faces} and~\ref{prop:shd-moser}, each $\Phi_j$ maps $V_\Delta(E)$ and its interior onto
+themselves and satisfies $\Phi_j^*\Omega_{j,1}=\Omega_{j,0}$ there, where
+$\Omega_{0,0}=\Omega$, $\Omega_{j,1}=\Omega_{j+1,0}$ and $\Omega_{2,1}=\Omega_{\rm final}$. Composing gives
+$\Phi^*\Omega_{\rm final}=\Phi_0^*\Phi_1^*\Phi_2^*\Omega_{2,1}=\Omega$ on $V_\Delta(E)$.
+\end{proof}
+
+\begin{proposition}[Embeddings into the model]\label{prop:str-embeddings}
+\lean{SymplecticPacking.HighDim.RawModelAgreement.native_packing_spec,
+SymplecticPacking.Strip.Cubic.fN_symplectic, SymplecticPacking.Strip.Cubic.fN_eq_imp,
+SymplecticPacking.Strip.Cubic.fN_disjoint, SymplecticPacking.Strip.Cubic.fN_avoid_fibres}
+\uses{prop:str-layer, lem:str-DPhi}
+For $1\le i\le k$ let
+\[
+ \psi_i=\Phi^{-1}\circ\mathcal D^{-1}\circ E_i\colon\Bo(\hat\rho_i)\to E .
+\]
+\begin{enumerate}[label=(\roman*)]
+\item $\psi_i$ is a smooth symplectic embedding of $(\Bo(\hat\rho_i),\omega_0)$ onto an open subset of
+$(\operatorname{int}V_\Delta(E),\Omega)$; in particular it restricts to a symplectic embedding of a neighbourhood of
+$B(\bar\rho_i)$, and $\psi_i(B(\bar\rho_i))$ is a compact subset of $\operatorname{int}V_\Delta(E)$;
+\item the images $\psi_i(\Bo(\hat\rho_i))$, $1\le i\le k$, are pairwise disjoint.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) By Proposition~\ref{prop:str-layer}(i),(iii), $E_i$ is a diffeomorphism of $\Bo(\hat\rho_i)$ onto an open subset of
+$\Lambda_i$. By Lemma~\ref{lem:str-DPhi}(D), $\mathcal D^{-1}$ maps it diffeomorphically onto an open subset of
+$E|_{\mathcal A}$ lying over $(l_i,r_i)\times(v_-,v_+)$ with fibre component in $\operatorname{int}V_\Delta$. On this rectangle
+$b(v)>0$, so it lies in the support of $\beta$, contained in $\mathcal B\subset\operatorname{int}\Sigma_\ell$
+(Definition~\ref{def:hdl-handle-data}); hence the image lies in $\operatorname{int}\Sigma_\ell\times\operatorname{int}V_\Delta
+=\operatorname{int}V_\Delta(E)$, which $\Phi^{-1}$ maps diffeomorphically onto itself (Lemma~\ref{lem:str-DPhi}($\Phi$)). So
+$\psi_i$ is a diffeomorphism onto an open subset of $\operatorname{int}V_\Delta(E)$, and
+\[
+ \psi_i^*\Omega=E_i^*(\mathcal D^{-1})^*(\Phi^{-1})^*\Omega=E_i^*(\mathcal D^{-1})^*\Omega_{\rm final}=E_i^*\Omega_{\rm pre}=\omega_0
+\]
+by Lemma~\ref{lem:str-DPhi} and Proposition~\ref{prop:str-layer}(ii). Since $\bar\rho_i<\hat\rho_i$, $\Bo(\hat\rho_i)$ is a
+neighbourhood of the compact set $B(\bar\rho_i)$, whose image is compact.
+
+(ii) The sets $E_i(\Bo(\hat\rho_i))$ are pairwise disjoint (Proposition~\ref{prop:str-layer}(v)), and $\mathcal D^{-1}$ and
+$\Phi^{-1}$ are injective maps independent of $i$.
+\end{proof}
+
+These are the higher-dimensional embeddings of Theorem~\ref{thm:shd-packing}; for the periodic four-dimensional input
+see \PoneRef{rem:shd-four}, whose images avoid the exceptional fibres by the equivariant handle and layer identities.

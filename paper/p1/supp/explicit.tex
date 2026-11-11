@@ -1,0 +1,73 @@
+\section{The explicitness check}\label{sec:xpl}
+
+The Lean command \texttt{\#check\_explicit} (\texttt{SymplecticPacking/Explicit.lean}) audits the data dependencies of construction terms for the syntactic form of level L1 (\Mref{Definition}{def:intro-levels}); it is used in no proof of this supplement.
+
+\subsection{Data dependencies}\label{sec:xpl-traversal}
+
+The command follows constants in data positions (including lambda bodies, local values, project and vendored definitions), skipping theorem bodies and proposition-typed arguments; choices supplying values are inspected. \texttt{sorryAx} and the recorded choice operators (\texttt{Classical.choose}, \texttt{Function.invFun}, \dots) are rejected outside \S\ref{sec:xpl-accept}. A source scan excludes new axioms and unchecked mechanisms; the main results use only \texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}.
+
+\subsection{Definite operations and searches}\label{sec:xpl-accept}
+
+\texttt{Explicit.the} gives definite descriptions with uniqueness proofs (integral curves, inverse images, scalar roots, linear solves), the predicate and domain being part of the construction. Classical decisions are allowed as case distinctions at level L1 only. Searches over naturals, rationals or finite encoded data (also natural infima, filtered finite sets, descriptions over search types) must have genuinely decidable predicates, with requirements propagated to call sites; searches over function spaces are rejected. Mathlib's classical limits, integrals etc.\ are accepted only for the reviewed declarations in \texttt{Explicit/}\allowbreak\texttt{Whitelist.lean}, with dependency paths in the output.
+
+\begingroup\sloppy
+
+\subsection{Definite descriptions in the construction}\label{sec:xpl-descriptions}
+
+Descriptions over continuous types are reviewed by hand (\Msec{sec:ver}). The report on \texttt{General.packingHamiltonian} lists $26$ declarations with \texttt{Explicit.the}; each defining property is an explicit equation or inequality in the construction data, with uniqueness proved, and none refers to a packing specification.
+\begin{itemize}
+\item \emph{Inverses} (fixed fallback off the image): \texttt{Inner.invR}, \texttt{Inner.TrotInv}, \texttt{Qhat.ordInv}, \texttt{Qhat.qhatInv}, \texttt{HighDim.ToricPackingStages.circleClockInv}, \texttt{layerChartInv}, \texttt{nativeInverse}, \texttt{BranchLarge3.CubicBridge.expInv}, \texttt{General.Ham.pushforward} ($u\in\EB(r)$ with $F_t(u)=y$, Definition~\Mnum{def:ham-H}).
+\item \emph{Roots, critical points}: \texttt{Strip.layerRoot}, \texttt{Strip.Cubic.layerRoot} (\cite{SongHD}, \S\ref{sec:shd-four}), \texttt{Strip.vOfT}, \texttt{BranchLarge3.PrimExt.rootExt}, \texttt{Branch2.Planar.PlanarInput.pstar}, \texttt{HighDim.PlanarGen.Input.vstar}.
+\item \emph{Linear solves}: \texttt{BranchLarge3.TargetMoser.solveL}, \texttt{BranchSmall.VT.transportField}, \texttt{returnField}, \texttt{General.Ham.Linear.posSqrt}.
+\item \emph{Integral curves}: \texttt{Qhat.flowOf}, \texttt{Return.flowFrom}, \texttt{BranchSmall.VT.flowI}, \texttt{BranchLarge3.UMoser.curve}, \texttt{HighDim.ToricPackingStages.nativeAmbientFlow}.
+\item \emph{Extrema, measures}: \texttt{HighDim.ToricPackingStages.finiteMinimumOrZero}, \texttt{Explicit.planeVolume}.
+\end{itemize}
+
+\subsection{Vendored declarations used}\label{sec:xpl-vendored}
+
+The $3810$ vendored declarations in the closure of the statement and algorithm theorems (\Msec{sec:ver}) are listed in \texttt{verification/Audit/VendoredUsage.lean}; none comes from \texttt{Compactness}, \texttt{Continuation}, \texttt{Degree}, \texttt{Cauchy}, \texttt{Campanato}.
+
+\endgroup
+
+\subsection{Formal statements that differ in form from the text}\label{sec:xpl-interface}
+
+Table~\ref{tab:xpl-interface} lists them (names relative to \texttt{SymplecticPacking}). The labels \emph{needed consequence verified} and \emph{full statement verified} record a human comparison, not a kernel check; unqualified tags claim no full coverage.
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}
+
+\begin{longtable}{@{}p{0.22\textwidth}p{0.74\textwidth}@{}}
+\caption{Formal statements that differ in form from the text.}\label{tab:xpl-interface}\\
+\toprule
+statement & formal form\\\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ (continued)}\\
+\toprule
+statement & formal form\\\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{Continued on the next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+$S$ (Def.~\ref{def:pre-flat}) & \texttt{Real.smoothTransition}, \texttt{expNegInvGlue}${}=a_\flat$; $\defdesc(h)$ is \texttt{Explicit.the}\\
+real coordinates & $\zeta_l$ (Table~\ref{tab:pre-interfaces}) is coordinate $l-1$ of \texttt{Problem.E}~$n$\\
+Thm.~\ref{thm:pln-isotopy} & single ordinary path, no parameter $y$\\
+Cor.~\ref{thm:pln-full-disc} & Theorem~\ref{thm:pll-inner}(e) with $g(I)=I+4e$, $\eps=0$, $\Upsilon\le h$ on $[0,h]$, $\Upsilon(\pi|\mathfrak e_1(z)|^2)<\pi|z|^2+\frac{13}{24}e$ on $\bar D(h-4e)$\\
+Def.~\ref{def:shd4-data} & $(q_t)$ only the whole-disc isotopy $\hat q$ of an ordinary path of area $h$\\
+Prop.~\ref{prop:shd4-moser} & (a)--(d), smoothness of $\Phi^{\pm1}$; $\Phi=\Phi_2\circ\Phi_1\circ\Phi_0$ not formalised\\
+Prop.~\ref{prop:shd4-maps}(c) & $\mathcal Tf^N_i(X)=\mathcal Tf^N_j(X')\Rightarrow f^N_i(X)=f^N_j(X')$, $\mathcal T$ of Thm.~\ref{thm:rtc-transfer}\\
+Prop.~\ref{prop:rtc-return}, Lem.~\ref{lem:rtc-ball-chart}, Thm.~\ref{thm:rtc-transfer} & only along each $\mathcal T\circ f^N_i$: pullbacks along smooth unit-vector families and for $\mathcal T_{\rm u}$ on smooth families in $\mathcal N_h$, with Prop.~\ref{prop:rtc-central}; injectivity as above\\
+Thm.~\ref{thm:cub-packing} & $u\mapsto\sqrt C\,f_i(u/\sqrt C)$: smooth, symplectic on $\Bo(C\rho_i^{\rm dom})$, injective on $B(C\rho_i^+)$, disjoint images in $\Bo(C)$; $m$ not stated, (iv) structural; injectivity, disjointness, $\pi|f_i|^2<1$ on $\Bo(\hat\rho_i)$ in both cases\\
+Rem.~\ref{rem:rtc-equal} & \texttt{Params}, \texttt{Params.}$\varepsilon=4\eta_\star$ (not $\eps$ of \Mref{Theorem}{thm:intro-4d}), \texttt{Params.rho}${}=(1-\eta_\star)/\sqrt k=\rho$; via \texttt{Branch2.CubicData.ofParams} to \texttt{Branch2.cubicEmbeddings\_spec}; data of \Mref{Theorem}{thm:intro-4d} from \texttt{General.epochHamiltonianQ}, \texttt{General.epochQ\_equalCase} gives \texttt{Branch2.EqualCase}\\
+support of $H$ (\Msec{sec:ham}) & \texttt{General.Ham.isotopySupport}${}=\bigcup_{i,t\in[0,1]}F_{i,t}(B(r_{2,i}))$, \texttt{isotopySupport\_compact}, \texttt{ofIsotopy\_support\_precise}; for $H[n,k,C,c,s]$: \texttt{General.packingSupportSet\_compact}, \texttt{packingHamiltonian\_support\_precise}, \texttt{packingSupportSet\_subset\_radius} (ball of radius \texttt{General.packingSupportRadius}), \texttt{main\_support\_radius}\\
+\end{longtable}
+
+}
+
+\subsection{Reproduction}\label{sec:xpl-searches}
+
+The statement file runs the check on \texttt{General.packingHamiltonian}, the Epoch Hamiltonians, each embedding
+constructor, and the polynomial interpreter, rational verifier and output construction of the finite-output
+algorithm of~\cite{SongHD}; any violation fails the build. \texttt{test/ExplicitTest.lean} also contains admissible
+searches that must be accepted (besides the rejected ones of \Msec{sec:ver}).

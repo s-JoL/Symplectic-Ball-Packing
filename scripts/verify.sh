@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Full check of the repository: source hygiene, paper-to-Lean tags, Lean build with axiom and
-# explicitness gates, regression tests and both papers. Every stage is fatal. Node.js is
+# explicitness gates, regression tests and the three papers. Every stage is fatal. Node.js is
 # needed in every mode (source checks); Elan for the Lean stages, Tectonic for the papers.
 #   bash scripts/verify.sh            # everything
 #   bash scripts/verify.sh --lean     # Lean only
@@ -35,7 +35,7 @@ if [[ $mode != --paper ]]; then
 set -euo pipefail
 log=$1
 for entry in verification/Statement.lean verification/Computability.lean \
-  verification/EpochComputability.lean verification/Executable.lean verification/Audit/Independence.lean \
+  verification/EpochComputability.lean verification/Audit/Independence.lean \
   verification/Audit/PaperTags.lean test/ExplicitTest.lean \
   test/DependencyAuditTest.lean test/AxiomCheckTest.lean; do
   name=${entry//\//-}

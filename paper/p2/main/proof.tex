@@ -1,0 +1,89 @@
+\section{Proof of Theorem~\texorpdfstring{\ref{thm:main}}{1}\textup{(i)}, \textup{(ii)} and of the corollaries}\label{p2:sec-proof}
+
+Let $(n,k,C,c,s)$ satisfy the hypotheses of Theorem~\ref{thm:main}. The normalised capacities $\rho=c/C$ are
+admissible, and Construction~\ref{cons:ham-branch} selects one of the cases (i)--(iv). In case (i), $n=2$, the
+embeddings are those of Theorem~\ref{thm:mdl-cub-general}: the cubic model, handle and transfer of Paper~I
+(\PoneRef{thm:cub-packing}) with the linear datum of Paper~I or the scalar comparison datum of
+\Sref{Proposition}{prop:scalar-cubic-data}. In case (ii) the
+embeddings are those of Theorem~\ref{thm:mdl-qdr}, proved in \Sref{Theorem}{thm:qdr-packing}: the comparison datum of
+Theorem~\ref{thm:cmp-main} for the quadric profile minorant of \Sref{Lemma}{lem:qdr-auxiliary}, the packing in the model
+of Theorem~\ref{thm:mech-packing} on the bordered quadric base (\Sref{Theorem}{thm:shd-packing}), and the transfer of
+\Sref{Theorem}{thm:qdr-transfer}, composed by Proposition~\ref{prop:mech-assembly}. In cases (iii) and (iv) they are
+those of Theorem~\ref{thm:mdl-lrg}, proved in \Sref{Theorems}{thm:lrg-high} and~\Snum{thm:lrg-six}. In each case
+Proposition~\ref{prop:ham-embeddings} turns them into an embedding datum, and Definition~\ref{def:ham-H-final} defines
+$H[n,k,C,c,s]$ from it.
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}\textup{(i)}]
+Let $H=H[n,k,C,c,s]$ with the hypotheses of Theorem~\ref{thm:main}, and let $\mathfrak E$ be the datum of
+Definition~\ref{def:ham-H-final}. By Theorem~\ref{I:thm:ham-flow} (with \PoneRef{lem:ham-smooth}), $H$ is $C^\infty$, vanishes for $t\notin(0,1)$, and vanishes
+outside $\R\times K$ with the explicit compact set $K=\EB(R_F)$. By Proposition~\ref{I:prop:ham-end}, $H$ satisfies
+$\Pack(n,k,C,c,s)$. By Theorem~\ref{I:thm:ham-flow}, $\phi^1_H(B(s_i,c_i))=f_i(B(c_i))$; these sets are pairwise disjoint and lie
+in the compact subset $\bigcup_if_i(B(c'_i))$ of $\Bo(C)$ (Proposition~\ref{prop:ham-embeddings}).
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}\textup{(ii)}]
+Every entry of Table~\ref{tab:ham-explicit} is one of the operations of Definition~\ref{def:intro-levels}; the only search
+in it is the least of $n+1$ angle indices in the linear path. The same definition applies to all
+$(n,k,C,c,s)$.
+\end{proof}
+
+\begin{table}[ht]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}L{0.27\textwidth}L{0.4\textwidth}L{0.27\textwidth}@{}}
+\toprule
+Ingredient & Operation of Definition~\ref{def:intro-levels} & Where shown\\
+\midrule
+hypotheses; branch & case distinctions on propositions ($n=2$; some $\rho_j\ge\frac12$; for $n=2$, $k\ge10$, equal $\rho_i=\rho$ and $\frac34<\rho\sqrt k<1$) & Def.~\ref{def:ham-H-final}, Cons.~\ref{cons:ham-branch}\\
+branch margins & arithmetic, finite minima and maxima, square roots, an integer floor and ceiling & Cons.~\ref{cons:ham-branch}\\
+model embeddings $f^\natural_i$, $\rho_i^+$ & model formulas and compact flow parameters; in dimension six, integer weights and explicit polynomial lifts & Thms.~\ref{thm:mdl-cub-general}, \ref{thm:mdl-qdr}, \ref{thm:mdl-lrg}; \Sref{Prop.}{prop:lrg-six-polynomials}\\
+comparison datum ($n\ge3$) & iterates by finitely many Fourier--Motzkin eliminations with $N$ given by a formula; log-sum-exp smoothing & Prop.~\ref{prop:cmp-fixed-point}, Thm.~\ref{thm:cmp-main}\\
+scalar datum ($n=2$) & finite scalar iteration; convolution with a fixed mollifier (integral over a compact interval) & \Ssec{sec:scalar-iteration}\\
+planar, twist and Moser isotopies & unique solutions of explicit ODEs; inverses of explicit injective maps; unique roots & Thm.~\ref{thm:cmp-realisation}, \Sref{Thm.}{thm:shd-packing}, \PoneRef{thm:pln-isotopy}\\
+$c'_i$, $\bar c_i$, $f_i$ & arithmetic; composition with a dilation & Prop.~\ref{prop:ham-embeddings}\\
+radii $r_{\ell,i}$ & square roots; finite minima; arithmetic & \PoneRef{lem:ham-radii}\\
+linear path $M_{i,\sigma}$ & positive square root (definite description); inverses by the adjugate formula; least of $n+1$ angle indices; $\sin$, $\cos$ & \PoneRef{lem:iso-linear-path}\\
+$L$, $\delta_c$, $r_{\rm tot}$, $\tau$, $Y_i$ & maxima of continuous functions over compact sets; finite minima; arithmetic & \PoneRef{lem:iso-parameters}\\
+route $z_i$ & ranks (counts of propositions); arithmetic & \PoneRef{lem:iso-route}\\
+shape, tail, clocks & integral over $[0,1]$; composition; the flat step & \PoneRef{lem:iso-shape}, \PoneRef{lem:iso-tail}\\
+$H_{\mathfrak E}$ & integral over $[0,1]$; radial cutoff; definite description of the unique preimage & Def.~\ref{I:def:ham-H}, \PoneRef{lem:ham-smooth}\\
+\bottomrule
+\end{tabular}
+\caption{The construction of $H[n,k,C,c,s]$ by the operations of level L1. The finite output of part (iii) adds
+Bernstein coefficients (finite sums of rational approximations), exact rational Euler tables and the least passing
+candidate of a decidable search (Section~\ref{sec:eff}).}
+\label{tab:ham-explicit}
+\end{table}
+
+Part (iii) of Theorem~\ref{thm:main} is Theorem~\ref{thm:eff-algorithm}: its termination argument uses only that
+$H[n,k,C,c,s]$ satisfies $\Pack(n,k,C,c,s)$ with a positive margin, which part (i) provides.
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-sy}]
+Let $n\ge3$. Suppose $\Psi$ is a symplectic embedding of a neighbourhood of $\bigsqcup_iB(s_i,c_i)$ into $\Bo(C)$. The
+image of the compact set $\bigsqcup_iB(s_i,c_i)$ is compact, hence contained in $B(C')$ for some $C'<C$. Symplectic
+embeddings preserve $\omega_0^n$, so $\sum_ic_i^n/n!=\vol\Psi(\bigsqcup_iB(s_i,c_i))\le C'^n/n!<C^n/n!$. For $i\ne j$,
+$\Psi$ restricts to a symplectic embedding of the union of the interiors of $B(s_i,c_i)$ and $B(s_j,c_j)$ into
+$\Bo(C'')$ for any $C''\in(C',C)$, and Gromov's two-ball theorem \cite{Gromov1985} gives $c_i+c_j\le C''<C$. Conversely,
+if both inequalities hold, then $(n,k,C,c)$ is admissible and Theorem~\ref{thm:main}(i) applies to $H=H[n,k,C,c,s]$. The
+global symplectic diffeomorphism $\phi^1_H$ maps each $B(s_i,c_i)$ into $\Bo(C)$, so its restriction to the open
+neighbourhood $(\phi^1_H)^{-1}(\Bo(C))$ of $\bigsqcup_iB(s_i,c_i)$ is a symplectic embedding into $\Bo(C)$.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-equal}]
+All $c_i=c$, and $\sum_ic_i^n=kc^n<C^n$. If $n\ge3$, then $2^nc^n\le kc^n<C^n$, so $c_i+c_j=2c<C$. If $n=2$, then
+$9c^2\le kc^2<C^2$, so $3c<C$. Thus $(n,k,C,c)$ is admissible and Theorem~\ref{thm:main}(i) applies. The images are
+pairwise disjoint and $\phi^1_H$ preserves volume, so they fill the fraction $k\vol B(c)/\vol B(C)=kc^n/C^n$ of $B(C)$,
+and $kc^n/C^n>1-\eps$ by hypothesis.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-cone4}]
+Let $V=\sum_ic_i^2$ and $C=C_\eps$, so $V/C^2=1-\eps/2$. Then $3c_i\le V^{1/2}<C$, so $(2,k,C,c)$ is admissible.
+Theorem~\ref{thm:main}(i) applies, and as for Corollary~\ref{thm:main-equal} the images fill the fraction $1-\eps/2$ of
+$B(C)$.
+\end{proof}
+
+\begin{proof}[Proof of Corollary~\ref{thm:main-epoch}]
+Here $B(s_i,\pi)$ is the closed unit ball about $s_i=(3i-3,0,0,0)$, and these balls are disjoint. Let $C=\pi R^2$ with
+$R^4=k/(1-\eps/2)$. Then $k\pi^2<C^2$, and $3\pi<C$ since $R^4>k\ge9$, so Theorem~\ref{thm:main}(i) applies. Finally,
+$\Bo(\pi R^2)$ is the open ball of radius $R$, and $k/R^4=1-\eps/2>1-\eps$.
+\end{proof}

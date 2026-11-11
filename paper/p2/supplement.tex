@@ -1,0 +1,62 @@
+\documentclass[11pt]{amsart}
+\input{macros}
+\input{p1refs}
+\hypersetup{
+  pdftitle={Supplement to Explicit Hamiltonian ball packings: general capacities, higher dimensions and the Siegel--Yao criterion},
+  pdfauthor={Liang Song},
+  pdfsubject={Explicit symplectic ball packings and Lean 4 formal verification},
+  pdfkeywords={symplectic geometry, Hamiltonian dynamics, ball packing, Siegel--Yao criterion, Lean 4},
+  pdflang={en-US}
+}
+\usepackage{tikz}
+\usepackage{array}
+\externaldocument[M-]{build/main}[main.pdf]
+
+\title[Supplement: explicit Hamiltonian ball packings]{Supplementary material to\\
+``Explicit Hamiltonian ball packings: general capacities,\\ higher dimensions and the Siegel--Yao criterion''}
+\author{Liang Song}
+\email{sl12160010@gmail.com}
+\thanks{Version 1.1.}
+\date{}
+
+\begin{document}
+\begin{abstract}
+This supplement contains the complete proofs of the constructions of the main text that are not in Paper~I: the
+finite comparator, the explicit planar rearrangement of convex functions and its lift to the fibres, the scalar
+comparison datum for the four-dimensional cubic model, the bordered handle construction with its layer maps, finite
+coordinate primitive and Moser fields, the diagonal affine quadric model and its transfer to the ball, the two models
+for one large ball, the input-name programs, the finite compilation, the trajectory certificates and the termination
+of the algorithm. Appendix~\ref{p2:sec-quoted} reproduces the statements of Paper~I used in the proofs.
+\end{abstract}
+\maketitle
+
+\noindent\emph{Authorship and the role of AI.} See the corresponding section at the end of the main text.
+
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+\input{supp/guide}
+\input{supp/comparator}
+\input{supp/planar-convex}
+\input{supp/scalar-comparator}
+\input{supp/handle}
+\input{supp/strip}
+\input{supp/native-toric}
+\input{supp/model-quadric}
+\input{supp/quadric-transfer}
+\input{supp/model-large}
+\input{supp/large-shell}
+\input{supp/six-model}
+\input{supp/six-return}
+\input{supp/effective}
+\input{supp/compile}
+\input{supp/certificate}
+\input{supp/algorithm}
+
+\appendix
+\input{supp/quoted}
+
+\bibliographystyle{amsalpha}
+\bibliography{refs}
+
+\end{document}

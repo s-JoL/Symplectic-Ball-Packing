@@ -1,0 +1,439 @@
+\section{Return to the four-ball}\label{sec:rtc}
+
+We use the torus cover of \S\ref{sec:fer} and unit representatives in $\C^3\times\C$. Write $\mathcal F(Z)=Z_0^3+Z_1^3+Z_2^3$, fix $0<h<d_n<1/3$, and put $\mathcal N_h=\{(Z,U):|Z|=1,\ \mathcal F(Z)=0,\ \pi|U|^2\le h\}$. The cover map $\mathsf N(u,v,w)=(Z(u,v),w)$ takes $\{p\le h\}$ into $\mathcal N_h$. The three marked base points are the zeros of $Z_0$ on the torus; on the cover, the zero set is their $\Z^2$-periodic inverse image (Lemma~\ref{lem:fer-bpoints}). Pairs are gauge equivalent if $(Z',U')=(cZ,c^3U)$ with $|c|=1$.
+
+\subsection{Conventions and the ambient form}\label{sec:rtc-conventions}
+
+For $Z\ne0$ put $\eta_H=\operatorname{Im}(Z^*dZ)/(2\pi|Z|^2)$ and $\omega_{\rm FS}=d\eta_H=dd^c\log|Z|^2$. For unit $Z$ put $H_Z=\{\xi:Z^*\xi=0\}$. On $H_Z$ one has $\omega_{\rm FS}(\xi_1,\xi_2)=\pi^{-1}\operatorname{Im}(\xi_1^*\xi_2)$, because the terms of $d\eta_H$ containing $d|Z|^2=2\operatorname{Re}(Z^*\,\cdot\,)$ vanish there. All forms below are gauge invariant and annihilate the gauge generator, so they descend to the quotient; we evaluate them on horizontal representatives.
+
+\begin{definition}[Ambient potential on representatives]\label{def:rtc-ambient}
+\lean{SymplecticPacking.Return.PhiE,SymplecticPacking.Return.lamE,SymplecticPacking.Return.OmegaE}
+On $(\C^3\setminus0)\times\C$ set
+\[
+ q(Z,W)=\frac{|W|^2}{|Z|^6},\quad
+ \Phi_E^{(\delta)}=\log|Z|^2+\delta\log(1+q),\quad
+ \Omega_E^{(\delta)}=dd^c\Phi_E^{(\delta)},\quad \Omega_E=\Omega_E^{(d_n)}.
+\]
+On unit representatives put $p_W=d_n|W|^2/(1+|W|^2)$ and
+$X_T=\{(Z,W):|Z|=1,\ \mathcal F(Z)=TW\}$.
+Use $E_3$ as shorthand for these representative data with gauge $(Z,W)\sim(cZ,c^3W)$.
+For $W\ne0$, write $\alpha=d\arg W/(2\pi)-3\eta_H$.
+\end{definition}
+
+A unit phase $e^{i\chi}$ shifts $\eta_H$ by $d\chi/(2\pi)$ and the fibre angular form by $3d\chi/(2\pi)$. Hence $\alpha$ is gauge invariant and vanishes on the gauge generator.
+
+\begin{lemma}[$d^c$ of the norm]\label{lem:rtc-dc}
+\lean{SymplecticPacking.Return.dc_log_normW, SymplecticPacking.Return.dc_log_one_add}
+\uses{def:rtc-ambient}
+On $\{W\ne0\}$, $d^c\log\|W\|^2=\alpha$. On $E_3$,
+\[
+ d^c\log\big(1+\|W\|^2\big)=\frac{\|W\|^2}{1+\|W\|^2}\,\alpha ,
+\]
+where the right side extends smoothly across $\{W=0\}$.
+\end{lemma}
+
+\begin{proof}
+Choose a holomorphic lift $\hat Z$ and a fibre coordinate $\upsilon$ with $[Z,W]=[\hat Z,\upsilon]$. Then $\|W\|^2=|\upsilon|^2\|\hat Z\|^{-6}$ and $\arg W=\arg\upsilon$. Moreover $\eta_H=d^c\log\|\hat Z\|^2$, since $\operatorname{Re}(\hat Z^\dagger d\hat Z)=\frac12d\|\hat Z\|^2$. Hence $d^c\log\|W\|^2=d\arg\upsilon/2\pi-3\,d^c\log\|\hat Z\|^2=\alpha$.
+
+The second identity follows from $d^c\phi(\mu)=\phi'(\mu)\mu\,d^c\log\mu$ with $\mu=\|W\|^2$. Smoothness follows from $\|W\|^2\alpha=\|\hat Z\|^{-6}[(\operatorname{Re}\upsilon\,d\operatorname{Im}\upsilon-\operatorname{Im}\upsilon\,d\operatorname{Re}\upsilon)/2\pi-3|\upsilon|^2d^c\log\|\hat Z\|^2]$.
+\end{proof}
+
+\begin{lemma}[The horizontal Hermitian blocks]\label{lem:rtc-kahler}
+\lean{SymplecticPacking.Return.OmegaE_closed,SymplecticPacking.Return.OmegaE_herm,SymplecticPacking.Return.OmegaE_pos}
+At $|Z|=1$, for $(\xi,\varsigma)\in H_Z\times\C$,
+\begin{equation}\label{eq:rtc-OmegaE}
+ \Omega_E^{(\delta)}((\xi_1,\varsigma_1),(\xi_2,\varsigma_2))
+ =\frac1\pi\operatorname{Im}(A_\delta\xi_1^*\xi_2+B_\delta\bar\varsigma_1\varsigma_2),\quad
+ A_\delta=1-\frac{3\delta|W|^2}{1+|W|^2},\quad B_\delta=\frac{\delta}{(1+|W|^2)^2}.
+\end{equation}
+For $\delta=d_n$, $A>1-3d_n>0$ and $B>0$.
+The form is closed, and its restriction to every complex horizontal constraint kernel
+$\{(\xi,\varsigma):d\mathcal F_Z\xi=T\varsigma\}$ is nondegenerate.
+\end{lemma}
+
+\begin{proof}
+Since $q$ is $(\lambda Z,\lambda^3W)$-invariant for $\lambda\in\C^*$, it suffices to work on $H_Z\times\C$ at $|Z|=1$. There $\partial q=\bar W\,dW$, and
+$\partial\bar\partial\log(1+q)=\frac{dW\wedge d\bar W}{(1+|W|^2)^2}-\frac{3|W|^2}{1+|W|^2}\sum_jdZ_j\wedge d\bar Z_j$, with no mixed terms. Applying $dd^c=\frac i{2\pi}\partial\bar\partial$ and adding $\omega_{\rm FS}$ gives \eqref{eq:rtc-OmegaE}. For $\delta=d_n$ the Hermitian form $A\xi_1^*\xi_2+B\bar\varsigma_1\varsigma_2$ is positive definite, so its imaginary part is nondegenerate on every complex subspace. Closedness is $d\,dd^c=0$.
+\end{proof}
+
+\subsection{The central normal injection}\label{sec:rtc-injection}
+
+\begin{construction}[Weight-three injection]\label{cons:rtc-injection}
+\lean{SymplecticPacking.Return.injection}
+\uses{def:rtc-ambient, def:cub-model}
+For a unit pair $(Z,U)$ with $p<d_n$ put
+\[
+ \iota[Z,U]=[Z,W],\qquad W=\frac{\sqrt\pi\,U}{\sqrt{d_n-p}},\qquad p=\pi|U|^2 .
+\]
+\end{construction}
+
+\begin{lemma}[The fibre injection]\label{lem:rtc-injection}
+\lean{SymplecticPacking.Return.injection_bijective,SymplecticPacking.Return.injection_normW,SymplecticPacking.Return.injection_pW,SymplecticPacking.Return.injection_normW_le}
+At each unit $Z$, the radial maps
+\[
+ U\mapsto\frac{\sqrt\pi\,U}{\sqrt{d_n-\pi|U|^2}},\qquad
+ W\mapsto W\sqrt{\frac{d_n}{\pi(1+|W|^2)}}
+\]
+are smooth inverses from $\{\pi|U|^2<d_n\}$ to $\C$ and back.
+They commute with the weight-three gauge action and preserve $Z$.
+Moreover $|W|^2=p/(d_n-p)$, $p_W=p$, and on $\mathcal N_h$ one has $|W|^2\le h/(d_n-h)$.
+\end{lemma}
+
+\begin{proof}
+Substitute each radial expression into the other and use positivity of its denominator.
+The norm and moment identities follow by squaring the positive radial factor.
+The last bound follows from the increasing function $p\mapsto p/(d_n-p)$.
+\end{proof}
+
+\begin{proposition}[The central pullback on the cover]\label{prop:rtc-central}
+\lean{SymplecticPacking.Return.injection_pullback}
+On $\{p<d_n\}$ in the torus cover,
+$(\iota\circ\mathsf N)^*\Omega_E=\Omega_0$.
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:rtc-dc}, $d^c\Phi_E=\eta_H+p_W\alpha$. Along $\iota$ we have $p_W=p$ and $\arg W=\arg U$ (Lemma~\ref{lem:rtc-injection}). Along $\mathsf N$ we have $Z^*\eta_H=\eta$ and $U=w$. Hence $(\iota\circ\mathsf N)^*d^c\Phi_E=(1-3p)\eta+\frac12\operatorname{Im}(\bar w\,dw)$, which is smooth across $w=0$ and has exterior derivative $\Omega_0$ by Lemma~\ref{lem:fer-Omega0}.
+\end{proof}
+
+\subsection{Transport to $T=1$}\label{sec:rtc-transport}
+
+The transport field is the lift of $\partial_T$ that preserves the constraint and is $\Omega_E$-orthogonal to $TX_T=\ker d(\mathcal F(Z)-TW)$.
+
+\begin{construction}[Transport field]\label{cons:rtc-transport}
+\lean{SymplecticPacking.Return.nvec, SymplecticPacking.Return.Gfun, SymplecticPacking.Return.Nden,
+ SymplecticPacking.Return.transportField}
+\uses{lem:rtc-kahler}
+For $(Z,W,T)\in S^5\times\C\times\R$ put $f=\mathcal F(Z)$, $\bar Z^2=(\bar Z_0^2,\bar Z_1^2,\bar Z_2^2)$,
+\[
+ n=3\bar Z^2-3\bar fZ,\qquad G=\|n\|^2,\qquad N_{\rm den}=\frac GA+\frac{T^2}B ,
+\]
+with $A,B$ as in Lemma~\ref{lem:rtc-kahler}. On the open set $\mathcal O=\{N_{\rm den}>0\}$ define
+\begin{equation}\label{eq:rtc-transport}
+ \dot Z=\frac{W\,n}{A\,N_{\rm den}},\qquad \dot W=-\frac{T\,W}{B\,N_{\rm den}},\qquad \dot T=1 .
+\end{equation}
+\end{construction}
+
+Since $A,B>0$, $N_{\rm den}\ge0$ with equality only where $T=0$ and $n=0$; so $\mathcal O$ is the complement of $\{T=0,\ n=0\}$, on which the field is smooth.
+
+\begin{lemma}[Properties of the transport field]\label{lem:rtc-transport-field}
+\lean{SymplecticPacking.Return.n_horizontal, SymplecticPacking.Return.n_dF, SymplecticPacking.Return.G_eq,
+ SymplecticPacking.Return.transport_gaugeEquiv, SymplecticPacking.Return.transport_horizontal,
+ SymplecticPacking.Return.transport_constraint, SymplecticPacking.Return.transport_normW,
+ SymplecticPacking.Return.transport_orthogonal, SymplecticPacking.Return.transport_isotropic}
+\uses{cons:rtc-transport, lem:rtc-kahler}
+\begin{enumerate}[label=(\roman*)]
+\item $Z^\dagger n=0$, $n^\dagger\xi=d\mathcal F_Z(\xi)$ for $\xi\in H_Z$, and $G=9\sum_j|Z_j|^4-9|f|^2$.
+\item The field is equivariant under $(Z,W)\mapsto(e^{i\chi}Z,e^{3i\chi}W)$ and satisfies $Z^\dagger\dot Z=0$; hence it is
+tangent to $S^5\times\C\times\R$. Its horizontal component is $V=(\dot Z,\dot W)\in H_Z\times\C$.
+\item Along the field, $\frac{d}{dT}\mathcal F(Z)=\frac{WG}{AN_{\rm den}}=\frac{d}{dT}(TW)$, so $\mathcal F(Z)-TW$ is constant;
+$\|Z\|$ is constant; and $\frac{d}{dT}|W|^2=-\frac{2T|W|^2}{BN_{\rm den}}\le0$ for $T\ge0$.
+\item At a point of $X_T\times\{T\}$ in $\mathcal O$, $V$ is $\Omega_E$-orthogonal to $\ker(d\mathcal F_Z,-T)\subset H_Z\times\C$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) Since $Z^\dagger(3\bar Z^2)=3\bar f$, $n$ is the orthogonal projection of $3\bar Z^2$ to $H_Z$. This gives $Z^\dagger n=0$ and $G=\|3\bar Z^2\|^2-|3\bar f|^2$. For $\xi\in H_Z$, $d\mathcal F_Z(\xi)=(3\bar Z^2)^\dagger\xi=n^\dagger\xi$.
+
+(ii) Under the gauge action $f\mapsto e^{3i\chi}f$ and $n\mapsto e^{-2i\chi}n$, while $G,A,B,N_{\rm den}$ are invariant. Tangency follows from (i). Finally, $H_Z\times\C$ is a complement to the kernel $\langle(iZ,3iW)\rangle$ of $T(S^5\times\C)\to TE_3$.
+
+(iii) By (i), $\frac{d}{dT}\mathcal F(Z)=n^\dagger\dot Z$ and $\frac{d}{dT}(TW)=W+T\dot W$. The remaining claims follow from $\frac{d}{dT}\|Z\|^2=2\operatorname{Re}(Z^\dagger\dot Z)$ and $\frac{d}{dT}|W|^2=2\operatorname{Re}(\bar W\dot W)$.
+
+(iv) By (i), $\ker(d\mathcal F_Z,-T)\cap(H_Z\times\C)$ is the kernel of $\ell(\xi,\varsigma)=n^\dagger\xi-T\varsigma$. Let $\mathfrak h=A\,\xi_1^\dagger\xi_2+B\,\bar\varsigma_1\varsigma_2$ and $\nu_\ell=(n/A,-T/B)$. Then $\mathfrak h(\nu_\ell,\kappa)=\ell(\kappa)$. Since $V=(W/N_{\rm den})\nu_\ell$ and $\mathfrak h$ is conjugate linear in its first slot, $\mathfrak h(V,\kappa)=0$ on $\ker\ell$, so $\Omega_E(V,\kappa)=\frac1\pi\operatorname{Im}\mathfrak h(V,\kappa)=0$. Also $\ell(V)=W$. Hence the field is the unique $\Omega_E$-orthogonal lift of $\partial_T$ preserving the constraint.
+\end{proof}
+
+\begin{lemma}[Denominator]\label{lem:rtc-denominator}
+\lean{SymplecticPacking.Return.Nden_pos, SymplecticPacking.Return.Nden_lower}
+\uses{cons:rtc-transport, lem:rtc-transport-field}
+Let $\mathcal C=\{(Z,W,T):\|Z\|=1,\ \mathcal F(Z)=TW,\ 0\le T\le1\}$. On $\mathcal C$, $N_{\rm den}>0$: for $T=0$ one has $G\ge3$
+and $N_{\rm den}\ge3$, and for $T>0$, $N_{\rm den}\ge T^2/B>0$. If moreover $|W|\le W_{\max}$ and
+$T_0=\min\big(1,1/(\sqrt6\max(1,W_{\max}))\big)$, then $N_{\rm den}\ge\min\big(\frac32,\,T_0^2/d_n\big)$.
+\end{lemma}
+
+\begin{proof}
+By Cauchy--Schwarz $\sum_j|Z_j|^4\ge\frac13$; since $0<A\le1$, $N_{\rm den}\ge G$; and $|f|=T|W|$ on $\mathcal C$. If $T=0$, $G=9\sum_j|Z_j|^4\ge3$. If $T\le T_0$, $9|f|^2\le9T_0^2W_{\max}^2\le\frac32$, so $G\ge\frac32$. If $T\ge T_0$, $N_{\rm den}\ge T^2/B\ge T_0^2/d_n$, since $B\le d_n$.
+\end{proof}
+
+\begin{proposition}[Protected transport]\label{prop:rtc-transport}
+\lean{SymplecticPacking.Return.transport_mem,SymplecticPacking.Return.transport_hasDerivAt,SymplecticPacking.Return.transport_smooth,SymplecticPacking.Return.transport_injective,SymplecticPacking.Return.transport_pullback}
+Fix $w_*=h/(d_n-h)$ and let $\tau_T$ be the flow, from $T=0$, of the cut field defined in the proof. It is a smooth
+injective map, commuting with the gauge action. For every unit pair $(Z,W)\in X_0$ with $|W|^2\le w_*$ the trajectory
+solves \eqref{eq:rtc-transport} on $[0,1]$, stays in $X_T\cap\{|W|^2\le w_*\}$, and $\tau_1$ maps
+$X_0\cap\{|W|^2\le w_*\}$ into $X_1$ with $\tau_1^*(\Omega_E|_{X_1})=\Omega_E|_{X_0}$ there.
+\end{proposition}
+
+\begin{proof}
+\emph{Cut field.} Let $T_0=T_0(\sqrt{w_*})$ and $c_*=\min(\frac32,T_0^2/d_n)$. For $a<b$ write $S_{a,b}(x)=S((x-a)/(b-a))$ and $P_{a,b,c,d}(x)=S_{a,b}(x)(1-S_{c,d}(x))$, and put
+\[
+ \chi=S_{c_*/2,3c_*/4}(N_{\rm den})\,P_{1/2,3/4,5/4,3/2}(|Z|^2)\,S_{0,1}(w_*+2-|W|^2)\,P_{-1,-1/2,3/2,2}(T).
+\]
+Off the unit sphere, $n$ is replaced by $3\bar Z^2-3\bar fZ/|Z|^2$ in computing $N_{\rm den}$. The field $\chi\cdot(\dot Z,\dot W,1)$ is smooth, since its first factor vanishes where $N_{\rm den}\le c_*/2$. It is supported in $\{\frac12\le|Z|^2\le\frac32,\ |W|^2\le w_*+2,\ |T|\le2\}$, so its flow is complete, with diffeomorphic time-$T$ maps. The flow is gauge equivariant because $\chi$ is gauge invariant and the field is equivariant (Lemma~\ref{lem:rtc-transport-field}(ii)).
+
+\emph{Trajectories.} On $\mathcal C_*=\{|Z|=1,\ \mathcal F(Z)=TW,\ |W|^2\le w_*,\ 0\le T\le1\}$ we have $\chi=1$, by Lemma~\ref{lem:rtc-denominator} with $W_{\max}=\sqrt{w_*}$. By Lemma~\ref{lem:rtc-transport-field}(iii), uncut trajectories from $X_0\cap\{|W|^2\le w_*\}$ stay in $\mathcal C_*$, so by uniqueness they coincide with cut trajectories on $[0,1]$.
+
+\emph{Pullback.} Let $F(\sigma,T)=\tau_T(x(\sigma))$ for a smooth family $x(\sigma)$ of initial points. Since $\mathcal F(Z)-TW\equiv0$ along $F$, each tangent vector $(\kappa,t)$ satisfies $\ell(\kappa)=tW$, where $\ell=(d\mathcal F_Z,-T)$. Replacing $\kappa$ by its horizontal representative $\kappa_H$ modulo $G_{\rm gauge}=(iZ,3iW)$ changes neither the constraint, since $\ell(G_{\rm gauge})=3i(\mathcal F(Z)-TW)=0$, nor the pairing with $\Omega_E$. Now $\partial_TF=(V,1)$ with $\ell(V)=W$, so $\kappa_H-tV\in\ker\ell$. Lemma~\ref{lem:rtc-transport-field}(iv) then gives $\Omega_E(V,\kappa)=0$, i.e.\ $\iota_{\partial_T}F^*\Omega_E=0$. Since $F^*\Omega_E$ is closed, Cartan's formula gives $\partial_T(F_T^*\Omega_E)=0$, hence $F_1^*\Omega_E=F_0^*\Omega_E$.
+\end{proof}
+
+\subsection{Return to the Fubini--Study form}\label{sec:rtc-return}
+
+On $X_1$ we have $W=\mathcal F(Z)$, so $\mathrm{pr}$ has inverse $\mathrm{gr}[Z]=[Z,\mathcal F(Z)]$. Let $u=|\mathcal F(Z)|^2/\|Z\|^6$, which is smooth on unit representatives. For $s\in\R$ put $\omega^{\rm gr}_s=\omega_{\rm FS}+s\,d_n\,dd^c\log(1+u)=\mathrm{gr}^*\Omega_E^{(sd_n)}$, where the equality uses $\mathrm{gr}^*\|W\|^2=u$. Then $\omega^{\rm gr}_0=\omega_{\rm FS}$ and $\omega^{\rm gr}_1=\mathrm{gr}^*\Omega_E=(\mathrm{pr}^{-1})^*(\Omega_E|_{X_1})$. The return is the Moser flow of this path, which requires $\iota_{Y_s}\omega^{\rm gr}_s=-d_n\,d^c\log(1+u)$; this is solved in closed form because $n$ is an eigenvector of $M_s$.
+
+\begin{construction}[Return field]\label{cons:rtc-return}
+\lean{SymplecticPacking.Return.omegaS, SymplecticPacking.Return.returnField}
+\uses{lem:rtc-transport-field}
+In unit representatives, with $f$, $n$, $G$ as in Construction~\ref{cons:rtc-transport}, put
+\[
+ A_s=1-3s\,d_n\frac{u}{1+u},\qquad B_s=\frac{s\,d_n}{(1+u)^2},\qquad M_s=A_sI+B_s\,nn^\dagger\ \text{ on }H_Z,
+\]
+\begin{equation}\label{eq:rtc-return-field}
+ Y_s=-\frac{d_n}{2}\,\frac{f\,n}{(1+u)(A_s+B_sG)}\in H_Z .
+\end{equation}
+\end{construction}
+
+\begin{lemma}[Graph forms]\label{lem:rtc-graph}
+\lean{SymplecticPacking.Return.omegaS_graph, SymplecticPacking.Return.OmegaE_herm,
+ SymplecticPacking.Return.As_gt_half, SymplecticPacking.Return.Bs_nonneg, SymplecticPacking.Return.returnDen_gt_half, SymplecticPacking.Return.Ms_nvec}
+\uses{cons:rtc-return, lem:rtc-kahler}
+For $s\in[0,1]$ and $\xi_1,\xi_2\in H_Z$, $\omega^{\rm gr}_s(\xi_1,\xi_2)=\frac1\pi\operatorname{Im}(\xi_1^\dagger M_s\xi_2)$. Moreover
+$u\le1$, $A_s\ge1-\frac32d_n>\frac12$ and $B_s\ge0$; hence $M_s\ge\frac12I$ and every $\omega^{\rm gr}_s$ is positive on $H_Z$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:rtc-transport-field}(i), $d\,\mathrm{gr}(\xi)$ is represented by $(\xi,n^\dagger\xi)$ in the gauge of Lemma~\ref{lem:rtc-kahler}. Since $|W|^2=u$ at $W=\mathcal F(Z)$, \eqref{eq:rtc-OmegaE} gives the Hermitian form $A_s\xi_1^\dagger\xi_2+B_s\overline{n^\dagger\xi_1}\,n^\dagger\xi_2=\xi_1^\dagger M_s\xi_2$. For $\|Z\|=1$, $|f|\le\max_j|Z_j|\sum_j|Z_j|^2\le1$. Hence $u\le1$, so $u/(1+u)\le\frac12$ and $A_s\ge1-\frac32d_n>\frac12$, because $d_n<\frac13$.
+\end{proof}
+
+\begin{lemma}[$d^c$ along the graph]\label{lem:rtc-dc-horizontal}
+\lean{SymplecticPacking.Return.dc_log_one_add_u}
+\uses{cons:rtc-return, lem:rtc-transport-field}
+For $\xi\in H_Z$ (unit representative), $d^c\log(1+u)(\xi)=\dfrac{\operatorname{Im}\big(\bar f\,n^\dagger\xi\big)}{2\pi(1+u)}$.
+\end{lemma}
+
+\begin{proof}
+Where $f\ne0$, as in Lemma~\ref{lem:rtc-dc}, $d^c\log(1+u)=\tfrac{u}{1+u}\big(\tfrac{d\arg\mathcal F}{2\pi}-3\eta_H\big)$. On $H_Z$ we have $\eta_H(\xi)=0$ and $d\arg\mathcal F(\xi)=\operatorname{Im}(n^\dagger\xi/f)$, and $u/f=\bar f$. Both sides are smooth, so the identity extends to $\{f=0\}$.
+\end{proof}
+
+\begin{lemma}[The return field]\label{lem:rtc-return-field}
+\lean{SymplecticPacking.Return.returnField_spec, SymplecticPacking.Return.returnField_gauge}
+\uses{lem:rtc-graph, lem:rtc-dc-horizontal}
+$Y_s$ is smooth in $(s,Z)$ for $s$ in a neighbourhood of $[0,1]$, gauge equivariant and tangent to $S^5$, hence descends to a
+time-dependent smooth vector field on unit representatives, and
+\[
+ \iota_{Y_s}\omega^{\rm gr}_s=-d_n\,d^c\log(1+u)\qquad(s\in[0,1]).
+\]
+\end{lemma}
+
+\begin{proof}
+Under the gauge action $f\mapsto e^{3i\chi}f$ and $n\mapsto e^{-2i\chi}n$, so $Y_s\mapsto e^{i\chi}Y_s$; also $Z^\dagger Y_s=0$. The denominator is positive for $-\frac1{9d_n}<s<\frac2{3d_n}$, an interval containing $[0,1]$: for $s\ge0$, $A_s+B_sG\ge A_s\ge1-\frac32s\,d_n$; for $s<0$, $A_s\ge1$ and $B_sG\ge-9|s|d_n$, because $0\le G\le9$. Since $M_sn=(A_s+B_sG)n$, we get $M_sY_s=-\frac{d_n}2\frac{fn}{1+u}$. Lemmas~\ref{lem:rtc-graph} and~\ref{lem:rtc-dc-horizontal} then give, for $\xi\in H_Z$, $\omega^{\rm gr}_s(Y_s,\xi)=\frac1\pi\operatorname{Im}((M_sY_s)^\dagger\xi)=-d_n\,d^c\log(1+u)(\xi)$.
+\end{proof}
+
+\begin{proposition}[Unit-representative return]\label{prop:rtc-return}
+\lean[needed]{SymplecticPacking.Return.returnFlow_pullback,SymplecticPacking.Return.returnFlowInv_pullback,
+SymplecticPacking.Return.returnFlow_smooth,SymplecticPacking.Return.returnFlowInv_smooth,
+SymplecticPacking.Return.returnFlowInv_returnFlow,SymplecticPacking.Return.returnFlow_returnFlowInv,
+SymplecticPacking.Return.nsq_returnFlow,SymplecticPacking.Return.returnFlow_gaugeEquiv}
+Let $\psi_s$ be the flow from $s=0$ of the cut field of the proof. It is defined for all $s$, preserves $|Z|=1$, commutes
+with the gauge action, and its time-$s$ maps are diffeomorphisms. On the unit sphere it is the flow of $Y_s$ for
+$s\in[0,1]$, and $\psi_s^*\omega_s^{\rm gr}=\omega_{\rm FS}$. Consequently $(\psi_1^{-1})^*\omega_{\rm FS}=\omega^{\rm gr}_1$, and
+$(\psi_1^{-1}\circ\mathrm{pr})^*\omega_{\rm FS}=\Omega_E|_{X_1}$.
+\end{proposition}
+
+\begin{proof}
+Put $m=1-\frac32d_n>0$ and $D_s=A_s+B_sG$, with $n$ extended off the sphere as in Proposition~\ref{prop:rtc-transport}. The cut field is
+\[
+ S_{m/2,3m/4}(D_s)\,P_{1/2,3/4,5/4,3/2}(|Z|^2)\,P_{-1,-1/2,3/2,2}(s)\,Y_s .
+\]
+It is smooth, since the first factor vanishes where $D_s\le m/2$, and compactly supported, so its flow is complete with diffeomorphic time maps. The flow is gauge equivariant by Lemma~\ref{lem:rtc-return-field}, and it preserves the sphere because $2\operatorname{Re}(Z^\dagger Y_s)=0$. For $|Z|=1$ and $s\in[0,1]$, Lemma~\ref{lem:rtc-graph} gives $D_s\ge m$, so the cut field equals $Y_s$ there. Since $\partial_s\omega^{\rm gr}_s=d(d_n\,d^c\log(1+u))$, Cartan's formula and Lemma~\ref{lem:rtc-return-field} give $\frac d{ds}\psi_s^*\omega^{\rm gr}_s=0$. Finally, $\mathrm{gr}\circ\mathrm{pr}=\mathrm{id}$ on $X_1$ gives $\mathrm{pr}^*\omega^{\rm gr}_1=\Omega_E|_{X_1}$.
+\end{proof}
+
+\subsection{Equivariant injectivity and the ball chart}\label{sec:rtc-avoid}
+
+From now on, $\mathcal T_{\rm u}$ uses the protected cutoff $w_*=h/(d_n-h)$ and is considered on $\mathcal N_h$. Let $\mathsf r Z=(\zeta Z_0,Z_1,Z_2)$ and $\mathsf r(Z,W)=(\mathsf r Z,W)$; $\mathsf r$ preserves the norm, the Fermat equation and the source moment, and commutes with the unit gauge action.
+
+\begin{lemma}[Fixed representatives modulo gauge]\label{lem:rtc-fixed}
+\lean{SymplecticPacking.Return.fixed_CP2,SymplecticPacking.Return.fixed_N}
+For a nonzero vector, $\mathsf r Z$ is a scalar multiple of $Z$ exactly when $Z_0=0$ or $Z_1=Z_2=0$.
+For a central unit pair $(Z,U)$, the equation $\mathsf r(Z,U)=(cZ,c^3U)$ is possible exactly when $Z_0=0$.
+\end{lemma}
+
+\begin{proof}
+A nonzero last coordinate forces $c=1$ and then $Z_0=0$. Otherwise both last coordinates vanish, which $\mathcal F(Z)=0$ excludes at a central unit vector. If $Z_0=0$, the pair is fixed with $c=1$.
+\end{proof}
+
+\begin{lemma}[Equivariance]\label{lem:rtc-equivariant}
+\lean{SymplecticPacking.Return.injection_equivariant, SymplecticPacking.Return.transport_equivariant,
+ SymplecticPacking.Return.returnFlow_equivariant, SymplecticPacking.Return.compositeT_equivariant}
+\uses{cons:rtc-injection, prop:rtc-transport, prop:rtc-return}
+$\mathsf r$ preserves $\mathcal F$, $\omega_{\rm FS}$, $\|W\|$, $\Omega_E$, $u$, each $X_T$ and $\{(Z,U):|Z|=1,\mathcal F(Z)=0,p<d_n\}$, and it maps the fields
+\eqref{eq:rtc-transport} and \eqref{eq:rtc-return-field} to themselves. Consequently $\iota$, $\tau_1$, $\mathrm{pr}$, $\psi_1^{-1}$ and
+$\mathcal T_{\rm u}$ commute with $\mathsf r$.
+\end{lemma}
+
+\begin{proof}
+$\mathsf r$ is unitary and $\mathcal F\circ\mathsf r=\mathcal F$, so it preserves all the listed quantities and also $p,A,B,A_s,B_s$. Since $\bar\zeta^2=\zeta$, we have $n(\mathsf rZ)=\mathsf r\,n(Z)$. Hence $G$ and $N_{\rm den}$ are invariant, both fields are $\mathsf r$-equivariant, and by uniqueness so are their flows. $\iota$ commutes with $\mathsf r$ because $p$ is invariant, and $\mathrm{pr}$ does because the lift of $\mathsf r$ to $E_3$ covers $\mathsf r$.
+\end{proof}
+
+\begin{lemma}[Injectivity modulo gauge]\label{lem:rtc-injective}
+\lean{SymplecticPacking.Return.compositeT_inj_mod_gauge}
+For $x,x'\in\mathcal N_h$ and $|c|=1$, the equality
+$\mathcal T_{\rm u}(x)=c\mathcal T_{\rm u}(x')$ implies
+$x=(cZ',c^3U')$.
+\end{lemma}
+
+\begin{proof}
+Each factor of $\mathcal T_{\rm u}=\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota$ is injective on representatives: $\iota$ by the explicit inverse of Lemma~\ref{lem:rtc-injection}, $\tau_1$ and $\psi_1^{-1}$ as time maps of complete flows, and $\mathrm{pr}$ on $X_1$, where $W=\mathcal F(Z)$. Each factor also commutes with $(Z,W)\mapsto(cZ,c^3W)$. Hence $c\,\mathcal T_{\rm u}(x')=\mathcal T_{\rm u}(cZ',c^3U')$, and injectivity concludes.
+\end{proof}
+
+\begin{proposition}[Avoidance and compact margin]\label{prop:rtc-avoid}
+\lean{SymplecticPacking.Return.avoid_L,SymplecticPacking.Return.avoid_L_compact}
+If $x=(Z,U)\in\mathcal N_h$ and $Z_0\ne0$, then
+$(\mathcal T_{\rm u}(x))_0\ne0$ and its last two coordinates do not vanish together.
+On every nonempty compact family of these inputs,
+$m_{\mathcal K}=\min_{x\in\mathcal K}|(\mathcal T_{\rm u}(x))_0|^2>0$. For $\mathcal K=\varnothing$ set $m_{\mathcal K}=1$.
+\end{proposition}
+
+\begin{proof}
+Let $Y=\mathcal T_{\rm u}(x)$. If $Y_0=0$, then $\mathsf rY=Y$, and Lemmas~\ref{lem:rtc-equivariant} and~\ref{lem:rtc-injective} (with $c=1$) give $\mathsf rx=x$. If $Y_1=Y_2=0$, then $\mathsf rY=\zeta Y$, and the same lemmas give $\mathsf rx=(\zeta Z,\zeta^3U)$. In both cases Lemma~\ref{lem:rtc-fixed} gives $Z_0=0$, a contradiction. The compact margin holds because $x\mapsto|(\mathcal T_{\rm u}(x))_0|^2$ is continuous and positive on $\mathcal K$.
+\end{proof}
+
+\begin{lemma}[The ball chart on representatives]\label{lem:rtc-ball-chart}
+\lean[needed]{SymplecticPacking.Return.ballChart, SymplecticPacking.Return.ballChart_gauge,
+ SymplecticPacking.Return.ballChart_symplectic_rep, SymplecticPacking.Return.ballChart_affine,
+ SymplecticPacking.Return.ballChart_norm, SymplecticPacking.Return.ballAffine_eq, SymplecticPacking.Return.ballChart_norm_lt}
+On $S^5_*=\{Z\in\C^3:|Z|=1,\ Z_0\ne0\}$ put $b_{\rm ball}(Z)=\frac{\bar Z_0}{|Z_0|}\frac{(Z_1,Z_2)}{\sqrt\pi}$. This map is gauge
+invariant, $\pi|b_{\rm ball}(Z)|^2=1-|Z_0|^2<1$, and in the affine coordinates $z=(Z_1/Z_0,Z_2/Z_0)$ it is the chart
+$\mathrm{ch}(z)=z/\sqrt{\pi(1+|z|^2)}$ of Lemma~\ref{lem:pre-fs}(b). Moreover
+$b_{\rm ball}^*\omega_0=\frac1\pi\sum_{j=0}^2dx_j\wedge dy_j\big|_{S^5_*}=\omega_{\rm FS}|_{S^5_*}$, where $Z_j=x_j+iy_j$. Hence
+$(b_{\rm ball}\circ\varphi)^*\omega_0=\varphi^*\omega_{\rm FS}$ for every smooth map $\varphi$ of a manifold into $S^5_*$.
+\end{lemma}
+
+\begin{proof}
+The unit phases cancel, and substituting $Z=e^{i\chi}(1,z)/\sqrt{1+|z|^2}$ gives the affine formula and the norm identity.
+Write $e=\bar Z_0/|Z_0|=e^{i\phi}$, $\phi=-\arg Z_0$, and $y_j=eZ_j/\sqrt\pi$ ($j=1,2$). Then
+$\bar y_jdy_j=\frac1\pi\big(|Z_j|^2\,\bar e\,de+\bar Z_jdZ_j\big)$ with $\bar e\,de=i\,d\phi$, so the Liouville form
+$\lambda_0=\frac12\sum_{j=1}^2\operatorname{Im}(\bar y_jdy_j)$ pulls back to
+$\frac1{2\pi}\big((1-|Z_0|^2)d\phi+\sum_{j=1}^2\operatorname{Im}(\bar Z_jdZ_j)\big)$ on $S^5_*$. Since
+$\operatorname{Im}(\bar Z_0dZ_0)=|Z_0|^2d\arg Z_0=-|Z_0|^2d\phi$, this equals $\frac1{2\pi}\big(d\phi+\operatorname{Im}(Z^\dagger dZ)\big)$, whose
+differential is $\frac1{2\pi}\sum_{j=0}^2d(x_jdy_j-y_jdx_j)=\frac1\pi\sum_jdx_j\wedge dy_j$. As $d\lambda_0=\omega_0$, this proves the first
+identity; the second holds because $\frac1{2\pi}\operatorname{Im}(Z^\dagger dZ)=\eta_H$ on the sphere and $d\eta_H=\omega_{\rm FS}$.
+\end{proof}
+
+For $y\in\Bo(1)$, $(\sqrt{1-\pi|y|^2},\sqrt\pi\,y_1,\sqrt\pi\,y_2)$ is the unique gauge representative with positive first coordinate of every unit vector with nonzero first coordinate and ball-chart image $y$.
+
+\subsection{The transfer theorem}\label{sec:rtc-transfer}
+
+\begin{theorem}[Transfer on the cover]\label{thm:rtc-transfer}\label{thm:cub-transfer}
+\lean[needed]{SymplecticPacking.Return.compositeT_inj_mod_gauge,SymplecticPacking.Return.compositeT_pullback,SymplecticPacking.Return.compositeT_equivariant,SymplecticPacking.Return.avoid_L_compact,
+SymplecticPacking.Return.injection_pullback, SymplecticPacking.Return.ballChart_symplectic_rep,
+SymplecticPacking.Embed.Cubic.fcap_eq_imp, SymplecticPacking.Embed.Cubic.fcap_eq_imp}
+\uses{cons:cub-transfer, prop:rtc-central, prop:rtc-transport, prop:rtc-return, prop:rtc-avoid, lem:rtc-ball-chart}
+Let $w_*=h/(d_n-h)$ and $\mathcal T_{\rm u}=\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota$ on $\mathcal N_h$. The cover map
+\[
+ \mathcal T=b_{\rm ball}\circ\mathcal T_{\rm u}\circ\mathsf N
+ \quad\text{on}\quad\{p<h,\ (u,v)\notin\mathcal Z\}
+\]
+is smooth, invariant under the deck maps, takes values in $\Bo(1)$ and satisfies $\mathcal T^*\omega_0=\Omega_0$. Two points
+have the same image if and only if they are deck equivalent. For every compact $\mathcal K$ in the domain,
+$\mathcal T(\mathcal K)\subset B(1-m_{\mathcal K})$ with $m_{\mathcal K}>0$ as in Proposition~\ref{prop:rtc-avoid}. In particular the
+restriction of $\mathcal T$ to an open set on which it is injective is a symplectic embedding, and $\mathcal T$ carries
+pairwise disjoint subsets of its domain, no two points of whose union are deck equivalent, to pairwise disjoint sets.
+\end{theorem}
+
+\begin{proof}
+On $\{p<h\}$, $\mathsf N$ takes values in $\mathcal N_h$ with $p<d_n$, and $\tau_1\circ\iota$ lands in $X_1\cap\{|W|^2\le w_*\}$ (Lemma~\ref{lem:rtc-injection}, Proposition~\ref{prop:rtc-transport}). Propositions~\ref{prop:rtc-central}, \ref{prop:rtc-transport} and~\ref{prop:rtc-return} give $(\mathcal T_{\rm u}\circ\mathsf N)^*\omega_{\rm FS}=\Omega_0$. For $(u,v)\notin\mathcal Z$, $\mathcal T_{\rm u}(\mathsf N(x))\in S^5_*$ (Proposition~\ref{prop:rtc-avoid}), so Lemma~\ref{lem:rtc-ball-chart} gives $\mathcal T^*\omega_0=\Omega_0$ and $\pi|\mathcal T|^2=1-|(\mathcal T_{\rm u}\mathsf N)_0|^2<1$, whence the margin $m_{\mathcal K}$ on $\mathcal K$. Deck maps change $\mathsf N(x)$ to a gauge-equivalent pair (Construction~\ref{cons:fer-atlas}(b)), $\mathcal T_{\rm u}$ is gauge equivariant and $b_{\rm ball}$ gauge invariant, so $\mathcal T$ is deck invariant. Conversely, if $\mathcal T(x)=\mathcal T(x')$, the ball chart determines a unit vector with nonzero first coordinate up to gauge, so Lemma~\ref{lem:rtc-injective} gives $\mathsf N(x)\sim\mathsf N(x')$; hence $[Z(u,v)]=[Z(u',v')]$ in $\CP^2$, and Lemma~\ref{lem:fer-torus} gives $(u,v)-(u',v')\in\Z^2$. For the corresponding deck map $T$, the unit vectors $Z(u,v)$ agree, so the gauge factor is one and $x=Tx'$. Injective restrictions are injective symplectic immersions in equal dimension, hence open symplectic embeddings; the last assertion follows from the characterisation of equal images.
+\end{proof}
+
+All objects are explicit; $\psi_1^{-1}$ is obtained by integrating \eqref{eq:rtc-return-field} backwards from $s=1$, and the transport by \eqref{eq:rtc-transport}.
+
+\subsection{The packing in dimension four}\label{sec:rtc-packing}
+
+The transfer depends on the data only through $h$.
+
+\begin{construction}[Data of the four-dimensional packing]\label{cons:rtc-data}
+\uses{M-prop:cmp-linear, def:shd4-data, prop:cub-handle, prop:fer-handle, thm:rtc-transfer, prop:rtc-avoid}
+Let $(k,\rho_i,a_i,h,d_n,g,K,q)$ be valid cubic data (Definition~\ref{def:shd4-data}) with $d_n=\frac12(h+\frac13)$. Let
+$f_i=f_i^{\rm cap}$ be the maps of Remark~\ref{rem:shd-four}, built by the handle construction of \S\ref{sec:shd-four},
+put $\bar\rho_i=(\rho_i+a_i)/2$ and $\hat\rho_i=\bar\rho_i+(a_i-\bar\rho_i)/4$, and let the open domain be
+$\Bo(\hat\rho_i)$. Let $\rho_i^+<\rho_i^{\rm dom}$ be the recorded capacities of Remark~\ref{rem:rtc-recorded}. Put
+$\mathcal K=\bigcup_i f_i(B(\rho_i^+))$ and $m=\frac12\min_{z\in\mathcal K}(1-\pi|z|^2)$.
+
+\emph{The equal case.} Let $k\ge10$, $\rho_1=\dots=\rho_k=\rho$ and $\frac34<\rho\sqrt k<1$. Put
+$t_0=\frac12(1+\rho\sqrt k)$, $a_i=a=t_0/\sqrt k$, $h=t_0/3$, $g=3(1-t_0)$, and let $(K,q)$ be the comparison datum of
+\Mref{Proposition}{prop:cmp-linear}, with gap $\frac{31}{32}g$. These are valid cubic data
+(Remark~\ref{rem:rtc-equal}). For $k=9$ the same formulas would give $a=t_0/3=h$, violating $a<h$; valid cubic data for
+$k=9$ and for unequal capacities are constructed in the companion paper~\cite{SongHD} from a scalar comparison datum.
+\end{construction}
+
+\begin{theorem}[Packing in dimension four]\label{thm:cub-packing}\label{prop:rtc-embeddings}
+\lean[needed]{SymplecticPacking.Branch2.CubicData.Valid.fcapGen_injective, SymplecticPacking.Embed.Cubic.fcapV_disjoint,
+SymplecticPacking.Embed.Cubic.fcapV_mem_ball, SymplecticPacking.Embed.Cubic.fcap_injective, SymplecticPacking.Embed.Cubic.fcap_disjoint,
+SymplecticPacking.Embed.Cubic.fcap_mem_ball, SymplecticPacking.Embed.Cubic.handle_phiInvSpec,
+SymplecticPacking.Handle.Cubic.handle_deckEquivariant}
+\uses{cons:rtc-data, M-prop:cmp-linear, def:shd4-data, prop:cub-handle, prop:fer-handle, thm:rtc-transfer, prop:rtc-avoid}
+Let $(k,\rho_i,a_i,h,d_n,g,K,q)$ be valid cubic data with $d_n=\frac12(h+\frac13)$. Then there are explicit numbers
+$\rho_i<\rho_i^+<\rho_i^{\rm dom}$ and smooth maps $f_i\colon\Bo(\rho_i^{\rm dom})\to\C^2$ with symplectic derivative, injective
+on $B(\rho_i^+)$, such that the sets $f_i(B(\rho_i^+))$ are pairwise disjoint and contained in $B(1-\mu_{\rm ball})$ for some
+$\mu_{\rm ball}\in(0,1)$. More precisely, for the data of Construction~\ref{cons:rtc-data}:
+\begin{enumerate}[label=(\roman*)]
+\item each $f_i$ is a smooth symplectic embedding of $\Bo(\hat\rho_i)$ into $(\Bo(1),\omega_0)$, and
+$\rho_i<\rho_i^+<\rho_i^{\rm dom}\le\hat\rho_i$;
+\item the sets $f_i(\Bo(\hat\rho_i))$, $1\le i\le k$, are pairwise disjoint;
+\item $m>0$ and $f_i(B(\rho_i^+))\subset B(1-m)$ for every $i$;
+\item the comparison isotopy $q$, the Moser map $\Phi$, the handle map $\mathcal D$ and the transfer $\mathcal T$ are the same for all $i$;
+only the layer map $E_i$ depends on $i$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+The data are valid cubic data by hypothesis (in the equal case by \Mref{Proposition}{prop:cmp-linear} and Remark~\ref{rem:rtc-equal}), and $h<d_n<\frac13$. Here $f_i=\mathcal T\circ f^N_i$ with $f^N_i$ of Proposition~\ref{prop:shd4-maps} (Remark~\ref{rem:shd-four}).
+
+(i) By Proposition~\ref{prop:shd4-maps}(a), $f^N_i$ is smooth on $\Bo(\hat\rho_i)$ into $\{p<h\}\setminus\widetilde{\mathcal F}$, the domain of $\mathcal T$, with $(f^N_i)^*\Omega_0=\omega_0$; Theorem~\ref{thm:rtc-transfer} gives $f_i$ smooth into $\Bo(1)$ with $f_i^*\omega_0=\omega_0$. If $f_i(X)=f_i(X')$, Theorem~\ref{thm:rtc-transfer} gives $f^N_i(X)=Tf^N_i(X')$ for a deck map $T$, and Proposition~\ref{prop:shd4-maps}(c) gives $X=X'$; so $f_i$ is an open embedding. The capacity inequalities are in Remark~\ref{rem:rtc-recorded}.
+(ii) If $f_i(X)=f_j(X')$, the same argument gives $i=j$, $X=X'$.
+(iii) $\mathcal K$ is compact in $\Bo(1)$, so $1-\pi|z|^2\ge2m>m>0$ on $\mathcal K$.
+(iv) $q$, $\mathcal D$, $\Phi$, $\chi_{\mathcal A}$ and $\mathcal T$ do not depend on $i$.
+
+The first statement follows with $\mu_{\rm ball}=m<1$, restricting $f_i$ to $\Bo(\rho_i^{\rm dom})$.
+\end{proof}
+
+\begin{remark}[Recorded capacities]\label{rem:rtc-recorded}
+Since the proof embeds the open balls $\Bo(\hat\rho_i)$ with pairwise disjoint images, Theorem~\ref{thm:cub-packing}
+holds for every choice of $\rho_i<\rho_i^+<\rho_i^{\rm dom}\le\hat\rho_i$. The choice enters only the radii of the common
+isotopy (\Mref{Definition}{def:ham-radii}) and hence the Hamiltonian. In the equal case the construction records
+$(\rho_i^+,\rho_i^{\rm dom})=(\rho \varrho_3^2,\rho \varrho_4^2)$, where $\varrho_4=\sqrt{\bar\rho/\rho}$ and $\varrho_3=(1+\varrho_4)/2$; then
+$1<\varrho_3<\varrho_4$ gives $\rho<\rho \varrho_3^2<\rho \varrho_4^2=\bar\rho<\hat\rho$. For target capacity $C$ and given capacity $c=C\rho$
+the physical map $u\mapsto\sqrt C\,f_i(u/\sqrt C)$ has the capacities $C\rho_i^+$ and $C\rho_i^{\rm dom}$, that is,
+$c\varrho_3^2$ and $c\varrho_4^2$. For the valid cubic data of the companion paper~\cite{SongHD} the construction records
+$(\rho_i^+,\rho_i^{\rm dom})=(\bar\rho_i,\hat\rho_i)$.
+\end{remark}
+
+\begin{remark}[The equal-capacity branch]\label{rem:rtc-equal}\label{rem:cub-lean}
+\lean{SymplecticPacking.Params.t0, SymplecticPacking.Params.a, SymplecticPacking.Params.h,
+ SymplecticPacking.Params.dn_sub_h, SymplecticPacking.Params.one_sub_three_dn, SymplecticPacking.Params.a_sub_rho,
+ SymplecticPacking.Params.density, SymplecticPacking.Branch2.CubicData.ofParams_valid,
+ SymplecticPacking.Branch2.embeddingsEq, SymplecticPacking.Branch2.embeddingsEq_spec,
+ SymplecticPacking.Branch2.cubicEmbeddings_spec}
+\uses{cons:rtc-data, thm:cub-packing, rem:fer-lean}
+In the equal case of Construction~\ref{cons:rtc-data} let $\eta_\star=1-\rho\sqrt k\in(0,\frac14)$ be the volume defect. Then
+\[
+ t_0=1-\frac{\eta_\star}2,\quad a=\frac{t_0}{\sqrt k},\quad h=\frac{t_0}3,\quad d_n=\frac13-\frac{\eta_\star}{12},\qquad
+ a-\rho=\frac{\eta_\star}{2\sqrt k},\quad d_n-h=\frac{\eta_\star}{12},\quad 1-3d_n=\frac{\eta_\star}4,
+\]
+the comparison function is $K(p)=(3\sqrt k-9)p$, and the comparison gap of \Mref{Proposition}{prop:cmp-linear} is
+$\frac{31}{32}g$ with $g=3(1-t_0)=\frac{3\eta_\star}2$. With the isotopy of Theorem~\ref{thm:pll-inner} and the handle
+construction of \S\ref{sec:shd-four}, the maps of this branch are
+\[
+ f_i= b_{\rm ball}\circ\psi_1^{-1}\circ\operatorname{pr}\circ\tau_1\circ\iota
+       \circ\mathsf N\circ\Phi^{-1}\circ\chi_{\mathcal A}\circ\mathcal D^{-1}\circ E_i\qquad(1\le i\le k).
+\]
+For the input of \Mref{Corollary}{thm:main-epoch}, $\rho=\sqrt{(1-\eps/2)/k}$ and
+$\eta_\star=1-\sqrt{1-\eps/2}\in(\eps/4,\eps/2)$; the equal case applies exactly when $\rho\sqrt k>3/4$, i.e.\ $\eps<\frac78$.
+For unit balls (capacity $\pi$) the target capacity is $C=\pi/\rho$, and the
+physical rescaling of \Mref{Definition}{def:ham-normalise} makes the target the open Euclidean ball of radius
+$R=\rho^{-1/2}$, so $k/R^4=k\rho^2=(1-\eta_\star)^2$. For the data of \Mref{Theorem}{thm:intro-4d}, $R^4=k/(1-\eps/4)$, so
+$\rho\sqrt k=\sqrt{1-\eps/4}>\frac34$ and $\eta_\star=1-\sqrt{1-\eps/4}\in(\eps/8,\eps/4)$; the equal case applies
+for every $\eps\in(0,1)$ when $k\ge10$. The strip constants are those of Remark~\ref{rem:shd-four} with
+$\delta=(a-\rho)/2$.
+
+The defect $1-\rho\sqrt k=\eta_\star$ splits as $(1-t_0)+\sqrt k\,(a-\rho)=\frac{\eta_\star}2+\frac{\eta_\star}2$. The fibre part $1-t_0=1-3h$ pays for
+$h<\frac13$, for the comparison gap $g$ and for the margins $d_n-h$ and $1-3d_n$ of the transfer; the strip part $\sqrt k\,(a-\rho)$ pays for the enlargement from $\rho$ to $\bar\rho$ and for the excess of the strip map.
+The transfer, the ball chart and the dilation are symplectic embeddings and lose no volume beyond these margins.
+\end{remark}
+

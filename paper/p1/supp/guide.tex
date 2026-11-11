@@ -1,0 +1,52 @@
+\section{A checking route}\label{sec:guide}
+
+\begingroup\sloppy
+
+This section lists, in construction order, the statements to check for \Mref{Theorem}{thm:intro-4d} and
+\Mref{Corollary}{thm:main-epoch}. For each step it gives input, output, where it is proved, and what is new. Prefix M
+and the lettered results refer to the main text. Interface conventions are in Table~\ref{tab:pre-interfaces}.
+
+\subsection*{Organisation}
+
+After \S\ref{sec:pre}, the sections are grouped as follows: the coordinate rearrangement and the planar maps of the
+linear comparison datum (\S\S\ref{sec:fcp}--\ref{sec:pll}); the four-dimensional model, handle, strip and layer maps
+and return to the ball (\S\S\ref{sec:cub}--\ref{sec:rtc}); and the global construction and the worked instance
+(\S\S\ref{sec:brd}--\ref{sec:example}). The general comparator, the scalar comparison datum for unequal capacities and
+$k=9$, the higher-dimensional models and the finite-output algorithm are in the companion paper~\cite{SongHD}.
+
+\subsection{The four-dimensional chain}\label{sec:guide-four}
+
+The data are $n=2$, $k\ge10$, equal capacities $c$ and $C$ with $\frac34<\rho\sqrt k<1$, $\rho=c/C$; this covers the
+data of \Mref{Theorem}{thm:intro-4d} and \Mref{Corollary}{thm:main-epoch}. Steps F5--F12 apply verbatim to any valid
+cubic data (Definition~\ref{def:shd4-data}); the companion paper supplies such data for all admissible
+$(2,k,C,c)$.
+
+\begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,itemsep=3pt]
+\item \emph{Normalisation.} Admissible $(2,k,C,c)$ $\mapsto$ $\rho=c/C<\frac13$ and the linear branch
+ (\Mref{Definition}{def:ham-normalise}, Construction~\ref{cons:ham-branch}).
+\item \emph{Auxiliary capacities and profile.} $\rho\mapsto t_0=\frac12(1+\rho\sqrt k)$, $a=t_0/\sqrt k$, $h=t_0/3$, and
+ $\Pb=\Hb-k(a-p)_+$ on $[0,h]$ with $\int_0^h\Pb=t_0(1-t_0)>0$ (Remark~\ref{rem:rtc-equal}).
+\item \emph{Comparison function.} $K(p)=(3\sqrt k-9)p$; $K-\Pb$ is a constant plus a tent whose increasing rearrangement
+ is linear (\Mref{Proposition}{prop:cmp-linear}, \S\ref{sec:fcp-equal}). New: no fixed point of the rearrangement
+ contraction of \cite{OpenAI2026} is needed.
+\item \emph{Planar realisation.} A Hamiltonian isotopy $q_t$ of $(\C,\omega_\C)$ with generator supported in
+ $\{\pi|z|^2\le P_{\rm supp}\}$, $P_{\rm supp}<h$, satisfying \eqref{eq:shd4-comparison} (Theorems~\ref{thm:pll-inner}
+ and~\ref{thm:pln-isotopy}). New: built from Morse charts of an explicit convex potential, with a radial source
+ primitive as Hamiltonian.
+\item \emph{Model.} $h<d_n<\frac13\mapsto$ the cubic cover model $(\R^2\times\C,\Omega_0)$ with deck maps, marked fibres, annulus and dual one-form (Definition~\ref{def:cub-model}, Propositions~\ref{prop:cub-handle}, \ref{prop:fer-handle}). New: an explicit theta lift $Z$ of the Fermat torus, giving Biran's disc bundle \cite{Biran2001} by formulas on the cover.
+\item \emph{Handle.} Cubic data and model $\mapsto$ maps $f^N_i$ on $\Bo(\hat\rho_i)$ into $\{p<h\}$, with $(f^N_i)^*\Omega_0=\omega_0$, injective, disjoint images, no two image points deck equivalent (\S\ref{sec:shd-four}: Propositions~\ref{prop:shd4-second}, \ref{prop:shd4-third}, \ref{prop:shd4-moser}, \ref{prop:shd4-maps}; strip map Proposition~\ref{prop:hdl-strip}; outline \Mref{Remark}{rem:hdl-four}). New: the three Moser paths have explicit deck-invariant primitives vanishing on the marked fibres.
+\item \emph{Transfer.} Compact subsets of $\{p<h\}$ avoiding marked fibres $\mapsto$ $\mathcal T$ into $\Bo(1)$, $\mathcal T^*\omega_0=\Omega_0$, identifying exactly deck-equivalent points, with compact margin (Theorem~\ref{thm:rtc-transfer}). New: explicit injection, transport and Moser return flows; a cube-root symmetry keeps the image off the line removed by the ball chart.
+\item \emph{Embeddings.} F6, F7 $\mapsto$ normalised $f^\natural_i$ on $\Bo(\rho_i^{\rm dom})$, injective on $B(\rho_i^+)$, disjoint images in $B(1-m)$ (Theorem~\ref{thm:cub-packing}; \Mref{Theorem}{thm:mdl-cub}).
+\item \emph{Common isotopy.} Rescaled datum (\Mref{Proposition}{prop:ham-embeddings}) and centres with disjoint closed balls $\mapsto$ symplectic $F_{i,t}$, disjoint at all times, from $u\mapsto s_i+u$ to $f_i$ (\Mref{Proposition}{prop:ham-isotopy}, Proposition~\ref{prop:iso-common}). New: explicit route, path in $\operatorname{Sp}(2n)$ and common Alexander tail, the same in every dimension.
+\item \emph{Hamiltonian.} $F_{i,t}\mapsto$ smooth $H_{\mathfrak E}$ vanishing for $t\notin(0,1)$ and outside $\R\times\EB(R_F)$, $X_H=\dot F_{i,t}$ on the moving balls, satisfying $\Pack$ (\Mref{Definition}{def:ham-H}, \Mref{Lemma}{lem:ham-field}, \Mref{Proposition}{prop:ham-end}, \Mref{Theorem}{thm:ham-flow}). New: pushforward of a cut-off radial primitive in the source balls.
+\item \emph{Statements.} With $H[2,k,C,c,s]=H_{\mathfrak E}$ (\Mref{Definition}{def:ham-H-final}), \Mref{Theorem}{thm:intro-4d} and \Mref{Corollary}{thm:main-epoch} follow after checking admissibility (\Msec{sec:ham-proof-main}).
+\item \emph{Robustness.} \Mref{Proposition}{thm:intro-stability} follows from \Mref{Theorem}{thm:intro-4d} and Gr\"onwall's inequality.
+\end{enumerate}
+
+\subsection{What the formal proof covers}\label{sec:guide-trust}
+
+Scope, trusted base and the unverified metaprogram are in \Msec{sec:ver}; the explicitness check and the formal statements
+that differ in form from the text are in Appendix~\ref{sec:xpl}. The Lean declarations for each statement are named in
+the source tags and indexed in \texttt{verification/PAPER-INDEX.md}.
+
+\endgroup

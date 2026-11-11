@@ -1,12 +1,10 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 title: "Explicit Hamiltonian ball packings in every dimension"
-version: "1.0.1"
-doi: "10.5281/zenodo.23763498"
-date-released: "2026-10-29"
+version: "1.1.0"
+date-released: "2026-11-11"
 license: Apache-2.0
 repository-code: "https://github.com/s-JoL/Symplectic-Ball-Packing"
-url: "https://doi.org/10.5281/zenodo.23763498"
 authors:
   - family-names: Song
     given-names: Liang
@@ -16,8 +14,10 @@ abstract: >-
   R × R^4 whose time-one map carries the k closed unit balls centred at (3i−3,0,0,0) into the
   ball of radius (k/(1−ε/4))^{1/4}, with an explicit stability margin. The same construction
   realises every ball packing allowed by the volume and two-ball inequalities in dimension
-  2n ≥ 6, and the packings with Σc_i² < C² and 3c_i < C in dimension four. Paper, supplement
-  and a Lean 4 formalisation of the main packing, stability and algorithm theorems.
+  2n ≥ 6, and the packings with Σc_i² < C² and 3c_i < C in dimension four. Three papers (four-ball,
+  higher dimensions, elementary packings and their limits), supplements, and a Lean 4 formalisation
+  of the main packing, stability and algorithm theorems. This gives Biran's theorem for k ≥ 9 equal balls
+  without J-holomorphic curves or Seiberg–Witten theory.
 keywords:
   - symplectic ball packing
   - Hamiltonian dynamics

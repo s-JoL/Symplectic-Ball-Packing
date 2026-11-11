@@ -1,0 +1,195 @@
+\section{Introduction}\label{p2:sec-intro}
+
+Points of $\R^{2n}=\C^n$ are $z=(z_1,\dots,z_n)$, $z_j=x_j+iy_j$, with $\omega_0=\sum_jdx_j\wedge dy_j$. The
+Hamiltonian vector field of $H(t,z)$ is defined by $\iota_{X_H}\omega_0=dH$, i.e.\
+$X_H=(\partial_yH,-\partial_xH)$, and $\phi^t_H$ is its flow from time $0$ to time $t$. We write
+$B(c)=\{\pi|z|^2\le c\}$ for the closed ball of capacity $c$, $\Bo(c)$ for its interior, and $B(s,c)=s+B(c)$.
+
+Balls of capacities $c_1,\dots,c_k$ can be packed symplectically into $\Bo(C)$ only if $\sum_ic_i^n<C^n$ (volume) and
+$c_i+c_j<C$ for $i\ne j$ (Gromov's two-ball theorem \cite{Gromov1985}). In dimension four there are further
+obstructions \cite{McDuffPolterovich1994,Hutchings2011}, and every packing problem reduces to inequalities indexed by
+exceptional classes \cite{McDuff1998,LiLiu2001,LiLi2002}; Biran \cite{Biran1997} proved that $k\ge9$ equal balls fill
+$B^4$ up to any $\eps>0$. In dimension $2n\ge6$ there are no further obstructions: this is Conjecture~A of Siegel and
+Yao \cite{SiegelYao2025}, proved in a 2026 preprint of OpenAI \cite{OpenAI2026}. These proofs do not write down a
+Hamiltonian moving prescribed balls; in \cite{OpenAI2026} the comparison function is a fixed point, and the planar maps
+realising the rearrangements and the relative Moser isotopies are obtained from existence statements. Paper~I \cite{PaperI} constructs explicit Hamiltonian full packings of $B^4$ by $k\ge10$ equal
+balls. Here we realise, by the time-one map of one explicit Hamiltonian moving balls at prescribed positions into the
+target, every packing allowed by the two inequalities in dimension $2n\ge6$, and in dimension four a range that
+contains all nearly full packings by $k\ge9$ equal balls; and we give an algorithm whose output is a rational
+polynomial times a fixed cutoff.
+
+\subsection{Results}\label{p2:sec-intro-results}
+
+\begin{definition}[Packing specification]\label{def:intro-spec}
+\lean{SymplecticPacking.Problem.PackingSpec}
+Let $n\ge1$, $k\ge0$, $C>0$, $c=(c_1,\dots,c_k)\in(0,\infty)^k$ and $s=(s_1,\dots,s_k)\in(\R^{2n})^k$. A
+function $H\colon\R\times\R^{2n}\to\R$ satisfies $\Pack(n,k,C,c,s)$ if
+\begin{enumerate}[label=(\alph*)]
+\item $H$ is $C^\infty$, and there is a compact set $\mathcal S\subset\R^{2n}$ with $H(t,z)=0$ for all
+ $t\in\R$ and all $z\notin\mathcal S$;
+\item for every $i$ and every $z\in B(s_i,c_i)$ there is an integral curve $\gamma\colon\R\to\R^{2n}$ of
+ $X_H$ with $\gamma(0)=z$, and every integral curve $\gamma\colon[0,1]\to\R^{2n}$ of $X_H$ with
+ $\gamma(0)=z$ satisfies $\gamma(1)\in\Bo(C)$.
+\end{enumerate}
+\leanmark{Problem.PackingSpec}
+\end{definition}
+
+Under (a) the flow $\phi^t_H$ is global and symplectic, and (b) says $\phi^1_H(B(s_i,c_i))\subset\Bo(C)$.
+
+\begin{definition}[Admissible data]\label{def:intro-admissible}
+\lean{SymplecticPacking.Problem.Admissible}
+Let $n\ge2$, $k\ge1$, $C>0$ and $c\in(0,\infty)^k$. The data $(n,k,C,c)$ are \emph{admissible} if
+\begin{align*}
+ n\ge3:&\qquad \textstyle\sum_ic_i^n<C^n\quad\text{and}\quad c_i+c_j<C\ \text{ for all } i\ne j;\\
+ n=2:&\qquad \textstyle\sum_ic_i^2<C^2\quad\text{and}\quad 3c_i<C\ \text{ for all } i.
+\end{align*}
+\leanmark{Problem.Admissible}
+\end{definition}
+
+For $n\ge3$ these are exactly the two necessary conditions. For $n=2$ they define a sufficient range: by \cite{McDuffPolterovich1994,McDuff1998,LiLiu2001,LiLi2002}, closed balls of capacities
+$c_i$ embed in $\Bo(C)$ if $\sum_ic_i^2<C^2$ and $\sum_im_ic_i<dC$ for every exceptional class $(d;m_1,\dots,m_k)$
+with $d\ge1$; such a class has $m_i\ge0$ and $\sum_im_i=3d-1$, so $3c_i<C$ gives $\sum_im_ic_i<dC$.
+
+
+\begin{maintheorem}\label{thm:main}
+\uses{def:intro-spec, def:intro-admissible, def:intro-levels, def:ham-H-final, thm:eff-algorithm}
+Let $n\ge2$, $k\ge1$, $C>0$, $c_1,\dots,c_k>0$ and $s_1,\dots,s_k\in\R^{2n}$ be such that the closed balls
+$B(s_i,c_i)$ are pairwise disjoint and $(n,k,C,c)$ is admissible. Then:
+\begin{enumerate}[label=(\roman*)]
+\item the function $H=H[n,k,C,c,s]$ of Definition~\ref{def:ham-H-final} is $C^\infty$ on $\R\times\R^{2n}$,
+ vanishes outside $\R\times\mathcal S$ for an explicit compact set $\mathcal S$ and for $t\notin(0,1)$, and
+ satisfies $\Pack(n,k,C,c,s)$; in particular $\phi^1_H$ maps each $B(s_i,c_i)$ into $\Bo(C)$, and the
+ images are pairwise disjoint;
+ \leanmark{main\_theorem, main\_time\_support, main\_support\_radius, flow\_images\_disjoint}
+\item \textup{(L1)} the definition of $H[n,k,C,c,s]$ is the same for all such data and uses only the
+ operations of level~L1 in Definition~\ref{def:intro-levels};
+\item \textup{(L2, L3)} there is one oracle algorithm which, given $n$, $k$ and names of the real inputs
+ $C,c_1,\dots,c_k,s_1,\dots,s_k$ (a rational number is named by its constant sequence), halts on all such data and
+ outputs an integer $B$ and a polynomial $P\in\Q[t,z]$ such that $\Hfin=\beta_B\cdot P$ satisfies
+ $\Pack(n,k,C,c,s)$. The output may depend on the names; for computable inputs, given by computable names, it is an
+ ordinary algorithm.
+ \leanmark{original\_name\_algorithm}
+\end{enumerate}
+\end{maintheorem}
+
+Here level L1 means that $H$ is built by explicitly listed operations (arithmetic, elementary functions, integrals,
+unique solutions of explicit ODEs, inverses, case distinctions, finite searches; Definition~\ref{def:intro-levels}).
+A \emph{name} of a real number $x$ is a sequence of rationals $q(p)$ with $|q(p)-x|\le2^{-p}$, and
+$\beta_B(z)=\prod_l\beta(\zeta_l/B)$ is a fixed smooth cutoff equal to one on the cube $[-B/2,B/2]^{2n}$ and vanishing outside
+$(-3B/4,3B/4)^{2n}$, so that L2 is a finite description of a Hamiltonian and L3 a uniform algorithm producing it.
+
+Parts (i) and (ii) are proved in \S\ref{p2:sec-proof}, from the model theorems of Section~\ref{p2:sec-models} and the
+passage from embeddings to one Hamiltonian of Paper~I; for $k\ge10$ equal capacities in dimension four with
+$\frac34<\rho\sqrt k<1$, $\rho=c/C$, they are the linear branch of Paper~I. Part (iii) is
+Theorem~\ref{thm:eff-algorithm}, proved in Section~\ref{sec:eff}; its termination argument uses part (i).
+
+\begin{maincorollary}[The Siegel--Yao criterion by explicit flows]\label{thm:main-sy}
+Let $n\ge3$, $k\ge1$, $C>0$ and $c_i>0$, and let $B(s_i,c_i)\subset\R^{2n}$, $1\le i\le k$, be pairwise disjoint closed balls.
+There is a symplectic embedding of a neighbourhood of $\bigsqcup_iB(s_i,c_i)$ into $\Bo(C)$ if and only if
+$\sum_ic_i^n<C^n$ and $c_i+c_j<C$ for all $i\ne j$. In that case $\phi^1_H$ with $H=H[n,k,C,c,s]$ is such
+an embedding.
+\leanmark{neighbourhood\_criterion, flow\_neighbourhood\_embedding}
+\end{maincorollary}
+
+Sufficiency is the main theorem of \cite{OpenAI2026}; Corollary~\ref{thm:main-sy} realises the embedding as the
+time-one map of an explicit Hamiltonian moving balls at prescribed positions.
+
+\begin{maincorollary}[Equal balls]\label{thm:main-equal}
+Let $n\ge2$, $\eps\in(0,1)$, and $k\ge2^n$ if $n\ge3$, $k\ge9$ if $n=2$. Let $c>0$, let $s_1,\dots,s_k$ be
+centres with $B(s_i,c)$ pairwise disjoint, and let $C>0$ with $kc^n<C^n<kc^n/(1-\eps)$. Then
+$H[n,k,C,(c,\dots,c),s]$ satisfies $\Pack(n,k,C,(c,\dots,c),s)$, and $kc^n/C^n>1-\eps$.
+\leanmark{equal\_balls}
+\end{maincorollary}
+
+Thus, for $n\ge3$, $k\ge2^n$ equal balls fill any fraction below one of $B(C)$ by an explicit flow; for $2\le k<2^n$
+the two-ball inequality caps the fraction at $k/2^n$. For $n=2$ the bound $k\ge9$ is Biran's \cite{Biran1997}; here it
+comes from the condition $3c<C$, and for $k\le8$ full packings do not exist except for $k=1,4$
+\cite{McDuffPolterovich1994}. The case $n=2$ gives a proof, without $J$-holomorphic curves or Seiberg--Witten theory, of Biran's
+theorem that $B^4$ is fully packed by $k$ equal balls for every $k\ge9$; the earlier proofs \cite{Biran1997,Biran1999,BuseHind2013,BuseHindOpshtein2016}
+use them, directly or through the results they cite.
+
+\begin{maincorollary}[A cone of unequal balls in dimension four]\label{thm:main-cone4}
+Let $k\ge1$ and $c_1,\dots,c_k>0$ with $\max_ic_i\le\frac13\big(\sum_ic_i^2\big)^{1/2}$, let $\eps\in(0,1)$ and
+$C_\eps=\big(\sum_ic_i^2/(1-\eps/2)\big)^{1/2}$. For all centres $s_i$ with $B(s_i,c_i)$ pairwise disjoint,
+$H[2,k,C_\eps,c,s]$ satisfies $\Pack(2,k,C_\eps,c,s)$, and $\sum_ic_i^2/C_\eps^2=1-\eps/2$; the images fill the fraction
+$1-\eps/2$ of the volume of $B(C_\eps)$.
+\leanmark{unequal\_cone}
+\end{maincorollary}
+
+\begin{maincorollary}[The Epoch data]\label{thm:main-epoch}
+Let $k\ge9$ be an integer, $\eps\in(0,1)$, $s_i=(3i-3,0,0,0)\in\R^4$, $R=(k/(1-\eps/2))^{1/4}$ and $C=\pi R^2$. Then
+$H=H[2,k,C,(\pi,\dots,\pi),s]$ satisfies $\Pack(2,k,C,(\pi,\dots,\pi),s)$: its time-one map sends each closed unit ball
+$B(s_i,\pi)$ into $\Bo(\pi R^2)$, and $k/R^4=1-\eps/2>1-\eps$.
+\leanmark{epoch\_packing}
+\end{maincorollary}
+
+For $k\ge10$ and $\eps<\frac78$ this is the corresponding corollary of Paper~I, which uses the linear comparison datum;
+the other cases use the scalar comparison datum. The corollary is the input of the Epoch part of
+Theorem~\ref{thm:eff-algorithm}, which, together with Paper~I, answers the mathematical part of the construction problem
+of Epoch AI \cite{Epoch} (see Remark~\ref{rem:eff-epoch-interface} for its numerical interface).
+
+\subsection{The construction and what is new}\label{p2:sec-intro-mechanism}
+
+We follow the mechanism of \cite{OpenAI2026}, and its sign convention $\iota_{X_Q}\omega_V=-dQ$ for fibre
+Hamiltonians, opposite to the convention for $H$. The model is a product $\Sigma_\ell\times\C^m$, $m=n-1$, of a compact
+piece of an affine curve with the fibre, with fibre moments $p_j=\pi|w_j|^2$. A ball $B(a)\subset\C\times\C^m$,
+sliced by the moments of its last $m$ coordinates, is a family of discs of capacity $(a-|p|)_+$, $|p|=\sum_jp_j$. For
+capacities below $\frac12$ the base is the diagonal curve $y_j^2=t^2-j$, and the base area above a fibre point is
+$\Hb(p)=A_\ell(1-2|p|)$ with $A_\ell\uparrow2^m$; the limiting profile has integral $1/n!=\vol\Bo(1)$. For a nearly
+full packing the deficit $\Pb=\Hb-\sum_i(a_i-|p|)_+$ has positive integral but is negative near $p=0$, so the base
+discs cannot simply be placed side by side. One twists the bundle across an annulus by a Hamiltonian isotopy $q$ of the
+fibre; with a function $K$ of the moments this redistributes base area between moment levels, and the balls fit if
+\[
+ (K-P)\bigl(p(q(w))\bigr)\le K\bigl(p(w)\bigr)-\gamma\qquad\text{for every fibre point }w,
+\]
+for some $\gamma>0$ and a minorant $P\le\Pb$. In \cite{OpenAI2026}, $K$ is the fixed point of a contraction built
+from increasing rearrangements, the rearrangements are realised by isotopies, the inequality is turned into
+embeddings by Moser's method, and the result is transferred to the target. There are three cases: all capacities
+below $\frac C2$; one capacity at least $\frac C2$ with $n\ge4$; and one capacity at least $\frac C2$ with $n=3$.
+
+The common isotopy from the prescribed balls and the Hamiltonian generating it are those of Paper~I, recalled in
+Section~\ref{p2:sec-machine}; so are the cubic model, the four-dimensional handle and the return to the four-ball.
+The following ingredients are new here:
+\begin{enumerate}[label=(\arabic*),leftmargin=*]
+\item a comparison datum for every concave profile on a rational polytope: a finite rational iterate of the
+ rearrangement contraction of \cite[\S2]{OpenAI2026}, with explicit gap, in place of its fixed point
+ (Theorem~\ref{thm:cmp-main});
+\item an explicit area-preserving rearrangement of a planar convex function, lifted to the fibres of a toric model
+ with face collars (Theorem~\ref{thm:cmp-realisation}, proved in \Ssec{sec:plc});
+\item in dimension four, a scalar comparison datum for the cubic model that covers all admissible capacities, including
+ $k=9$ and unequal capacities, where a linear comparison function can fail (Theorem~\ref{thm:mdl-cub-general});
+\item a bordered handle whose Moser maps are time-one maps of explicit fields in a finite coordinate atlas, which
+ proves the packing theorem in a model (Theorem~\ref{thm:mech-packing}) for $n\ge3$
+ (\Ssec{p2:sec-shd}--\Snum{sec:native-toric});
+\item a model over the fixed diagonal curve $y_j^2=t^2-j$, an explicit instance of the complete-intersection model of
+ \cite[\S5.2]{OpenAI2026}, with a transfer to the ball by explicit flows (Theorem~\ref{thm:mdl-qdr});
+\item for one large ball and $n\ge4$, a mixed product model with a closed-form return to the shell about the reserved
+ ball; for $n=3$, the polynomial cubic model of \cite{OpenAI2026} with a quantitative area tail and a polynomial
+ bubble that inserts the large ball (Theorem~\ref{thm:mdl-lrg});
+\item an algorithm with finite output: a sound rational Euler certificate for a candidate polynomial, and termination
+ proved from the explicit Hamiltonian (Theorem~\ref{thm:eff-algorithm}).
+\end{enumerate}
+Definitions~\ref{def:intro-spec} and~\ref{def:intro-admissible}, Theorem~\ref{thm:main}(i), (iii) and
+Corollaries~\ref{thm:main-sy}--\ref{thm:main-epoch} are verified in Lean~4; the explicitness statement (ii) is
+checked by a metaprogram that is not itself verified (Section~\ref{p2:sec-ver}).
+
+\subsection{Relation to previous work}\label{p2:sec-intro-prior}
+
+Packing stability in dimension four was extended by Biran \cite{Biran1999}, Buse, Hind and Opshtein
+\cite{BuseHind2011,BuseHind2013,BuseHindOpshtein2016} and Edtmair \cite{Edtmair2025}; Buse and Hind proved it in higher
+dimensions. Siegel and Yao
+\cite{SiegelYao2025} stated Conjecture~A and proved a stabilised two-ball theorem and the invariance of
+four-dimensional ball packing problems under products with closed surfaces. Explicit constructions go back to
+Traynor \cite{Traynor1995}, including full packings of $B^{2n}$ by $d^n$ equal balls; symplectic folding and wrapping
+are in \cite{SchlenkHand,SchlenkBook,Schlenk2018}, and Witt Nystr\"om \cite{WittNystrom2024} embedded large
+neighbourhoods of zero sections of normal bundles. It uses the rearrangement contraction of \cite[\S2]{OpenAI2026}, and the formal proof uses lemmas of the Lean library accompanying
+\cite{OpenAI2026}; the packing existence theorem of that preprint is not used.
+
+\subsection{Organisation}\label{p2:sec-intro-organisation}
+
+Section~\ref{p2:sec-machine} states the comparison data and the toric mechanism, proved here, and the passage from
+embeddings to one Hamiltonian, recalled from Paper~I. Section~\ref{p2:sec-models} describes the four-dimensional
+scalar branch, the three higher-dimensional models and the case distinction. Section~\ref{p2:sec-proof} proves
+Theorem~\ref{thm:main}(i), (ii) and the corollaries, Section~\ref{sec:eff} proves the finite form and the algorithm, and
+Section~\ref{p2:sec-ver} describes the formal verification. The supplement contains the complete proofs; numbers with
+the prefix S refer to it, and ``Paper~I, \dots'' refers to \cite{PaperI} and its supplement.

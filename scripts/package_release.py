@@ -23,7 +23,8 @@ PUBLIC_FILES = (
     "README.md", "README.zh-CN.md", "REVIEW.md", "PROVENANCE.md", "cache/README.md", ".gitattributes", "LICENSE", "NOTICE", "CITATION.cff", ".zenodo.json", ".gitignore",
     "lakefile.toml", "lake-manifest.json", "lean-toolchain", "SymplecticPacking.lean",
 )
-PUBLIC_DIRS = ("SymplecticPacking", "verification", "vendor", "scripts", "test", ".github", "examples")
+DOCUMENTS = ("p1/main", "p1/supplement", "p2/main", "p2/supplement", "p3/main")
+PUBLIC_DIRS = ("SymplecticPacking", "verification", "vendor", "scripts", "test", ".github", "program")
 
 
 def sha256(data: bytes) -> str:
@@ -54,18 +55,21 @@ def main() -> None:
     config = tomllib.loads((ROOT / "lakefile.toml").read_text())
     metadata = json.loads((ROOT / ".zenodo.json").read_text())
     citation = (ROOT / "CITATION.cff").read_text()
-    version = config["version"]
-    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
-        raise RuntimeError("expected a three-part release version")
-    if metadata["version"] != version or f'version: "{version}"' not in citation:
-        raise RuntimeError("Lake, citation and archive metadata versions disagree")
+    # The release version is the publication version (citation and archive metadata). The Lake
+    # package version is the version of the Lean development, which may be older: changing it
+    # would change the proof-source digest without changing any proof.
+    version = metadata["version"]
+    if not re.fullmatch(r"\d+\.\d+\.\d+", version) or not re.fullmatch(r"\d+\.\d+\.\d+", config["version"]):
+        raise RuntimeError("expected three-part versions")
+    if f'version: "{version}"' not in citation:
+        raise RuntimeError("citation and archive metadata versions disagree")
     if f'date-released: "{metadata["publication_date"]}"' not in citation:
         raise RuntimeError("citation and archive dates disagree")
 
     before = public_sources()
     log = ROOT / ".lake" / "verify" / "submission.log"
     log.parent.mkdir(parents=True, exist_ok=True)
-    print("Verifying sources, paper tags, Lean proofs, regressions and both papers...", flush=True)
+    print("Verifying sources, paper tags, Lean proofs, regressions and the three papers...", flush=True)
     with log.open("w") as stream:
         completed = subprocess.run(["bash", "scripts/verify.sh"], cwd=ROOT,
                                    stdout=stream, stderr=subprocess.STDOUT)
@@ -89,8 +93,8 @@ def main() -> None:
 
     payload = dict(before)
     page_counts = {}
-    for doc in ("main", "supplement"):
-        pdf = ROOT / "paper" / "build" / f"{doc}.pdf"
+    for doc in DOCUMENTS:
+        pdf = ROOT / "paper" / doc.split("/")[0] / "build" / f"{doc.split('/')[1]}.pdf"
         data = pdf.read_bytes()
         if not data.startswith(b"%PDF-"):
             raise RuntimeError(f"invalid PDF: {doc}")
@@ -135,10 +139,14 @@ def main() -> None:
             if sha256(z.read(name)) != sha256(expected):
                 raise RuntimeError(f"archive content mismatch: {name}")
 
-    for doc in ("main", "supplement"):
-        shutil.copyfile(ROOT / "paper" / "build" / f"{doc}.pdf", out / f"{doc}.pdf")
+    pdfs = []
+    for doc in DOCUMENTS:
+        paper, name = doc.split("/")
+        target = out / f"{paper}-{name}.pdf"
+        shutil.copyfile(ROOT / "paper" / paper / "build" / f"{name}.pdf", target)
+        pdfs.append(target)
     (out / "verification.json").write_bytes(receipt_bytes)
-    outputs = [archive, out / "main.pdf", out / "supplement.pdf", out / "verification.json"]
+    outputs = [archive, *pdfs, out / "verification.json"]
     (out / "SHA256SUMS").write_text("".join(f"{sha256(p.read_bytes())}  {p.name}\n" for p in outputs))
     print(f"PASS: {archive.name}; {len(before)} source files; PDFs {page_counts}", flush=True)
     print("Archive contents and checksums verified. No Git history or build caches included.", flush=True)

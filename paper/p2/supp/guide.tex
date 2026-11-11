@@ -1,0 +1,42 @@
+\section{A checking route}\label{p2:sec-guide}
+
+This section lists, in the order of the construction, the statements to check for \Mref{Theorem}{thm:main} and its
+corollaries. Numbers with the prefix M refer to the main text, as do the numbered results. Paper~I \cite{PaperI} gives
+the four-dimensional chain for the linear datum as steps F1--F12 (\PoneRef{sec:guide-four}). Steps F5--F11 (cubic model,
+handle, transfer, embeddings, common isotopy, Hamiltonian, statements) hold for all valid cubic data, and steps F9--F11
+in every dimension; they are recalled in \Msec{p2:sec-machine-ham}. The case distinction of
+\Mref{Construction}{cons:ham-branch} selects one of four branches. The statements of Paper~I used in the proofs are
+recalled in \S\ref{p2:sec-quoted}, and the Lean declarations for each step are listed in \Mref{Table}{tab:guide-lean}.
+Steps F2--F4 of Paper~I are replaced, or extended, as follows.
+
+\label{sec:guide-high}%
+\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,itemsep=3pt]
+\item \emph{Comparison datum on a polytope.} In: a rational downward polytope $\Delta$ and a concave minorant $P$.
+ Out: $K$ and a Hamiltonian isotopy of $\C^m$ preserving $V_\Delta$, Poisson-commuting with the face moments on a
+ collar, with gap $\gamma$. Proved: \Mref{Proposition}{prop:cmp-fixed-point} and \Mref{Theorem}{thm:cmp-main}
+ (\S\ref{sec:fcp}); the lift is Theorem~\ref{thm:plc-lift} (\S\ref{sec:plc}, with the planar machine of
+ \PoneRef{sec:pln}). New: a finite rational iterate with explicit gap replaces the fixed point of the rearrangement
+ contraction of \cite{OpenAI2026}.
+\item \emph{Dimension four, general capacities.} In: $\rho_i<\frac13$ with $\sum_i\rho_i^2<1$. Out: valid cubic data
+ for \PoneRef{thm:cub-packing}. The scalar iteration, the planar wells and the Alexander path, \S\ref{sec:scalar-cmp};
+ the theorem, \S\ref{sec:four-general}. Proved: Propositions~\ref{prop:scalar-cmp-gap}, \ref{prop:scalar-planar-realisation},
+ \ref{prop:scalar-cubic-data}, Theorem~\ref{thm:cub-packing-general}.
+\item \emph{Packing in a model.} In: a model input with handle data and collar bounds, a comparison datum, and
+ $\rho_i<a_i$ with the profile minorant. Out: embeddings $\psi_i$ of $B(\rho_i)$ into $\operatorname{int}V_\Delta(E)$.
+ Proved: Theorem~\ref{thm:shd-packing} (\S\S\ref{p2:sec-shd}--\ref{sec:native-toric}); the composition with the
+ transfer is \Mref{Proposition}{prop:mech-assembly}.
+\item \emph{All $\rho_i<\frac12$, $n\ge3$.} In: $\rho$ with $\sum_i\rho_i^n<1$. Out: embeddings into $\Bo(1)$ with disjoint
+ images. The diagonal affine quadric curve, \S\S\ref{sec:qdr} and~\ref{sec:vtr}. Proved: Theorems~\ref{thm:qdr-transfer}
+ and~\ref{thm:qdr-packing}.
+\item \emph{One $\rho_j\ge\frac12$, $n\ge4$.} In: $A=\rho_j$ and valid auxiliary data. Out: the identity on the large ball
+ and embeddings of the others into the shell $S_a$. The mixed model and the slit-shell return, \S\S\ref{sec:lrg-high}
+ and~\ref{sec:two}. Proved: Lemma~\ref{lem:lrg-slit}, Theorem~\ref{thm:lrg-high}.
+\item \emph{One $\rho_j\ge\frac12$, $n=3$.} In: $A=\rho_j$ and valid rational auxiliary data. Out: embeddings into $\Bo(1)$
+ with disjoint images. The polynomial cubic model and the bubble, \S\S\ref{sec:lrg-six}, \ref{sec:sxm}
+ and~\ref{sec:sxr}. Proved: Proposition~\ref{prop:sxr-transport}, Theorem~\ref{thm:lrg-six}.
+\item \emph{Finite form and algorithm.} Any $H$ satisfying $\Pack$ $\mapsto$ $(B,P)$ with $\beta_BP$ satisfying $\Pack$,
+ found by a machine from input names (\Mref{Theorem}{thm:eff-finite}, Theorem~\ref{thm:cpl-final};
+ \Mref{Theorem}{thm:eff-algorithm}, Theorems~\ref{thm:alg-main} and~\ref{thm:certificate-sound}). New: a sound rational
+ Euler certificate, and termination proved from the explicit $H$.
+\end{enumerate}
+Steps F9--F11 of Paper~I then give \Mref{Theorem}{thm:main}(i), and with H7 part (iii) and the corollaries.

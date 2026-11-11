@@ -1,0 +1,113 @@
+\section{Statements}\label{sec:results}
+
+\subsection{The packing specification}\label{sec:results-general}
+
+\begin{definition}[Packing specification]\label{def:intro-spec}
+\lean{SymplecticPacking.Problem.PackingSpec}
+Let $n\ge1$, $k\ge0$, $C>0$, $c=(c_1,\dots,c_k)\in(0,\infty)^k$ and $s=(s_1,\dots,s_k)\in(\R^{2n})^k$. A
+function $H\colon\R\times\R^{2n}\to\R$ satisfies $\Pack(n,k,C,c,s)$ if
+\begin{enumerate}[label=(\alph*)]
+\item $H$ is $C^\infty$, and there is a compact set $\mathcal S\subset\R^{2n}$ with $H(t,z)=0$ for all
+ $t\in\R$ and all $z\notin\mathcal S$;
+\item for every $i$ and every $z\in B(s_i,c_i)$ there is an integral curve $\gamma\colon\R\to\R^{2n}$ of
+ $X_H$ with $\gamma(0)=z$, and every integral curve $\gamma\colon[0,1]\to\R^{2n}$ of $X_H$ with
+ $\gamma(0)=z$ satisfies $\gamma(1)\in\Bo(C)$.
+\end{enumerate}
+\leanmark{Problem.PackingSpec}
+\end{definition}
+
+For $H$ satisfying (a) the flow $\phi^t_H$ is global and consists of symplectic diffeomorphisms, and
+(b) says $\phi^1_H(B(s_i,c_i))\subset\Bo(C)$ for every $i$.
+
+\begin{definition}[Admissible data]\label{def:intro-admissible}
+\lean{SymplecticPacking.Problem.Admissible}
+Let $n\ge2$, $k\ge1$, $C>0$ and $c\in(0,\infty)^k$. The data $(n,k,C,c)$ are \emph{admissible} if
+\begin{align*}
+ n\ge3:&\qquad \textstyle\sum_ic_i^n<C^n\quad\text{and}\quad c_i+c_j<C\ \text{ for all } i\ne j;\\
+ n=2:&\qquad \textstyle\sum_ic_i^2<C^2\quad\text{and}\quad 3c_i<C\ \text{ for all } i.
+\end{align*}
+\leanmark{Problem.Admissible}
+\end{definition}
+
+For $n=2$ the condition $3c_i<C$ comes from the fibre capacity $\frac13$ of the model; it is a sufficient
+small-capacity range, not the full four-dimensional packing criterion. This paper uses admissibility only for $n=2$
+and equal capacities.
+
+\subsection{Robustness}\label{sec:intro-contribution}
+
+Theorem~\ref{thm:intro-4d} leaves an explicit margin: the images lie in the closed ball of radius $R$, while the
+density requirement is already met by a larger radius $R'$. The following estimate converts this margin into a
+tolerance on the vector field.
+
+\begin{mainproposition}[Robustness]\label{thm:intro-stability}
+Let $k\ge10$, $\eps\in(0,1)$, $R=(k/(1-\eps/4))^{1/4}$ and $R'=(k/(1-\eps/2))^{1/4}$, so $R<R'$. Let $\widehat H$ be a smooth function on $\R\times\R^4$
+vanishing outside $\R\times K$ for a compact set $K$. Suppose that, for $t\in[0,1]$, the field $X_{\widehat H}(t,\cdot)$
+is $L$-Lipschitz for some $L\ge0$ and $|X_{\widehat H}-X_{H_{k,\eps}}|\le\eta$ on $\R^4$, where $\eta e^L\le R'-R$. Then the time-one map
+of $\widehat H$ sends each closed unit ball $B(s_i,\pi)$ into the closed ball of radius $R'$ about the origin, and
+$k/R'^4=1-\eps/2>1-\eps$.
+\leanmark{four\_dim\_stability}
+\end{mainproposition}
+
+\begin{proof}
+Let $\gamma$ and $\hat\gamma$ be integral curves of $X_{H_{k,\eps}}$ and $X_{\widehat H}$ starting at the same point of
+$B(s_i,\pi)$. Then $|\hat\gamma(1)-\gamma(1)|\le\eta(e^L-1)/L\le\eta e^L$ by Gr\"onwall's inequality
+(Lemma~\ref{lem:eff-gronwall}, with the Lipschitz bound on $X_{\widehat H}$), and $|\gamma(1)|\le R$ by
+Theorem~\ref{thm:intro-4d}. For $L=0$ the Gr\"onwall bound is $\eta$.
+\end{proof}
+
+No explicit bound on the Lipschitz constant of $X_{H_{k,\eps}}$ is given, so the margin $R'-R$ is not
+directly a numerical step-size bound.
+
+\begin{lemma}[Gr\"onwall]\label{lem:eff-gronwall}
+Let $G,H\colon\R\times\R^{2n}\to\R$ be $C^\infty$, let $\eta>0$ and $L_X>0$, and suppose that
+\begin{enumerate}[label=(\roman*)]
+\item $|X_G(t,z)-X_H(t,z)|\le\eta$ for all $t\in[0,1]$ and all $z\in\R^{2n}$;
+\item $X_H(t,\cdot)$ is $L_X$-Lipschitz on all of $\R^{2n}$ for every $t\in[0,1]$.
+\end{enumerate}
+If $\gamma_G,\gamma_H\colon[0,1]\to\R^{2n}$ are integral curves of $X_G$ and $X_H$ with
+$\gamma_G(0)=\gamma_H(0)$, then $|\gamma_G(1)-\gamma_H(1)|\le\eta(e^{L_X}-1)/L_X$.
+\end{lemma}
+
+\begin{proof}
+$u=\gamma_G-\gamma_H$ satisfies $u(0)=0$ and $|\dot u|\le\eta+L_X|u|$, so Gr\"onwall's inequality gives the bound.
+\end{proof}
+
+For smooth compactly supported $H$, (ii) holds for every $L_X>0$ with $L_X\ge\max_{[0,1]\times\R^{2n}}\|D^2_zH\|$, as
+$X_H=J_0\nabla_zH$ with $J_0$ orthogonal.
+
+\subsection{The Epoch data}\label{sec:results-epoch}
+
+\begin{maincorollary}[The Epoch data]\label{thm:main-epoch}
+Let $k\ge10$ be an integer, $\eps\in(0,\frac78)$, $s_i=(3i-3,0,0,0)\in\R^4$, $R=(k/(1-\eps/2))^{1/4}$ and $C=\pi R^2$.
+Then $H=H[2,k,C,(\pi,\dots,\pi),s]$ satisfies $\Pack(2,k,C,(\pi,\dots,\pi),s)$: its time-one map sends each closed unit
+ball $B(s_i,\pi)$ into $\Bo(\pi R^2)$, and $k/R^4=1-\eps/2>1-\eps$.
+\leanmark{epoch\_packing, epoch\_theorem\_ten}
+\end{maincorollary}
+
+Theorem~\ref{thm:intro-4d} is Corollary~\ref{thm:main-epoch} at $\eps/2$. The bound $\eps<\frac78$ is the range
+$\rho\sqrt k=\sqrt{1-\eps/2}>\frac34$ of the linear comparison datum. The companion paper~\cite{SongHD} proves the
+corollary for all $k\ge9$ and $\eps\in(0,1)$, with the scalar comparison datum outside this range, and uses it as the
+input of its finite-output algorithm.
+
+\subsection{Explicitness}\label{sec:intro-explicitness}
+
+\begin{definition}[Definite description]\label{def:intro-the}
+\lean{SymplecticPacking.Explicit.the}
+For a property $\mathcal P$ of elements of a set $X$ and a proof $h$ that exactly one $x\in X$ satisfies
+$\mathcal P(x)$, $\defdesc(h)$ denotes that element. Phrases such as ``the unique $u$ with $F(u)=y$''
+denote this operation.
+\end{definition}
+
+\begin{definition}[Explicit definitional construction]\label{def:intro-levels}
+An \emph{explicit definitional construction} (level L1) is a definition built from rational constants and the input by
+arithmetic and elementary functions, integrals over compact domains, limits of series with an explicit rate of
+convergence, maxima and minima of continuous functions over explicit compact sets, unique solutions of explicit
+ordinary differential equations, inverses of explicit injective maps, unique roots of explicit equations, case
+distinctions on propositions about the input and about the arguments of the function being defined, and least
+elements of searches over a fixed enumeration of finitely described objects (integers, rationals, and tuples of these
+and of rational polynomials) whose validity is decided by finitely many explicit inequalities; definite descriptions
+are used only after unique existence has been proved (Definition~\ref{def:intro-the}).
+\end{definition}
+
+Theorem~\ref{thm:intro-4d} concerns level L1 (Table~\ref{tab:ham-explicit}). The finite form and computability
+(levels L2 and L3) are defined in~\cite{SongHD}.

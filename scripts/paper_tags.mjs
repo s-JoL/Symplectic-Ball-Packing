@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Collect the \lean{...} tags of the main paper and supplement.
+// Collect the \lean{...} tags of Papers I and II (main texts and supplements; Paper III has none).
 // Writes verification/Audit/PaperTags.lean (every tagged name must exist and pass the axiom
 // gate) and verification/PAPER-INDEX.md (paper statement -> Lean declarations).
 // With --check nothing is written; the run fails if either file differs from what the sources give.
@@ -8,7 +8,8 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const docs = [['main', 'paper/main'], ['supplement', 'paper/supp']];
+const docs = [['I main', 'paper/p1/main'], ['I supplement', 'paper/p1/supp'],
+  ['II main', 'paper/p2/main'], ['II supplement', 'paper/p2/supp']];
 const envs = 'theorem|lemma|proposition|corollary|definition|construction|remark|maintheorem|mainproposition|maincorollary';
 const coverage = { reference: 'Reference only; scope not classified',
   full: 'Full statement verified', needed: 'Needed consequence verified' };

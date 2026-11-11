@@ -1,0 +1,126 @@
+\section{Formal verification}\label{p2:sec-ver}
+\begingroup\sloppy
+
+The statements of this paper are verified in the Lean~4 development shared with Paper~I \cite{LeanRepo,Lean4}, with the
+toolchain \texttt{v4.34.1}, Mathlib \cite{Mathlib2020} at the tag of the same name, and the unmodified Lean library
+accompanying \cite{OpenAI2026}. That library contributes lemmas and a few generic differential-geometric operators
+(exterior derivative, chart differential); the definitions of the Hamiltonian and of the algorithms belong to the
+development, and none of the library's packing constructions or existence results is used. In the directory
+\texttt{verification/}, \texttt{Problem.lean} defines the problem using Mathlib alone, \texttt{Algorithm.lean} exposes
+the top level of the construction, \texttt{Statement.lean} states its correctness, and \texttt{Computability.lean} and
+\texttt{EpochComputability.lean} state correctness and termination of the finite-output algorithms. Theorems in \texttt{verification/} have no
+namespace; other names are relative to \texttt{SymplecticPacking}. The statement files, the trusted base and the
+metaprograms are described in \PoneRef{sec:ver}.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}L{0.24\textwidth}L{0.7\textwidth}@{}}
+\toprule
+Statement & Lean \\
+\midrule
+Definitions~\ref{def:intro-spec}, \ref{def:intro-admissible} & \texttt{Problem.PackingSpec}, \texttt{Problem.Admissible} \\
+Theorem~\ref{thm:main}(i) & \texttt{main\_theorem}, \texttt{main\_time\_support}, \texttt{main\_support\_radius}; for the
+ flow, \texttt{flow\_is\_integral\_curve}, \texttt{flow\_symplectic\_diffeomorphism}, \texttt{flow\_images\_disjoint} \\
+Theorem~\ref{thm:main}(ii) & \texttt{\#check\_explicit General.packingHamiltonian} (a metaprogram) \\
+Theorem~\ref{thm:main}(iii) & \texttt{original\_name\_algorithm}, with \texttt{\#check\_constructive} on the machine;
+ finite form: \texttt{General.Compile.main\_finite} \\
+Corollary~\ref{thm:main-sy} & \texttt{neighbourhood\_criterion}, \texttt{flow\_neighbourhood\_embedding} \\
+Corollary~\ref{thm:main-equal} & \texttt{equal\_balls} \\
+Corollary~\ref{thm:main-cone4} & \texttt{unequal\_cone} \\
+Corollary~\ref{thm:main-epoch} & \texttt{epoch\_packing} \\
+Theorem~\ref{thm:eff-algorithm} & \texttt{original\_name\_algorithm}, \texttt{epoch\_name\_algorithm}, \texttt{epoch\_name\_algorithm\_packing} \\
+embeddings, by case & \texttt{Branch2.embeddingsEq\_spec}, \texttt{Branch2.embeddingsGen\_spec} ($n=2$, linear and scalar datum), \texttt{BranchSmall.embeddings\_spec} (all $c_i<\frac C2$),
+ \texttt{BranchLargeHigh.embeddings\_spec} ($n\ge4$, one $c_j\ge\frac C2$), \texttt{BranchLarge3.embeddings\_spec}
+ ($n=3$, one $c_j\ge\frac C2$) \\
+transfers & \texttt{BranchSmall.vectorTransfer\_spec}, \texttt{BranchLargeHigh.shell\_pullback},
+ \texttt{BranchLarge3.cubicTransfer\_spec} \\
+comparison and handle & \texttt{HighDim.CmpInput.comparatorDatum}, \texttt{HighDim.liftGen\_spec},
+ \texttt{HighDim.RawModelAgreement.native\_packing\_spec}, \texttt{HighDim.assembly\_spec} \\
+\bottomrule
+\end{tabular}
+\caption{Formal counterparts of the statements of this paper. Every case of Construction~\ref{cons:ham-branch} is
+covered by \texttt{main\_theorem} and the algorithm theorems.}
+\label{p2:tab-ver}
+\end{table}
+
+\emph{The statement.} Phase space is $\texttt{Problem.E}~n=\texttt{EuclideanSpace}\ \R\ (\texttt{Fin}\ (2n))$;
+\texttt{omega0} and \texttt{hamVF} give $\omega_0$ and $X_H=(\partial_yH,-\partial_xH)$, so $\iota_{X_H}\omega_0=dH$.
+\texttt{capBall}~$s$~$c=\{z:\pi\|z-s\|^2\le c\}$ and \texttt{capBallOpen} is its strict version. \texttt{Admissible},
+\texttt{BallsDisjoint} and \texttt{PackingSpec} are Definitions~\ref{def:intro-admissible} and~\ref{def:intro-spec} and the
+disjointness hypothesis, field by field; \texttt{PackingSpec} quantifies over every integral curve on $[0,1]$, so it
+does not depend on a chosen solution. \texttt{Algorithm.lean} shows by \texttt{rfl} that
+\texttt{General.packingHamiltonian} is \texttt{HamEnd.hamiltonianOfEmbeddings} applied to
+\texttt{General.selectEmbeddings}, the case distinction of Construction~\ref{cons:ham-branch}. The Lean statements agree
+with the text, with these differences of form:
+\texttt{equal\_balls} does not assume $\eps>0$; the algorithm theorems assert \texttt{Nat.RecursiveIn} relative to the
+oracles given by the input names, and that one program serves every input is certified by
+\texttt{\#check\_constructive}; \texttt{flow\_neighbourhood\_embedding} uses the neighbourhood $(\phi^1_H)^{-1}(\Bo(C))$
+and holds for every $n\ge2$.
+
+\emph{What is verified.} The kernel checks the theorems of \texttt{Statement.lean} and \texttt{Computability.lean}
+and all their dependencies in the development, the vendored library and Mathlib. The trusted base is the kernel, the
+definitions in \texttt{Problem.lean} and the axioms \texttt{propext}, \texttt{Classical.choice} and
+\texttt{Quot.sound}; the build fails if the transitive axiom set of any of these theorems contains anything else, in
+particular \texttt{sorryAx}. Explicitness (level L1) and uniformity (level L3) are checked by the metaprograms
+\texttt{\#check\_explicit} and \texttt{\#check\_constructive}, which are not themselves verified. The first is described
+in \PoneRef{sec:ver} and \PoneRef{sec:xpl}; it is also applied to the algorithm terms. The second, applied to the two
+oracle machines, additionally forbids any classical constant, including classical decidability, so each is one fixed
+program in its oracle streams and cannot branch on an undecidable property of the named reals.
+\texttt{test/ExplicitTest.lean} contains terms both commands must reject, among them a machine branching on
+$x<\frac13$ for real $x$.
+
+\emph{Independence.} The command \texttt{\#assert\_construction\_independence} in
+\texttt{verification/Audit/Independence.lean} traverses types, definitions and proof bodies of the packing, flow,
+corollary and algorithm theorems and fails if they reach the vendored packing predicate or existence theorems, the
+holomorphic-line and two-ball obstruction proofs, or the curve-analysis modules of the vendored library. In
+particular the sufficiency direction of Corollary~\ref{thm:main-sy} does not use the packing existence theorem of
+\cite{OpenAI2026}. The converse is checked separately: it may use the classical obstructions, but no sufficiency
+theorem.
+
+\emph{Source tags.} The sources of the main text and the supplement attach Lean declaration names to further
+statements; \texttt{verification/PAPER-INDEX.md} indexes them, and the build checks that every tagged name exists and
+depends only on the three axioms. A tag is a reference to related declarations, without a claim that the Lean
+statement covers the printed one, except as follows. Definitions~\ref{def:intro-spec} and~\ref{def:intro-admissible},
+Theorem~\ref{thm:main}(i), (iii) and Corollaries~\ref{thm:main-sy}--\ref{thm:main-epoch} are verified in full, up to
+the differences of form above; Theorem~\ref{thm:main}(ii) is checked by \texttt{\#check\_explicit}.
+For Theorem~\ref{thm:cmp-realisation} (\Sref{Theorem}{thm:plc-lift}), \Sref{Theorem}{I:thm:pln-isotopy} and
+\Sref{Lemma}{I:lem:rtc-ball-chart} the formal statement is the consequence used by the construction, not every
+assertion or the whole domain of the printed statement; the restrictions are recorded in
+\PoneRef{sec:xpl-interface}. Table~\ref{tab:guide-lean} lists the Lean declarations for the checking route of
+\Ssec{p2:sec-guide}.
+
+{\footnotesize
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}p{0.08\textwidth}>{\raggedright\arraybackslash}p{0.86\textwidth}@{}}
+\caption{Lean declarations for the steps H1--H7 of \Ssec{p2:sec-guide} and the steps F1, F9--F11 of Paper~I (\PoneRef{sec:guide-four}). Names are relative to \texttt{SymplecticPacking}, except the theorems of
+\texttt{verification/}, which have no namespace.}\label{tab:guide-lean}\\
+\toprule
+step & Lean declarations\\\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ (continued)}\\
+\toprule
+step & Lean declarations\\\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{Continued on the next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+F1 & \texttt{General.selectEmbeddings}, \texttt{Branch2.EqualCase}\\
+F9 & \texttt{General.Ham.Isotopy.IsoInput.commonIsotopy}, \texttt{\dots isoF\_sympl}, \texttt{\dots isoF\_disj}\\
+F10 & \texttt{HamEnd.hamiltonianOfEmbeddings}, \texttt{General.Ham.hamVF\_ofIsotopy\_image}, \texttt{HamEnd.hamiltonian\_end}\\
+F11 & \texttt{main\_theorem}, \texttt{four\_dim\_theorem}, \texttt{epoch\_packing}, \texttt{epoch\_theorem} in
+ \texttt{verification/Statement.lean}\\
+H1 & \texttt{HighDim.CmpInput.comparatorDatum}, \texttt{HighDim.ComparisonDatum}, \texttt{HighDim.PlanarGen.Input}\\
+H2 & \texttt{Branch2.cmpInput}, \texttt{Branch2.cubicDataOf}, \texttt{Branch2.Hyp.cubicDataOf\_valid}, \texttt{Branch2.embeddingsGen\_spec}\\
+H3 & the tags of \Sref{Theorem}{thm:shd-packing} in \texttt{PAPER-INDEX.md}; composition \texttt{HighDim.assembly\_spec}\\
+H4 & \texttt{BranchSmall.vectorTransfer\_spec}, \texttt{BranchSmall.embeddings\_spec}\\
+H5 & \texttt{BranchLargeHigh.shell\_pullback}, \texttt{BranchLargeHigh.embeddings\_spec}\\
+H6 & \texttt{BranchLarge3.cubicTransfer\_spec}, \texttt{BranchLarge3.embeddings\_spec}; corollaries
+ \texttt{main\_theorem}, \texttt{neighbourhood\_criterion}, \texttt{equal\_balls}\\
+H7 & \texttt{General.Compile.main\_finite}, \texttt{original\_name\_algorithm}, \texttt{epoch\_name\_algorithm}\\
+\end{longtable}
+}
+\endgroup

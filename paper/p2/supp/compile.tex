@@ -1,0 +1,272 @@
+\section{Finite scalar compilation}\label{sec:cpl}
+
+\begingroup\sloppy
+
+We compile $H$ satisfying $\Pack(n,k,C,c,s)$ into $\Hfin=\beta_B\cdot P$, with $B\in\N$, $\beta_B$ a product of flat cutoffs and $P\in\Q[t,z]$, and show that $\varphi^1_{\Hfin}$ still carries every closed source ball into the open target ball; this proves \Mref{Lemma}{lem:eff-gronwall} and \Mref{Theorem}{thm:eff-finite}. A rounded tensor Bernstein polynomial approximates $H$ in $C^1$ on a box, the box cutoff globalises the estimate, and one Gr\"onwall estimate bounds the displacement, which is paid from the gap to the target boundary.
+
+\emph{Notation.} $|v|$ is the Euclidean norm on $\R^d$, $|v|_\infty=\max_l|v_l|$ (so $|v|\le\sqrt d\,|v|_\infty$), and $\|A\|$ is the operator norm. The real coordinates of $z\in\R^{2n}$ are $\zeta_1,\dots,\zeta_{2n}$. For $G\colon\R\times\R^{2n}\to\R$, we write $X_G=J_0\nabla_zG$ and $\varphi^t_G$ for its flow from time $0$ to $t$ (\PoneRef{sec:pre-conventions}). Since $J_0$ is orthogonal, $|X_G-X_{G'}|=|\nabla_zG-\nabla_zG'|$.
+
+Fix $n\ge2$, $k\ge1$, $C>0$, $c\in(0,\infty)^k$, $s\in(\R^{2n})^k$ and $H$ satisfying $\Pack(n,k,C,c,s)$ (\Mref{Definition}{def:intro-spec}). Thus $H$ is $C^\infty$, $H(t,z)=0$ for $z$ outside a compact $K\subset\R^{2n}$, and $\varphi^1_H(B(s_i,c_i))\subset\Bo(C)$. A \emph{compilation datum} for $H$ is a tuple (C1)--(C7) as in \Msec{sec:eff-finite}, with numbers $C_0$, $R_*$, $R_C$, $a_{\rm box}$, $B$, $L_X$, $C_\beta$, $b_R$, $\eta$, $M_0$, $\delta$, $N_{\rm B}$, $\tilde H_m$.
+
+\subsection{The box cutoff and global Lipschitz bounds}\label{sec:cpl-box}
+
+\begin{definition}[Box cutoff]\label{def:cpl-box}
+\lean{SymplecticPacking.boxCutoff1, SymplecticPacking.General.Compile.boxCut}
+\uses{def:pre-flat}
+Let $S$ be the flat step (Definition~\ref{I:def:pre-flat}). For a real $B>0$, $x\in\R$ and $z\in\R^{2n}$ put
+\[
+ \beta_{B,1}(x)=1-S\Bigl(\frac{x^2-(B/2)^2}{(3B/4)^2-(B/2)^2}\Bigr),\qquad
+ \beta_B(z)=\prod_{l=1}^{2n}\beta_{B,1}(\zeta_l).
+\]
+The compilation uses the integer $B$ of (C2).
+\end{definition}
+
+\begin{lemma}[Support in the box]\label{lem:cpl-box}
+\lean{SymplecticPacking.General.Compile.contDiff_boxCut, SymplecticPacking.General.Compile.boxCut_mem,
+SymplecticPacking.General.Compile.boxCut_eq_one, SymplecticPacking.General.Compile.boxCut_eq_zero,
+SymplecticPacking.General.Compile.fderiv_boxCut_eq_zero, SymplecticPacking.General.Compile.boxCut_mul_eq}
+\uses{def:cpl-box, lem:pre-flat}
+For every real $B>0$, the function $\beta_B$ is $C^\infty$ on $\R^{2n}$, $0\le\beta_B\le1$, $\beta_B=1$ on
+$[-B/2,B/2]^{2n}$, $\beta_B=0$ on the closed set $\{|z|_\infty\ge3B/4\}=\R^{2n}\setminus(-3B/4,3B/4)^{2n}$, and
+$\nabla\beta_B=0$ on the open set $\{|z|_\infty>3B/4\}$. For the integer $B$ of (C2),
+$\beta_B(z)H(t,z)=H(t,z)$ for all $(t,z)\in\R\times\R^{2n}$.
+\end{lemma}
+
+\begin{proof}
+Use Lemma~\ref{I:lem:pre-flat} and $S=0$ on $(-\infty,0]$, $S=1$ on $[1,\infty)$. The argument of $S$ in $\beta_{B,1}(x)$ is $\le0$ for $|x|\le B/2$ and $\ge1$ for $|x|\ge3B/4$, which gives all claims factor by factor. If $\beta_B(z)\ne1$, then $|z|_\infty>B/2>a_{\rm box}$ by (C2), so $H(t,z)=0$.
+\end{proof}
+
+\begin{lemma}[Global Lipschitz bounds]\label{lem:cpl-lipschitz}
+\lean{SymplecticPacking.General.Compile.hamVF_lipschitz}
+\uses{lem:cpl-box, M-def:intro-spec}
+The suprema $\sup_{[0,1]\times\R^{2n}}\|D_z^2H\|$ and $\sup_{\R^{2n}}|\nabla\beta_B|$ are finite, so (C3) can be met.
+For $L_X,C_\beta$ as in (C3) and every $t\in[0,1]$, the field $X_H(t,\cdot)$ is $L_X$-Lipschitz on $\R^{2n}$ and
+$|\nabla\beta_B|\le C_\beta$.
+\end{lemma}
+
+\begin{proof}
+Both suprema are finite: $D_z^2H$ vanishes on $\R\times(\R^{2n}\setminus K)$ and is continuous on the compact $[0,1]\times K$, and $\nabla\beta_B$ is continuous and vanishes outside $[-3B/4,3B/4]^{2n}$ (Lemma~\ref{lem:cpl-box}). Since $\|D_zX_H\|=\|J_0D_z^2H\|=\|D_z^2H\|<L_X$, the mean value inequality gives the Lipschitz bound.
+\end{proof}
+
+\subsection{Tensor Bernstein approximation}\label{sec:cpl-bernstein}
+
+\begin{definition}[Tensor Bernstein operator]\label{def:cpl-bernstein}
+\lean{SymplecticPacking.tensorWeight, SymplecticPacking.gridPt, SymplecticPacking.tensorBernstein,
+SymplecticPacking.General.Compile.W, SymplecticPacking.General.Compile.Pn}
+For $N\ge1$ and $0\le j\le N$ let $b_{N,j}(x)=\binom Njx^j(1-x)^{N-j}$, and $b_{N,j}=0$ for $j\notin\{0,\dots,N\}$. For
+$d\ge1$, $m\in\{0,\dots,N\}^d$ and $x\in[0,1]^d$ put $W_m(x)=\prod_{\ell=1}^db_{N,m_\ell}(x_\ell)$, and for
+$g\colon[0,1]^d\to\R$
+\[
+ \mathcal B_Ng(x)=\sum_{m\in\{0,\dots,N\}^d}g(m/N)\,W_m(x).
+\]
+The weights $W_m(x)$ are nonnegative and $\sum_mW_m(x)=\prod_\ell(x_\ell+1-x_\ell)^N=1$.
+\end{definition}
+
+\begin{lemma}[Mean absolute deviation]\label{lem:cpl-mad}
+\lean{SymplecticPacking.bernstein_mean_abs_dev, SymplecticPacking.sqrt_var_le,
+SymplecticPacking.General.Compile.sum_bW_abs_sub_le}
+For $N\ge1$ and $x\in[0,1]$,
+\[
+ \sum_{j=0}^Nb_{N,j}(x)\,\Bigl|x-\frac jN\Bigr|\le\sqrt{\frac{x(1-x)}N}\le\frac1{2\sqrt N},
+ \qquad
+ \sum_{j=0}^{N-1}b_{N-1,j}(x)\,\bigl|j-(N-1)x\bigr|\le\frac{\sqrt N}2 .
+\]
+\end{lemma}
+
+\begin{proof}
+The $b_{M,j}(x)$ are binomial probabilities with mean $Mx$ and variance $Mx(1-x)$ \cite[\S1.1]{Lorentz1986}, so Cauchy--Schwarz gives $\sum_jb_{M,j}(x)|j-Mx|\le\sqrt{Mx(1-x)}$. For the first bound take $M=N$, divide by $N$ and use $x(1-x)\le1/4$; for the second take $M=N-1$.
+\end{proof}
+
+\begin{lemma}[Value error]\label{lem:cpl-bernstein-value}
+\lean{SymplecticPacking.bernstein_tensor_value_error}
+\uses{def:cpl-bernstein, lem:cpl-mad}
+Let $g\colon[0,1]^d\to\R$ and $M\ge0$ satisfy $|g(y)-g(y')|\le M\sum_{\ell}|y_\ell-y'_\ell|$ for all
+$y,y'\in[0,1]^d$. Then $|\mathcal B_Ng(x)-g(x)|\le dM/(2\sqrt N)$ for all $N\ge1$ and $x\in[0,1]^d$.
+\end{lemma}
+
+\begin{proof}
+As the weights sum to $1$, $|\mathcal B_Ng(x)-g(x)|\le M\sum_\ell\sum_mW_m(x)|m_\ell/N-x_\ell|$. Summing out the coordinates other than $\ell$ reduces each inner sum to the first sum of Lemma~\ref{lem:cpl-mad}.
+\end{proof}
+
+\begin{proposition}[Tensor Bernstein estimates]\label{prop:cpl-bernstein}
+\lean{SymplecticPacking.bernstein_tensor_value_error, SymplecticPacking.General.Compile.Dform_grid_error,
+SymplecticPacking.General.Compile.Dform_round_error, SymplecticPacking.General.Compile.cube_error}
+\uses{def:cpl-bernstein, lem:cpl-mad, lem:cpl-bernstein-value}
+Let $d\ge1$, $N\ge1$, and let $g$ be the restriction to $[0,1]^d$ of a $C^2$ function on a neighbourhood of
+$[0,1]^d$ whose first and second partial derivatives are bounded in absolute value by $M_0$ on $[0,1]^d$. Then for
+every $x\in[0,1]^d$ and every $j\in\{1,\dots,d\}$:
+\begin{enumerate}[label=(\alph*)]
+\item $|\mathcal B_Ng(x)-g(x)|\le dM_0/(2\sqrt N)$;
+\item $|\partial_j\mathcal B_Ng(x)-\partial_jg(x)|\le M_0\bigl[d/(2\sqrt N)+2/N\bigr]$;
+\item if $(e_m)_{m\in\{0,\dots,N\}^d}$ are reals with $|e_m|\le a$ for all $m$, then
+ $\bigl|\sum_me_mW_m(x)\bigr|\le a$ and $\bigl|\partial_j\sum_me_mW_m(x)\bigr|\le2Na$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a) By the mean value theorem, $|g(y)-g(y')|\le M_0\sum_\ell|y_\ell-y'_\ell|$; apply Lemma~\ref{lem:cpl-bernstein-value}.
+
+(b) Use $b_{N,i}'=N(b_{N-1,i-1}-b_{N-1,i})$ and summation by parts \cite[\S1.4]{Lorentz1986}. For arbitrary $h_m$ and the unit vector $e_j$ this gives
+\begin{equation}\label{eq:cpl-deriv}
+ \partial_j\sum_mh_mW_m(x)=N\sum_{m:\,m_j\le N-1}\bigl(h_{m+e_j}-h_m\bigr)\,W^{(j)}_m(x),\qquad
+ W^{(j)}_m(x)=b_{N-1,m_j}(x_j)\prod_{\ell\ne j}b_{N,m_\ell}(x_\ell),
+\end{equation}
+with weights $W^{(j)}_m\ge0$ summing to $1$. For $h_m=g(m/N)$, $N[g((m+e_j)/N)-g(m/N)]=\int_0^1\partial_jg((m+se_j)/N)\,ds$, and $|\partial_jg(y)-\partial_jg(x)|\le M_0\sum_\ell|y_\ell-x_\ell|$. Hence $|\partial_j\mathcal B_Ng-\partial_jg|$ is at most $M_0$ times the $W^{(j)}$-average of $\int_0^1\bigl(\sum_{\ell\ne j}|m_\ell/N-x_\ell|+|(m_j+s)/N-x_j|\bigr)ds$.
+
+Each term with $\ell\ne j$ contributes at most $1/(2\sqrt N)$ (Lemma~\ref{lem:cpl-mad}). Writing $\frac{m_j+s}N-x_j=\frac{m_j-(N-1)x_j}N+\frac{s-x_j}N$, the second bound of Lemma~\ref{lem:cpl-mad} bounds the last term by $1/(2\sqrt N)+1/N$. This yields $M_0[d/(2\sqrt N)+1/N]$, stronger than the stated bound.
+
+(c) The weights are nonnegative with sum $1$. For the derivative, by \eqref{eq:cpl-deriv} the derivative is $N$ times a convex combination of the differences $e_{m+e_j}-e_m$, each of size at most $2a$.
+\end{proof}
+
+\begin{definition}[The finite Hamiltonian]\label{def:cpl-Hfin}
+\lean{SymplecticPacking.General.Compile.phiB, SymplecticPacking.General.Compile.bernsteinMvPoly,
+SymplecticPacking.General.Compile.finiteHam, SymplecticPacking.General.Compile.CompilationDatum.Hfin}
+\uses{def:cpl-box, def:cpl-bernstein}
+Let a compilation datum (C1)--(C7) be given, put $d=2n+1$ and $N=N_{\rm B}$, and let $\Phi_B\colon\R^d\to\R^d$,
+\[
+ \Phi_B(t,z)=\Bigl(t,\frac{\zeta_1+B}{2B},\dots,\frac{\zeta_{2n}+B}{2B}\Bigr),
+\]
+which maps $[0,1]\times[-B,B]^{2n}$ onto $[0,1]^d$, with coordinates
+$\xi=(\xi_0,\dots,\xi_{2n})$; $\tilde H=H\circ\Phi_B^{-1}$ is the function of (C5). With the rationals
+$\tilde H_m$ of (C7) put
+\[
+ \hat P(\xi)=\sum_{m\in\{0,\dots,N\}^d}\tilde H_m\,W_m(\xi),\qquad P=\hat P\circ\Phi_B,\qquad
+ \Hfin(t,z)=\beta_B(z)\,P(t,z).
+\]
+This $P$ is the polynomial displayed after (C7) in \Msec{sec:eff-finite}. Since $\tilde H_m\in\Q$ and $B\in\N$,
+$P\in\Q[t,z]$, of degree at most $N$ in each variable. Put $a_N=\max_m|\tilde H_m-\tilde H(m/N)|$; then
+$a_N<\delta/(2N+1)$ by (C7).
+\end{definition}
+
+\begin{lemma}[Polynomial error in physical coordinates]\label{lem:cpl-poly}
+\lean{SymplecticPacking.General.Compile.poly_error}
+\uses{def:cpl-Hfin, prop:cpl-bernstein}
+For every compilation datum, every $t\in[0,1]$, every $z\in[-B,B]^{2n}$ and every $l\in\{1,\dots,2n\}$,
+\[
+ |P(t,z)-H(t,z)|<\delta,\qquad |\partial_{\zeta_l}(P-H)(t,z)|\le\frac\delta B,
+\]
+and hence $|\nabla_zP(t,z)-\nabla_zH(t,z)|\le\sqrt{2n}\,\delta/B<\delta$.
+\end{lemma}
+
+\begin{proof}
+On $[0,1]^d$ write $\hat P-\tilde H=(\mathcal B_N\tilde H-\tilde H)+\sum_me_mW_m$ with $e_m=\tilde H_m-\tilde H(m/N)$, so $|e_m|\le a_N$. Here $\tilde H$ is the restriction of the $C^\infty$ function $H\circ\Phi_B^{-1}$, with $M_0$ as in (C5). By (C6), $dM_0/(2\sqrt N)<\delta/2$ and $2M_0/N<\delta/2$. Proposition~\ref{prop:cpl-bernstein} then gives $|\hat P-\tilde H|<\delta/2+a_N<\delta$ and $|\partial_{\xi_j}(\hat P-\tilde H)|<\delta+2Na_N<2\delta$ for $0\le j\le2n$.
+
+Composing with $\Phi_B$ gives the value bound, and $\partial_{\zeta_l}(P-H)=(2B)^{-1}(\partial_{\xi_l}(\hat P-\tilde H))\circ\Phi_B$ gives $\delta/B$. Hence $|\nabla_z(P-H)|\le\sqrt{2n}\,\delta/B<\delta$, since $B>2n\ge\sqrt{2n}$ by (C2).
+\end{proof}
+
+\begin{remark}[Grid values]\label{rem:cpl-values}
+Condition (C7) asks only for rationals near the finitely many grid values; these exist by density of $\Q$.
+Compilation data are used only to prove that the search of Section~\ref{sec:alg} terminates.
+\end{remark}
+
+\subsection{The global field error}\label{sec:cpl-cutoff}
+
+\begin{lemma}[Product rule estimate]\label{lem:cpl-product}
+\lean{SymplecticPacking.cutoff_gradient_error}
+Let $E$ be a real normed space, $b,p,h,C',\varepsilon\in\R$ and $g_b,g_p,g_h\in E$ with $g_h=bg_h+hg_b$,
+$0\le b\le1$, $\|g_b\|\le C'$, $|p-h|<\varepsilon$ and $\|g_p-g_h\|<\varepsilon$. Then
+$\|(bg_p+pg_b)-g_h\|<\varepsilon(1+C')$.
+\end{lemma}
+
+\begin{proof}
+$(bg_p+pg_b)-g_h=b(g_p-g_h)+(p-h)g_b$ has norm $<\varepsilon+\varepsilon C'$.
+\end{proof}
+
+\begin{lemma}[Global field error]\label{lem:cpl-cutoff}
+\lean{SymplecticPacking.General.Compile.field_error, SymplecticPacking.General.Compile.boxCut_mul_eq}
+\uses{def:cpl-Hfin, lem:cpl-box, lem:cpl-lipschitz, lem:cpl-poly, lem:cpl-product}
+For every compilation datum, $\Hfin$ is $C^\infty$ on $\R\times\R^{2n}$, $\Hfin(t,z)=0$ for all $t$ whenever
+$z\notin(-3B/4,3B/4)^{2n}$, and for all $t\in[0,1]$ and $z\in\R^{2n}$
+\[
+ |X_{\Hfin}(t,z)-X_H(t,z)|=|\nabla_z\Hfin(t,z)-\nabla_zH(t,z)|<\delta(1+C_\beta)<\eta/16 .
+\]
+\end{lemma}
+
+\begin{proof}
+Smoothness and the support claim hold because $\Hfin$ is $\beta_B$ times a polynomial (Lemma~\ref{lem:cpl-box}). Fix $t\in[0,1]$.
+
+For $z\in[-B,B]^{2n}$, differentiating $\beta_BH=H$ gives $\nabla_z\Hfin-\nabla_zH=\beta_B\nabla_z(P-H)+(P-H)\nabla\beta_B$. Lemma~\ref{lem:cpl-product} with $E=\R^{2n}$, $b=\beta_B$, $p=P$, $h=H$, $g_b=\nabla\beta_B$, $g_p=\nabla_zP$, $g_h=\nabla_zH$, $C'=C_\beta$, $\varepsilon=\delta$, whose hypotheses hold by Lemmas~\ref{lem:cpl-box}, \ref{lem:cpl-lipschitz} and~\ref{lem:cpl-poly}, gives the bound $\delta(1+C_\beta)$.
+
+For $z\notin(-B,B)^{2n}$, $z$ lies in the open sets $\{|z|_\infty>3B/4\}$, where $\Hfin(t,\cdot)=0$, and $\{|z|_\infty>a_{\rm box}\}$, where $H(t,\cdot)=0$ by (C2), so both gradients vanish. Finally, $\delta(1+C_\beta)<\eta/16$ by (C6).
+\end{proof}
+
+\subsection{The Gr\"onwall estimate}\label{sec:cpl-gronwall}
+
+\begin{lemma}[Gr\"onwall]\label{lem:cpl-gronwall-abstract}
+\lean{SymplecticPacking.flow_error_le, SymplecticPacking.eta_choice}
+Let $E$ be a finite-dimensional real normed space, $L>0$, $\eta\ge0$, and let $v,w\colon\R\times E\to E$ be
+continuous, with $v(t,\cdot)$ $L$-Lipschitz for every $t\in\R$ and $\|w(t,e)-v(t,e)\|\le\eta$ for all $(t,e)$. If
+$x,y\colon[0,1]\to E$ are differentiable with $\dot x(t)=w(t,x(t))$, $\dot y(t)=v(t,y(t))$ for $t\in[0,1]$
+(one-sided derivatives at the end points) and $x(0)=y(0)$, then
+\[
+ \|x(1)-y(1)\|\le\eta\,\frac{e^L-1}L .
+\]
+If moreover $b>0$ and $\eta=be^{-L}/2$, then $\eta(e^L-1)/L<b/2$.
+\end{lemma}
+
+\begin{proof}
+$u=x-y$ is $C^1$ with $u(0)=0$ and $\|\dot u\|\le\|w(s,x)-v(s,x)\|+\|v(s,x)-v(s,y)\|\le\eta+L\|u\|$. With
+$\Omega(t)=\int_0^t(\eta+L\|u\|)\,ds$ we get $\|u\|\le\Omega$, $\Omega'\le\eta+L\Omega$, so
+$(e^{-Lt}\Omega)'\le\eta e^{-Lt}$ and $\Omega(t)\le\eta(e^{Lt}-1)/L$; take $t=1$. For $\eta=be^{-L}/2$,
+$\eta(e^L-1)/L=b(1-e^{-L})/(2L)<b/2$ as $1-e^{-L}<L$.
+\end{proof}
+
+\begin{proof}[Proof of \Mref{Lemma}{lem:eff-gronwall}]
+With $\pi_{[0,1]}(t)=\min(1,\max(0,t))$, put $v(t,e)=X_H(\pi_{[0,1]}(t),e)$, $w(t,e)=X_G(\pi_{[0,1]}(t),e)$. These are
+continuous, satisfy the hypotheses of Lemma~\ref{lem:cpl-gronwall-abstract} for all $t$ by (i), (ii) (with
+$E=\R^{2n}$, $L=L_X$), and agree with $X_H,X_G$ on $[0,1]$; apply that lemma with $x=\gamma_G$, $y=\gamma_H$.
+\end{proof}
+
+\begin{lemma}[Flow error of the compiled Hamiltonian]\label{lem:cpl-gronwall}
+\lean{SymplecticPacking.General.Compile.exists_integralCurve_global, SymplecticPacking.General.Compile.flow_error}
+\uses{lem:cpl-gronwall-abstract, lem:cpl-cutoff, lem:cpl-lipschitz, M-def:intro-spec}
+Let a compilation datum be given and let $G$ be $H$ or $\Hfin$.
+\begin{enumerate}[label=(\alph*)]
+\item For every $(t_0,z_0)\in\R\times\R^{2n}$ there is an integral curve $\gamma\colon\R\to\R^{2n}$ of $X_G$ with
+ $\gamma(t_0)=z_0$, and every integral curve of $X_G$ defined on an interval $I\ni t_0$ with value $z_0$ at $t_0$
+ is the restriction of $\gamma$ to $I$. In particular $\varphi^t_G$ is defined on all of $\R^{2n}$ for every $t$, and
+ $\varphi^1_G$ is injective.
+\item For every $z\in\R^{2n}$,
+\[
+ |\varphi^1_{\Hfin}(z)-\varphi^1_H(z)|\le\eta\,\frac{e^{L_X}-1}{L_X}<b_R .
+\]
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $X_G=J_0\nabla_zG$ is $C^\infty$ and vanishes outside a $t$-independent compact $K_G$ ($K_H=K$,
+$K_{\Hfin}=[-3B/4,3B/4]^{2n}$ by Lemma~\ref{lem:cpl-cutoff}), so on each $[T_1,T_2]\times\R^{2n}$ it and its spatial
+derivative are bounded. Picard--Lindel\"of gives a unique maximal integral curve through each $(t_0,z_0)$, of which
+every integral curve through $(t_0,z_0)$ is a restriction; bounded velocity rules out a finite end point, so it is
+defined on $\R$. If $\varphi^1_G(z)=\varphi^1_G(z')$, the two curves meet at $t=1$, hence coincide, so $z=z'$.
+
+(b) Define $v,w$ as in the proof of \Mref{Lemma}{lem:eff-gronwall} with $G=\Hfin$. Then $v(t,\cdot)$ is
+$L_X$-Lipschitz (Lemma~\ref{lem:cpl-lipschitz}) and $|w-v|\le\eta/16\le\eta$ (Lemma~\ref{lem:cpl-cutoff}); apply
+Lemma~\ref{lem:cpl-gronwall-abstract} to $x=\varphi^t_{\Hfin}(z)$, $y=\varphi^t_H(z)$ with $L=L_X$ and
+$\eta=b_Re^{-L_X}/2$ (C4).
+\end{proof}
+
+\subsection{The finite output}\label{sec:cpl-final}
+
+\begin{theorem}[Finite output]\label{thm:cpl-final}
+\lean{SymplecticPacking.General.Compile.finite_spec, SymplecticPacking.General.Compile.main_finite}
+\uses{lem:cpl-cutoff, lem:cpl-gronwall, M-def:intro-spec, M-thm:eff-finite}
+Let $H$ satisfy $\Pack(n,k,C,c,s)$. For every compilation datum (C1)--(C7) for $H$, the function
+$\Hfin=\beta_B\cdot P$ of Definition~\ref{def:cpl-Hfin} is $C^\infty$, $\Hfin(t,z)=0$ for all $t$ whenever
+$z\notin(-3B/4,3B/4)^{2n}$, and $|X_{\Hfin}-X_H|<\eta$ on $[0,1]\times\R^{2n}$. For every $z\in\bigcup_iB(s_i,c_i)$,
+\[
+ |\varphi^1_{\Hfin}(z)-\varphi^1_H(z)|<b_R,\qquad |\varphi^1_{\Hfin}(z)|<R_*+b_R<R_C .
+\]
+In particular $\Hfin$ satisfies $\Pack(n,k,C,c,s)$, and if the balls $B(s_i,c_i)$ are pairwise disjoint, so are
+their images under $\varphi^1_{\Hfin}$. This is \Mref{Theorem}{thm:eff-finite}.
+\end{theorem}
+
+\begin{proof}
+Smoothness, support (condition (a) of \Mref{Definition}{def:intro-spec}) and the field error are
+Lemma~\ref{lem:cpl-cutoff}. For $z\in B(s_i,c_i)$, (C1) gives $|\varphi^1_H(z)|\le R_*$, so by
+Lemma~\ref{lem:cpl-gronwall}(b) and (C4), $|\varphi^1_{\Hfin}(z)|<R_*+b_R<R_C$, i.e.\ $\pi|\varphi^1_{\Hfin}(z)|^2<C$.
+By Lemma~\ref{lem:cpl-gronwall}(a) every integral curve $\gamma\colon[0,1]\to\R^{2n}$ of $X_{\Hfin}$ with
+$\gamma(0)=z$ has $\gamma(1)=\varphi^1_{\Hfin}(z)\in\Bo(C)$, which is condition (b) of
+\Mref{Definition}{def:intro-spec}; injectivity of $\varphi^1_{\Hfin}$ gives disjointness of the images.
+\end{proof}
+\endgroup

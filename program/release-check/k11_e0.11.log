@@ -1,0 +1,3 @@
+k=11 eps=0.11 steps=400: R=1.874150 (need < 1.874997), k/R^4=0.891610, PASS, longest H call 0.009s
+k=11 eps=0.11 steps=800: R=1.874150 (need < 1.874997), k/R^4=0.891610, PASS, longest H call 0.010s
+RESULT {"k": 11, "eps": 0.11, "R_needed": 1.8749973990790658, "solution_seconds": 0.0, "points": 3300, "runs": {"400": {"R": 1.8741504131161906, "density": 0.8916099639932434, "passed": true, "longest_H_call_s": 0.009, "seconds": 4.8}, "800": {"R": 1.874150407319783, "density": 0.8916099750235956, "passed": true, "longest_H_call_s": 0.01, "seconds": 10.9}}, "max_point_difference": 2.9979524016308165e-05, "passed": true, "margin": 0.0008469859628752463}

@@ -1,0 +1,134 @@
+\section{Coordinate rearrangement and the equal-ball identities}\label{sec:fcp}
+
+We prove the properties of the coordinate rearrangement used in \Msec{sec:cmp} and record the scalar identities behind
+\Mref{Proposition}{prop:cmp-linear}. General comparison data are constructed in the companion paper~\cite{SongHD}.
+
+\subsection{Setting}\label{sec:fcp-setting}
+
+Fix $m\ge1$. Let $\Delta=\{p\in\R^m_{\ge0}:\langle b_\nu,p\rangle\le\ell_\nu,\ \nu=1,\dots,N_\Delta\}$, with $b_\nu\in\Q^m_{\ge0}$ and $\ell_\nu\in\Q_{>0}$, be a compact full-dimensional polytope. Since $b_\nu\ge0$, $\Delta$ is \emph{downward closed}: $p\in\Delta$ and $0\le p'\le p$ imply $p'\in\Delta$; so $0\in\Delta$ and $\tau\Delta\subset\Delta$ for $0\le\tau\le1$.
+
+We use $p$, $|p|=\sum_jp_j$ and $\omega_V$ of \S\ref{sec:pre}, and put $V_\Delta=p^{-1}(\Delta)\subset\C^m$. We write $\mathbf e_1,\dots,\mathbf e_m$ for the standard basis and $\|\cdot\|$ for the uniform norm on $\Delta$. As in \Msec{sec:cmp}, $P$ is an arbitrary concave function on $\Delta$ (applied with $P=\Pb$ or a concave minorant of $\Pb$). The letters $y$, $L$, and in \S\ref{sec:fcp-equal} $s,a,c_s,g,A,B,\Lambda$, are local to this section and \Msec{sec:cmp}, with the same meaning there.
+
+Fix $j$ and write $p=(y,x)$ with $x=p_j$ and $y=(p_i)_{i\ne j}$ ($y$ absent if $m=1$). By compactness some $b_{\nu j}>0$. Put
+$$L(y)=\min_{\nu:\,b_{\nu j}>0}\bigl(\ell_\nu-\textstyle\sum_{i\ne j}b_{\nu i}y_i\bigr)/b_{\nu j};$$
+it is concave, continuous and piecewise affine. Let $\Delta_j=\{y:(y,0)\in\Delta\}$, a compact convex polytope. On $\Delta_j$ we have $L\ge0$ and
+\begin{equation}\label{eq:fcp-slices}
+ \Delta=\{(y,x):y\in\Delta_j,\ 0\le x\le L(y)\}.
+\end{equation}
+The \emph{slice} through $y\in\Delta_j$ is $\{y\}\times[0,L(y)]$, possibly of length zero.
+
+\subsection{Coordinate rearrangement}\label{sec:fcp-rearrangement}
+
+For $L\ge0$ and continuous $f$ on $[0,L]$, let $\mathcal L_f(b)=\bigl|\{v\in[0,L]:f(v)\le b\}\bigr|$ (Lebesgue measure, $b\in\R$).
+
+\begin{lemma}[Increasing rearrangement on an interval]\label{lem:fcp-interval}
+Let $L\ge0$, let $f\colon[0,L]\to\R$ be continuous and convex, and for $0\le x\le L$ put
+\[
+ f^\sharp(x)=\min_{0\le a\le L-x}\max\bigl(f(a),f(a+x)\bigr).
+\]
+\begin{enumerate}[label=(\alph*)]
+\item For $b\in\R$ and $0\le x\le L$: $f^\sharp(x)\le b$ if and only if $\{f\le b\}\ne\emptyset$ and
+ $\mathcal L_f(b)\ge x$. Hence $f^\sharp(x)=\min\{b\ge\min f:\mathcal L_f(b)\ge x\}$, the increasing rearrangement of
+ $f$.
+\item $\mathcal L_{f^\sharp}=\mathcal L_f$; in particular $\int_0^Lf^\sharp=\int_0^Lf$.
+\item $f^\sharp$ is nondecreasing, $f^\sharp(0)=\min f$ and $f^\sharp(L)=\max f$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+By convexity, each $\{f\le b\}$ is a closed interval and $f\le\max(f(a),f(a+x))$ on $[a,a+x]$.
+
+(a) A minimiser $a$ gives $[a,a+x]\subset\{f\le b\}$. Conversely, if $\{f\le b\}=[u,v]$ with $v-u\ge x$, take $a=u$.
+
+(b) By (a), $\{f^\sharp\le b\}=[0,\mathcal L_f(b)]$ for $b\ge\min f$, and both sets are empty for $b<\min f$. Equal distribution functions give equal integrals via $\int_0^L\varphi=c_0L+\int_{c_0}^\infty(L-\mathcal L_\varphi(b))\,db$.
+
+(c) A minimiser $a$ for $x'\ge x$ is admissible for $x$, and $\max(f(a),f(a+x))\le f^\sharp(x')$. At $x=0$ every $a\in[0,L]$ is admissible. At $x=L$ only $a=0$ is admissible, and $\max(f(0),f(L))=\max f$ by convexity.
+\end{proof}
+
+For a continuous convex function $F$ on $\Delta$ and a coordinate $j$ put
+\[
+ (R_jF)(y,x)=\min_{0\le a,\ a+x\le L(y)}\max\bigl(F(y,a),F(y,a+x)\bigr)\qquad((y,x)\in\Delta),
+\]
+and $\Rcal=R_m\circ\dots\circ R_1$; for $m=1$, $\Delta=[0,h]$ this is \Mref{Definition}{def:cmp-rearrangement}. For continuous $F$ on $\Delta$, put $E=\{(y,x,a):(y,x)\in\Delta,\ a\ge0,\ a+x\le L(y)\}$ and $\Phi_F(y,x,a)=\max\bigl(F(y,a),F(y,a+x)\bigr)$. Then $(R_jF)(y,x)=\min_a\Phi_F(y,x,a)$ over $(y,x,a)\in E$; $E$ is compact, $\Phi_F$ is continuous, and $(y,a),(y,a+x)\in\Delta$ on $E$ by \eqref{eq:fcp-slices}.
+
+\begin{lemma}[Properties of $R_j$]\label{lem:fcp-rearrangement}
+\uses{lem:fcp-interval}
+Let $F,G$ be continuous convex functions on $\Delta$ and $j\in\{1,\dots,m\}$.
+\begin{enumerate}[label=(\roman*)]
+\item For every $y\in\Delta_j$, $x\mapsto(R_jF)(y,x)$ is the increasing rearrangement $f^\sharp$ (Lemma~\ref{lem:fcp-interval}) of
+ $f=F(y,\cdot)$ on $[0,L(y)]$. It is nondecreasing,
+ $(R_jF)(y,0)=\min_{[0,L(y)]}F(y,\cdot)$ and $(R_jF)(y,L(y))=\max_{[0,L(y)]}F(y,\cdot)$.
+\item $R_jF$ is continuous and convex on $\Delta$.
+\item $\int_\Delta R_jF=\int_\Delta F$.
+\item If $F\le G$ then $R_jF\le R_jG$. For $c\in\R$ and $\alpha\ge0$, $R_j(F+c)=R_jF+c$ and
+ $R_j(\alpha F)=\alpha R_jF$; in particular $R_j0=0$. Moreover $\|R_jF-R_jG\|\le\|F-G\|$,
+ $\max_\Delta R_jF=\max_\Delta F$ and $\min_\Delta R_jF=\min_\Delta F$.
+\item If $i\ne j$ and $F$ is nondecreasing in $p_i$ (that is, $F(p)\le F(p')$ whenever $p,p'\in\Delta$ differ only in
+ the $i$-th coordinate and $p_i\le p'_i$), then so is $R_jF$. Consequently $\Rcal F=R_m\circ\dots\circ R_1F$ is
+ nondecreasing in every coordinate, and $\Rcal F(0)=\min_\Delta\Rcal F$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) By \eqref{eq:fcp-slices}, this is Lemma~\ref{lem:fcp-interval}(a),(c) applied to $F(y,\cdot)$ on $[0,L(y)]$.
+
+(ii) Let $(y_n,x_n)\to(y,x)$. Upper semicontinuity: if $a$ is a minimiser at $(y,x)$, then $a_n=\min(a,L(y_n)-x_n)\to a$ is admissible. Lower semicontinuity: along a subsequence, minimisers $a_n\to a^*$ with $(y,x,a^*)\in E$, since $E$ is closed. Convexity: convex combinations of minimisers are admissible by concavity of $L$, and convexity of $F$ gives the inequality.
+
+(iii) Apply Fubini over \eqref{eq:fcp-slices}, with (i) and Lemma~\ref{lem:fcp-interval}(b) on each slice.
+
+(iv) $\Phi$ is monotone in $F$, and $\Phi_{F+c}=\Phi_F+c$, $\Phi_{\alpha F}=\alpha\Phi_F$. Apply these to $G-\|F-G\|\le F\le G+\|F-G\|$. The max/min statements follow from (i).
+
+(v) Since $b_{\nu i}\ge0$, we have $L(y+t\mathbf e_i)\le L(y)$ for $t\ge0$. So a minimiser at $(y+t\mathbf e_i,x)$ is admissible at $(y,x)$, and monotonicity of $F$ gives the claim. Inductively, $R_j$ makes the output nondecreasing in $p_j$ (by (i)) and preserves monotonicity in $p_1,\dots,p_{j-1}$. Downward closure then gives $\Rcal F(0)\le\Rcal F(p)$.
+\end{proof}
+
+\subsection{Equal balls in dimension four}\label{sec:fcp-equal}
+
+We record the identities and margins used in \Mref{Proposition}{prop:cmp-linear} and \S\ref{sec:pll}.
+
+Let $k\ge10$, $\eta_\star\in(0,\frac14)$ and $t_0=1-\eta_\star/2$. Let $s=\sqrt k$, $a=t_0/s$, $h=t_0/3$, $c_s=3s-9$, $g=3(1-t_0)=\frac32\eta_\star$, $A=h/a$, $B=h/(h-a)$, and let the tent $\Lambda$ be as in \Msec{sec:cmp-linear}. In the equal-capacity branch, $\eta_\star=1-\rho\sqrt k$ is the volume defect of the normalised capacity $\rho$ (Remark~\ref{rem:rtc-equal}). Put $K_{\rm lin}(p)=c_sp$, $\Pb(p)=3(1-3p)-k(a-p)_+$, $F=K_{\rm lin}-\Pb$ on $\R$, and $\bar D(h)=\{z\in\C:\pi|z|^2\le h\}$. By \Msec{sec:cmp-linear}: $0<a<h$, $c_s>0$, $A,B>0$, $1/A+1/B=1$ (\Mnum{eq:cmp-AB}), and $F=-g+c_s\Lambda$ (\Mnum{eq:cmp-identity}).
+
+\begin{lemma}[The slopes of the tent]\label{lem:fcp-AB}
+\lean{SymplecticPacking.Params.inv_A_add_inv_B, SymplecticPacking.Params.cs_mul_A, SymplecticPacking.Params.cs_mul_B,
+SymplecticPacking.Params.three_s_a}
+$A+B=AB$, $h/A=a$, $h/B=h-a$, and
+\[
+ c_sA=k-3s,\qquad c_sB=3s,\qquad 3sa=3-g .
+\]
+\end{lemma}
+
+\begin{proof}
+Multiplying $1/A+1/B=1$ by $AB$ gives $A+B=AB$; $h/A=a$ and $h/B=h-a$ are the definitions. Using
+$h-a=t_0(s-3)/(3s)$,
+\[
+ c_sA=(3s-9)\frac s3=s^2-3s=k-3s,\qquad c_sB=(3s-9)\frac{s}{s-3}=3s,\qquad 3sa=3t_0=3-g .\qedhere
+\]
+\end{proof}
+
+We have $\Lambda(0)=h$, $\Lambda(a)=0$, $\Lambda(h)=h$, and by \Mref{Corollary}{thm:cmp-tent-rearrangement} the increasing rearrangement of $\Lambda$ on $[0,h]$ is $x\mapsto x$.
+
+No area-preserving homeomorphism $q$ of $\bar D(h)$ satisfies $\Lambda(p(q(z)))\le\pi|z|^2$ exactly: for $0<b<h$ it would map $\bar D(b)$ into $\{\Lambda(\pi|z|^2)\le b\}$, which by \Mref{Lemma}{lem:cmp-tent-sublevel} is the closed annulus $\{a-b/A\le\pi|z|^2\le a+b/B\}$ of area $b$ with $a-b/A>0$; a compact subset of area $b$ is the whole annulus (nonempty relatively open subsets have positive measure), and a disc is not homeomorphic to an annulus. The inner map of \S\ref{sec:pll} achieves the inequality up to an error $4e_q$; the bound $e_q\le h/100$ keeps its errors small relative to $h$.
+
+\begin{definition}[Inner smoothing parameter]\label{def:fcp-eq}
+\lean{SymplecticPacking.Params.eq_, SymplecticPacking.Params.eq_pos, SymplecticPacking.Params.eq_le_h}
+\uses{lem:fcp-AB}
+Put
+\[
+ e_q=\min\Bigl(\frac h{100},\ \frac g{128\,c_s}\Bigr).
+\]
+Then $0<e_q\le h/100$.
+\end{definition}
+
+\begin{lemma}[Margin]\label{lem:fcp-margin}
+\lean{SymplecticPacking.Params.margin_one, SymplecticPacking.Params.K_sub_F_ge}
+\uses{def:fcp-eq, lem:fcp-AB}
+$g-4c_se_q\ge\frac{31}{32}g$. Consequently, for all real $u$ and $x$,
+\[
+ \Lambda(x)\le u+4e_q\quad\Longrightarrow\quad K_{\rm lin}(u)-F(x)\ge\tfrac{31}{32}g .
+\]
+In particular, if $q$ satisfies $\Lambda(p(q(z)))\le\pi|z|^2+4e_q$ on $\bar D(h)$, then
+$(K_{\rm lin}-\Pb)(p(q(z)))\le K_{\rm lin}(\pi|z|^2)-\frac{31}{32}g$ there.
+\end{lemma}
+
+\begin{proof}
+$4c_se_q\le g/32$. By (\Mnum{eq:cmp-identity}) and $c_s>0$, $K_{\rm lin}(u)-F(x)=c_su+g-c_s\Lambda(x)\ge g-4c_se_q\ge\tfrac{31}{32}g$. The last statement is the case $u=\pi|z|^2$, $x=p(q(z))$.
+\end{proof}

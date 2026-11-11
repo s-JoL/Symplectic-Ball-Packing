@@ -1,0 +1,500 @@
+\section{The Fermat torus cover}\label{sec:fer}
+
+The base $\Gamma$ is the hexagonal torus $(\R/\Z)^2$, $z=u+\zeta v$, $\zeta=e^{2\pi i/3}$. This section gives the unit Fermat lift $Z(u,v)$, the deck maps, the model form, the handle data for \S\ref{sec:cub}, and the first Moser primitive $\alpha_1$. Write $\mathcal F(Z)=Z_0^3+Z_1^3+Z_2^3$, $S_\Gamma=\{|Z|=1,\ \mathcal F(Z)=0\}\subset\C^3$, and $\eta_H=\operatorname{Im}(Z^\dagger dZ)/(2\pi)$ on the unit sphere.
+
+\subsection{The representative and cover data}\label{sec:fer-curve}
+
+\begin{lemma}[Unit Fermat representatives]\label{lem:fer-curve}
+\lean{SymplecticPacking.Embed.Fpoly_Zunit,SymplecticPacking.Bundle.normSq3_Zunit,SymplecticPacking.Bundle.contDiff_Zunit}
+The theta lift defined below is smooth, has unit norm and satisfies
+$Z_0(u,v)^3+Z_1(u,v)^3+Z_2(u,v)^3=0$ for every $(u,v)\in\R^2$.
+\end{lemma}
+
+\begin{proof}
+Off the lattice $\hat Z$ is a nonzero multiple of the Weierstrass vector of Lemma~\ref{lem:fer-torus}, and at the lattice a nonzero multiple of $(0,1,-1)$. Both are Fermat and normalization preserves this. $Z$ is smooth since $\hat Z\ne0$ (Lemma~\ref{lem:fer-theta}).
+\end{proof}
+
+We use the cover model of Definition~\ref{def:cub-model}: $\widetilde N=\R^2\times\C$ with deck maps $T_u,T_v$, $\mathsf N(u,v,w)=(Z(u,v),w)$, and gauge $(Z,U)\sim(e^{i\chi}Z,e^{3i\chi}U)$. Put $p=\pi|w|^2$, $\eta=\operatorname{Im}\sum_j\bar Z_jdZ_j/(2\pi)$ and $\sigma=d\eta$.
+
+\begin{lemma}[Angular and model forms]\label{lem:fer-alpha}
+\lean{SymplecticPacking.Bundle.d_etaH,SymplecticPacking.Return.d1_betaLoc}
+On $w\ne0$, the form $\alpha=d\arg w/(2\pi)-3\eta$ is deck invariant, $d\alpha=-3\sigma$, and
+$\alpha$ has integral one on each fibre circle. The product $p\alpha$ extends smoothly across $w=0$.
+\end{lemma}
+
+\begin{proof}
+Under $Z\mapsto e^{i\chi}Z$, the changes $d\chi/(2\pi)$ of $\eta$ and $3d\chi/(2\pi)$ of $d\arg w/(2\pi)$ cancel in $\alpha$. The rest follows from $d\eta=\sigma$ and $p\,d\arg w/(2\pi)=\frac12\operatorname{Im}(\bar w\,dw)$.
+\end{proof}
+
+\begin{lemma}[The coordinate model form]\label{lem:fer-Omega0}
+\lean{SymplecticPacking.Bundle.Omega0loc,SymplecticPacking.Return.d1_betaLoc,SymplecticPacking.Bundle.Cubic.OmegaT_split,SymplecticPacking.Bundle.Cubic.OmegaT_sq}
+On the cover,
+\begin{equation}\label{eq:fer-Omega0-local}
+ \Omega_0=\sigma+d(p\alpha)
+ =\omega_V+(1-3p)\sigma-3dp\wedge\eta.
+\end{equation}
+It is closed, deck invariant and smooth at the fibre axis, with square
+$2(1-3p)\omega_V\wedge\sigma$, so nondegenerate for $p<1/3$.
+\end{lemma}
+
+\begin{proof}
+Differentiate the smooth primitive $\frac12\operatorname{Im}(\bar w\,dw)+(1-3p)\eta$. In the square, every other mixed term contains a repeated vertical differential or three base differentials. Positivity of $\sigma$ is Lemma~\ref{lem:fer-sigma}.
+\end{proof}
+
+\subsection{An explicit parametrisation and atlas}\label{sec:fer-torus}
+
+We uniformise $\Gamma$ by $\C/\Lambda_0$, $\Lambda_0=\Z+\zeta\Z$, and lift the curve to the unit sphere without poles; with the flat cutoffs of \S\ref{sec:fer-handle}, all base data are explicit smooth functions of $(u,v)$. Since $\zeta_6:=e^{i\pi/3}=1+\zeta$, also $\Lambda_0=\Z+\zeta_6\Z$, and $\zeta_6\Lambda_0=\zeta\Lambda_0=\Lambda_0$.
+
+\begin{definition}[Torus parametrisation]\label{def:fer-torus}
+\lean{SymplecticPacking.Bundle.tau, SymplecticPacking.Bundle.hexPair,
+SymplecticPacking.Bundle.mem_lattice_iff, SymplecticPacking.Bundle.torusZ,
+SymplecticPacking.Bundle.cF, SymplecticPacking.Bundle.dF, SymplecticPacking.Bundle.torusLift,
+SymplecticPacking.Bundle.latticeLift, SymplecticPacking.Bundle.torusPoint}
+Let $\wp=\wp_{\Lambda_0}$ be the Weierstrass function of $\Lambda_0$, $w_\wp=\wp'(z)$, and $g_2,g_3$ the invariants of
+$\Lambda_0$, so that $w_\wp^2=4\wp^3-g_2\wp-g_3$. Put
+\[
+ c_F=g_3^{-1/3},\qquad d_F=(3g_3)^{-1/2}\qquad\text{(principal powers)},
+\]
+so that $c_F^3g_3=1$ and $3d_F^2g_3=1$ ($g_3\ne0$ by Lemma~\ref{lem:fer-torus}). Define $\Phi_\Gamma$ on the quotient by the lattice, with brackets denoting nonzero complex vectors modulo a scalar by
+\[
+ \Phi_\Gamma(z)=\big[\,2c_F\,\wp(z):-(1+d_F\,w_\wp):-(1-d_F\,w_\wp)\,\big]\quad(z\notin\Lambda_0),\qquad
+ \Phi_\Gamma(0)=[0:1:-1].
+\]
+The torus is oriented by $\nu=du\wedge dv$, so $\int\nu=1$.
+\end{definition}
+
+The form $\nu$ gives the complex orientation, as $d\operatorname{Re}z\wedge d\operatorname{Im}z=\frac{\sqrt3}2\,du\wedge dv$. The constants $c_F,d_F$ normalise the map, not the lattice.
+
+\begin{lemma}[Injectivity of the Fermat representative map]\label{lem:fer-torus}
+\lean{SymplecticPacking.Bundle.hex_g2, SymplecticPacking.Bundle.hex_g3_ne_zero,
+SymplecticPacking.Bundle.cF_cube, SymplecticPacking.Bundle.dF_sq,
+SymplecticPacking.Bundle.torusLift_fermat, SymplecticPacking.Bundle.torusPoint_mem,
+SymplecticPacking.Bundle.wp_injective, SymplecticPacking.Bundle.torusLift_proj_injective,
+SymplecticPacking.Bundle.torusPoint_proj_injective}
+\uses{def:fer-torus, lem:fer-curve}
+The invariants of $\Lambda_0$ are $g_2=0$ and $g_3\ne0$, so $w_\wp^2=4\wp^3-g_3$. The map $\Phi_\Gamma$ takes values in gauge classes of nonzero Fermat vectors, and it is injective on $\C/\Lambda_0$.
+\end{lemma}
+
+\begin{proof}
+\emph{Invariants.} From $G_k(\lambda\Lambda)=\lambda^{-k}G_k(\Lambda)$ and $\zeta_6\Lambda_0=\Lambda_0$ we get $G_4=\zeta_6^{-4}G_4$, and $\zeta_6^4\ne1$ gives $g_2=0$. Suppose $g_3=0$, so $w_\wp^2=4\wp^3$. Then $\wp'(\frac12)=0$, as $\wp'$ is odd and periodic, which forces $\wp(\frac12)=0$; a zero of order $n\ge1$ there would give $2(n-1)=3n$, impossible.
+
+\emph{Image.} Off $\Lambda_0$, $(2c_F\wp)^3-(1+d_Fw_\wp)^3-(1-d_Fw_\wp)^3=(8\wp^3-2g_3-2w_\wp^2)/g_3=0$; at the lattice point, $0^3+1^3+(-1)^3=0$.
+
+\emph{Injectivity.} The last two coordinates sum to $-2$ off $\Lambda_0$ and to $0$ at $[0:1:-1]$, so only the lattice point maps to $[0:1:-1]$. For $z,z'\notin\Lambda_0$, equal classes give $\wp(z)=\wp(z')$ and $\wp'(z)=\wp'(z')$. Since $\wp-\wp(z)$ has a single double pole, $z'\equiv\pm z$. If $z'\equiv-z$, then $\wp'(z)=0$; as $\wp'$ has a single triple pole and vanishes at the three half periods, those are all its zeros, so $z$ is a half period and $-z\equiv z$.
+\end{proof}
+
+\begin{definition}[Theta lift]\label{def:fer-theta}
+\lean{SymplecticPacking.Bundle.jacobiTheta1, SymplecticPacking.Bundle.thetaFactor,
+SymplecticPacking.Bundle.rTheta, SymplecticPacking.Bundle.wpConst,
+SymplecticPacking.Bundle.PTheta, SymplecticPacking.Bundle.QTheta,
+SymplecticPacking.Bundle.Zraw, SymplecticPacking.Bundle.Zunit}
+\uses{def:fer-torus}
+Let $x=\pi z=\pi(u+\zeta v)$ and
+\[
+ \vartheta(x)=2\sum_{n\ge0}(-1)^ne^{i\pi\zeta(n+1/2)^2}\sin\big((2n+1)x\big),
+\]
+the Jacobi function $\vartheta_1(x\,|\,\zeta)$; primes denote $x$-derivatives. Put
+$r_\vartheta=\vartheta'''(0)/(3\vartheta'(0))$,
+\[
+ P_\vartheta=\vartheta'^2\vartheta-\vartheta''\vartheta^2+r_\vartheta\vartheta^3,\qquad
+ Q_\vartheta=-\vartheta'''\vartheta^2+3\vartheta'\vartheta''\vartheta-2\vartheta'^3,
+\]
+\[
+ \hat Z=\big(2c_F\pi^2P_\vartheta,\;-\vartheta^3-d_F\pi^3Q_\vartheta,\;-\vartheta^3+d_F\pi^3Q_\vartheta\big),\qquad
+ Z=\frac{\hat Z}{\|\hat Z\|},
+\]
+all evaluated at $x=\pi z$.
+\end{definition}
+
+Equivalently, $\vartheta(x)=-i\,e^{i\pi\zeta/4+ix}\,\Theta(x/\pi+\frac12+\frac\zeta2,\zeta)$ with $\Theta(y,\zeta)=\sum_{n\in\Z}e^{2\pi iny+i\pi n^2\zeta}$.
+
+\begin{lemma}[The lift has no zero]\label{lem:fer-theta}
+\lean{SymplecticPacking.Bundle.jacobiTheta1_pi_mul_eq_zero_iff,
+SymplecticPacking.Bundle.dTheta1_ne_zero_of_eq_zero, SymplecticPacking.Bundle.wp_eq_theta,
+SymplecticPacking.Bundle.Zraw_eq, SymplecticPacking.Bundle.Zraw_ne_zero,
+SymplecticPacking.Bundle.Zraw_automorphy, SymplecticPacking.Bundle.contDiff_Zunit}
+\uses{def:fer-theta, lem:fer-torus}
+The zeros of $\vartheta$ are exactly the points of $\pi\Lambda_0$, and they are simple. Off $\Lambda_0$,
+\[
+ \wp(z)=-\pi^2(\log\vartheta)''(\pi z)+\pi^2r_\vartheta ,
+\]
+and $\hat Z=\vartheta^3\cdot(2c_F\wp,\,-1-d_Fw_\wp,\,-1+d_Fw_\wp)$ wherever $\vartheta\ne0$. $\hat Z$ is an entire function
+of $z$ without zeros, so $Z$ is a smooth map $\R^2\to\C^3$ with $\|Z\|=1$. Under $(u,v)\mapsto(u+1,v)$ and
+$(u,v)\mapsto(u,v+1)$, $\hat Z$ is multiplied by $-1$ and by $\mathfrak m(\pi z)^3$, where
+$\mathfrak m(x)=-e^{-i\pi\zeta}e^{-2ix}$.
+\end{lemma}
+
+\begin{proof}
+\emph{Quasi-periodicity.} $\vartheta$ is entire and odd, and the identities of $\Theta$ give $\vartheta(x+\pi)=-\vartheta(x)$ and $\vartheta(x+\pi\zeta)=\mathfrak m(x)\vartheta(x)$. Hence $\ell=\vartheta'/\vartheta$ satisfies $\ell(x+\pi)=\ell(x)$ and $\ell(x+\pi\zeta)=\ell(x)-2i$.
+
+\emph{Zeros.} Take a parallelogram $P=a+[0,1]\pi+[0,1]\pi\zeta$ with no zeros on $\partial P$. In the argument principle the edges parallel to $\pi\zeta$ cancel, and the other two contribute $\int_a^{a+\pi}(\ell(x)-\ell(x+\pi\zeta))\,dx=2\pi i$, so $P$ contains exactly one zero, and it is simple. Since $\vartheta(0)=0$ and $P$ contains exactly one point of $\pi\Lambda_0$, the zero set is $\pi\Lambda_0$, and $\vartheta'\ne0$ there.
+
+\emph{Formula for $\wp$.} $F(z)=\pi^2(\vartheta'^2-\vartheta\vartheta'')/\vartheta^2$, evaluated at $\pi z$, is $\Lambda_0$-periodic because $\ell$ changes only by constants, and $F(z)=z^{-2}-\pi^2r_\vartheta+O(z^2)$ at $0$. By Liouville, and since $\wp$ has zero constant Laurent term, $\wp-F=\pi^2r_\vartheta$, so $\vartheta^3\wp=\pi^2P_\vartheta$. Differentiating gives $w_\wp=\pi^3Q_\vartheta/\vartheta^3$, hence the formula for $\hat Z$.
+
+\emph{No zero.} Where $\vartheta\ne0$, the last two components sum to $-2\vartheta^3\ne0$; where $\vartheta=0$, $Q_\vartheta=-2\vartheta'^3$, so the second component is $2d_F\pi^3\vartheta'^3\ne0$. $\hat Z$ is entire, being polynomial in $\vartheta,\dots,\vartheta'''$.
+
+\emph{Automorphy.} Under $x\mapsto x+\pi$, all of $\vartheta,\dots,\vartheta'''$ change sign and $P_\vartheta,Q_\vartheta,\vartheta^3$ are cubic in them, so $\hat Z\mapsto-\hat Z$. Under $x\mapsto x+\pi\zeta$, periodicity of $\wp,w_\wp$ and the previous step show that $P_\vartheta,Q_\vartheta,\vartheta^3$ gain the factor $\mathfrak m^3$ off $\pi\Lambda_0$, hence everywhere by continuity.
+\end{proof}
+
+At lattice points $P_\vartheta=0$ and $Q_\vartheta=-2\vartheta'^3$, so $[\hat Z]=[0:1:-1]$; off the lattice $[\hat Z]=\Phi_\Gamma(z)$. Hence $Z$ is a smooth unit Fermat lift of that gauge class.
+
+\begin{construction}[The atlas of $N$]\label{cons:fer-atlas}
+\lean{SymplecticPacking.Return.Ncoord, SymplecticPacking.Embed.deckU, SymplecticPacking.Embed.deckV,
+SymplecticPacking.Return.betaLoc, SymplecticPacking.Return.d1_betaLoc, SymplecticPacking.Bundle.Omega0loc}
+\uses{lem:fer-theta, def:cub-model}
+\begin{enumerate}[label=(\alph*)]
+\item \emph{Base.} The chart $(u,v)\mapsto\Phi_\Gamma(u+\zeta v)$ is the injective Fermat representative map of the base torus $\Gamma=(\R/\Z)^2$; all base objects are written in $(u,v)$, and $\nu=du\wedge dv$.
+\item \emph{The torus cover of $N$.} The map $\R^2\times\C\to N$, $(u,v,w)\mapsto[Z(u,v),w]$, with $w=\xi+i\eta$, is the cover-to-representative map. Let $\phi(u,v)=\mathfrak m(\pi z)^3/|\mathfrak m(\pi z)|^3$, so that $Z(u+1,v)=-Z(u,v)$
+and $Z(u,v+1)=\phi(u,v)Z(u,v)$ (Lemma~\ref{lem:fer-theta}). The deck maps
+\[
+ T_u(u,v,w)=(u+1,v,-w),\qquad T_v(u,v,w)=(u,v+1,\phi(u,v)^3w)
+\]
+generate a free $\Z^2$-action, and $(u,v,w)\mapsto[Z(u,v),w]$ is exactly the deck relation defining $N$.
+\item \emph{Algebraic frames.} For $j=0,1,2$, $Z\bar Z_j/|Z_j|$ is a local unitary frame over $\Gamma\cap\{Z_j\ne0\}$ in the sense
+of Definition~\ref{def:cub-model}. Its fibre coordinate $w_j$ is given by $U=(Z_j/|Z_j|)^3w_j$, so its unit section is
+$[Z]\mapsto[Z,(Z_j/|Z_j|)^3]$, and its connection form is $-3\eta_H+\frac3{2\pi}d\arg Z_j$. These three sets cover $\Gamma$, and the
+transition functions $w_j=(Z_k|Z_j|/(|Z_k|Z_j))^3w_k$ have weight three.
+\item \emph{The model form in the torus frame.} In the frame (b), $p=\pi|w|^2$, $\alpha=d\theta-3Z^*\eta_H$, and
+\[
+ \Omega_0=d\Big((1-3p)\,Z^*\eta_H+\tfrac12(\xi\,d\eta-\eta\,d\xi)\Big)=\omega_V+(1-3p)\sigma+dp\wedge(-3Z^*\eta_H).
+\]
+\end{enumerate}
+\end{construction}
+
+\begin{proof}[Verification]
+(b) Since $(e^{i\pi}Z,e^{3i\pi}U)\sim(Z,U)$, $[Z(u+1,v),-w]=[Z(u,v),w]$, and likewise $[\phi Z,\phi^3w]=[Z,w]$. As $\mathfrak m(x+\pi)=\mathfrak m(x)$, $\phi$ is $u$-periodic, so $T_uT_v=T_vT_u$. By projective injectivity, gauge-equivalent unit pairs have base coordinates differing by a lattice vector; after the corresponding deck map, unit gauge equivalence fixes the fibre coordinate.
+
+(c) The frame is gauge invariant, and $[Z,(Z_j/|Z_j|)^3w_j]=[e^{-i\arg Z_j}Z,w_j]$. From $\arg U=3\arg Z_j+\arg w_j$ we get $\alpha=d\arg w_j/(2\pi)+\frac3{2\pi}d\arg Z_j-3\eta_H$, which is the connection form. The sets cover $\Gamma$ since $Z\ne0$, and comparing sections on overlaps gives the transitions.
+
+(d) Apply Lemmas~\ref{lem:fer-alpha} and~\ref{lem:fer-Omega0} with $a_{\rm loc}=-3Z^*\eta_H$ and $d(Z^*\eta_H)=\sigma$; the primitive is $Z^*\eta_H+p\alpha$.
+\end{proof}
+
+\begin{lemma}[The deck phase]\label{lem:fer-clutch}
+\lean{SymplecticPacking.Embed.deckU,SymplecticPacking.Embed.deckV,SymplecticPacking.Bundle.Zraw_automorphy}
+The two fibre factors are $-1$ and $\phi^3$; they commute with the lattice translations. On $v=0$,
+$\phi(u,0)=\phi_0e^{-6\pi iu}$ for a constant $|\phi_0|=1$.
+\end{lemma}
+
+\begin{proof}
+$\mathfrak m$ is $u$-periodic, so the deck maps commute. On $v=0$, $\mathfrak m(\pi u)=-e^{-i\pi\zeta}e^{-2\pi iu}$; cubing its unit phase gives the claim.
+\end{proof}
+
+\begin{lemma}[The area of the base]\label{lem:fer-sigma}
+\lean{SymplecticPacking.Bundle.d_etaH, SymplecticPacking.Bundle.sigmaC_pos,
+SymplecticPacking.Bundle.sigmaC_periodic, SymplecticPacking.Bundle.integral_sigma}
+\uses{lem:fer-theta}
+Write $Z^*\eta_H=\mathsf h_u\,du+\mathsf h_v\,dv$ and $\sigma=d(Z^*\eta_H)=\sigma_\Gamma(u,v)\,du\wedge dv$ on $\R^2$. Then
+$\sigma_\Gamma$ is smooth, $1$-periodic in $u$ and in $v$, strictly positive, and
+$\int_0^1\!\int_0^1\sigma_\Gamma\,du\,dv=3$.
+\end{lemma}
+
+\begin{proof}
+\emph{Positivity.} $\sigma_\Gamma$ is the pull-back of $\omega_{\rm FS}$ by $z\mapsto[\hat Z(z)]$:
+$\sigma_\Gamma=\operatorname{Im}\zeta\cdot(\|\hat Z\|^2\|\hat Z'\|^2-|\hat Z^\dagger \hat Z'|^2)/(\pi\|\hat Z\|^4)$, where $\hat Z'=d\hat Z/dz$; this is positive unless $\hat Z'\parallel\hat Z$. Off the lattice, $\hat Z=\vartheta^3R$ with $R=(2c_F\wp,-1-d_Fw_\wp,-1+d_Fw_\wp)$ and $R'=(2c_Fw_\wp,-d_F\wp'',d_F\wp'')$. If $R'=aR$, summing the last two components gives $a=0$, so $w_\wp=\wp''=0$, impossible since $\wp''=6\wp^2$ and $w_\wp=0$ forces $4\wp^3=g_3\ne0$. At lattice points, the first component of $\hat Z$ is $0$ while that of $\hat Z'$ is $2c_F\pi^3\vartheta'^3\ne0$.
+
+\emph{Periodicity.} Under deck translations $Z$ changes by unit phases $\phi$ (Lemma~\ref{lem:fer-theta}), so $\eta_H$ changes by the closed form $(2\pi i)^{-1}\bar\phi\,d\phi$.
+
+\emph{Integral.} By Stokes, $\iint\sigma_\Gamma=\iint(\partial_u\mathsf h_v-\partial_v\mathsf h_u)$. The constant phase $-1$ gives $\mathsf h_v(1,v)=\mathsf h_v(0,v)$, so the first term contributes $0$; by Lemma~\ref{lem:fer-clutch}, $\mathsf h_u(u,1)=\mathsf h_u(u,0)-3$. Hence $\iint\sigma_\Gamma=3$.
+\end{proof}
+
+\begin{lemma}[The three points on $L$]\label{lem:fer-bpoints}
+\lean{SymplecticPacking.Bundle.bpoints, SymplecticPacking.Bundle.Z0_eq_zero_iff}
+\uses{lem:fer-theta}
+The set $\mathcal Z=\{(u,v)\in\Gamma:Z_0(u,v)=0\}$ of base points on the line $L=\{Z_0=0\}$ consists of
+\[
+ b_1=(0,0),\qquad b_2=(\tfrac13,\tfrac23),\qquad b_3=(\tfrac23,\tfrac13).
+\]
+\end{lemma}
+
+\begin{proof}
+$Z_0=0$ iff $P_\vartheta=0$, i.e.\ iff $\vartheta=0$ (the point $b_1$) or $\wp=0$. As $\zeta\Lambda_0=\Lambda_0$, $\wp(\zeta z)=\zeta\wp(z)$, so $\wp$ vanishes at non-lattice fixed points of $z\mapsto\zeta z$. By $\zeta^2=-1-\zeta$, these include $z_2=\frac13+\frac23\zeta$ and $z_3=\frac23+\frac13\zeta\equiv-z_2$. Since $\wp$ has exactly two zeros counted with multiplicity and $z_2\not\equiv z_3$, these are all its zeros.
+\end{proof}
+
+\subsection{Handle data}\label{sec:fer-handle}
+
+We use the handle data of Proposition~\ref{prop:cub-handle}: $\mathcal A=\{\frac18\le u\le\frac5{24}\}\subset\mathcal A^+=\{\frac1{12}\le u\le\frac14\}$; the dual band $\mathcal B=\{\frac19<v<\frac29\}\supset\{\frac18\le v\le\frac5{24}\}$, carrying the closed one-form $\beta=b(v)\,dv$ and meeting $\mathcal A^+$ in one square; and small discs $U_j$ about the points $b_j$, which lie far from both bands.
+
+\begin{definition}[Frame over $\mathcal A^+$]\label{def:fer-frame}
+\lean{SymplecticPacking.Bundle.frameA, SymplecticPacking.Handle.chartInv,
+SymplecticPacking.Bundle.lambdaC, SymplecticPacking.Bundle.aA}
+\uses{cons:fer-atlas}
+On $\Gamma\cap\{Z_0\ne0\}$ let $w_{\mathcal A}$ be the fibre coordinate of the local unitary frame $Z\bar Z_0/|Z_0|$ of
+Construction~\ref{cons:fer-atlas}(c), i.e.\ $U=(Z_0/|Z_0|)^3w_{\mathcal A}$ (the frame $(Z_0/|Z_0|)^3$, after its unit
+section). Let $\theta_{\mathcal A}=\arg w_{\mathcal A}/2\pi$, and put
+\[
+ \lambda_\Gamma=\eta_H-\frac{1}{2\pi}\operatorname{Im}\frac{dZ_0}{Z_0},\qquad a_{\mathcal A}=-3\lambda_\Gamma,\qquad
+ \Gamma_{\mathcal A}(p)=(1-3p)\,\lambda_\Gamma ,
+\]
+so that $a_{\mathcal A}$ is the connection form $a_{\rm loc}$ of this frame.
+\end{definition}
+
+\begin{lemma}[The frame over the annulus]\label{lem:fer-frame}
+\lean{SymplecticPacking.Bundle.lambdaC_descends, SymplecticPacking.Bundle.d_lambdaC,
+SymplecticPacking.Bundle.angularForm_frameA}
+\uses{def:fer-frame, lem:fer-alpha}
+$\lambda_\Gamma$ is a smooth one-form on $\Gamma\cap\{Z_0\ne0\}$ (no branch of $\arg$ is needed), $d\lambda_\Gamma=\sigma$, and on
+$N|_{\Gamma\cap\{Z_0\ne0\}}$
+\[
+ \alpha=d\theta_{\mathcal A}+a_{\mathcal A},\qquad \Omega_0=\omega_V+d\Gamma_{\mathcal A},\quad \omega_V=dp\wedge d\theta_{\mathcal A}.
+\]
+\end{lemma}
+
+\begin{proof}
+Since $\operatorname{Im}(dZ_0/Z_0)=d\arg Z_0$ is smooth and closed on $\{Z_0\ne0\}$, $\lambda_\Gamma$ is invariant on $S_\Gamma$ and vanishes on $iZ$, hence is basic with $d\lambda_\Gamma=d\eta_H=\sigma$. From $\arg U=3\arg Z_0+\arg w_{\mathcal A}$ we get $\alpha=d\theta_{\mathcal A}-3\lambda_\Gamma$, and a direct computation gives $\Omega_0=\omega_V+d\big((1-3p)\lambda_\Gamma\big)$.
+\end{proof}
+
+\begin{definition}[Torus primitive operator]\label{def:fer-Pprim}
+\lean{SymplecticPacking.Bundle.Pprim, SymplecticPacking.Bundle.Pb0,
+SymplecticPacking.Bundle.PA0, SymplecticPacking.Bundle.PB0}
+This is the operator of Proposition~\ref{prop:cub-handle}(e). For a smooth function $\mathfrak b$ on $(\R/\Z)^2$ with
+$\int\mathfrak b\,\nu=0$ put
+\[
+ \mathfrak b_0(v)=\int_0^1\mathfrak b(s',v)\,ds',\quad
+ A_0(u,v)=\int_0^u\big(\mathfrak b(s',v)-\mathfrak b_0(v)\big)\,ds',\quad
+ B_0(v)=\int_0^v\mathfrak b_0(t)\,dt,
+\]
+and $P_\Gamma(\mathfrak b\,\nu)=A_0\,dv-B_0\,du$.
+\end{definition}
+
+\begin{lemma}\label{lem:fer-Pprim}
+\lean{SymplecticPacking.Bundle.Pprim_periodic, SymplecticPacking.Bundle.d_Pprim,
+SymplecticPacking.Bundle.contDiff_Pprim_cu, SymplecticPacking.Bundle.contDiff_Pprim_cv,
+SymplecticPacking.Bundle.Pprim_affine}
+\uses{def:fer-Pprim}
+$A_0$ and $B_0$ are $1$-periodic in both variables, so $P_\Gamma(\mathfrak b\nu)$ is a smooth one-form on the torus, and
+$d_\Sigma P_\Gamma(\mathfrak b\nu)=\mathfrak b\nu$. $P_\Gamma$ is linear, and if $\mathfrak b$ depends smoothly on parameters then so does
+$P_\Gamma(\mathfrak b\nu)$, with all jets; in particular it preserves affine dependence on $p$.
+\end{lemma}
+
+\begin{proof}
+$A_0(u+1,v)-A_0(u,v)=\int_u^{u+1}(\mathfrak b-\mathfrak b_0)\,ds'=0$ and $B_0(v+1)-B_0(v)=\int\mathfrak b\,\nu=0$; $v$-periodicity of $A_0$ is inherited from $\mathfrak b,\mathfrak b_0$. Directly, $d(A_0\,dv-B_0\,du)=\partial_uA_0\,du\wedge dv-\mathfrak b_0\,dv\wedge du=\mathfrak b\,\nu$. Parameter dependence follows by differentiation under the integral sign.
+\end{proof}
+
+\begin{proposition}[Cutoffs on the cubic handle]\label{prop:fer-handle}
+\lean{SymplecticPacking.Bundle.annulusPlus, SymplecticPacking.Bundle.annulus,
+SymplecticPacking.Bundle.psiB, SymplecticPacking.Bundle.bB, SymplecticPacking.Bundle.betaB,
+SymplecticPacking.Bundle.stripB, SymplecticPacking.Bundle.zetaA, SymplecticPacking.Bundle.zetaJ,
+SymplecticPacking.Bundle.supports, SymplecticPacking.Bundle.Zunit_zero_ne_zero_of_mem}
+\uses{prop:cub-handle, lem:fer-bpoints, def:pre-cutoff, lem:pre-cutoff}
+Let $\mathcal A\subset\mathcal A^+$, $\mathcal B$ and $\beta$ be the handle data of Proposition~\ref{prop:cub-handle}, and take
+the discs of its item (g) closed: $U_j=\{x_j^2+y_j^2\le10^{-4}\}$, of radius $\frac1{100}$ about $b_j$ in the centred coordinates
+$(x_j,y_j)=(u-u(b_j),v-v(b_j))$, reduced to $[-\frac12,\frac12)^2$. With the flat step $S$ and the cutoffs of
+Definition~\ref{def:pre-cutoff}, the cutoffs
+\[
+ \zeta_{\mathcal A}(u)=\chi^{\rm I}_{9/96,\,23/96,\,2/96}(u),\qquad \zeta_j=\chi_{1/200,\,1/100}(x_j,y_j)
+\]
+(extended by zero) satisfy: $\zeta_{\mathcal A}=1$ on $\{\frac{11}{96}\le u\le\frac{21}{96}\}$, a neighbourhood of $\mathcal A$, and
+$\operatorname{supp}\zeta_{\mathcal A}=\{\frac9{96}\le u\le\frac{23}{96}\}\subset\operatorname{int}\mathcal A^+$; $\zeta_j=1$ on the disc
+of radius $\frac1{200}$ about $b_j$, and $\operatorname{supp}\zeta_j=U_j$. The discs $U_j$ are pairwise disjoint and disjoint from
+$\mathcal A^+\cup\mathcal B$, and $\operatorname{supp}\beta\cap U_j=\varnothing$. All these data are independent of the input.
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:pre-cutoff}(b), $\chi^{\rm I}_{9/96,23/96,2/96}=1$ on $[\frac{11}{96},\frac{21}{96}]\supset\mathcal A=[\frac{12}{96},\frac{20}{96}]$ and is positive exactly on $(\frac9{96},\frac{23}{96})$, so its support lies in $\operatorname{int}\mathcal A^+=(\frac8{96},\frac{24}{96})$. By Lemma~\ref{lem:pre-cutoff}(a), $\chi_{1/200,1/100}$ is $1$ on the closed disc of radius $\frac1{200}$, vanishes outside the open disc of radius $\frac1{100}$ and is positive on it (as $S<1$ on $(-\infty,1)$), so its support is $U_j$. The $b_j$ have mutual flat distance $\ge\frac13$ and distance $\ge\frac1{12}$ from $\mathcal A^+\cup\mathcal B$ (proof of Proposition~\ref{prop:cub-handle}(a),(b)), both exceeding $\frac2{100}$; and $\operatorname{supp}\beta\subset\mathcal B$.
+\end{proof}
+
+\subsection{A global primitive vanishing on three whole fibres}\label{sec:fer-alpha1}
+
+We write the first path of the handle construction (\Msec{sec:hdl}) for the cubic in closed form, for all valid cubic data, correcting an explicit primitive $\alpha^0$ of $\kappa_1-\kappa$ by $d_\Sigma$-closed forms supported over $\mathcal A^+$ and near the $b_j$ (disjoint by Proposition~\ref{prop:fer-handle}).
+
+\begin{definition}[Admissible auxiliary data and base area forms]\label{def:fer-kappa}
+\lean{SymplecticPacking.Branch2.CubicData.eh,
+SymplecticPacking.Branch2.CubicData.Hstar,
+SymplecticPacking.Bundle.kappa,
+SymplecticPacking.Bundle.Cubic.kappa1,
+SymplecticPacking.Bundle.chiA}
+\uses{prop:fer-handle}
+Let $0<h<1/3$ and $0<g\le3(1-3h)$. Set
+\[
+ e_h=g/16,\qquad H^*(p)=3(1-3p)-e_h,\qquad
+ f(s)=S(2s-1/2),\qquad \Gamma_{\rm sm}=e_h(u-1/6)\,dv.
+\]
+Thus $0<e_h\le\Hb(h)/2$, $f$ is nondecreasing, $0$ for $s\le1/4$, $1$ for $s\ge3/4$, and $d\Gamma_{\rm sm}=e_h\nu$.
+Put $\chi=f'(s)\,ds\wedge\beta$ (on $\mathcal A$, extended by zero) and
+\[
+ \kappa(p)=(1-3p)\,\sigma,\qquad \kappa_1(p)=e_h\nu+H^*(p)\chi .
+\]
+\end{definition}
+
+\begin{lemma}[Base area forms]\label{lem:fer-kappa}
+\lean{SymplecticPacking.Bundle.integral_chi,
+SymplecticPacking.Bundle.integral_kappa,
+SymplecticPacking.Bundle.Cubic.integral_kappa1,
+SymplecticPacking.Bundle.Cubic.kappa_pos}
+\uses{def:fer-kappa, lem:fer-sigma, prop:fer-handle}
+$\chi\ge0$, $\int\chi=1$, and $\int\kappa(p)=\int\kappa_1(p)=\Hb(p)$. On $[0,h]$, $H^*\ge\frac12\Hb(h)>0$. For every $p<\frac13$
+with $H^*(p)\ge0$, both $\kappa(p)$ and $\kappa_1(p)$ are positive area forms, and $\kappa_1(p)\ge e_h\nu$.
+\end{lemma}
+
+\begin{proof}
+$\chi=f'(s)b(v)\,ds\wedge dv\ge0$ and $\int\chi=\int_0^1f'\,ds\int_0^1b\,dv=1$. By Lemma~\ref{lem:fer-sigma}, $\int\kappa=3(1-3p)$ and $\sigma>0$; $\int\kappa_1=e_h+H^*=\Hb$. On $[0,h]$, $\Hb\ge\Hb(h)$ and $e_h\le\frac12\Hb(h)$. Finally $\kappa_1-e_h\nu=H^*\chi\ge0$.
+\end{proof}
+
+\begin{definition}[The annular difference and its period]\label{def:fer-Delta}
+\lean{SymplecticPacking.Bundle.Cubic.alpha10,
+SymplecticPacking.Bundle.Cubic.gammaSm,
+SymplecticPacking.Bundle.Cubic.DeltaA,
+SymplecticPacking.Bundle.Cubic.corePeriod}
+\uses{def:fer-kappa, def:fer-Pprim, def:fer-frame}
+Let $\alpha^0(p)=P_\Gamma\big(\kappa_1(p)-\kappa(p)\big)$, a base one-form with coefficients depending on the base point and
+affinely on $p$, with $d_\Sigma\alpha^0=\kappa_1-\kappa$ (Lemmas~\ref{lem:fer-Pprim} and~\ref{lem:fer-kappa}). On $\mathcal A^+$ put
+\[
+ \Delta_0(p)=\Gamma_{\mathcal A}(p)+\alpha^0(p)-\Gamma_{\rm sm}-f(s)H^*(p)\beta ,
+\]
+and let $c(p)=\oint_{\{u={\rm const}\}}\Delta_0(p)$ be its period over a $v$-circle in $\mathcal A^+$.
+\end{definition}
+
+\begin{lemma}\label{lem:fer-Delta}
+\lean{SymplecticPacking.Bundle.Cubic.d_alpha10,
+SymplecticPacking.Bundle.Cubic.alpha10_affine,
+SymplecticPacking.Bundle.Cubic.alpha10_periodic,
+SymplecticPacking.Bundle.Cubic.DeltaA_closed,
+SymplecticPacking.Bundle.Cubic.corePeriod_indep,
+SymplecticPacking.Bundle.Cubic.corePeriod_affine}
+\uses{def:fer-Delta, lem:fer-frame}
+For each $p$, $\Delta_0(p)$ is $d_\Sigma$-closed on $\mathcal A^+$; hence $c(p)$ does not depend on the circle, and $c$ is affine
+in $p$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:fer-frame}, $d_\Sigma\Gamma_{\mathcal A}=\kappa$; with $d_\Sigma\alpha^0=\kappa_1-\kappa$, $d_\Sigma\Gamma_{\rm sm}=e_h\nu$ and $d_\Sigma(fH^*\beta)=H^*\chi$ this gives $d_\Sigma\Delta_0=0$. Two $v$-circles bound an annulus in $\mathcal A^+$, so Stokes gives independence; every term is affine in $p$ since $P_\Gamma$ is linear and $e_h,\Gamma_{\rm sm}$ do not depend on $p$.
+\end{proof}
+
+In general $c(p)\ne0$ (holonomy of the frame $(Z_0/|Z_0|)^3$ around the core circle and periods of the primitives); since $\oint\beta=1$, $\Delta_0-c(p)\beta$ has period zero and is $d_\Sigma$-exact on $\mathcal A^+$.
+
+\begin{definition}[Annular primitive]\label{def:fer-FA}
+\lean{SymplecticPacking.Bundle.Cubic.FA}
+\uses{lem:fer-Delta}
+Write $\Delta_0(p)-c(p)\beta=D_u\,du+D_v\,dv$ on $\mathcal A^+$ and put
+\[
+ F_{\mathcal A}(u,v,p)=\int_{1/6}^uD_u(t,0,p)\,dt+\int_0^vD_v(u,t,p)\,dt\qquad(\tfrac1{12}\le u\le\tfrac14,\ v\in\R),
+\]
+the integral of $\Delta_0-c\beta$ along the path from $(\frac16,0)$ horizontally and then vertically.
+\end{definition}
+
+\begin{lemma}\label{lem:fer-FA}
+\lean{SymplecticPacking.Bundle.Cubic.FA_periodic,
+SymplecticPacking.Bundle.Cubic.d_FA,
+SymplecticPacking.Bundle.Cubic.contDiffOn_FA,
+SymplecticPacking.Bundle.Cubic.FA_affine}
+\uses{def:fer-FA, prop:cub-handle}
+$F_{\mathcal A}$ is a smooth function on $\mathcal A^+$, $1$-periodic in $v$, affine in $p$, and
+$d_\Sigma F_{\mathcal A}=\Delta_0-c(p)\beta$.
+\end{lemma}
+
+\begin{proof}
+$\partial_vF_{\mathcal A}=D_v$, and closedness ($\partial_uD_v=\partial_vD_u$) gives $\partial_uF_{\mathcal A}=D_u(u,0)+\int_0^v\partial_tD_u\,dt=D_u$. Periodicity: $\int_0^1D_v(u,t)\,dt=c(p)-c(p)=0$ by Proposition~\ref{prop:cub-handle}(c). Smoothness and affinity are inherited from $D_u,D_v$.
+\end{proof}
+
+\begin{construction}[The global primitive $\alpha_1$]\label{cons:fer-alpha1}
+\lean{SymplecticPacking.Bundle.Cubic.alpha1pre,
+SymplecticPacking.Bundle.Cubic.Ajet,
+SymplecticPacking.Bundle.Cubic.Bjet,
+SymplecticPacking.Bundle.Cubic.jetSum,
+SymplecticPacking.Bundle.Cubic.alpha1}
+\uses{def:fer-Delta, def:fer-FA, prop:fer-handle}
+Define the base one-form, with $\zeta_{\mathcal A}F_{\mathcal A}$ extended by zero outside $\mathcal A^+$,
+\[
+ \alpha_{\rm pre}(p)=\alpha^0(p)-c(p)\beta-d_\Sigma\big(\zeta_{\mathcal A}F_{\mathcal A}(\cdot,p)\big),
+\]
+write its value at $b_j$ as $A_j(p)\,dx_j+B_j(p)\,dy_j$ ($A_j,B_j$ affine in $p$), and put
+\begin{equation}\label{eq:fer-alpha1}
+ \alpha_1(p)=\alpha_{\rm pre}(p)-\sum_{j=1}^3d_\Sigma\Big[\zeta_j\big(A_j(p)\,x_j+B_j(p)\,y_j\big)\Big].
+\end{equation}
+We use $\alpha_1$ as the toric one-form $\pi_N^*\alpha_1(p(\cdot))$ on $N$. For the data of \Msec{sec:hdl} this is the
+primitive $\alpha_1$ of the first path, with the base point $(\frac16,0)$ for $F_{\mathcal A}$ and the cutoffs
+$\zeta_{\mathcal A}$, $\zeta_j$ of Proposition~\ref{prop:fer-handle}.
+\end{construction}
+
+\begin{lemma}[Properties of $\alpha_1$]\label{lem:fer-alpha1}
+\lean{SymplecticPacking.Bundle.Cubic.smooth_alpha1,
+SymplecticPacking.Bundle.Cubic.alpha1_periodic,
+SymplecticPacking.Bundle.Cubic.alpha1_affine,
+SymplecticPacking.Bundle.Cubic.alpha1_curvature,
+SymplecticPacking.Bundle.Cubic.Gamma1,
+SymplecticPacking.Bundle.Cubic.alpha1_annulus}
+\uses{cons:fer-alpha1, lem:fer-FA, lem:fer-frame, prop:fer-handle}
+\begin{enumerate}[label=(\roman*)]
+\item $\alpha_1$ is a smooth one-form on $N$, horizontal (no $dp$ and no fibre-angle component), affine in $p$, and
+$d_\Sigma\alpha_1=\kappa_1-\kappa$.
+\item Over $\mathcal A$, in the frame $(Z_0/|Z_0|)^3$,
+\begin{equation}\label{eq:fer-Gamma1}
+ \Gamma_{\mathcal A}+\alpha_1=\Gamma_{\rm sm}+f(s)H^*(p)\beta,\qquad\text{hence}\qquad
+ \Omega_0+d\alpha_1=\omega_V+e_h\nu+d\big(f(s)H^*(p)\beta\big),
+\end{equation}
+with the full exterior derivative, which contains the mixed term $f(s)H^{*\prime}(p)\,dp\wedge\beta=-9f(s)\,dp\wedge\beta$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) Each term is a base one-form smooth in the base point and affine in $p$, so its pull-back is a smooth horizontal one-form; $c\beta$, $d_\Sigma(\zeta_{\mathcal A}F_{\mathcal A})$ and the corrections at the $b_j$ are $d_\Sigma$-closed, so $d_\Sigma\alpha_1=d_\Sigma\alpha^0=\kappa_1-\kappa$.
+
+(ii) On $\mathcal A$, $\zeta_{\mathcal A}=1$ nearby and all $\zeta_j=0$ (Proposition~\ref{prop:fer-handle}), so $\alpha_1=\alpha^0-\Delta_0$, the first identity. By Lemma~\ref{lem:fer-frame}, $\Omega_0+d\alpha_1=\omega_V+d\Gamma_{\rm sm}+d(fH^*\beta)$, with $d\Gamma_{\rm sm}=e_h\nu$ as $\Gamma_{\rm sm}$ is $p$-independent.
+\end{proof}
+
+\begin{remark}[The period is subtracted in $\alpha_1$]\label{rem:fer-period}
+The term $-c(p)\beta$ is part of $\alpha_1$, not only of $F_{\mathcal A}$: otherwise the left side of \eqref{eq:fer-Gamma1} gains
+$c(p)\beta$, whose ambient differential $c'(p)\,dp\wedge\beta$ is in general nonzero. As $\beta$ is closed and
+$\operatorname{supp}\beta\cap U_j=\varnothing$, the subtraction changes only the mixed term, not the base curvature or the values
+at the $b_j$, and the mixed term does not enter \eqref{eq:fer-positivity}.
+\end{remark}
+
+\begin{lemma}[Vanishing on three whole fibres]\label{lem:fer-alpha1-fibres}
+\lean{SymplecticPacking.Bundle.Cubic.alpha1_fibre_zero}
+\uses{cons:fer-alpha1, prop:fer-handle}
+At every point of each of the three fibres $N_{b_1},N_{b_2},N_{b_3}$, $\alpha_1$ is the zero covector of $T^*N$.
+\end{lemma}
+
+\begin{proof}
+Near $b_j$, $\zeta_j=1$ and $\zeta_i=0$ for $i\ne j$ (Proposition~\ref{prop:fer-handle}), so $\alpha_1(p)_{b_j}=\alpha_{\rm pre}(p)_{b_j}-A_j(p)\,dx_j-B_j(p)\,dy_j=0$ for every $p$. At a point of $N_{b_j}$ with moment $p_0$, the toric form $\alpha_1$ is the pull-back of $\alpha_1(p_0)_{b_j}$ by $d\pi_N$, hence zero.
+\end{proof}
+
+\begin{remark}[Ambient covector versus pull-back]\label{rem:fer-covector}
+The pull-back of $\alpha_1$ to a fibre vanishes automatically, as $\alpha_1$ is horizontal; that would only make
+the Moser field $Y$ ($\iota_Y\Omega_\lambda=-\alpha_1$) $\Omega_\lambda$-orthogonal to the fibre, hence in general transverse to it. Lemma~\ref{lem:fer-alpha1-fibres} gives $Y=0$ at every point of $N_{b_j}$, so the Moser flow fixes these fibres
+pointwise and preserves their complement, which the $\Z/3$-equivariant transfer maps into $\{Z_0\ne0\}$
+(Lemma~\ref{lem:fer-alpha1-fibres} and Proposition~\ref{prop:rtc-avoid}).
+\end{remark}
+
+\subsection{Positivity including the mixed terms}\label{sec:fer-positivity}
+
+The corrections change $\alpha_1$ by base forms with $p$-dependent coefficients, whose differentials contain mixed terms $dp\wedge a$ ($a$ a base one-form). These do not affect nondegeneracy: locally the space is a two-dimensional base times a fibre, and $dp\wedge a$ wedges to zero with every base two-form, with $\omega_V=dp\wedge d\theta$, and with itself.
+
+\begin{lemma}[Positivity]\label{lem:fer-positivity}
+\lean{SymplecticPacking.Bundle.Cubic.OmegaT,
+SymplecticPacking.Bundle.Cubic.kappaT,
+SymplecticPacking.Bundle.Cubic.OmegaT_split,
+SymplecticPacking.Bundle.Cubic.OmegaT_sq,
+SymplecticPacking.Bundle.Cubic.OmegaT_nondeg',
+SymplecticPacking.Bundle.Cubic.OmegaT_nondeg'}
+\uses{lem:fer-alpha1, lem:fer-kappa, lem:fer-Omega0, lem:pre-top-power}
+For $\lambda\in[0,1]$ let $\Omega_\lambda=\Omega_0+\lambda\,d\alpha_1$ and $\kappa_\lambda=(1-\lambda)\kappa+\lambda\kappa_1$. In every local unitary
+frame,
+\[
+ \Omega_\lambda=\omega_V+\kappa_\lambda+dp\wedge a_\lambda,\qquad a_\lambda=a_{\rm loc}+\lambda\,\partial_p\alpha_1,
+\]
+with $a_\lambda$ a base one-form, and
+\begin{equation}\label{eq:fer-positivity}
+ \Omega_\lambda^2=2\,\omega_V\wedge\kappa_\lambda ,
+\end{equation}
+smoothly across the zero section. Hence $\Omega_\lambda$ is a circle-invariant symplectic form on the open set
+$\{p<\frac13,\ H^*(p)>0\}=\{p<\frac13-\frac{e_h}9\}$, which contains $N_{p\le h}$; moreover $\iota_{X_p}\Omega_\lambda=-dp$ for the
+generator $X_p$ of the circle action, and $\partial_\lambda\Omega_\lambda=d\alpha_1$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:fer-alpha1}(i), $d\alpha_1=\kappa_1-\kappa+dp\wedge\partial_p\alpha_1$; with \eqref{eq:fer-Omega0-local} this gives the local form, and the preceding paragraph (Lemma~\ref{lem:pre-top-power}(a) with $m=1$) gives $\Omega_\lambda^2=2\,\omega_V\wedge\kappa_\lambda$. Write $\kappa_\lambda=k_\lambda\nu$. Where $p<\frac13$ and $H^*(p)\ge0$, $k_\lambda>0$ by Lemma~\ref{lem:fer-kappa}, and $\omega_V\wedge\nu$ is a positive volume form; $H^*(p)>0$ iff $p<\frac13-\frac{e_h}9$, and $h<\frac13-\frac{e_h}9$ since $e_h\le\frac32(1-3h)<9(\frac13-h)$. In Cartesian fibre coordinates $\omega_V=d\xi\wedge d\eta$ and $dp=2\pi(\xi\,d\xi+\eta\,d\eta)$ are smooth, so the decomposition and \eqref{eq:fer-positivity} hold across $w=0$. Finally $\Omega_0,\alpha_1$ are circle-invariant, $\iota_{X_p}\Omega_0=-dp$ (Lemma~\ref{lem:pre-local-form}(c)), and $\iota_{X_p}d\alpha_1=\mathcal L_{X_p}\alpha_1-d(\alpha_1(X_p))=0$ as $\alpha_1$ is invariant and horizontal.
+\end{proof}
+
+The remaining paths, primitives and Moser map are in \S\ref{sec:shd-four}.
+
+\begin{remark}[Scalar data of valid cubic data]\label{rem:fer-lean}
+\lean{SymplecticPacking.Branch2.CubicData.Valid.Hstar_ge,SymplecticPacking.Branch2.CubicData.Valid.residual_ge}
+The equal branch uses $g=3(1-t_0)$ and $h=t_0/3$, so $g=\Hb(h)$; the scalar comparison datum of~\cite{SongHD}
+uses $g=3d/4$. In both cases the data are valid in the sense of Definition~\ref{def:shd4-data}: $g\le\Hb(h)$, and \eqref{eq:shd4-comparison} holds with constant $\frac{31}{32}g$. With
+$e_h=g/16$ and the cap smoothing scale $\mu_h=g/(16k)$, the smoothing loss is at most $g/32$ and the residual gap is
+\[
+ \frac{31g}{32}-\frac g{16}-\frac g{32}=\frac{7g}{8}>0.
+\]
+This is Lemma~\ref{lem:shd4-budget}(a),(c); the constructions above apply to all valid cubic data.
+\end{remark}

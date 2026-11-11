@@ -5,3 +5,6 @@ __pycache__/
 release/
 output/
 tmp/
+paper/p1/build/
+paper/p2/build/
+paper/p3/build/

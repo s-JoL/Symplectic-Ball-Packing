@@ -9,7 +9,6 @@ import SymplecticPacking.General.EpochStability
 import SymplecticPacking.General.CompileOutput
 import SymplecticPacking.Effective.PackingCertificateAlgorithm
 import SymplecticPacking.Effective.PackingCertificateEpochAlgorithm
-import SymplecticPacking.Effective.ExecutablePacking
 import SymplecticPacking.Explicit
 
 /-!

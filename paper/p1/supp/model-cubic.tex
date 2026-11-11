@@ -1,0 +1,167 @@
+\section{Dimension four: the cubic model}\label{sec:cub}
+
+Here $n=2$, the target is $\Bo(1)$, and the model is the degree-$9$ normal disc bundle of a smooth cubic in $\CP^2$ (Biran's decomposition \cite{Biran2001}), written on the cover $\R^2\times\C$ of a hexagonal torus; the coefficient $1-3p$ forces $p<1/3$, giving $3c_i<C$.
+
+\subsection{The model}
+
+Let $\zeta=e^{2\pi i/3}$ and $\Gamma=(\R/\Z)^2\cong\C/(\Z+\zeta\Z)$ via $(u,v)\mapsto u+\zeta v$. By \S\ref{sec:fer-torus} there is a smooth $Z:\R^2\to\C^3$ with $|Z|=1$, $Z_0^3+Z_1^3+Z_2^3=0$, $Z(u+1,v)=-Z(u,v)$ and $Z(u,v+1)=\phi(u,v)Z(u,v)$, where $|\phi|=1$. Representatives related by $(Z,U)\mapsto(e^{i\chi}Z,e^{3i\chi}U)$ are gauge equivalent; forms are evaluated on the cover and on horizontal unit representatives.
+
+\begin{definition}[The cubic cover model]\label{def:cub-model}
+\lean{SymplecticPacking.Return.Ncoord,SymplecticPacking.Bundle.Omega0loc,SymplecticPacking.Embed.deckU,SymplecticPacking.Embed.deckV,
+SymplecticPacking.Bundle.pE}
+Use the deck maps
+\[
+ T_u(u,v,w)=(u+1,v,-w),\qquad T_v(u,v,w)=(u,v+1,\phi(u,v)^3w)
+\]
+on $\widetilde N=\R^2\times\C$; $N$ denotes these cover data with their deck identification.
+Put
+\[
+ p=\pi|w|^2,\quad \eta=\frac{1}{2\pi}\operatorname{Im}\sum_j\overline{Z_j(u,v)}\,dZ_j(u,v),\quad
+ \sigma=d\eta,\quad \alpha=\frac{d\arg w}{2\pi}-3\eta,
+\]
+\[
+ \Omega_0=\sigma+d(p\alpha)
+ =\omega_V+(1-3p)\sigma-3dp\wedge\eta,\quad
+ \Delta=[0,h],\quad 0<h<1/3,\quad \Hb(p)=3(1-3p).
+\]
+The expression $p\,d\arg w/(2\pi)=\frac12\operatorname{Im}(\bar w\,dw)$ makes the form smooth at $w=0$.
+The marked set $\mathcal Z$ consists of the three torus points at which $Z_0=0$; its inverse image in the cover is
+$\widetilde{\mathcal Z}=\mathcal Z+\Z^2$, using the three representatives given below.
+The cover-to-representative map is $\mathsf N(u,v,w)=(Z(u,v),w)$.
+\end{definition}
+
+The deck maps preserve $p$ and $\Omega_0$ and send $\mathsf N$ to gauge-equivalent pairs. Since $\sigma=\sigma_\Gamma\,du\wedge dv$ with $\sigma_\Gamma$ smooth, periodic, strictly positive and $\int_0^1\!\int_0^1\sigma_\Gamma\,du\,dv=3$ (Lemma~\ref{lem:fer-sigma}), $\Omega_0$ is nondegenerate for $p<1/3$.
+
+\begin{lemma}[Integrated profile]\label{lem:cub-volume}
+For $0<h<1/3$,
+\[
+ \int_0^h\Hb(p)\,dp=3h-\frac92h^2,\qquad
+ \frac12-\int_0^h\Hb(p)\,dp=\frac12(1-3h)^2.
+\]
+Thus this scalar budget tends to $1/2$ as $h\uparrow1/3$.
+\end{lemma}
+
+\begin{proof}
+Integrate $3-9p$ and complete the square.
+\end{proof}
+
+\subsection{Handle data}
+
+\emph{Torus coordinates.} Let $\Lambda_0=\Z+\zeta\Z$, $\wp=\wp_{\Lambda_0}$, $g_3=g_3(\Lambda_0)\neq0$, $c_F=g_3^{-1/3}$, $d_F=(3g_3)^{-1/2}$. The Weierstrass parametrisation $\Phi_\Gamma(z)=[2c_F\wp(z):-(1+d_F\wp'(z)):-(1-d_F\wp'(z))]$, $z=u+\zeta v$, with $\Phi_\Gamma(0)=[0:1:-1]$, is injective modulo the lattice into gauge classes of Fermat vectors; a pole-free theta lift $Z(u,v)$ makes $\sigma$ smooth on $(\R/\Z)^2$ and $Z^*\eta_H$ smooth on $\R^2$ with explicit lattice periods (\S\ref{sec:fer}). Put $\nu=du\wedge dv$ ($\int\nu=1$) and $\mathcal Z=\{b_1,b_2,b_3\}$ with $b_1=(0,0)=\Phi_\Gamma(0)$, $b_2=(\tfrac13,\tfrac23)$, $b_3=(\tfrac23,\tfrac13)$, the zeros of $\wp$ (non-lattice fixed points of $z\mapsto\zeta z$).
+
+\begin{proposition}[Handle data on the cubic]\label{prop:cub-handle}
+\lean{SymplecticPacking.Bundle.torusPoint, SymplecticPacking.Bundle.bpoints, SymplecticPacking.Bundle.Z0_eq_zero_iff, SymplecticPacking.Bundle.annulusPlus, SymplecticPacking.Bundle.annulus, SymplecticPacking.Bundle.bB, SymplecticPacking.Bundle.betaB, SymplecticPacking.Bundle.stripB, SymplecticPacking.Bundle.zetaJ, SymplecticPacking.Bundle.supports, SymplecticPacking.Bundle.Pprim, SymplecticPacking.Bundle.Pprim_periodic, SymplecticPacking.Bundle.d_Pprim, SymplecticPacking.Bundle.frameA, SymplecticPacking.Bundle.lambdaC_descends, SymplecticPacking.Bundle.d_lambdaC, SymplecticPacking.Bundle.angularForm_frameA}
+\uses{def:cub-model, prop:fer-handle, lem:fer-frame}
+In the torus coordinates $(u,v)$ the cubic model $(\Gamma,N,[0,h],\Omega_0,\mathcal Z)$ carries the following data:
+\begin{enumerate}[label=(\alph*)]
+\item the annuli $\mathcal A=\{\frac18\le u\le\frac5{24}\}\subset\mathcal A^+=\{\frac1{12}\le u\le\frac14\}$ with handle
+coordinates $(s,v)=(12u-\frac32,\,v)$, so that $\mathcal A=[0,1]\times\R/\Z$ and $\mathcal A^+=[-\frac12,\frac32]\times\R/\Z$;
+\item the dual band $\mathcal B=\{\frac19<v<\frac29\}$, containing the closed clock band $[\frac18,\frac5{24}]$; its active intersection with $\mathcal A^+$ is $[\frac1{12},\frac14]\times[\frac18,\frac5{24}]$, with $v_-=\frac18$, $v_+=\frac5{24}$;
+\item the closed one-form $\beta=b(v)\,dv$, $b=\varphi/\int_0^1\varphi$, where
+$\varphi(v)=a_{\rm flat}(v-\frac18)\,a_{\rm flat}(\frac5{24}-v)$ on $[0,1]$, extended $1$-periodically, with
+$a_{\rm flat}(x)=e^{-1/x}$ for $x>0$ and $a_{\rm flat}(x)=0$ for $x\le0$;
+\item the area form $\nu=du\wedge dv=\frac1{12}\,ds\wedge dv$, so $c_\nu=\frac1{12}$;
+\item the primitive operator $P_\Gamma$: for a smooth function $\mathfrak b$ on $(\R/\Z)^2$ with $\int\mathfrak b\,\nu=0$,
+\[
+\begin{aligned}
+ P_\Gamma(\mathfrak b\,\nu)&=A_0\,dv-B_0\,du,\\
+ A_0(u,v)&=\int_0^u\big(\mathfrak b(s',v)-\mathfrak b_0(v)\big)ds',\\
+ \mathfrak b_0(v)&=\int_0^1\mathfrak b(s',v)\,ds',\qquad B_0(v)=\int_0^v\mathfrak b_0(t)\,dt;
+\end{aligned}
+\]
+\item the unitary frame $(Z_0/|Z_0|)^3$ of $N$ over $\mathcal A^+$, with fibre coordinate $w_{\mathcal A}$ defined by
+$U=(Z_0/|Z_0|)^3w_{\mathcal A}$, angle $\theta_{\mathcal A}=\arg w_{\mathcal A}/2\pi$, and the toric one-form
+\[
+ \Gamma_{\mathcal A}(p)=(1-3p)\,\lambda_\Gamma,\qquad \lambda_\Gamma=\eta_H-\frac1{2\pi}\,d\arg Z_0 ,
+\]
+so that $\Omega_0=\omega_V+d\Gamma_{\mathcal A}$ on $N|_{\mathcal A^+}$, with $\omega_V=dp\wedge d\theta_{\mathcal A}$;
+\item the coordinate discs $U_j$ of radius $\frac1{100}$ about $b_j$ in the centred coordinates
+$(u-u(b_j),v-v(b_j))$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(a), (b) The maps $u\mapsto12u-\frac32$ and $v\mapsto v$ identify the closed bands as stated, and $ds\wedge dv=12\,du\wedge dv$ is
+positive. Modulo $1$, the $u$-coordinates $0,\frac13,\frac23$ of the $b_j$ have distance at least $\frac1{12}$ from
+$[\frac1{12},\frac14]$, and their $v$-coordinates $0,\frac23,\frac13$ have positive distance from $[\frac19,\frac29]$;
+so $\mathcal A^+$ and $\mathcal B$ avoid $\mathcal Z$. The base is closed, so there is no boundary collar.
+(c) $\varphi$ is smooth on $\R$ because $a_{\rm flat}$ is flat at $0$; it vanishes outside $[\frac18,\frac5{24}]\subset(0,1)$ and is
+positive exactly on $(\frac18,\frac5{24})$. Hence $b\ge0$ is smooth and $1$-periodic, $b>0$ exactly on $(v_-,v_+)$,
+$\int_0^1b=1$, $\operatorname{supp}\beta\subset\mathcal B$, $\beta$ is closed because it depends on $v$ only, and
+$\int_{\{s\}\times\R/\Z}\beta=1$.
+(d) is the positivity of $\nu$ (\S\ref{sec:fer}).
+(e) $A_0$ and $B_0$ are $1$-periodic because $\int_0^1(\mathfrak b-\mathfrak b_0)\,ds'=0$ and $\int_0^1\mathfrak b_0=\int\mathfrak b\,\nu=0$,
+and $d(A_0\,dv-B_0\,du)=(\mathfrak b-\mathfrak b_0)\,du\wedge dv+\mathfrak b_0\,du\wedge dv=\mathfrak b\,\nu$; the operator is linear and
+preserves smooth dependence on parameters, with all jets, by differentiation under the integral sign. No support
+condition is needed on a closed base.
+(f) $\mathcal Z=\{b_1,b_2,b_3\}$ is disjoint from $\mathcal A^+$ by (a), so $Z_0\ne0$ on $\mathcal A^+$ and the frame
+is defined there. The identity $\Omega_0=\omega_V+d\Gamma_{\mathcal A}$ is Lemma~\ref{lem:fer-frame}: $\lambda_\Gamma$ is basic
+with $d\lambda_\Gamma=\sigma$, and $\arg U=3\arg Z_0+\arg w_{\mathcal A}$ gives $\alpha=d\theta_{\mathcal A}-3\lambda_\Gamma$. The form
+$\Gamma_{\mathcal A}$ is a smooth family of base one-forms depending on $p$, hence toric.
+(g) The $b_j$ have mutual distance at least $\frac13$ in the flat metric of the torus, and by (a), (b) distance at least
+$\frac1{12}$ from $\mathcal A^+\cup\mathcal B$; both bounds exceed $\frac2{100}$. So the closed discs $\overline U_j$ are disjoint from
+each other and from $\mathcal A^+\cup\mathcal B$.
+\end{proof}
+
+As the base is closed, $\chi_\partial=0$, no atlas is needed, $P_\Gamma$ of (e) is global, and the correction region is the whole torus, where $\kappa(p)=(1-3p)\sigma\ge(1-3h)\sigma$ for $p\le h$. The background is $e_h\nu$ (Definition~\ref{def:fer-kappa}); twist, paths, Moser and layer maps are in \S\ref{sec:shd-four}.
+
+\subsection{Transfer into the ball}
+
+The transfer is a deformation to the normal cone, following the scheme of \cite{OpenAI2026}. Let $\mathcal F(Z)=Z_0^3+Z_1^3+Z_2^3$ and $X_T=\{\mathcal F(Z)=TW\}$, $W$ of weight three: $X_1$ is a graph over $\CP^2$ and $X_0$ is the total space of $\mathcal O(3)|_E$ over the cubic $E$. One potential $\Phi_E$ restricts to every $X_T$; the transport ($\Omega_E$-orthogonal lift of $\partial_T$ on a bounded region) carries $X_0$ to $X_1$ preserving restricted forms, and the Moser return removes the exact term of $\omega_{\rm FS}+d_n\,dd^c\log(1+\mathfrak u)$; both fields are explicit with denominators bounded below for $0\le T,s\le1$. Every step commutes with $\mathsf r\colon Z_0\mapsto\zeta Z_0$, whose fixed set is $\{Z_0=0\}\cup\{[1:0:0]\}$, so by injectivity modulo gauge the model over $E\setminus\{Z_0=0\}$ avoids the line (Proposition~\ref{prop:rtc-avoid}).
+
+\begin{construction}[The cubic transfer]\label{cons:cub-transfer}
+\uses{def:cub-model, cons:rtc-injection}
+Fix $h<d_n<1/3$. Use unit pairs $(Z,W)$ with the gauge relation $(Z,W)\sim(e^{i\chi}Z,e^{3i\chi}W)$, the ambient form
+$\Omega_E=dd^c\Phi_E$, $\Phi_E=\log|Z|^2+d_n\log(1+|W|^2/|Z|^6)$ (Definition~\ref{def:rtc-ambient}), and the constraint
+$X_T=\{(Z,W):|Z|=1,\ \mathcal F(Z)=TW\}$. The transfer is the composite of the following four maps.
+\begin{enumerate}[label=(\arabic*)]
+\item The \emph{weight-three injection} $\iota[Z,U]=[Z,\sqrt\pi\,U/\sqrt{d_n-p}]$ for unit pairs with $p<d_n$
+ (Construction~\ref{cons:rtc-injection}).
+\item The \emph{transport} $\tau_1$, the time-one map, from $T=0$ to $T=1$, of the field~\eqref{eq:rtc-transport} on
+ unit representatives in the gauge $Z^\dagger\dot Z=0$ (Construction~\ref{cons:rtc-transport}).
+\item The projection $\mathrm{pr}(Z,W)=Z$ from the graph constraint at $T=1$.
+\item The \emph{Moser return} $\psi_1^{-1}$, where $\psi_s$ is the unit-representative flow of the field
+ $Y_s$ of~\eqref{eq:rtc-return-field} for the graph forms $\omega^{\rm gr}_s=\omega_{\rm FS}+s\,d_n\,dd^c\log(1+\mathfrak u)$,
+ $\mathfrak u=|\mathcal F(Z)|^2/\|Z\|^6$, $0\le s\le1$ (Construction~\ref{cons:rtc-return}).
+\end{enumerate}
+Finally set $\mathsf r Z=(\zeta Z_0,Z_1,Z_2)$ and $\mathsf r(Z,W)=(\mathsf r Z,W)$. This preserves the central constraint and the gauge relation.
+\end{construction}
+
+With the ball chart $b_{\rm ball}$ (Lemma~\ref{lem:rtc-ball-chart}), the cover transfer $\mathcal T=b_{\rm ball}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota\circ\mathsf N$ is defined on $\{p<h\}$ off the marked fibres, pulls $\omega_0$ back to $\Omega_0$, identifies exactly deck-equivalent points (Theorem~\ref{thm:cub-transfer} in \S\ref{sec:rtc-transfer}), and avoids $\{Z_0=0\}$ (Proposition~\ref{prop:rtc-avoid}).
+
+\subsection{The packing}
+
+The packing uses valid cubic data (Definition~\ref{def:shd4-data}): auxiliary capacities $a_i>\rho_i$, a height
+$h<\frac13$ and a comparison datum for the profile $\Pb=\Hb-\sum_i(a_i-p)_+$ on $[0,h]$, whose integral
+$\frac12(1-\sum_ia_i^2-(1-3h)^2)$ (Lemma~\ref{lem:cub-volume}) must be positive. The four-dimensional embeddings are
+Theorem~\ref{thm:cub-packing} in \S\ref{sec:rtc-packing}; the equal-capacity parameters are in Remark~\ref{rem:rtc-equal}.
+
+\subsection{The four-dimensional argument in outline}\label{sec:mdl-cub-outline}
+
+For valid cubic data (Definition~\ref{def:shd4-data}) with $d_n=\frac12(h+\frac13)$ the $i$-th ball is embedded by
+\begin{equation}\label{eq:mdl-cub-chain}
+ f_i=b_{\rm ball}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota\circ\mathsf N\circ\Phi^{-1}\circ\chi_{\mathcal A}
+ \circ\mathcal D^{-1}\circ E_i\qquad\text{on }\Bo(\hat\rho_i).
+\end{equation}
+Here $E_i$ places the ball in the $i$-th handle layer; $\mathcal D^{-1}$ undoes the twist (the comparison isotopy $q_{f(u)}$ fibrewise over the annulus $\mathcal A$); $\chi_{\mathcal A}$ is the frame chart; $\Phi^{-1}$ the inverse handle Moser map; $\mathsf N$ passes to unit Fermat representatives; $\iota,\tau_1,\mathrm{pr},\psi_1^{-1}$ are the weight-three injection, transport from the cone $X_0$ to the graph $X_1$, projection to $\CP^2$ and inverse Moser return (Construction~\ref{cons:cub-transfer}); $b_{\rm ball}\colon\CP^2\setminus\{Z_0=0\}\to\Bo(1)$ is the affine chart. With $\bar\rho_i=\frac12(\rho_i+a_i)$, $\delta_i=a_i-\bar\rho_i$, $\hat\rho_i=a_i-\frac34\delta_i$: $\rho_i<\rho_i^+\le\bar\rho_i<\hat\rho_i<a_i<h<d_n<\tfrac13$. Margins are in Table~\Mnum{tab:mdl-margins}.
+
+\emph{(i) Vector fields.} Each flow is generated by a globally smooth field, compactly supported or of bounded speed, equal to the geometric field on a set its trajectories never leave.
+\begin{itemize}
+\item $q_t$: smooth Hamiltonian vanishing for $t\notin(0,1)$ and outside $D(P_{\rm supp})$, $P_{\rm supp}<h$ (Theorem~\ref{thm:pll-inner} in the equal case).
+\item Handle Moser field $Y_t$, $\iota_{Y_t}\Omega^{\rm M}_t=-\mathfrak v_t$: by $\Omega_\lambda^2=2\,\omega_V\wedge\kappa_\lambda$, nondegeneracy holds on $U=\{p<h+2\delta_m\}$, $\delta_m=\min((d_n-h)/4,g/100)$, where $H^*>\frac{15}{16}g-18\delta_m>0$ (Lemmas~\ref{lem:fer-positivity} and~\ref{lem:shd4-budget}(d), Propositions~\ref{prop:shd4-second} and~\ref{prop:shd4-third}). It is cut by $\mathfrak c(p)$, $=1$ for $p\le h+\frac32\delta_m$, $=0$ for $p\ge h+\frac74\delta_m$; above $P_{\rm supp}$ it preserves $p$ ($\iota_R\Omega^{\rm M}_t=-dp$, $\mathfrak v_t(R)=0$), its deck-invariant base components are bounded by $C_b$ (maximum over a fundamental domain), and on $\{p\le h+\delta_m\}$ the flow is the uncut one (Proposition~\ref{prop:shd4-moser}).
+\item Transport field (equation~\ref{eq:rtc-transport}): denominators $A\,N_{\rm den}$, $B\,N_{\rm den}$, $A=1-3p_W>1-3d_n>0$, $B>0$, $N_{\rm den}=G/A+T^2/B$. On the set $\mathcal C_*$ of points of $X_T$, $0\le T\le1$, $|W|^2\le w_*=h/(d_n-h)$, one has $N_{\rm den}\ge c_*=\min(\frac32,T_0^2/d_n)$, $T_0=\min\bigl(1,(\sqrt6\max(1,\sqrt{w_*}))^{-1}\bigr)$: $G\ge3$ at $T=0$ by the Fermat equation, $G\ge\frac32$ for $T\le T_0$ via $|\mathcal F(Z)|=T|W|$, and $T^2/B$ suffices for $T\ge T_0$ (Lemma~\ref{lem:rtc-denominator}). Cut off where $N_{\rm den}\le c_*/2$ and outside a compact set; since $|Z|$, $\mathcal F(Z)-TW$ are constant, $|W|^2$ is nonincreasing and $\iota(\{p\le h\})\subset\{|W|^2\le w_*\}$, trajectories from $X_0\cap\{p\le h\}$ stay in $\mathcal C_*$ (Lemma~\ref{lem:rtc-injection}, Proposition~\ref{prop:rtc-transport}).
+\item Return field: denominator $(1+\mathfrak u)(A_s+B_sG)$, $A_s+B_sG\ge1-\frac32d_n>\frac12$ on the unit sphere for $s\in[0,1]$ as $\mathfrak u\le1$ (Lemma~\ref{lem:rtc-graph}); its cutoff at half this bound is inactive (Proposition~\ref{prop:rtc-return}).
+\end{itemize}
+The other factors are closed formulas: $\iota$ needs $p<d_n$; the layer root exists as $x_i$ increases strictly in $u$ onto $(0,h_i(p))$; $b_{\rm ball}$ needs $Z_0\ne0$, see (ii).
+
+\emph{(ii) Injectivity and the deleted set.} Only $\{p<h\}$ is used, so the skeleton never enters; the set to avoid is the line $L=\{Z_0=0\}$, meeting the cubic in points $b_j$ with marked fibres $\widetilde{\mathcal F}$ over them.
+\begin{enumerate}[label=(\alph*)]
+\item The $E_i$ are injective with images over disjoint intervals $l_i<u<r_i$, and $\chi_{\mathcal A}\mathcal D^{-1}$, $\Phi^{-1}$ are common diffeomorphisms, so $f^N_i=\Phi^{-1}\chi_{\mathcal A}\mathcal D^{-1}E_i$ are injective with disjoint images (Proposition~\ref{prop:shd4-maps}(b)).
+\item Their points lie over $(\frac18,\frac5{24})^2$, disjoint from its integral translates, and $\Phi^{-1}$ commutes with deck maps, so no two image points are deck equivalent (Proposition~\ref{prop:shd4-maps}(c)).
+\item The layers lie over $\mathcal A$, missing the $b_j$; the variation primitives vanish on $\widetilde{\mathcal F}$ (Lemma~\ref{lem:shd4-fibres}), so $\Phi$ fixes $\widetilde{\mathcal F}$ and $Z_0\ne0$ on the image of $f^N_i$.
+\item $\mathcal T_{\rm u}=\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota$ is injective modulo gauge and commutes with $\mathsf r\colon Z_0\mapsto\zeta Z_0$, so inputs with $Z_0\ne0$ map off $L$, and $b_{\rm ball}\circ\mathcal T_{\rm u}\circ\mathsf N$ identifies exactly deck-equivalent points (\Msec{sec:mdl-return}; Lemmas~\ref{lem:rtc-injective}, \ref{lem:rtc-equivariant}, \ref{lem:rtc-fixed}, Proposition~\ref{prop:rtc-avoid}, Theorem~\ref{thm:rtc-transfer}).
+\end{enumerate}
+Hence the $f_i$ are injective with disjoint images; avoidance of $L$ comes from symmetry, not an estimate.
+
+\emph{(iii) Closed balls.} No area-preserving map takes a closed disc of area $a$ into $\{0<x<a\}\times(0,1)$, and $\Psi_\delta$ has excess $\frac\delta2$ (Proposition~\ref{prop:hdl-strip}); so the domain is $\Bo(\hat\rho_i)\supset B(\bar\rho_i)\supset B(\rho_i^+)$, where $0<x<a_i-p-\frac{\delta_i}4<h_i(p)$. Images lie in $\{p<a_i\}\subset\{p<h\}$, inside the Moser region $\{p\le h+\delta_m\}$. The compact $\mathcal K=\bigcup_if_i(B(\rho_i^+))$ lies in $B(1-\mu_{\rm ball})$, $\mu_{\rm ball}=\frac12\min_{\mathcal K}(1-\pi|z|^2)>0$ (Construction~\ref{cons:rtc-data}). In Section~\Mnum{sec:ham}, $\rho_i^+,\rho_i^{\rm dom}$ give the radii $r_i<r_{1,i}<r_{2,i}<r_{3,i}<r_{4,i}<r'_i<\bar r_i$ of Definition~\Mnum{def:ham-radii}: the Hamiltonian field equals the isotopy velocity on $\EB^\circ(r_{1,i})\supset\EB(r_i)$, the cutoff acts between $r_{1,i}$ and $r_{2,i}$, disjointness holds on $\EB(r_{3,i})$, all stages are smooth on $\EB^\circ(r_{4,i})$ (Proposition~\Mnum{prop:ham-isotopy}, Lemma~\Mnum{lem:ham-field}). So each closed $B(s_i,c_i)$ goes onto $f_i(B(c_i))\subset f_i(B(c'_i))$, compact in $\Bo(C)$; the room to $\partial B(C)$ is used by the finite-output algorithm of~\cite{SongHD}.
+

@@ -1,178 +1,78 @@
 # Symplectic Ball Packing
 
-**Explicit Hamiltonian ball packings in every dimension**
-
-Paper, complete supplement, and Lean 4 proofs by Liang Song.
+**Explicit Hamiltonian ball packings, with Lean 4 proofs.** By Liang Song.
 
 [![Verification](https://github.com/s-JoL/Symplectic-Ball-Packing/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/s-JoL/Symplectic-Ball-Packing/actions/workflows/verify.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23756576.svg)](https://doi.org/10.5281/zenodo.23756576)
 
-Version **1.0.1**, 29 October 2026. [Archived publication and files](https://doi.org/10.5281/zenodo.23763498) ·
-[Fixed release](https://github.com/s-JoL/Symplectic-Ball-Packing/releases/tag/v1.0.1) · [Publication and provenance](PROVENANCE.md).
+Version **1.1.0**. The previous version, 1.0.1, is archived under
+[DOI 10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498); see [PROVENANCE.md](PROVENANCE.md).
+[中文导读](README.zh-CN.md) · [Reviewer guide](REVIEW.md)
 
-This revision corrects two supplementary arguments and three documentation/comment issues;
-Lean definitions, theorem statements and proofs are unchanged. See the
-[revision notes](PROVENANCE.md#changes-from-100). The optional proof cache and verification
-receipts correspond to this version.
+## The result
 
-For fixed links, use the [source tree](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/v1.0.1)
-and [reviewer guide](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/v1.0.1/REVIEW.md).
-The [original 1.0.0 DOI archive](https://doi.org/10.5281/zenodo.23756576) remains available;
-its former GitHub release page is unavailable.
-
-[Paper](paper/main.pdf) · [Supplement](paper/supplement.pdf) · [Reviewer guide](REVIEW.md) · [中文导读](README.zh-CN.md) · [Formal statements](verification/Statement.lean)
-
-## What this work does
-
-Symplectic ball packing asks how balls can be moved into a larger ball while preserving the
-standard symplectic form. This work gives a single explicit Hamiltonian construction: a
-smooth, compactly supported time-dependent function whose flow performs the packing from
-prescribed initial positions. Its main packing, stability, and computability theorems are
-formalised in Lean 4.
-
-For every integer **k ≥ 10** and **0 < ε < 1**, the construction moves the k closed unit balls
-centred at `(3i, 0, 0, 0)`, `0 ≤ i < k`, into the four-dimensional ball of radius
+For every integer **k ≥ 10** and **0 < ε < 1**, one explicit smooth compactly supported
+Hamiltonian on ℝ × ℝ⁴ has a time-one map that carries the k closed unit balls centred at
+`(3i − 3, 0, 0, 0)`, `1 ≤ i ≤ k`, into the ball of radius
 
 ```text
-R = (k / (1 − ε/4))^(1/4),     occupied volume fraction = k/R^4 = 1 − ε/4 > 1 − ε.
+R = (k / (1 − ε/4))^(1/4),     occupied volume fraction  k/R⁴ = 1 − ε/4.
 ```
 
-The formulas work for all admissible inputs. A separate uniform computability theorem gives
-a terminating algorithm with finite output, a rational polynomial times a fixed smooth
-cutoff. The executable reference implementation below runs this finite-certificate search;
-the algorithm has no practical runtime bound. The paper explains its relation to Epoch AI's
-[program submission requirements](https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing).
+Biran proved in 1997 that such packings exist, using J-holomorphic curves and Seiberg–Witten theory,
+which give no motion; explicit full packings by k ≥ 10 equal balls were known only for square k. Here the
+motion is given by formulas, for every k ≥ 10, without those methods. This answers the mathematical part of the
+construction problem posed by [Epoch AI](https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing).
+All main theorems of Papers I–II are checked in Lean 4 against a problem statement written from Mathlib alone,
+using only the three standard axioms. The construction is designed for proof; the separate program below runs in
+Epoch's numerical interface for a range of (k, ε), with numerically checked correctness.
 
-## Results at a glance
+## Papers and program
 
-Here `B(c) = {z : π‖z‖² ≤ c}` denotes a ball of **capacity** c; the source balls are closed,
-the target is open, and the prescribed source balls must be pairwise disjoint. The general
-results assume n ≥ 2, k ≥ 1, C > 0, and every cᵢ > 0.
+| | Paper | Main results | Lean |
+|---|---|---|---|
+| I | *Explicit Hamiltonian full packings of the four-ball by equal balls* — [paper](paper/p1/main.pdf) (21 pp), [supplement](paper/p1/supplement.pdf) | Theorem A above, with the shortest complete route; robustness under perturbation of the vector field (Prop. B); the Epoch data for k ≥ 10 | yes |
+| II | *Explicit Hamiltonian ball packings: general capacities, higher dimensions and the Siegel–Yao criterion* — [paper](paper/p2/main.pdf) (22 pp), [supplement](paper/p2/supplement.pdf) | One explicit Hamiltonian for all admissible data: in ℝ⁴ every packing with Σcᵢ² < C², 3cᵢ < C; in ℝ²ⁿ, n ≥ 3, every packing allowed by the volume and two-ball inequalities. Biran's theorem that B⁴ is fully packed by k ≥ 9 equal balls, without J-holomorphic curves or Seiberg–Witten theory. A terminating algorithm with finite output | yes |
+| III | *Elementary packings of the four-ball and their limits* — [paper](paper/p3/main.pdf) (13 pp) | Toric and window constructions: n(n+1) balls in B(n+½); density ≥ 1 − 1/√k for every k; ten balls at density 360/361. Obstructions explaining why these methods stop short of density 1 for non-square k | no |
+| | [`program/`](program/README.md) — `solution_epoch.py` | A runnable Hamiltonian in Epoch's interface built from the same kind of constructions as Paper III (lattice layouts found by search, windows, sheared windows): k = 10 down to ε = 0.005, squares to ε ≈ 0.002, every k ≤ 10⁵ above an explicit ε_min(k). Checked numerically (RK4 at N and 2N, 12/12 test points pass), not proved; the returned Hamiltonian is smooth near the ball trajectories but not globally (see its README) | no |
 
-| Result | Precise scope | Lean entry |
-|---|---|---|
-| Four-ball motion (Theorem A) | k ≥ 10 unit balls, density 1 − ε/4 | [`four_dim_theorem`](verification/Statement.lean) |
-| Robustness (Proposition B) | Explicit vector-field error margin for density > 1 − ε | [`four_dim_stability`](verification/Statement.lean) |
-| General motion (Theorem C) | n ≥ 3: Σcᵢⁿ < Cⁿ and cᵢ+cⱼ < C; n = 2: Σcᵢ² < C² and 3cᵢ < C | [`main_theorem`](verification/Statement.lean) |
-| Finite-output algorithm | One oracle program, certified output, termination on every admissible input | [`original_name_algorithm`](verification/Computability.lean), [`epoch_name_algorithm`](verification/EpochComputability.lean) |
-| Further consequences | Higher-dimensional packing criterion; four-ball stability for k ≥ 9; unequal capacities in a specified cone | [`Statement.lean`](verification/Statement.lean) |
+The constructions of Papers I and II develop the twisted disc-bundle mechanism of the OpenAI
+preprint *Symplectic Ball Packings in Higher Dimensions* (2026), which treats dimension 2n ≥ 6. The
+four-dimensional ingredients are new: a linear comparison identity, a Fermat cubic disc-bundle model and a
+return to the ball controlled by a cube-root symmetry.
+In dimensions 2n ≥ 6, where that preprint proved existence, Paper II makes every step explicit: a finite
+rational iterate in place of the fixed point, explicit planar rearrangements and Moser flows, and explicit
+returns to the ball.
 
-The construction develops the twisted disc-bundle mechanism of the OpenAI preprint
-*Symplectic Ball Packings in Higher Dimensions* (2026). The four-dimensional ingredients are
-a linear comparison identity, explicit planar rearrangements, a Fermat cubic model with a
-symmetry-controlled return to the ball, and one global Hamiltonian motion. The construction
-and its sufficiency proofs avoid packing existence theorems, J-holomorphic curves, and
-Seiberg–Witten theory. The necessity direction of the higher-dimensional criterion uses the
-classical obstructions, including the holomorphic-line two-ball obstruction.
+## Checking the claims
 
-## Read a small part first
-
-- **For a referee:** [REVIEW.md](REVIEW.md) gives the claims, hypotheses, novelty, proof route,
-  formal counterparts, and verification boundaries in one place.
-- **For a formalisation reviewer:** read [`Problem.lean`](verification/Problem.lean), then
-  [`Statement.lean`](verification/Statement.lean). The problem definitions import Mathlib
-  alone. [`Algorithm.lean`](verification/Algorithm.lean) ties the statements to the defined
-  Hamiltonian; the two computability entry files specify the finite-output algorithms.
-- **For a first explanation, including AI-assisted reading:** start with the
-  [中文导读](README.zh-CN.md). The [paper-to-Lean index](verification/PAPER-INDEX.md) locates
-  individual supporting results without reading the entire development.
-
-## Uniform executable algorithm
-
-[`examples/packing.py`](examples/packing.py) compiles every integer `k ≥ 10` and
-`ε ∈ (0,1)` to a finite rational-polynomial-times-cutoff global Hamiltonian.
-[`verification/Executable.lean`](verification/Executable.lean) checks the computable
-total algorithm and its full closed-ball, actual-time-one-flow and strict-density
-contract. Epsilon, query coordinates and time may be supplied as refining real names;
-exact rational strings are supported directly. The numerical interpreter provides
-rigorous values, complete spatial gradients and actual ambient flow enclosures.
-
-See [`examples/PACKING.md`](examples/PACKING.md) for commands, the termination and
-interpreter correspondence arguments, tests and trust boundaries. Dense compilation
-may be astronomically slow. There is no practical resource bound or Python-to-Lean
-formal refinement proof, and no claim of Epoch's interface/performance or official
-acceptance. This executable addition is subsequent to the archived v1.0.1 publication.
-
-## Fixed-input executable example
-
-[`examples/k10.py`](examples/k10.py) implements the fixed `k=10`, `ε=0.1`
-construction as a native scalar Hamiltonian and an analytic trajectory evaluator
-for all ten source balls. The target radius is `73/40`, giving density greater than `0.9`. See
-[`examples/README.md`](examples/README.md) for commands and verification scope.
-This fixed-input implementation has not passed the full Epoch AI interface and
-performance acceptance and does not have a Python-to-Lean refinement proof.
-It is a development addition after the archived v1.0.1 publication.
-
-## Verify
-
-Requirements: [Elan](https://github.com/leanprover/elan), Node.js 22 or newer, Python 3.11 or
-newer. The optional project cache uses `leantar`, included in the pinned Lean toolchain.
-Tectonic 0.15.0 builds the papers. Lean and
-all Lean dependencies are pinned in `lean-toolchain` and `lake-manifest.json`.
+The formal statements are short. Read [`verification/Problem.lean`](verification/Problem.lean)
+(definitions, from Mathlib only), then [`verification/Statement.lean`](verification/Statement.lean)
+(the theorems). [REVIEW.md](REVIEW.md) maps them to the papers and states what the checks do and
+do not establish.
 
 ```sh
 git clone https://github.com/s-JoL/Symplectic-Ball-Packing.git
 cd Symplectic-Ball-Packing
-lake exe cache get                      # official Mathlib dependency cache
-bash scripts/verify.sh --lean            # source checks, all Lean targets and audit regressions
+lake exe cache get                         # Mathlib cache
+python3 scripts/project_cache.py restore   # optional: prebuilt project cache
+bash scripts/verify.sh                     # source checks, Lean build and audits, papers
 ```
 
-Success ends with `VERIFY PASS`. The script re-elaborates the main review entries, paper-tag
-axiom gates, independence gate, and checker regressions even after a cache restore.
-The bundled project cache belongs to the archived proof sources and does not match
-the new executable-algorithm modules. The commands above build current project sources
-using only Mathlib's cache. On a revision matching its manifest, the optional
-`python3 scripts/project_cache.py restore` can accelerate that build; a mismatch
-exits with code 2 and requires the source-build route.
-The cache is an acceleration artifact: a cache hit alone
-does not re-check an imported proof. For kernel replay, after the build run:
+A build without the project cache takes several hours. Requirements: [Elan](https://github.com/leanprover/elan),
+Node.js ≥ 22, Python ≥ 3.11, and [Tectonic](https://tectonic-typesetting.github.io) for the papers.
+Details: [`verification/README.md`](verification/README.md).
 
-```sh
-bash scripts/check_kernel.sh
-```
+**Trusted base:** the Lean kernel, Mathlib, `verification/Problem.lean`, and the axioms `propext`,
+`Classical.choice`, `Quot.sound`. Explicitness and uniformity of the algorithm are checked by
+metaprograms that are not themselves verified. The correspondence between the formal statements and
+the mathematics is for human review.
 
-This uses the pinned toolchain's `leanchecker --fresh` to replay the complete declaration
-closure into a fresh kernel environment. It reuses compiled proof terms and avoids tactic
-elaboration. It uses the same Lean kernel, rather than an independently implemented checker;
-see the [verification guide](verification/README.md) for the remaining trust boundary.
+## Citation and authorship
 
-For a source rebuild, start with an empty `.lake/build`, omit the optional project-cache
-restore, and run the commands above. This can take several hours. The CI workflow
-[`full-build.yml`](.github/workflows/full-build.yml) does exactly that with only Mathlib's
-cache and includes fresh kernel replay. [`verify.yml`](.github/workflows/verify.yml) uses the
-bundled project cache, rechecks the short source entries and audit/regression gates, and
-uploads the papers and logs. [`kernel-replay.yml`](.github/workflows/kernel-replay.yml)
-provides the stronger full kernel replay as a separate manual workflow. Every requested
-check is fatal; cache-based review and full kernel replay are reported separately.
+Cite with [`CITATION.cff`](CITATION.cff). Liang Song is the sole author and is responsible for
+the work. The mathematics, the Lean formalisation and the text were produced by AI systems in
+a research environment designed and directed by Liang Song; each paper states this in full.
 
-With Tectonic installed, `bash scripts/verify.sh` additionally compiles both papers and checks
-citations, cross-references, duplicate labels, and overfull boxes. The PDF files linked above
-are included for direct reading; the TeX sources are in [`paper/`](paper/README.md).
-
-## What is trusted
-
-The Lean kernel; the formal definitions in `verification/Problem.lean`; Mathlib and the
-vendored generic geometry; and the standard axioms `propext`, `Classical.choice`, `Quot.sound`.
-Axiom gates reject any additional axiom, including `sorryAx`. Explicitness, algorithm
-uniformity, and proof-dependency independence are checked by metaprograms with positive and
-negative regression cases; those metaprograms are not themselves formally verified.
-
-The unmodified upstream library and its provenance are retained in [`vendor/NOTICE`](vendor/NOTICE).
-The definitions of the packing Hamiltonians and finite-output algorithms are this project's
-own. Formal correctness concerns the exact Lean statements; their correspondence with the
-mathematical problem remains an essential part of human review.
-
-## Citation, authorship, and reuse
-
-Use [`CITATION.cff`](CITATION.cff) to cite *Explicit Hamiltonian ball packings in every dimension*.
-The version DOI is [10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498).
-Liang Song is the sole author and is responsible for the manuscript. The mathematics, Lean
-formalisation, and text were produced with AI systems in a research environment designed and
-directed by Liang Song. The manuscript records the authorship and AI contribution in full.
-
-Licensed under [Apache-2.0](LICENSE), with upstream attribution in [NOTICE](NOTICE) and
-[vendor/NOTICE](vendor/NOTICE). `python3 scripts/package_release.py` produces a verified,
-history-free source-and-PDF bundle and checksum manifest locally; it runs all build gates and
-requires a kernel-replay receipt bound to the current proof sources and objects (running the
-replay if necessary). It does not publish the bundle.
+Licensed under [Apache-2.0](LICENSE). The vendored library in `vendor/` keeps its own notices
+([NOTICE](NOTICE), [vendor/NOTICE](vendor/NOTICE)).

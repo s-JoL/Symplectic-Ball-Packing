@@ -94,7 +94,7 @@ jobs:
             echo "Commit: $GITHUB_SHA"
             echo "Project source rebuild requested: $FROM_SOURCE"
             echo "Actual project-cache route: $CACHE_ROUTE"
-            echo 'Source hygiene, Lean targets, axiom/explicitness/independence gates, regression suites, and both papers: PASS.'
+            echo 'Source hygiene, Lean targets, axiom/explicitness/independence gates, regression suites, and the three papers: PASS.'
             if [ "$KERNEL_REPLAY" = true ]; then
               echo 'Fresh kernel replay: PASS.'
             else
@@ -108,8 +108,11 @@ jobs:
         with:
           name: symplectic-ball-packing-${{ inputs.from-source && 'source' || 'cached' }}-${{ github.sha }}
           path: |
-            paper/build/main.pdf
-            paper/build/supplement.pdf
+            paper/p1/build/main.pdf
+            paper/p1/build/supplement.pdf
+            paper/p2/build/main.pdf
+            paper/p2/build/supplement.pdf
+            paper/p3/build/main.pdf
             .lake/verify/*.log
             .lake/verify/*.json
             cache/lean/manifest.json

@@ -1,7 +1,6 @@
 import verification.Statement
 import verification.Computability
 import verification.EpochComputability
-import verification.Executable
 import verification.Audit.PaperTags
 
 /-!

@@ -1,28 +1,21 @@
-# Manuscript and supplement
+# Papers
 
-[`main.pdf`](main.pdf) is the reading copy of the paper; [`supplement.pdf`](supplement.pdf) contains
-the complete proofs. `main.tex` and `supplement.tex` are their sources. They share `macros.tex`
-and `refs.bib`. In the printed text, numbers with the prefix S refer to the supplement and numbers
-with the prefix M to the main text; in the sources, cross-document labels carry the prefixes `S-`
-and `M-`.
+| Directory | Paper | Files |
+|---|---|---|
+| `p1/` | I. *Explicit Hamiltonian full packings of the four-ball by equal balls* | `main.pdf`, `supplement.pdf` |
+| `p2/` | II. *Explicit Hamiltonian ball packings: general capacities, higher dimensions and the Siegel–Yao criterion* | `main.pdf`, `supplement.pdf` |
+| `p3/` | III. *Elementary packings of the four-ball and their limits* | `main.pdf` |
 
-From the repository root,
+Each directory holds the TeX sources (`main.tex`, `supplement.tex`, `main/`, `supp/`, `macros.tex`,
+`refs.bib`). In Papers I and II, numbers with the prefix S refer to the supplement and M to the main
+text. Paper II restates the results it uses from Paper I (`p2/p1refs.tex`, `p2/supp/quoted.tex`).
 
 ```sh
-bash scripts/check_paper.sh
+bash scripts/check_paper.sh     # from the repository root
 ```
 
-compiles both documents (twice each, to resolve their mutual references) into `paper/build/`
-and fails on a LaTeX error, an undefined reference or citation, or an overfull box. A
-source-only checkout needs no previously generated auxiliary files. The figures are TikZ
-drawings in the TeX sources.
+compiles all three into each directory's `build/` and fails on a LaTeX error, an undefined or
+duplicate reference, or an overfull box. Copy the PDFs from `build/` to update the reading copies.
 
-The statements of both documents carry source tags `\lean{...}` naming the Lean declarations
-that formalise them; `scripts/paper_tags.mjs` collects them into `../verification/PAPER-INDEX.md`
-and `../verification/Audit/PaperTags.lean`. The correspondence with the Lean development is
-described in the section "Formal verification" of the paper and in `../verification/README.md`.
-
-For the shortest assessment of the claims and verification boundary, read
-[`REVIEW.md`](../REVIEW.md). After rebuilding, copy the two PDFs from `paper/build/`
-to `paper/` when updating the reading copies. Generated auxiliary files stay in the
-ignored build directory.
+Statements in Papers I and II carry source tags `\lean{…}` naming the Lean declarations that
+formalise them; `scripts/paper_tags.mjs` collects them into `../verification/PAPER-INDEX.md`.

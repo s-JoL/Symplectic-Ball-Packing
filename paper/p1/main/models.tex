@@ -1,0 +1,118 @@
+\section{The four-dimensional model and the return to the ball}\label{sec:mdl}
+
+This section describes the four-dimensional model, the return to the ball and the margins of the construction;
+details are in \Ssec{sec:cub} and \Ssec{sec:rtc}. Throughout, the target is $\Bo(1)$ and $\rho_i=c_i/C$.
+
+\subsection{The cubic model}\label{sec:mdl-cub}
+
+The model is the normal disc bundle of Biran's decomposition of $\CP^2$ along a smooth cubic \cite{Biran2001}, written on the cover $\R^2\times\C$ of the Fermat torus $\Gamma=\C/(\Z+\zeta\Z)$, $\zeta=e^{2\pi i/3}$. Theta functions give a smooth map $Z\colon\R^2\to\C^3$, periodic up to phase, with $|Z|=1$ and $Z_0^3+Z_1^3+Z_2^3=0$. With $\eta_\Gamma=\frac1{2\pi}\operatorname{Im}\sum_j\overline{Z_j}\,dZ_j$, $\sigma=d\eta_\Gamma$ and $p=\pi|w|^2$, the model form is
+\[
+ \Omega_0=\omega_V+(1-3p)\,\sigma-3\,dp\wedge\eta_\Gamma ,\qquad \int_\Gamma\sigma=3,
+\]
+so the base area at level $p$ is $3(1-3p)$, the fibre interval stops below $p=\frac13$, and hence $3c_i<C$. The integrated profile over $[0,h]$ is $3h-\frac92h^2\to\frac12=\vol\CP^2$ as $h\uparrow\frac13$ (\Sref{Lemma}{lem:cub-volume}).
+
+\begin{theorem}[Packing in dimension four]\label{thm:mdl-cub}
+Let $(k,\rho_i,a_i,h,d_n,g,K,q)$ be valid cubic data (\Sref{Definition}{def:shd4-data}) with $d_n=\frac12(h+\frac13)$:
+$0<\rho_i<a_i<h<d_n<\frac13$, $0<g\le3(1-3h)$, and $(K,(q_t))$ a comparison datum for the profile
+$3(1-3p)-\sum_i(a_i-p)_+$ on $[0,h]$ with gap $\frac{31}{32}g$, whose isotopy is the identity near $p=h$. Then there are
+explicit numbers $\rho_i<\rho_i^+<\rho_i^{\rm dom}$ and smooth maps $f_i\colon\Bo(\rho_i^{\rm dom})\to\C^2$ with symplectic
+derivative, injective on $B(\rho_i^+)$, such that the sets $f_i(B(\rho_i^+))$ are pairwise disjoint and contained in
+$B(1-\mu_{\rm ball})$ for some $\mu_{\rm ball}\in(0,1)$.
+\end{theorem}
+
+This is \Sref{Theorem}{thm:cub-packing}. For $k\ge10$ equal capacities with $\frac34<\rho\sqrt k<1$ the data are
+given by the linear datum of Proposition~\ref{prop:cmp-linear}, with $a=t_0/\sqrt k$, $h=t_0/3$,
+$t_0=(1+\rho\sqrt k)/2$, all algebraic in $\sqrt k$ and $\rho$ (\Sref{Remark}{rem:cub-lean}). For all other
+$\rho_i<\frac13$ with $\sum_i\rho_i^2<1$, including $k=9$ and unequal capacities, the companion paper~\cite{SongHD}
+constructs valid cubic data from a scalar comparison datum. The embeddings are
+\[
+ f_i=b_{\rm ball}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota\circ\mathsf N\circ\Phi^{-1}\circ\chi_{\mathcal A}
+ \circ\mathcal D^{-1}\circ E_i ,
+\]
+read from right to left as follows. The layer map $E_i$, built from an explicit strip map and a unique root, places the
+ball in the $i$-th layer over the annulus (\Sref{Proposition}{prop:shd4-maps}); $\mathcal D$ is the twist and
+$\chi_{\mathcal A}$ the frame chart over the annulus (Section~\ref{sec:hdl}); $\Phi$ is the handle Moser map, which
+commutes with the deck maps and fixes the marked fibres (Remark~\ref{rem:hdl-four}); $\mathsf N(u,v,w)=(Z(u,v),w)$
+passes from the cover to unit Fermat representatives; and $\iota,\tau_1,\mathrm{pr},\psi_1^{-1},b_{\rm ball}$ form the
+return of \S\ref{sec:mdl-return}. The argument
+is outlined in \Ssec{sec:mdl-cub-outline}.
+
+\subsection{The return to the ball}\label{sec:mdl-return}
+
+The handle maps land in $\{p<h\}$ of the model on the cover, and the return carries this region into
+$\CP^2\setminus\{Z_0=0\}$, which the affine chart $b_{\rm ball}$ identifies with $\Bo(1)$. It is a deformation to the
+normal cone, following the scheme of \cite{OpenAI2026}, written with explicit flows
+(\Sref{Construction}{cons:cub-transfer}). Let $\mathcal F(Z)=Z_0^3+Z_1^3+Z_2^3$ and $X_T=\{\mathcal F(Z)=TW\}$, with $W$ of
+weight three: $X_0$ is the total space of $\mathcal O(3)|_E$ over the cubic, and $X_1$ is a graph over $\CP^2$. The
+return is $\mathcal T=b_{\rm ball}\circ\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota\circ\mathsf N$: $\mathsf N$ passes to
+unit Fermat representatives, $\iota$ is an explicit weight-three injection into $X_0$, $\tau_1$ is the time-one map of
+an explicit transport field from $X_0$ to $X_1$ preserving the restricted forms, $\mathrm{pr}$ is the projection of the
+graph, and $\psi_1^{-1}$ is the inverse of an explicit Moser return removing an exact term from the Fubini--Study form.
+The denominators of both fields are bounded below on the regions the trajectories visit (Table~\ref{tab:mdl-margins}).
+Then $\mathcal T$ pulls $\omega_0$ back to $\Omega_0$ on $\{p<h\}$ off the marked fibres and identifies exactly
+deck-equivalent points (\Sref{Theorem}{thm:rtc-transfer}).
+
+The images must avoid the line $L=\{Z_0=0\}$, which the ball chart removes. This follows from a symmetry. Let
+$\mathsf r(Z,W)=(\zeta Z_0,Z_1,Z_2,W)$.
+\begin{enumerate}[label=(\alph*)]
+\item $\mathsf r$ is unitary and preserves $\mathcal F$, so it preserves the forms and constraints above; since
+ $\bar\zeta^2=\zeta$ it maps both fields to themselves. Hence $\iota$, $\tau_1$, $\mathrm{pr}$ and $\psi_1^{-1}$ commute with
+ $\mathsf r$ (\Sref{Lemma}{lem:rtc-equivariant}).
+\item Each factor is injective on representatives and commutes with the gauge action $(Z,W)\mapsto(cZ,c^3W)$, so
+ $\mathcal T_{\rm u}=\psi_1^{-1}\circ\mathrm{pr}\circ\tau_1\circ\iota$ is injective modulo gauge
+ (\Sref{Lemma}{lem:rtc-injective}).
+\item For a point $x=(Z,U)$ of the central fibre, $\mathsf rx$ is a gauge multiple of $x$ only if $Z_0=0$
+ (\Sref{Lemma}{lem:rtc-fixed}).
+\end{enumerate}
+If an output $Y=\mathcal T_{\rm u}(x)$ had $Y_0=0$, then $\mathsf rY=Y$, so by (a) and (b) $\mathsf rx$ is a gauge multiple
+of $x$, and (c) gives $Z_0=0$. The handle construction
+keeps the balls off the marked fibres, the fibres over the points of $E$ with $Z_0=0$: the layers lie over the
+annulus, which misses these points, and the three Moser flows fix the marked fibres pointwise because their variation
+primitives vanish there (\Sref{Lemma}{lem:shd4-fibres}). Hence the images avoid $L$, with a positive margin
+$\mu_{\rm ball}$ to $\partial\Bo(1)$ on every compact family (\Sref{Proposition}{prop:rtc-avoid}).
+
+\subsection{Margins}\label{sec:mdl-margins}
+
+Each step of the construction leaves a quantitative margin that a later step consumes; Table~\ref{tab:mdl-margins}
+lists them for the linear branch. The gap $g=3(1-t_0)=\frac32\eta_\star$ pays for the planar cost ($\le\frac g{32}$),
+the background $e_h=\frac g{16}$ and the cap excess ($\le\frac g{32}$), leaving a residual of at least $\frac78g$.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}L{0.2\textwidth}L{0.29\textwidth}L{0.27\textwidth}L{0.17\textwidth}@{}}
+\toprule
+Margin & Definition; dependence & Used for & Source\\
+\midrule
+volume defect & $\eta_\star=1-\rho\sqrt k$; input & $\eta_\star=(1-t_0)+\sqrt k(a-\rho)$, $\frac{\eta_\star}2$ each & hypothesis\\
+capacity slack $a-\rho$ & $\frac{\eta_\star}{2\sqrt k}$ & half to $\bar\rho$; strip excess $\frac{\delta}2$; $\frac{\delta}4$ left below $h_i$ & Rem.~\Snum{rem:rtc-equal}\\
+ball enlargement $\rho<\rho^+<\rho^{\rm dom}$ & $(\rho \varrho_3^2,\rho \varrho_4^2)$; $\rho$, $a$ & closed source $B(\rho^+)$, open domain $\Bo(\rho^{\rm dom})$ & Rem.~\Snum{rem:rtc-recorded}, Prop.~\Snum{prop:shd4-maps}\\
+fibre height $1-3h$ & $1-t_0=\frac{\eta_\star}2$ & $g\le\Hb(h)=3(1-3h)$; transfer margins & Rem.~\Snum{rem:rtc-equal}\\
+gap $g$ & $3(1-t_0)$ & all handle margins below & Prop.~\ref{prop:cmp-linear}\\
+planar tolerance $e_q$ & $\min(\frac h{100},\frac g{128c_s})$ & $\Lambda(p(q(z)))\le\pi|z|^2+4e_q$; cost $4c_se_q\le\frac g{32}$ & Def.~\Snum{def:fcp-eq}, Thm.~\Snum{thm:pll-inner}, Lem.~\Snum{lem:fcp-margin}\\
+comparison gap $\ge\frac{31}{32}g$ & $g$ minus the planar cost & background, cap excess, residual & Prop.~\ref{prop:cmp-linear}\\
+background $e_h=\frac g{16}$ & $H^*=\Hb-e_h\ge\frac{15}{16}g$ on $[0,h]$ & positive form $e_h\,du\wedge dv$ on the annulus & Rem.~\ref{rem:hdl-four}, Lem.~\Snum{lem:shd4-budget}(b)\\
+cap width $\mu_h=\frac g{16k}$ & $h_i=\frac12(a_i-p+\sqrt{(a_i-p)^2+\mu_h^2})$ & cap excess $\sum_i(h_i-(a_i-p)_+)\le\frac g{32}$ & Rem.~\ref{rem:hdl-four}, Lem.~\Snum{lem:shd4-budget}(a)\\
+residual $\frac78g$ & $\frac{31}{32}g-e_h-\frac g{32}$ & positive remainder layer $R^*$ & Lem.~\Snum{lem:shd4-budget}(c)\\
+planar support $h-P_{\rm supp}$ & isotopy data of Def.~\Snum{def:pln-isotopy-data}; $P_{\rm supp}>h-\frac{31}8e_q$ & all flows preserve $p$ above $P_{\rm supp}$ & Lem.~\Snum{lem:pln-data}, positivity\\
+safe region $\{p<h+2\delta_m\}$ & $\delta_m=\min(\frac{d_n-h}4,\frac g{100})$; cutoff on $[h+\frac32\delta_m,h+\frac74\delta_m]$ & $H^*>\frac{15}{16}g-18\delta_m$; Moser identity on $\{p\le h+\delta_m\}$ & Lem.~\Snum{lem:shd4-budget}(d)\\
+base speed $C_b$ & maximum over a compact fundamental set & completeness of the handle flow & positivity only\\
+transfer margins & $d_n-h=\frac12(\frac13-h)$, $1-3d_n=\frac12(1-3h)$; $h$ & $\iota$ needs $p<d_n$; $A>1-3d_n$; $w_*=\frac h{d_n-h}$ & explicit\\
+transport denominator & $N_{\rm den}\ge c_*=\min(\frac32,\frac{T_0^2}{d_n})$; $d_n$, $w_*$ & cutoff at $\frac{c_*}2$, inactive on $\mathcal C_*$ & Lem.~\Snum{lem:rtc-denominator}\\
+return denominator & $A_s+B_sG\ge1-\frac32d_n>\frac12$; $d_n$ & cutoff at half the bound, inactive & Lem.~\Snum{lem:rtc-graph}\\
+target boundary $\mu_{\rm ball}$ & $\frac12\min_{\mathcal K}(1-\pi|z|^2)=\frac12\min|Y_0|^2$ & compactness of $\bigcup_if_i(B(c'_i))\subset\Bo(C)$ & Prop.~\Snum{prop:rtc-avoid}, positivity only\\
+radii $r_i<r_{1,i}<\dots<r_{4,i}<r'_i$ & $r_{\ell,i}=r_i+\frac\ell5\min(\frac14\text{centre gap},r'_i-r_i)$ & cutoff collar, disjoint closed balls, open domain & Lem.~\ref{lem:ham-radii}\\
+isotopy scale $\tau$ & $\min(\frac12,\frac{\delta_c}{2Lr_{\rm tot}})$; $L$ a maximum over compact sets & separation $|Y_i-Y_j|\ge4Lr_{\rm tot}$ & Lem.~\Snum{lem:iso-parameters}, positivity only\\
+\bottomrule
+\end{tabular}
+\caption{Margins of the construction in the linear branch, in the order in which they are used. The table is an
+index into the supplement: symbols not defined in the main text are defined at the cited statements. ``Explicit''
+means that the margin is a closed formula in the inputs; ``positivity only'' means that the proof shows the number is
+positive without bounding it.}
+\label{tab:mdl-margins}
+\end{table}
+
+\emph{A worked instance.} \Ssec{sec:example} takes $k=10$, $\eps=\frac1{10}$ in Theorem~\ref{thm:intro-4d}:
+$R=(k/(1-\eps/4))^{1/4}$, $C=\pi R^2$, $c_i=\pi$, $s_i=(3i-3,0,0,0)$, so $\rho=\sqrt{39}/20$,
+$\rho\sqrt k=\sqrt{39/40}\in(\frac34,1)$ and the linear datum applies, with $K(p)=(3\sqrt{10}-9)p$; the supplement lists
+the resulting constants and margins and the composed Hamiltonian.

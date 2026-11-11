@@ -1,0 +1,407 @@
+\section{Comparison data, the toric mechanism and the Hamiltonian}\label{p2:sec-machine}
+
+This section states the comparison data for concave profiles and the packing theorem in a toric model, both proved
+in the supplement, and recalls from Paper~I \cite{PaperI} the toric balls, the twist and the passage from embeddings
+to one Hamiltonian. Statements recalled from Paper~I carry the tag ``Paper~I'' and have the same name there. Here
+$m=n-1$; the comparison data serve the higher-dimensional models and, for $m=1$, the scalar branch in dimension four.
+
+\emph{Dependencies.} Theorem~\ref{thm:cmp-main} follows from Proposition~\ref{prop:cmp-fixed-point} and
+Theorem~\ref{thm:cmp-realisation}; the proofs are in \Ssec{sec:fcp} and \Ssec{sec:plc}. Theorem~\ref{thm:mech-packing}
+is \Sref{Theorem}{thm:shd-packing}, with the handle construction of \Ssec{p2:sec-shd}. The termination part of
+Theorem~\ref{thm:eff-algorithm} uses Theorem~\ref{thm:main}(i), proved in \S\ref{p2:sec-proof}. The statements of
+the supplement of Paper~I used in the proofs are reproduced in \Ssec{p2:sec-quoted}.
+
+\emph{Conventions.} The dilation $z\mapsto\lambda z$ multiplies $\omega_0$ and capacities by $\lambda^2$; conjugation by
+it normalises the target capacity to $1$. In fibre coordinates $w_j$ the moments are $p_j=\pi|w_j|^2$ and the angles
+$\theta_j=\arg w_j/2\pi\in\R/\Z$, so that the fibre form is $\omega_V=\sum_jdp_j\wedge d\theta_j$ away from the axes.
+Fibre Hamiltonians $Q$ follow the sign of \cite{OpenAI2026}, $\iota_{X_Q}\omega_V=-dQ$, opposite to the global one. In
+affine coordinates $\omega_{\rm FS}=dd^c\log(1+|z|^2)$ with $d^c=i(\bar\partial-\partial)/(4\pi)$; the map
+$z\mapsto z/\sqrt{\pi(1+|z|^2)}$ identifies this chart symplectically with $\Bo(1)$. All cutoffs and clocks use the flat
+step $S$ of \Sref{Definition}{I:def:pre-flat}, all of whose derivatives vanish at $0$ and $1$.
+
+\subsection{Toric balls and the twist}\label{I:sec:mech-toric}
+
+A downward polytope is
+\[
+ \Delta=\{p\in\R^m_{\ge0}:\langle b_\nu,p\rangle\le\ell_\nu,\ 1\le\nu\le N\},
+ \qquad b_\nu\in\R^m_{\ge0},\quad \ell_\nu>0,
+\]
+with toric domain $V_\Delta=\{w\in\C^m:p(w)\in\Delta\}$. The equalities $\langle b_\nu,p\rangle=\ell_\nu$ are its outer
+faces, and $\tau_\Delta\Delta$, $0<\tau_\Delta<1$, is a core that keeps the source caps away from them.
+
+\begin{definition}[Toric ball; \PoneTag{def:mech-toric-ball}]\label{I:def:mech-toric-ball}
+\lean{OAI.PackingSufficiencySupport.closedBall,
+OAI.PackingSufficiencySupport.Hamiltonian.splitCapacityBall,
+OAI.PackingSufficiencySupport.Hamiltonian.complexSplitPhase_capacity}
+In $\C^n=\C\times\C^m$, put $\varpi=\pi|z_{\rm b}|^2$. The ball of capacity $a$ is
+$B(a)=\{\varpi+|p|\le a\}$. At a fibre point with $|p|\le a$ its base slice is a disc of capacity $a-|p|$, so its
+slice-height function is $(a-|p|)_+$.
+\end{definition}
+
+\begin{lemma}[The cap integral; \PoneTag{lem:mech-toric-volume}]\label{I:lem:mech-toric-volume}
+\lean{OAI.PackingSufficiencySupport.integral_simplex_tent, OAI.PackingSufficiencySupport.integral_tent}
+For $a\ge0$, $\int_{\R^m_{\ge0}}(a-|p|)_+\,dp=a^{m+1}/(m+1)!$.
+\end{lemma}
+\begin{proof}
+The simplex $\{|p|\le t\}$ has measure $t^m/m!$; integrate its distribution function against $(a-t)_+$.
+\end{proof}
+
+Each model has a compact affine core $\Sigma_\ell$ and a horizontal primitive $\Gamma_{\rm phys}(p)$; the physical form is
+$\Omega=\omega_V+d\Gamma_{\rm phys}$, with base curvature $\kappa(p)=d_\Sigma\Gamma_{\rm phys}(p)$. The base profile and budget
+are
+\begin{equation}\label{I:eq:mech-model-volume}
+ \Hb(p)=\int_{\Sigma_\ell}\kappa(p),\qquad
+ \mathcal B_\Delta=\int_\Delta\Hb(p)\,dp .
+\end{equation}
+For auxiliary capacities $a_i$ larger than the given ones, with $\{|p|\le a_i\}\subset\tau_\Delta\Delta$, put
+$\Pb(p)=\Hb(p)-\sum_i(a_i-|p|)_+$. By the cap integral,
+\begin{equation}\label{I:eq:mech-mean}
+ \int_\Delta\Pb=\mathcal B_\Delta-\sum_i\frac{a_i^n}{n!},\qquad
+ \frac{1-\sum_i\rho_i^n}{n!}
+ =\Big(\frac1{n!}-\mathcal B_\Delta\Big)+\int_\Delta\Pb+\sum_i\frac{a_i^n-\rho_i^n}{n!}.
+\end{equation}
+For small balls the model parameters make the first and last terms on the right smaller than the left side, so
+$\int_\Delta\Pb>0$; for one large ball of reserved capacity $a$ the limiting budget for the remaining balls is
+$(1-a^n)/n!$. A positive integral does not give the pointwise inequality $\Pb\ge0$ needed to stack the base discs; the
+twist uses only the integral.
+
+\emph{The twist.} The handle data (\Sref{Definition}{def:hdl-handle-data}) include an annulus with coordinates
+$(s,v)\in[0,1]\times\R/\Z$, a closed one-form $\beta=b(v)\,dv$ with $b\ge0$, $\int_0^1b=1$, and a positive reference
+area form $\Lambda$. A first Moser path replaces the physical curvature on the annulus by a background
+$e_\Lambda\Lambda$ plus the base mass $H^*(p)\ge\Hb(p)-\gamma_*/16$ carried by $\beta$
+(\Ssec{sec:hdl-first}), where $\gamma_*$ is a reserve set aside from the gap below. Let $q_t$ be a Hamiltonian
+isotopy of the fibre, $q=q_1$; the suspension $\mathcal D_\lambda(s,v,w)=(s,v,q_{\lambda f(s)}w)$, $f=S$, inserts it
+across the annulus. For a function $K$ of the moments put $J=K-H^*$; adding $d(J(p)\beta)$ changes only toric mixed
+terms away from the annulus, and after the twist the base area available across the annulus at $w$ is
+\begin{equation}\label{I:eq:mech-available}
+ K\big(p(q^{-1}w)\big)-J\big(p(w)\big)
+ =H^*\big(p(w)\big)+K\big(p(q^{-1}w)\big)-K\big(p(w)\big).
+\end{equation}
+Since $q$ preserves the fibre volume, this redistributes area between moment levels. A comparison supplies, for a
+minorant $P\le\Pb$,
+\begin{equation}\label{I:eq:mech-comparison}
+ (K-P)\big(p(qw)\big)\le K\big(p(w)\big)-\gamma\qquad(w\in V_\Delta),
+ \qquad 0<\gamma_*\le\gamma.
+\end{equation}
+Applied at $q^{-1}w$ it shows that the available area exceeds $\sum_i(a_i-|p(w)|)_+$ by at least
+$\gamma-\gamma_*/16>0$. This is divided among disjoint \emph{layers} $I_1,\dots,I_k,I_*$ of $s\in(0,1)$: across $I_i$
+the $\beta$-coefficient rises by a smooth cap $h_i(p)$ below $(a_i-|p|)_+$, and a ball of capacity slightly less than
+$a_i$ is placed there in product form; across $I_*$ it rises by the positive remainder. The general comparator is
+built from a concave piecewise affine minorant $P$ with positive mean, with
+\begin{equation}\label{I:eq:mech-necessary}
+ 0<d<\min\bigl(\bar P,\beta_P\bigr),\qquad
+ \bar P=|\Delta|^{-1}\int_\Delta P,
+\end{equation}
+where $P\ge\beta_P>0$ off the core $\tau_\Delta\Delta$ (\S\ref{p2:sec-machine-cmp}).
+
+\subsection{Model, comparison datum and transfer}\label{I:sec:mech-interfaces}
+
+\begin{definition}[Model input]\label{def:mech-model}
+\lean{SymplecticPacking.HighDim.RawToricModel,
+SymplecticPacking.HighDim.ToricPackingStages.smallRawModel,
+SymplecticPacking.HighDim.ToricPackingStages.mixedRawModel,
+SymplecticPacking.HighDim.ToricPackingStages.cubicRawTotalModel}
+A higher-dimensional model input consists of a compact affine core $\Sigma_\ell\subset M$ of an affine
+curve $M$, the product $E=M\times\C^m$, a downward polytope $\Delta$, and the physical primitive
+$\Gamma_{\rm phys}(p)$ given in the corresponding model section, together with the handle data of
+\Sref{Definition}{def:hdl-handle-data}. The physical form is
+\[
+ \Omega=\omega_V+d\Gamma_{\rm phys},\qquad
+ V_\Delta(E)=\Sigma_\ell\times V_\Delta.
+\]
+The physical curvature $\kappa(p)=d_\Sigma\Gamma_{\rm phys}(p)$ is positive on the model region and extends
+smoothly in the moment variables across the coordinate hyperplanes.
+\end{definition}
+
+\begin{definition}[Comparison datum]\label{def:mech-datum}
+\lean{SymplecticPacking.HighDim.ComparisonDatum,
+SymplecticPacking.HighDim.ComparisonDatum.qMap,
+SymplecticPacking.HighDim.CmpInput.comparatorDatum}
+A comparison datum for $(\Delta,P)$ with gap $\gamma>0$ and reserve $\gamma_*\in(0,\gamma]$ consists of a function
+$K$ of the moments, smooth on a neighbourhood of $\Delta$ in $\R^m$, and a smooth Hamiltonian isotopy
+$(q_t)_{t\in[0,1]}$ of $\C^m$ with $q_0=\mathrm{id}$, generated by $Q_t$ with $\iota_{X_{Q_t}}\omega_V=-dQ_t$,
+such that:
+\begin{enumerate}[label=(\arabic*),ref=(\arabic*)]
+\item\label{it:mech-datum-collar} $q_t(V_\Delta)=V_\Delta$ for every $t$, and there is $\varsigma>0$ such that
+ for every face $\nu$ and every $t$, $Q_t$ Poisson-commutes with the face moment $\mu_\nu=\langle b_\nu,p\rangle$ on
+ the collar $\{\mu_\nu>\ell_\nu-\varsigma\}$;
+\item\label{it:mech-datum-cmp} $q=q_1$ satisfies the comparison inequality~\eqref{I:eq:mech-comparison}.
+\end{enumerate}
+For the comparator of Theorem~\ref{thm:cmp-main}, with gap $\gamma=\frac{11}{16}d$, the models take the reserve
+$\gamma_*=\frac{11}{64}d$.
+\end{definition}
+
+\begin{definition}[Transfer]\label{def:mech-transfer}
+\lean{SymplecticPacking.BranchSmall.vectorTransfer,
+SymplecticPacking.BranchLargeHigh.Two.returnMap,
+SymplecticPacking.BranchLarge3.RawTransfer.transferMap,
+SymplecticPacking.Return.compositeT}
+A transfer to an open target $U\subset\C^n$ assigns to a compact subset $\mathcal K$ of the model
+domain a smooth symplectic embedding $\mathcal T_{\mathcal K}$ on a neighbourhood of $\mathcal K$,
+and an explicit compact set $\mathcal C_{\mathcal K}\subset U$ containing the image of $\mathcal K$.
+The cubic, quadric and six-dimensional polynomial transfers are fixed maps; in the shell transfer for
+$n\ge4$ the slit-shell parameters depend on $\mathcal K$.
+\end{definition}
+
+\begin{theorem}[Packing in a model]\label{thm:mech-packing}
+\lean{SymplecticPacking.HighDim.RawModelAgreement.native_packing_spec, SymplecticPacking.Strip.Cubic.fN_symplectic, SymplecticPacking.Strip.Cubic.fN_disjoint, SymplecticPacking.Strip.Cubic.fN_avoid_fibres}
+Let $n\ge3$ and let $(\Sigma_\ell,\Delta,\Gamma_{\rm phys})$ be a model input
+(Definition~\ref{def:mech-model}) whose handle data satisfy the collar bounds (\Snum{eq:hdl-collar}). Let
+$(K,(q_t))$ be a comparison datum for $(\Delta,P)$ with gap $\gamma$ and reserve $\gamma_*$
+(Definition~\ref{def:mech-datum}). Let $0<\rho_i<a_i$ $(1\le i\le k)$ with
+$\{|p|\le a_i\}\subset\tau_\Delta\Delta$, and suppose
+\[
+ P(p)\le\Hb(p)-\sum_i(a_i-|p|)_+\qquad(p\in\Delta).
+\]
+Then the maps $\psi_i$ of \Sref{Construction}{cons:native-packing} are smooth symplectic embeddings of
+neighbourhoods of the closed balls $B(\rho_i)$ into $(E,\Omega)$, and the sets $\psi_i(B(\rho_i))$ are pairwise
+disjoint and contained in $\operatorname{int}V_\Delta(E)$. For $n=2$ the same conclusion holds for the cubic model of
+Paper~I with its handle data and equivariant maps, when the comparison datum is replaced by valid cubic data
+(\PoneRef{def:shd4-data}): the full-disc comparison for the profile itself and the collar condition $P_{\rm supp}<h$.
+\end{theorem}
+
+The maps are $\psi_i=\Phi^{-1}\circ\mathcal D^{-1}\circ\mathcal E_i$: a layer map $\mathcal E_i$ placing the ball in the
+layer $I_i$, the inverse twist, and the inverse of three Moser maps (\Ssec{sec:hdl-proof}). The proof for the
+bordered base is \Sref{Theorem}{thm:shd-packing}, with \Sref{Propositions}{prop:str-layer}
+and~\Snum{prop:str-embeddings}. The model sections verify the density floor, the collar bounds and the profile
+minorant before applying the theorem.
+
+\begin{proposition}[Assembly]\label{prop:mech-assembly}
+\lean{OAI.PackingSufficiencySupport.Hamiltonian.postcompose_form_packing, SymplecticPacking.HighDim.assembly_spec}
+Let $\psi_i$ be the model embeddings of Theorem~\ref{thm:mech-packing} and let $\mathcal T$ be its transfer.
+Then, with $\mathcal K=\bigcup_i\psi_i(B(\rho_i))$, the maps
+$f_i=\mathcal T_{\mathcal K}\circ\psi_i$ are smooth symplectic embeddings on neighbourhoods of
+$B(\rho_i)$, have pairwise disjoint images in $U$, and have images contained in $\mathcal C_{\mathcal K}$.
+\end{proposition}
+\begin{proof}
+$\mathcal K$ is compact and the transfer is one injective symplectic map on a neighbourhood of it, so composition
+preserves the pullback identity and disjointness; the inverse images of that neighbourhood under the $\psi_i$ are open
+neighbourhoods of the source balls.
+\end{proof}
+
+\begin{table}[ht]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}L{.16\textwidth}L{.24\textwidth}L{.25\textwidth}L{.25\textwidth}@{}}
+\toprule
+input & base and physical primitive & base profile & target\\\midrule
+$n=2$ (Paper~I) & disc bundle over the cubic, on its periodic cover & $3(1-3p)$ & $\Bo(1)$\\
+$n\ge3$, all $c_i<C/2$ & $y_j^2=t^2-j$, $m=n-1$; $(1-2|p|)\lambda$ & $A_\ell(1-2|p|)$; limit $2^m(1-2|p|)$ & $\Bo(1)$\\
+$n\ge4$, one large ball & the curve $y_j^2=t^2-j$, $j\le n-2$, fibre $\C^{n-1}$; $(1-u-2w)\lambda$ & $A_\ell(1-u-2w)$; limit $2^{n-2}(1-u-2w)$ & a shell about the reserved ball\\
+$n=3$, one large ball & an explicit polynomial primitive on a compact affine core & $H_\ell$, limit $9(b-|p|)-2(s-|p|)_+$ & common polynomial form, then $\Bo(1)$\\\bottomrule
+\end{tabular}
+\caption{The models. $A_\ell$ is the reference area of the compact affine core; each
+higher-dimensional total space is a product over that core. For one large ball, $u=p_1$ and $w=p_2+\dots+p_{n-1}$
+($n\ge4$); for $n=3$, $H_\ell$ is the base profile of the truncated polynomial model, with limit $H_0$, and
+$s<b$ are explicit parameters of that model (\Ssec{sec:lrg-six}).}
+\label{tab:mech-models}
+\end{table}
+
+\subsection{Comparison data}\label{p2:sec-machine-cmp}
+
+Let $\Delta$ be a compact full-dimensional downward polytope and $P$ a continuous concave function on $\Delta$ with
+positive mean. Norms are uniform norms on $\Delta$. For a coordinate $j$ write $p=(y,x)$ with $x=p_j$; then
+$\Delta=\{(y,x):y\in\Delta_j,\ 0\le x\le L(y)\}$ with
+$L(y)=\min_{\nu:\,b_{\nu j}>0}(\ell_\nu-\sum_{i\ne j}b_{\nu i}y_i)/b_{\nu j}$ concave piecewise affine on the projection
+$\Delta_j$. The polytope is \emph{rational} if all $b_\nu,\ell_\nu$ are rational; a function on $\Delta$ is
+\emph{rational convex polyhedral} (resp.\ \emph{rational concave piecewise affine}) if it is the maximum (resp.\
+minimum) of finitely many affine functions with rational coefficients.
+
+\begin{definition}[Coordinate rearrangement]\label{def:cmp-rearrangement}
+For a continuous convex function $F$ on $\Delta$ and a coordinate $j$, put
+\[
+ (R_jF)(y,x)=\min_{\substack{0\le a,\ a+x\le L(y)}}\ \max\bigl(F(y,a),\,F(y,a+x)\bigr),
+ \qquad (y,x)\in\Delta,
+\]
+and $\Rcal=R_m\circ\dots\circ R_1$.
+\end{definition}
+
+Thus $x\mapsto(R_jF)(y,x)$ is the increasing rearrangement of $F(y,\cdot)$ on $[0,L(y)]$; its properties
+(monotonicity, nonexpansiveness, and preservation of rational convex polyhedral functions by Fourier--Motzkin
+elimination) are \Sref{Lemma}{lem:cmp-rearrangement}.
+
+\begin{proposition}[Finite comparator]\label{prop:cmp-fixed-point}
+Let $\Delta$ be rational, $\tau_\Delta\in(0,1)$ rational, and $P$ a rational concave piecewise affine function on
+$\Delta$ with mean $\mu=\vol(\Delta)^{-1}\int_\Delta P>0$ and $P\ge\beta_P$ on $\Delta\setminus\tau_\Delta\Delta$ for some
+$\beta_P>0$. Let $d$ be rational with $0<d<\min(\mu,\beta_P)$ and put
+\[
+ \eta_\Delta=(1-\tau_\Delta)(\mu-d),\qquad M_P=\max\bigl(1,\ d-\min_\Delta P+1\bigr),\qquad
+ \lambda=1-\frac{\eta_\Delta}{2(M_P+\eta_\Delta)}.
+\]
+Define $K_0=0$, $K_{r+1}=\Rcal(\lambda K_r-P)$ and
+\[
+ N=\left\lceil\frac{16\|P\|}{d(1-\lambda)(\lambda^{-1}-1)}\right\rceil+1.
+\]
+Then every $K_r$ is rational convex polyhedral, $\lambda^N\|P\|/(1-\lambda)<d/16$, and
+\[
+ \Rcal(K_N-P)\le K_N-\tfrac78d\qquad\text{on }\Delta .
+\]
+\end{proposition}
+
+All quantities are computed by finite rational arithmetic and Fourier--Motzkin elimination. The construction, and the
+smoothing and realisation below, apply verbatim over real coefficients (``convex polyhedral'' in place of ``rational
+convex polyhedral''); this version is used for real capacities.
+
+\begin{theorem}[Realisation of one coordinate rearrangement]\label{thm:cmp-realisation}
+\lean[needed]{SymplecticPacking.HighDim.liftGen_spec}
+\uses{lem:cmp-rearrangement, S-def:plc-slice, S-thm:plc-lift, S-thm:pln-isotopy}
+Let $\Delta$ be rational, $F$ rational convex polyhedral on $\Delta$, $j\in\{1,\dots,m\}$ and $e>0$ rational. Let
+$Q^{(j)}_t$ be the Hamiltonian defined from $(\Delta,F,j,e)$ in \Sref{Definition}{def:plc-slice}, and let
+$(q^{(j)}_t)_{t\in[0,1]}$ be its flow ($\iota_{X}\omega_V=-dQ^{(j)}_t$). Then $Q^{(j)}$ is smooth with compact support
+in $w$, $(q^{(j)}_t)$ is a smooth Hamiltonian isotopy of $\C^m$, and:
+\begin{enumerate}[label=(\alph*)]
+\item $q^{(j)}_0=\mathrm{id}$; every $q^{(j)}_t$ maps $V_\Delta$ onto itself and preserves the moments $p_i$, $i\ne j$.
+\item There is a rational $\varsigma_j>0$ such that for every $\nu$ with $b_{\nu j}>0$ and every $t$, $Q^{(j)}_t$
+ vanishes on $\{\langle b_\nu,p\rangle>\ell_\nu-\varsigma_j\}$; for every $\nu$ with $b_{\nu j}=0$, $Q^{(j)}_t$
+ Poisson-commutes with $\langle b_\nu,p\rangle$.
+\item $F\bigl(p(q^{(j)}_1(w))\bigr)\le(R_jF)(p(w))+e$ for every $w\in V_\Delta$.
+\end{enumerate}
+\end{theorem}
+
+The proof is \Sref{Theorem}{thm:plc-lift}. The construction is planar: fix $y$ and rescale an inner slice
+$[0,\ell_{\rm in}(y)]$, $\ell_{\rm in}(y)<L(y)$, to $[0,1]$; then $f(v)=F(y,\ell_{\rm in}(y)v)$ is convex with increasing
+rearrangement $f^\sharp$, and one needs an area-preserving map $q_{\rm in}$ of the disc with
+$f(\pi|q_{\rm in}(z)|^2)\le f^\sharp(\pi|z|^2)+\xi$ on a core disc. The sublevel sets of a convex potential approximating
+$f(v)$ (log-sum-exp smoothing plus a barrier), proper in the angle and exactly quadratic near its minimum, give such a
+map through Morse charts (\Sref{Theorem}{thm:plc-planar}). A compactly supported Hamiltonian isotopy of the disc ends
+at this map on a core (\Sref{Theorem}{I:thm:pln-isotopy}); its constants are uniform in $y$
+(\Sref{Theorem}{thm:plc-param}), and the planar generator is lifted as
+\[
+ Q^{(j)}_t(w)=\chi(y)S'(t)\ell_{\rm in}(y)\,
+ Q^{\rm pl}\bigl(y,\chi(y)S(t),w_j/\sqrt{\ell_{\rm in}(y)}\bigr),
+\]
+with a cutoff $\chi(y)$ vanishing near degenerate slices.
+
+\begin{theorem}[Comparison datum for concave profiles]\label{thm:cmp-main}
+\uses{prop:cmp-fixed-point, thm:cmp-realisation, def:mech-datum, S-lem:fcp-smoothing}
+Assume the hypotheses of Proposition~\ref{prop:cmp-fixed-point}, and let $d$, $N$ and $K_N$ be as there. Let
+$K_N=\max_{\iota\in I}\phi_\iota$ be the representation by rational affine functions produced by the iteration, each
+step $R_j$ being the Fourier--Motzkin elimination of \Sref{Lemma}{lem:cmp-rearrangement}(v), set
+$c_K=\lceil32\,\#I/d\rceil+1$ (so that $\log(\#I)/c_K<d/32$ by \Sref{Lemma}{lem:fcp-smoothing}), and put
+\[
+ K=\frac1{c_K}\log\sum_{\iota\in I}e^{c_K\phi_\iota}.
+\]
+Let $F_0=K_N-P$ and $F_j=R_jF_{j-1}$ ($1\le j\le m$); let $q^{(j)}_t$ be the isotopy of
+Theorem~\ref{thm:cmp-realisation} for $F_{j-1}$, the coordinate $j$ and $e_j=d/(8(m+1))$. Define $q_t$ by running
+$q^{(m)},q^{(m-1)},\dots,q^{(1)}$ in turn with flat clocks: for $t\in[\frac{r-1}m,\frac rm]$, $r=1,\dots,m$, and
+$j=m+1-r$,
+\[
+ q_t=q^{(j)}_{S(mt-r+1)}\circ q^{(j+1)}_1\circ\dots\circ q^{(m)}_1 .
+\]
+Then $(K,(q_t))$ is a comparison datum for $(\Delta,P)$ with gap $\gamma=\tfrac{11}{16}d$.
+\end{theorem}
+
+The proof chains the realisation errors $e_j$ along $u_m=w$, $u_{j-1}=q^{(j)}_1(u_j)$, which gives
+$(K_N-P)(p(q_1(w)))\le K_N(p(w))-\frac34d$, and uses $K_N\le K<K_N+d/32$.
+
+\subsection{From embeddings to one Hamiltonian}\label{p2:sec-machine-ham}
+
+The models give explicit symplectic embeddings of slightly enlarged balls centred at the origin into $\Bo(1)$, with
+pairwise disjoint images. Paper~I joins the translations $u\mapsto s_i+u$ to such embeddings by one explicit family of
+symplectic embeddings with pairwise disjoint images at every time, and writes down a Hamiltonian generating it on the
+moving balls. Both steps hold in every dimension $n\ge1$.
+
+\begin{definition}[Normalisation; \PoneTag{def:ham-normalise}]\label{I:def:ham-normalise}
+Let $C>0$ and $c\in(0,\infty)^k$. The \emph{normalised capacities} are $\rho_i=c_i/C$. For a map $f^\natural$
+defined on a subset of $\R^{2n}$, its \emph{physical rescaling} is $f(u)=\sqrt C\,f^\natural(u/\sqrt C)$.
+\end{definition}
+
+Admissibility is homogeneous, so $(n,k,C,c)$ is admissible if and only if $(n,k,1,\rho)$ is; the physical rescaling
+is symplectic, injective or of disjoint images exactly when $f^\natural$ is.
+
+\begin{definition}[Embedding datum; \PoneTag{def:ham-datum}]\label{I:def:ham-datum}
+\lean{SymplecticPacking.General.EmbeddingData, SymplecticPacking.General.EmbeddingSpec}
+Let $n\ge1$, $k\ge1$, $C>0$ and $c\in(0,\infty)^k$. An \emph{embedding datum} for $(n,k,C,c)$ consists of numbers
+$c'_i,\bar c_i$ with $c_i<c'_i<\bar c_i$ and maps $f_i\colon\Bo(\bar c_i)\to\R^{2n}$ such that
+\begin{enumerate}[label=(\roman*)]
+\item $f_i$ is $C^\infty$ and $Df_i(u)\in\operatorname{Sp}(2n)$ for all $u\in\Bo(\bar c_i)$;
+\item $f_i$ is injective on $B(c'_i)$;
+\item the sets $f_i(B(c'_i))$, $1\le i\le k$, are pairwise disjoint and contained in $\Bo(C)$.
+\end{enumerate}
+\end{definition}
+
+Given an embedding datum and centres $s_i$ with $B(s_i,c_i)$ pairwise disjoint, Paper~I fixes radii
+$r_i=\sqrt{c_i/\pi}<r_{1,i}<r_{2,i}<r_{3,i}<r_{4,i}<r'_i=\sqrt{c'_i/\pi}$ (\PoneRef{lem:ham-radii}) and defines an
+isotopy $F_{i,t}$ by explicit stages: a collision-free route of translations, a path in $\operatorname{Sp}(2n)$ from $I$ to
+$Df_i(0)$, a shape stage, and the Alexander tail $u\mapsto v^{-1}f_i(vu)$ (\PoneRef{cons:iso-isotopy}). Here
+$\EB(y,r)$ and $\EB^\circ(y,r)$ are the closed and open Euclidean balls, and $\EB(r)=\EB(0,r)$.
+
+\begin{proposition}[The common symplectic isotopy; \PoneTag{prop:ham-isotopy}]\label{I:prop:ham-isotopy}
+\lean{SymplecticPacking.General.Ham.Isotopy.IsoInput.commonIsotopy, SymplecticPacking.General.Ham.Isotopy.IsoInput.contDiffOn_isoF, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_sympl, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_injOn, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_disj, SymplecticPacking.General.Ham.Isotopy.IsoInput.isoF_bounded, SymplecticPacking.General.Ham.Isotopy.TargetIsoInput.isoF_norm_le}
+The isotopy $F_{i,t}$ has the following properties.
+\begin{enumerate}[label=(\alph*)]
+\item $(t,u)\mapsto F_{i,t}(u)$ is $C^\infty$ on $\R\times\EB^\circ(r_{4,i})$; $F_{i,0}(u)=s_i+u$, $F_{i,1}=f_i$;
+ $F_{i,t}=F_{i,0}$ for $t\le0$ and $F_{i,t}=F_{i,1}$ for $t\ge1$;
+\item $D_uF_{i,t}(u)\in\operatorname{Sp}(2n)$ for all $t$ and $u\in\EB^\circ(r_{4,i})$;
+\item each $F_{i,t}$ is injective on $\EB(r_{3,i})$, and for every $t$ the sets $F_{i,t}(\EB(r_{3,i}))$, $1\le i\le k$, are
+ pairwise disjoint;
+\item $F_{i,t}(\EB(r_{3,i}))\subset\EB(R_F)$ for all $i,t$, for an explicit radius $R_F$.
+\end{enumerate}
+\end{proposition}
+
+\begin{definition}[The Hamiltonian of an embedding datum; \PoneTag{def:ham-H}]\label{I:def:ham-H}
+\lean{SymplecticPacking.General.Ham.radialCutoff, SymplecticPacking.General.Ham.pushforward, SymplecticPacking.General.Ham.ofIsotopy, SymplecticPacking.HamEnd.hamiltonianOfEmbeddings}
+For $u\in\EB^\circ(r_{4,i})$ let $\mathfrak a_{i,t}(u)[w]=\omega_0\big(\dot F_{i,t}(u),D_uF_{i,t}(u)w\big)$ and
+$\mathfrak h_{i,t}(u)=\int_0^1\mathfrak a_{i,t}(\vartheta u)[u]\,d\vartheta$. Let $\chi_i=\chi_{r_{1,i},r_{2,i}}$ be the radial
+cutoff of \Sref{Definition}{I:def:pre-cutoff}. Put $H_i(t,y)=\chi_i(u)\,\mathfrak h_{i,t}(u)$ if $u$ is the unique point of
+$\EB(r_{3,i})$ with $F_{i,t}(u)=y$, and $H_i(t,y)=0$ if there is no such unique point; and $H_{\mathfrak E}=\sum_{i=1}^kH_i$,
+where $\mathfrak E$ denotes the embedding datum together with the centres.
+\end{definition}
+
+\begin{theorem}[The Hamiltonian realises the isotopy; \PoneTag{thm:ham-flow}]\label{I:thm:ham-flow}
+\lean{SymplecticPacking.General.packingFlow_diffeomorphism, SymplecticPacking.General.packingFlow_integral}
+Let $H=H_{\mathfrak E}$. Then $H$ is $C^\infty$, vanishes for $t\notin(0,1)$ and outside $\R\times\EB(R_F)$; the flow
+$\phi^t_H$ is defined for all $t\in\R$ and consists of symplectic diffeomorphisms of $\R^{2n}$, and
+\[
+ \phi^t_H(s_i+u)=F_{i,t}(u)\qquad(u\in\EB(r_i),\ t\in\R,\ 1\le i\le k).
+\]
+In particular $\phi^1_H(B(s_i,c_i))=f_i(B(c_i))$, and these sets are pairwise disjoint and contained in $\Bo(C)$.
+\end{theorem}
+
+This combines \PoneRef{lem:ham-smooth} with \PoneRef{thm:ham-flow}: the one-form $\mathfrak a_{i,t}$ is closed
+because $F_{i,t}$ is symplectic, $\mathfrak h_{i,t}$ is its radial primitive, and on $F_{i,t}(\EB^\circ(r_{1,i}))$ the field
+$X_H$ equals $\dot F_{i,t}$.
+
+\begin{proposition}[Hamiltonian of an embedding datum; \PoneTag{prop:ham-end}]\label{I:prop:ham-end}
+\lean{SymplecticPacking.HamEnd.hamiltonian_end}
+Let $n\ge1$, let $(c'_i,\bar c_i,f_i)$ be an embedding datum for $(n,k,C,c)$, and let $s_1,\dots,s_k$ be centres such
+that the closed balls $B(s_i,c_i)$ are pairwise disjoint. Then the Hamiltonian $H_{\mathfrak E}$ of
+Definition~\ref{I:def:ham-H} satisfies $\Pack(n,k,C,c,s)$.
+\end{proposition}
+
+\subsection{Explicitness}\label{p2:sec-machine-eff}
+
+\begin{definition}[Levels of explicitness]\label{def:intro-levels}
+\begin{enumerate}[label=(L\arabic*)]
+\item An \emph{explicit definitional construction} is a definition built from rational constants and the
+ input by arithmetic and elementary functions, integrals over compact domains, limits of series with an
+ explicit rate of convergence, maxima and minima of continuous functions over explicit compact sets,
+ unique solutions of explicit ordinary differential equations, inverses of explicit injective maps,
+ unique roots of explicit equations, case distinctions on propositions about the input and about the arguments of
+ the function being defined, and least
+ elements of searches over a fixed enumeration of finitely described objects (integers, rationals, and
+ tuples of these and of rational polynomials) whose validity is decided by finitely many explicit
+ inequalities; definite descriptions are used only after unique existence has been proved
+ (\PoneRef{def:intro-the}).
+\item The \emph{finite form} is $\Hfin=\beta_B\cdot P$ with $B\in\N$ and $P\in\Q[t,z]$, where
+ $\beta_B(z)=\prod_{l=1}^{2n}\beta(\zeta_l/B)$ for the real coordinates $\zeta_1,\dots,\zeta_{2n}$ of $z$,
+ and $\beta(x)=1-S\big((x^2-\frac14)/\frac5{16}\big)$; thus $\beta\colon\R\to[0,1]$ is smooth, equal to $1$ on
+ $[-\frac12,\frac12]$ and to $0$ outside $(-\frac34,\frac34)$.
+\item \emph{Computability} means that one oracle algorithm, given names of the input (a rational input is named by
+ its constant sequence), halts on every admissible input and outputs some $(B,P)$ as in (L2) for which $\Hfin$
+ satisfies the packing specification. The output may depend on the names and not only on the numbers they name;
+ this is necessary, as explained below.
+\end{enumerate}
+\end{definition}
+
+The algorithm of Section~\ref{sec:eff} accepts the first rational polynomial whose Euler trajectories from a finite grid,
+with an error bound valid on $[0,1]$, stay where the cutoff equals one and end inside the target; every accepted output
+is correct by a soundness theorem. Termination needs only some Hamiltonian with a positive margin; the existence
+theorems would also supply one, non-constructively. We use $H[n,k,C,c,s]$.
+
+The dependence on names in L3 is necessary for finite output. A computable single-valued map to the discrete set
+of polynomial codes is continuous, hence constant on $\eps\in(0,1)$ for fixed $k$. But the images of $k\ge2$
+disjoint closed balls under any fixed Hamiltonian diffeomorphism form a disconnected compact set, so their density in
+their smallest enclosing ball is strictly below one, and that fixed output fails the requirement for sufficiently
+small $\eps$.
+

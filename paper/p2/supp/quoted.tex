@@ -1,0 +1,454 @@
+\section{Statements quoted from Paper I}\label{p2:sec-quoted}
+
+This appendix reproduces, with their hypotheses, the statements of Paper~I \cite{PaperI} used in the proofs of
+this supplement; each names the statement it repeats, and the proofs are in Paper~I. The notation is that of the
+cited sections of Paper~I.
+
+\subsection{Conventions and analytic lemmas}
+
+\begin{definition}[Flat step; \PoneTag{def:pre-flat}]\label{I:def:pre-flat}
+\lean{expNegInvGlue, Real.smoothTransition, SymplecticPacking.flatStep}
+Let $a_\flat(x)=0$ for $x\le0$ and $a_\flat(x)=e^{-1/x}$ for $x>0$, and
+\[
+ S(x)=\frac{a_\flat(x)}{a_\flat(x)+a_\flat(1-x)}\qquad(x\in\R).
+\]
+\end{definition}
+
+\begin{lemma}[Properties of $S$; \PoneTag{lem:pre-flat}]\label{I:lem:pre-flat}
+\lean{Real.smoothTransition.contDiff,
+Real.smoothTransition.zero_of_nonpos,
+Real.smoothTransition.one_of_one_le,
+Real.smoothTransition.monotone,
+Real.smoothTransition.nonneg,
+Real.smoothTransition.le_one,
+OAI.PackingSufficiencySupport.Hamiltonian.smoothTransition_deriv_pos,
+OAI.PackingSufficiencySupport.Hamiltonian.smoothTransition_deriv_eq_zero}
+\uses{def:pre-flat}
+$S$ is $C^\infty$ on $\R$, takes values in $[0,1]$, is nondecreasing on $\R$ and strictly increasing on
+$[0,1]$, and $S(1-x)=1-S(x)$. For every $j\ge1$, $S^{(j)}=0$ on $(-\infty,0]\cup[1,\infty)$; in particular
+$S^{(j)}(0)=S^{(j)}(1)=0$.
+\end{lemma}
+
+\begin{definition}[Radial and interval cutoffs; \PoneTag{def:pre-cutoff}]\label{I:def:pre-cutoff}
+\lean{SymplecticPacking.General.Ham.radialCutoff}
+For $0\le r<r'$ and $u$ in a Euclidean space $\R^d$ put
+\[
+ \chi_{r,r'}(u)=1-S\Big(\frac{|u|^2-r^2}{r'^2-r^2}\Big).
+\]
+For $\ell_0<\ell_1$ and $0<w<(\ell_1-\ell_0)/2$ put
+$\chi^{\rm I}_{\ell_0,\ell_1,w}(x)=S\big((x-\ell_0)/w\big)\,S\big((\ell_1-x)/w\big)$ for $x\in\R$.
+\end{definition}
+
+\begin{lemma}[Moser lemma; \PoneTag{lem:pre-moser}]\label{I:lem:pre-moser}
+\lean{SymplecticPacking.Handle.LField.flow_preserves_form}
+\uses{lem:pre-concat}
+Let $M$ be a smooth manifold, $U\subset M$ open and $I\subset\R$ an open interval containing $[0,1]$. Let $\Omega_t$ and
+$\mathfrak v_t$, $t\in I$, be two-forms and one-forms on $U$ depending smoothly on $(t,x)\in I\times U$, such that each
+$\Omega_t$ is closed and nondegenerate at every point of $U$ and
+\[
+ \partial_t\Omega_t=d\mathfrak v_t .
+\]
+Let $Y_t$ be the vector field on $U$ defined by $\iota_{Y_t}\Omega_t=-\mathfrak v_t$, and let $\Psi_t$ be its flow from time $0$
+($\Psi_0=\mathrm{id}$), where defined.
+\begin{enumerate}[label=(\alph*)]
+\item $Y$ is smooth on $I\times U$, and $Y_t(x)=0$ whenever $\mathfrak v_t(x)=0$ as an element of $T_x^*M$.
+\item If $\Psi_t(x)$ is defined for $t\in[0,1]$, then $\Psi_t$ is defined and smooth on a neighbourhood of $x$ and
+$(\Psi_t^*\Omega_t)_x=(\Omega_0)_x$ for $t\in[0,1]$.
+\item If $Y_t(x)=0$ for all $t\in[0,1]$, then $\Psi_t(x)=x$ for $t\in[0,1]$. In particular $\Psi_t$ fixes pointwise every set
+at whose points $\mathfrak v_t$ is the zero covector for all $t\in[0,1]$.
+\item (Tangency.) Let $U'\subset U$ be open, $\mu\in C^\infty(U')$ and $V$ a vector field on $U'$ with
+$\iota_V\Omega_t=-d\mu$ and $\mathfrak v_t(V)=0$ on $U'$ for $t\in[0,1]$. Then $d\mu(Y_t)=0$ on $U'$, and $\mu$ is constant along
+every integral curve of $Y$ on a subinterval of $[0,1]$ as long as the curve stays in $U'$.
+\item (Completeness.) Let $\mathcal K\subset U$ be compact, and suppose that every integral curve $\gamma\colon J\to U$ of $Y$,
+$J\subset[0,1]$ an interval, which meets $\mathcal K$ satisfies $\gamma(J)\subset\mathcal K$. Then $\Psi_t$ is defined on $\mathcal K$ for
+every $t\in[0,1]$, $\Psi_t(\mathcal K)=\mathcal K$, $\Psi_t|_{\mathcal K}$ is the restriction of a diffeomorphism between open
+neighbourhoods of $\mathcal K$, and $\Psi_t^*\Omega_t=\Omega_0$ at every point of $\mathcal K$.
+\item (Reparametrisation and concatenation.) If $\varsigma\colon I\to I$ is smooth with $\varsigma(0)=0$, the pair
+$(\Omega_{\varsigma(t)},\varsigma'(t)\mathfrak v_{\varsigma(t)})$ satisfies the hypotheses, its field is $\varsigma'(t)Y_{\varsigma(t)}$, and its flow is
+$\Psi_{\varsigma(t)}$. Consequently, let $(\Omega^{(j)}_s,\mathfrak v^{(j)}_s)$, $1\le j\le N$, be pairs on $U$, smooth on
+$[0,1]\times U$ (up to the boundary), with every $\Omega^{(j)}_s$ closed and nondegenerate on $U$,
+$\partial_s\Omega^{(j)}_s=d\mathfrak v^{(j)}_s$, and $\Omega^{(j)}_1=\Omega^{(j+1)}_0$. With the clocks $\sigma_j$ of
+\PoneRef{lem:pre-concat} put $(\Omega_t,\mathfrak v_t)=(\Omega^{(j)}_{\sigma_j(t)},\sigma_j'(t)\mathfrak v^{(j)}_{\sigma_j(t)})$ on $[t_{j-1},t_j]$,
+$(\Omega_t,\mathfrak v_t)=(\Omega^{(1)}_0,0)$ for $t\le0$ and $(\Omega_t,\mathfrak v_t)=(\Omega^{(N)}_1,0)$ for $t\ge1$. Then
+$(\Omega_t,\mathfrak v_t)_{t\in\R}$ satisfies the hypotheses with $I=\R$, and its time-one map is
+$\Psi_1=\Psi^{(N)}_1\circ\dots\circ\Psi^{(1)}_1$ wherever the right side is defined.
+\item (Equivariance.) If a diffeomorphism $g$ of $U$ satisfies $g^*\Omega_t=\Omega_t$ and $g^*\mathfrak v_t=\mathfrak v_t$ for all $t$,
+then $g_*Y_t=Y_t$ and $g\circ\Psi_t=\Psi_t\circ g$ wherever defined.
+\end{enumerate}
+\end{lemma}
+
+\begin{lemma}[The affine Fubini--Study chart; \PoneTag{lem:pre-fs}]\label{I:lem:pre-fs}
+\lean{OAI.PackingSufficiencySupport.Hamiltonian.affineFSPrimitive_smooth,
+OAI.PackingSufficiencySupport.Hamiltonian.affineFSPrimitive_exterior,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_smooth,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_pullback,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_image,
+OAI.PackingSufficiencySupport.Hamiltonian.fsAffineMap_smoothOn,
+OAI.PackingSufficiencySupport.Hamiltonian.fsAffineMap_fsBallMap,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_fsAffineMap,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_primitive,
+OAI.PackingSufficiencySupport.Hamiltonian.fsBallMap_gap}
+On $\C^N$, put $D=1+|z|^2$ and
+\[
+ \lambda_{\rm FS}=
+ \frac{1}{2\pi D}\sum_{j=1}^N(x_j\,dy_j-y_j\,dx_j),\qquad
+ \omega_{\rm FS}=d\lambda_{\rm FS}.
+\]
+Then:
+\begin{enumerate}[label=(\alph*)]
+\item $\lambda_{\rm FS}=d^c\log D$ is smooth. Where every coordinate is nonzero it equals
+ $\sum_j p_j^{\rm FS}\,d\theta_j$, with $p_j^{\rm FS}=|z_j|^2/D$ and
+ $\theta_j=\arg z_j/(2\pi)$; its differential is $\sum_jdp_j^{\rm FS}\wedge d\theta_j$ there.
+\item The map $\mathrm{ch}(z)=z/\sqrt{\pi D}$ is a smooth bijection of $\C^N$ onto $\Bo(1)$ with $\mathrm{ch}^*\omega_0=\omega_{\rm FS}$,
+ with smooth inverse $w\mapsto\sqrt\pi\,w/\sqrt{1-\pi|w|^2}$.
+\item $\mathrm{ch}^*\lambda_{\rm std}=\lambda_{\rm FS}$, where
+ $\lambda_{\rm std}=\frac12\sum_j(x_j\,dy_j-y_j\,dx_j)$, and
+ $\pi|\mathrm{ch}(z)|^2=1-D^{-1}<1$.
+\end{enumerate}
+\end{lemma}
+
+\subsection{The coordinate rearrangement}
+
+\begin{lemma}[Increasing rearrangement on an interval; \PoneTag{lem:fcp-interval}]\label{I:lem:fcp-interval}
+Let $L\ge0$, let $f\colon[0,L]\to\R$ be continuous and convex, and for $0\le x\le L$ put
+\[
+ f^\sharp(x)=\min_{0\le a\le L-x}\max\bigl(f(a),f(a+x)\bigr).
+\]
+\begin{enumerate}[label=(\alph*)]
+\item For $b\in\R$ and $0\le x\le L$: $f^\sharp(x)\le b$ if and only if $\{f\le b\}\ne\emptyset$ and
+ $\mathcal L_f(b)\ge x$. Hence $f^\sharp(x)=\min\{b\ge\min f:\mathcal L_f(b)\ge x\}$, the increasing rearrangement of
+ $f$.
+\item $\mathcal L_{f^\sharp}=\mathcal L_f$; in particular $\int_0^Lf^\sharp=\int_0^Lf$.
+\item $f^\sharp$ is nondecreasing, $f^\sharp(0)=\min f$ and $f^\sharp(L)=\max f$.
+\end{enumerate}
+\end{lemma}
+
+\subsection{The planar machine}
+
+\begin{definition}[Isotopy data; \PoneTag{def:pln-isotopy-data}]\label{I:def:pln-isotopy-data}
+\lean{SymplecticPacking.Qhat.Ec, SymplecticPacking.Qhat.DeltaP, SymplecticPacking.Qhat.Deltay,
+ SymplecticPacking.Qhat.Dx, SymplecticPacking.Qhat.Dy, SymplecticPacking.Qhat.delta_s,
+ SymplecticPacking.Qhat.pdag, SymplecticPacking.Qhat.Ebar, SymplecticPacking.Qhat.Xbar,
+ SymplecticPacking.Qhat.Ybar, SymplecticPacking.Qhat.Pmin, SymplecticPacking.Qhat.Pmax,
+ SymplecticPacking.Qhat.MC, SymplecticPacking.Qhat.Bstar, SymplecticPacking.Qhat.B3,
+ SymplecticPacking.Qhat.cnew, SymplecticPacking.Qhat.Rq, SymplecticPacking.Qhat.Rsupp,
+ SymplecticPacking.Qhat.Psupp, SymplecticPacking.Qhat.pon, SymplecticPacking.Qhat.pzero}
+\uses{lem:pln-morse-inverse, lem:pln-energy, def:pln-charts}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ with disc area $h$, and consider positive numbers
+\[
+ p_{\rm on},\ p_{\rm zero},\ p^\dagger,\ p^*_{\rm lo},\ p^*_{\rm hi},\ E_c,\ \Delta P,\ \Delta\theta,\ R_q,\ \delta_x,\ \delta_\theta,\
+ \delta_s,\ \bar E,\ \bar X,\ \bar Y,\ \lambda_0,\ P_{\min},\ P_{\max},\ B_{\rm lin},\ B^*,\ c_{\rm sh},
+\]
+where the radial range bounds satisfy
+\[
+ P_{\min}\le\tfrac12\min(p^*_{\rm lo},\Delta P),\qquad P_{\max}\ge\max(\tfrac32p^*_{\rm hi},h).
+\]
+From these numbers we form the \emph{derived constants}
+\begin{gather*}
+ M_C=\frac1{2\sqrt{\pi P_{\min}}}+2\sqrt{\pi P_{\max}},\\
+ R^\dagger=\sqrt{p^\dagger/\pi},\quad R_h=\sqrt{h/\pi},\quad r_b^+=\sqrt{p^*_{\rm hi}/\pi},\\
+ R_{\rm supp}=\max\bigl(R^\dagger,\ r_b^++c_{\rm sh}B_{\rm lin},\ r_b^++c_{\rm sh}B^*,\ R_q\bigr),\quad P_{\rm supp}=\pi R_{\rm supp}^2,\quad
+ p_{\rm bd}=\tfrac12(h+P_{\rm supp}).
+\end{gather*}
+The numbers are \emph{isotopy data} for the pair if, for every $y\in\mathcal Y$:
+\begin{enumerate}[label=(D\arabic*)]
+\item\label{I:it:pln-D1} $p_{\rm on}<p_{\rm zero}<p^\dagger$ and $p^*_{\rm lo}\le p^*(y)\le p^*_{\rm hi}<h$;
+\item\label{I:it:pln-D2} (endpoint margins) for all $u,v$ with $u^2<E_c$, $v^2<E_c$:
+ \[
+  \Delta P\le p^*(y)+X_y(u)\le h-\Delta P,\qquad p^*(y)+X_y(u)\le\pi R_q^2<h,\qquad |Y_y(v)|\le\tfrac12-\Delta\theta ;
+ \]
+\item\label{I:it:pln-D3} (interpolation error) $|a_0(y)u-X_y(u)|\le\delta_x$ and $|b_0(y)v-Y_y(v)|\le \delta_\theta$ for $u^2<E_c$, $v^2<E_c$;
+\item\label{I:it:pln-D4} (late range) $\delta_s\le\frac14$, $\delta_s\delta_x\le\frac12\Delta P$, $\delta_s\delta_\theta\le\frac12\Delta\theta$ and
+ either $(1-\delta_s)^2\mathcal A_y(E_c)>p^\dagger$, or the
+ uniform-energy alternative $\mathcal A_{y,s}(E_c)>p^\dagger$ for all $s\in[0,1]$;
+ the slice construction uses the latter with $E_c=\bar E$;
+\item\label{I:it:pln-D5} (uniform energy) $\mathcal A_{y,s}(\bar E)\ge p^\dagger$ for all $s\in[0,1]$, and
+ $\max(a_0(y)|u|,|X_y(u)|)\le\bar X$, $\max(b_0(y)|v|,|Y_y(v)|)\le\bar Y$ for $u^2\le\bar E$, $v^2\le\bar E$;
+\item\label{I:it:pln-D6} (early range) $\lambda_0\le\frac12$, $\lambda_0\bar X\le\frac12p^*_{\rm lo}$ and $\lambda_0\bar Y\le\frac14$;
+\item\label{I:it:pln-D7} (ranges of the path)
+ \begin{gather*}
+  R^\dagger\max\bigl(1,|(\mathbf A_y)_{11}|,|(\mathbf A_y)_{22}|\bigr)\le B_{\rm lin},\qquad
+  B^*\ge\min\Bigl(M_C\sqrt{\bar X^2+\bar Y^2},\ \frac{\bar X}{\sqrt{\pi p^*_{\rm lo}}}+2\pi r_b^+\bar Y\Bigr),\\
+  c_{\rm sh}\le\min\Bigl(\frac14,\ \frac{R_h-r_b^+}{8\max(R^\dagger,B_{\rm lin},B^*)}\Bigr).
+ \end{gather*}
+\end{enumerate}
+The schedule $\lambda(s)$ of \PoneRef{def:pln-charts}(c) is formed with these $\lambda_0$ and $\delta_s$.
+\end{definition}
+
+\begin{lemma}[Existence and order of the data; \PoneTag{lem:pln-data}]\label{I:lem:pln-data}
+\lean{SymplecticPacking.Qhat.delta_s_pos, SymplecticPacking.Qhat.pdag_bounds,
+ SymplecticPacking.Qhat.cnew_pos, SymplecticPacking.Qhat.Rsupp_lt, SymplecticPacking.Qhat.Psupp_lt,
+ SymplecticPacking.Qhat.pon_bounds}
+\uses{def:pln-isotopy-data, lem:pln-energy}
+\begin{enumerate}[label=(\alph*)]
+\item The equal-ball potential family has the explicit isotopy data given in \PoneRef{sec:pll-data}.
+\item For any isotopy data: $0<\delta_s\le\frac14$, $p^\dagger<\mathcal A_y(E_c)<h$,
+ $E_c\le E_{\rm rect}(y)$ and $p^\dagger<I_{\rm rect}(y)$ for every $y$, and
+ \[
+  R_{\rm supp}<R_h,\qquad\text{i.e.}\qquad p_{\rm on}<p^\dagger\le P_{\rm supp}<p_{\rm bd}<h .
+ \]
+\end{enumerate}
+\end{lemma}
+
+For the convex pair of this paper, Definition~\ref{def:plc-data} gives isotopy data (Lemma~\ref{lem:plc-data}).
+
+\begin{lemma}[Morse inverse charts; \PoneTag{lem:pln-morse-inverse}]\label{I:lem:pln-morse-inverse}
+\lean{SymplecticPacking.Inner.SigmaR_smooth, SymplecticPacking.Inner.Xtilde_smooth,
+ SymplecticPacking.Inner.Rtilde_Xtilde, SymplecticPacking.Inner.Xtilde_linear,
+ SymplecticPacking.Inner.Ytilde_smooth, SymplecticPacking.Inner.Vtilde_Ytilde,
+ SymplecticPacking.Inner.Ytilde_linear, SymplecticPacking.Branch2.Planar.MorsePair.Fmor_det,
+ SymplecticPacking.Inner.Fmor_level, SymplecticPacking.Branch2.Planar.MorsePair.Acal_eq_area}
+\uses{def:pln-potential-pair}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$.
+\begin{enumerate}[label=(\roman*)]
+\item The minimum point $y\mapsto p^*(y)$ and $y\mapsto U_{\min}(y)$ are $C^\infty$ on $\mathcal Y$.
+\item On the open set $\mathcal D_U=\{(y,x):y\in\mathcal Y,\ p^*(y)+x\in I_U\}$ put
+ \[
+  \Sigma_U(y,x)=\operatorname{sign}(x)\sqrt{U_y(p^*(y)+x)-U_{\min}(y)}.
+ \]
+ This is the signed square root, with its removable singularity at $x=0$; and $\Sigma_U$ is $C^\infty$ with
+ $\partial_x\Sigma_U>0$. For each $y$, $\Sigma_U(y,\cdot)$ is an increasing diffeomorphism of
+ $I_U-p^*(y)$ onto $\R$; its inverse $X_y$ is $C^\infty$ jointly in $(y,u)\in\mathcal Y\times\R$, and
+ \begin{gather*}
+  U_y\bigl(p^*(y)+X_y(u)\bigr)-U_{\min}(y)=u^2,\\
+  \operatorname{sign}X_y(u)=\operatorname{sign}u,\qquad
+  X_y'(0)=a_0(y):=\sqrt{2/U_y''(p^*(y))} .
+ \end{gather*}
+\item In the same way $\Sigma_V(y,\theta)=\operatorname{sign}(\theta)\sqrt{V_y(\theta)}$
+ is an increasing diffeomorphism of $I_V$ onto $\R$ for each $y$, and its inverse $Y_y$ is $C^\infty$ in
+ $(y,v)$, with $V_y(Y_y(v))=v^2$, $\operatorname{sign}Y_y(v)=\operatorname{sign}v$ and
+ $Y_y'(0)=b_0(y):=\sqrt{2/V_y''(0)}$.
+\item The Morse chart $F_y(u,v)=(X_y(u),Y_y(v))$ is a $C^\infty$ diffeomorphism of $\R^2$ onto the
+ \emph{Morse rectangle} $\mathcal R_y=(I_U-p^*(y))\times I_V$, jointly smooth in $(y,w)$, with
+ \[
+  F_y^*(dx\wedge d\theta)=J_y\,du\wedge dv,\qquad J_y(u,v)=X_y'(u)\,Y_y'(v)>0,\qquad J_y(0)=j_0(y):=a_0(y)b_0(y),
+ \]
+ and $U_y(p^*(y)+x)-U_{\min}(y)+V_y(\theta)=u^2+v^2$ for $(x,\theta)=F_y(u,v)$. Consequently, for $E\ge0$,
+ \[
+  \int_{|w|^2\le E}J_y(w)\,dw=\operatorname{area}\bigl\{(p,\theta)\in I_U\times I_V:\ U_y(p)-U_{\min}(y)+V_y(\theta)\le E\bigr\},
+ \]
+ and these areas increase to $|I_U|\,|I_V|\in(0,\infty]$ as $E\to\infty$.
+\item If the pair is exactly quadratic near the minimum, then $X_y(u)=a_0(y)u$ for $|u|\le\eps_U/a_0(y)$
+ and $Y_y(v)=b_0(y)v$ for $|v|\le\eps_V/b_0(y)$; hence $J_y=j_0(y)$ on the disc $|w|\le\rho_T(y)$,
+ $\rho_T(y)=\min(\eps_U/a_0(y),\eps_V/b_0(y))$.
+\end{enumerate}
+\end{lemma}
+
+\begin{lemma}[The density family and the uniform energy bound; \PoneTag{lem:pln-energy}]\label{I:lem:pln-energy}
+\lean{SymplecticPacking.Qhat.Js_expand, SymplecticPacking.Qhat.Js_pos, SymplecticPacking.Qhat.Js_zero,
+ SymplecticPacking.Qhat.fs_symplectic, SymplecticPacking.Qhat.fs_injective, SymplecticPacking.Qhat.fs_smooth,
+ SymplecticPacking.Qhat.fs_zero_eq, SymplecticPacking.Qhat.fs_deriv_zero,
+ SymplecticPacking.Qhat.fs_linear_near_zero, SymplecticPacking.Qhat.fs_eq_L_at_zero,
+ SymplecticPacking.Qhat.fs_eq_finner}
+\uses{def:pln-charts, lem:pln-morse-inverse, lem:pln-area}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$, $y\in\mathcal Y$, $s\in[0,1]$, and abbreviate
+$a_0=a_0(y)$, $b_0=b_0(y)$, $j_0=a_0b_0$.
+\begin{enumerate}[label=(\alph*)]
+\item $X_{y,s},Y_{y,s}$ are $C^\infty$ and strictly increasing, and
+ \[
+  J_{y,s}=(1-s)^2j_0+s(1-s)\bigl(a_0Y_y'+b_0X_y'\bigr)+s^2J_y\ \ge\ (1-s)^2j_0+s^2J_y>0,\qquad J_{y,s}(0)=j_0 .
+ \]
+\item For $E\ge0$,
+ \[
+  \mathcal A_{y,s}(E)\ \ge\ \pi j_0(1-s)^2E+s^2\mathcal A_y(E)\ \ge\ \mathcal A^-_y(E):=\frac{\pi j_0E\,\mathcal A_y(E)}{\pi j_0E+\mathcal A_y(E)}\quad(E>0).
+ \]
+ In particular $\mathcal A_{y,s}(\infty)=\infty$ for $s<1$, and $\mathcal A_{y,1}(\infty)=\mathcal A_y(\infty)$.
+\item (Uniform energy bound.) $\mathcal A^-_y$ is continuous and strictly increasing. If $\bar E>0$ and
+ $\mathcal A_{y,s}(\bar E)\ge p^\dagger$ for every $s\in[0,1]$ (in both families this holds for the explicit $\bar E$ of
+ \PoneRef{lem:pll-bounds}(d), respectively Definition~\ref{def:plc-data}), then $E_{y,s}(I)\le\bar E$ for
+ $0\le I\le p^\dagger$ and $s\in[0,1]$.
+\item $f_{y,s}$ is a symplectic embedding on the source domain $\mathcal D_y^{\rm src}$ of Theorem~\ref{I:thm:pln-inner}; the map $(y,s,z)\mapsto f_{y,s}(z)$ is smooth for $s\in[0,1]$ and $z\in\mathcal D_y^{\rm src}$. In the equal-ball case it is a diffeomorphism onto $\R^2$; $f_{y,s}(0)=0$ and $Df_{y,s}(0)=\mathbf L_y$ for every $s$;
+ $f_{y,0}=\mathbf L_y$ and $f_{y,1}=f_y$. If $(u,v)=T_{y,s}^{-1}D_{y,s}(z)$, then $f_{y,s}(z)=(X_{y,s}(u),Y_{y,s}(v))$ and
+ $u^2+v^2=E_{y,s}(\pi|z|^2)$.
+\item If the pair is exactly quadratic near the minimum, then $J_{y,s}=j_0$ on $|w|\le\rho_T(y)$ and
+ $f_{y,s}(z)=\mathbf L_yz$ for $|z|\le\sqrt{j_0}\,\rho_T(y)$, for every $s\in[0,1]$.
+\end{enumerate}
+\end{lemma}
+
+\emph{The polar chart} (\PoneRef{sec:pln}). For $y\in\mathcal Y$ let
+\begin{equation}\label{eq:q-pln-chart}
+ C_y(x,\theta)=-\sqrt{\frac{p^*(y)+x}\pi}\;e^{2\pi i\theta},\qquad
+ (x,\theta)\in\mathcal C_y=\{p^*(y)+x>0,\ |\theta|<\tfrac12\}.
+\end{equation}
+It is injective and symplectic, $C_y^*(dp\wedge d\vartheta)=dx\wedge d\theta$, with $\pi|C_y(x,\theta)|^2=p^*(y)+x$; its image
+is $\C$ minus the closed positive real axis, and $C_y(0)=(-r_b(y),0)$ with $r_b(y)=\sqrt{p^*(y)/\pi}$. A computation gives
+$DC_y(0)=\operatorname{diag}\bigl(-1/(2\pi r_b(y)),\,-2\pi r_b(y)\bigr)$.
+
+\begin{definition}[The inner map; \PoneTag{def:pln-inner-map}]\label{I:def:pln-inner-map}
+\lean{SymplecticPacking.Inner.Fmor, SymplecticPacking.Inner.finner, SymplecticPacking.Inner.chartC}
+\uses{lem:pln-morse-inverse, def:pln-normalisations}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ and $y\in\mathcal Y$. Apply
+the formulas of \PoneRef{def:pln-normalisations} to the density $J_y=X_y'Y_y'$ of Lemma~\ref{I:lem:pln-morse-inverse}
+(parameters $\sigma=y\in\mathcal P=\mathcal Y$), and write $T_y$, $D_y$, $\mathcal A_y$, $E_y$ for its normalisations. In the slice case the claims about these maps are made on the disc $D(p^\dagger)$ of Definition~\ref{def:plc-data}
+and are proved with the constant-tail extension of \PoneRef{sec:pln}. Put
+\[
+ f_y=F_y\circ T_y^{-1}\circ D_y\colon D(\mathcal A_y(\infty))\to\mathcal R_y .
+\]
+Let $E_{\rm rect}(y)\in(0,\infty]$ be the infimum of $U_y(p)-U_{\min}(y)+V_y(\theta)$ over
+$(I_U\times I_V)\setminus\bigl((0,h)\times(-\frac12,\frac12)\bigr)$ (and $+\infty$ if this set is empty), let
+$I_{\rm rect}(y)=\mathcal A_y(E_{\rm rect}(y))$ (with $\mathcal A_y(+\infty)=\mathcal A_y(\infty)$), and define the
+\emph{inner map}
+\[
+ q_{{\rm in},y}=C_y\circ f_y\colon D\bigl(I_{\rm rect}(y)\bigr)\to\C .
+\]
+We also put $c_x(y)=\sqrt{a_0(y)/b_0(y)}$ and $\mathbf L_y=\operatorname{diag}(c_x(y),c_x(y)^{-1})$.
+\end{definition}
+
+With $\mathbf A_y=DC_y(0)\,\mathbf L_y$ (Theorem~\ref{I:thm:pln-inner}),
+\begin{equation}\label{eq:q-pln-A0}
+ \mathbf A_y=\operatorname{diag}\Bigl(-\frac{c_x(y)}{2\pi r_b(y)},\,-\frac{2\pi r_b(y)}{c_x(y)}\Bigr),\qquad\det\mathbf A_y=1.
+\end{equation}
+
+\begin{theorem}[The inner map; \PoneTag{thm:pln-inner}]\label{I:thm:pln-inner}
+\lean{SymplecticPacking.Branch2.Planar.MorsePair.finner_symplectic, SymplecticPacking.Branch2.Planar.MorsePair.finner_smooth,
+ SymplecticPacking.Branch2.Planar.MorsePair.finner_bijective, SymplecticPacking.Inner.finner_level,
+ SymplecticPacking.Branch2.Planar.MorsePair.finner_linear, SymplecticPacking.Inner.chartC_det,
+ SymplecticPacking.Inner.chartC_moment, SymplecticPacking.Inner.chartC_injOn}
+\uses{def:pln-inner-map, lem:pln-morse-inverse, lem:pln-rotation, lem:pln-area}
+Let $(U,V)$ be an admissible potential pair. Put $\mathcal D_y^{\rm src}=\C$ for the equal-ball family and
+$\mathcal D_y^{\rm src}=D(p^\dagger)$, with $p^\dagger$ of Definition~\ref{def:plc-data}, for the slice family.
+\begin{enumerate}[label=(\alph*)]
+\item For each $y$, $f_y$ is a symplectic embedding of $\mathcal D_y^{\rm src}$ into the Morse rectangle
+ $\mathcal R_y$, and $(y,z)\mapsto f_y(z)$ is smooth on the corresponding source set. In the equal-ball case it is a diffeomorphism onto $\mathcal R_y=\R^2$. Moreover
+ $f_y(0)=0$ and $Df_y(0)=\mathbf L_y$, a diagonal matrix of determinant $1$.
+\item (Energy identity.) If $f_y(z)=(x,\theta)$, then
+ \[
+  U_y\bigl(p^*(y)+x\bigr)+V_y(\theta)=U_{\min}(y)+E_y(\pi|z|^2),
+ \]
+ so $f_y$ maps each circle $\{\pi|z|^2=I\}$ onto the level curve of $U_y(p^*+\cdot)-U_{\min}+V_y$ which encloses area $I$.
+\item The inner map $q_{{\rm in},y}$ is a symplectic embedding of $D(I_{\rm rect}(y))\cap\mathcal D_y^{\rm src}$ into
+ $D(h)\setminus[0,\infty)$, jointly smooth in $(y,z)$, with $q_{{\rm in},y}(0)=b_y$,
+ $Dq_{{\rm in},y}(0)=\mathbf A_y:=DC_y(0)\,\mathbf L_y$, and, for $f_y(z)=(x,\theta)$,
+ \[
+  \pi|q_{{\rm in},y}(z)|^2=p^*(y)+x,\qquad
+  U_y\bigl(\pi|q_{{\rm in},y}(z)|^2\bigr)+V_y(\theta)=U_{\min}(y)+E_y(\pi|z|^2).
+ \]
+ In particular $U_y(\pi|q_{{\rm in},y}(z)|^2)\le U_{\min}(y)+E_y(\pi|z|^2)$, with equality on the centre line $\theta=0$.
+\item If the pair is exactly quadratic near the minimum, then $f_y(z)=\mathbf L_yz$ for
+ $|z|\le\sqrt{j_0(y)}\,\rho_T(y)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Whole-disc Hamiltonian isotopy with prescribed endpoint on the core; \PoneTag{thm:pln-isotopy}]\label{I:thm:pln-isotopy}
+\lean[needed]{SymplecticPacking.Qhat.qhat_interface, SymplecticPacking.Qhat.qhat_one_eq,
+ SymplecticPacking.Qhat.qhat_disk, SymplecticPacking.Qhat.qhat_openDisk,
+ SymplecticPacking.Qhat.qhat_of_nonpos, SymplecticPacking.Qhat.qhat_of_one_le, SymplecticPacking.Qhat.qhat_core,
+ SymplecticPacking.Qhat.qhatP, SymplecticPacking.Qhat.qhatP_spec}
+\uses{prop:pln-inner-family, lem:pln-five-segment, lem:pln-ambient-flow, lem:pln-normalisation, prop:pln-hamiltonian, thm:pln-inner}
+Let $(U,V)$ be an admissible potential pair over $\mathcal Y$ with disc area $h$, and let isotopy data be given
+(Definition~\ref{I:def:pln-isotopy-data}). Let $\hat q$ and $Q$ be obtained from the five-segment path of
+\PoneRef{cons:pln-five-segment} by \PoneRef{lem:pln-normalisation}, with the levels $p_{\rm on}<p_{\rm zero}$ of the data,
+and \PoneRef{cons:pln-hamiltonian}. Then $P_{\rm supp}<h$, and for every $y\in\mathcal Y$:
+\begin{enumerate}[label=(\alph*)]
+\item each $\hat q_{y,t}$ is a symplectic diffeomorphism of $\C$ which is the identity on $\{\pi|z|^2>P_{\rm supp}\}$ and maps
+ $\bar D(P)$ onto itself for every $P\ge P_{\rm supp}$, in particular $\bar D(h)$ and $D(h)$;
+\item $\hat q_{y,t}=\mathrm{id}$ for $t\le0$ and $\hat q_{y,t}=\hat q_{y,1}$ for $t\ge1$;
+\item (same endpoint on the core) $\hat q_{y,1}(z)=q_{{\rm in},y}(z)$ for $\pi|z|^2\le p_{\rm on}$;
+\item $Q_{y,t}$ vanishes with all derivatives on $\{\pi|x|^2>P_{\rm supp}\}$ and for $t\notin(0,1)$, and generates $\hat q_{y,t}$:
+ $\partial_t\hat q_{y,t}=\xi_{y,t}\circ\hat q_{y,t}$ with $\iota_{\xi_{y,t}}\omega_\C=-dQ_{y,t}$;
+\item (core formula) $\hat q_{y,t}(z)=\mathfrak e_{y,t}(z/\sqrt{\mu_t})$ for $\pi|z|^2\le\mu_tp_{\rm on}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Parametrised version; \PoneTag{thm:pln-param}]\label{I:thm:pln-param}
+\uses{thm:pln-isotopy, lem:pln-normalisation, prop:pln-hamiltonian, prop:pln-inner-family}
+In the situation of Theorem~\ref{I:thm:pln-isotopy}:
+\begin{enumerate}[label=(\alph*)]
+\item the maps $(y,t,z)\mapsto\hat q_{y,t}(z)$, $(y,t,x)\mapsto\hat q_{y,t}^{-1}(x)$ and $(y,t,x)\mapsto Q_{y,t}(x)$ are $C^\infty$ on
+ $\mathcal Y\times\R\times\C$, and $(y,s,z)\mapsto q^{\rm in}_{y,s}(z)$ is smooth on $\mathcal Y\times[0,1]\times D(p^\dagger)$; the
+ numbers $p_{\rm on}$, $P_{\rm supp}$, $c_{\rm sh}$, and hence the collar $\{\pi|z|^2>P_{\rm supp}\}$, the core $\bar D(p_{\rm on})$ and the
+ common core $\bar D(c_{\rm sh}^2p_{\rm on})$, do not depend on $y$;
+\item if $\mathcal Y_0\subset\mathcal Y$ is compact, then the derivatives of order $\ge1$ of $\hat q$ and $\hat q^{-1}$, and all
+ derivatives (including order $0$) of $\hat q-\mathrm{id}$, $\hat q^{-1}-\mathrm{id}$ and $Q$, are bounded on
+ $\mathcal Y_0\times\R\times\C$.
+\end{enumerate}
+\end{theorem}
+
+\subsection{The shear and the disc-to-strip map}
+
+\begin{lemma}[Multi-angle shear; \PoneTag{lem:hdl-shear}]\label{I:lem:hdl-shear}
+\lean{OAI.PackingSufficiencySupport.Hamiltonian.toricSuspension,
+OAI.PackingSufficiencySupport.Hamiltonian.toricSuspensionInverse_smooth,
+OAI.PackingSufficiencySupport.Hamiltonian.toricSuspension_pullback,
+OAI.PackingSufficiencySupport.Hamiltonian.toricSuspensionInverse_left,
+OAI.PackingSufficiencySupport.Hamiltonian.toricSuspensionInverse_right}
+\uses{M-def:mech-model}
+Let $A$ be a smooth function on an open set $W\subset\R^m$ and $\mathrm{Sh}_A(x,T,w)=(x,T,\mathrm{Sh}_{A,T}(w))$, where
+\[
+ \mathrm{Sh}_{A,T}(w)_j=\exp\big(-2\pi i\,T\,\partial_jA(p(w))\big)\,w_j\qquad(1\le j\le m),
+\]
+on $\{(x,T,w):p(w)\in W\}\subset\R^2\times\C^m$. Then $\mathrm{Sh}_A$ is a diffeomorphism of this set onto itself, preserves
+$p$, $x$ and $T$, and
+\[
+ \mathrm{Sh}_A^*\big(\omega_V+dx\wedge dT+dA(p)\wedge dT\big)=\omega_V+dx\wedge dT .
+\]
+\end{lemma}
+
+\emph{The strip map} (\PoneRef{sec:str}). For $\delta>0$ put $b_{\rm st}=\delta/\pi$ and, for $x>0$, $0<T<1$,
+\[
+ R_{\rm st}(x)=x+\frac{b_{\rm st}^2}{4x}-b_{\rm st},\qquad
+ V_{\rm st}(T)=b_{\rm st}\Big[\frac{1}{2\sqrt{T(1-T)}}-1\Big],
+\]
+Morse functions with minimum $0$ at $x=b_{\rm st}/2$ and $T=\frac12$. Let $F_{\rm st}(\xi)=(X_{\rm st}(\xi_1),Y_{\rm st}(\xi_2))$, where
+$X_{\rm st}(\xi_1)=\frac12[\xi_1^2+b_{\rm st}+\xi_1\sqrt{\xi_1^2+2b_{\rm st}}]$ and
+$Y_{\rm st}(\xi_2)=\frac12+\xi_2\sqrt{\xi_2^2+2b_{\rm st}}/(2(\xi_2^2+b_{\rm st}))$ are the signed square-root inverses
+($R_{\rm st}(X_{\rm st}(\xi_1))=\xi_1^2$, $V_{\rm st}(Y_{\rm st}(\xi_2))=\xi_2^2$), with Jacobian $\mathcal J_{\rm st}$. Let
+$\mathsf T_{\rm st}$, $\mathsf D_{\rm st}$ be the area normalisations of \PoneRef{def:pln-normalisations} for the density
+$\mathcal J_{\rm st}$, which preserve the circles about $0$, and let $\mathcal E_{\rm st}$ be the inverse of the function
+$\mathcal E\mapsto$ ($dx\,dT$-area of $\{R_{\rm st}(x)+V_{\rm st}(T)\le\mathcal E\}$). The strip map is
+$\Psi_\delta=F_{\rm st}\circ\mathsf T_{\rm st}^{-1}\circ\mathsf D_{\rm st}\colon\C\to(0,\infty)\times(0,1)$.
+
+\begin{proposition}[Disc-to-strip map; \PoneTag{prop:str-strip}]\label{I:prop:str-strip}\label{I:prop:hdl-strip}
+\lean{SymplecticPacking.Strip.psiStrip, SymplecticPacking.Strip.psiStrip_smooth,
+ SymplecticPacking.Strip.psiStrip_symplectic, SymplecticPacking.Strip.psiStrip_bijOn,
+ SymplecticPacking.Strip.psiStrip_x_pos, SymplecticPacking.Strip.psiStrip_x_lt}
+\lean{SymplecticPacking.Strip.psiStrip_smooth, SymplecticPacking.Strip.psiStrip_symplectic,
+ SymplecticPacking.Strip.psiStrip_level, SymplecticPacking.Strip.psiStrip_bijOn,
+ SymplecticPacking.Strip.psiStrip_x_pos, SymplecticPacking.Strip.psiStrip_x_lt,
+ SymplecticPacking.Strip.psiStrip_mem, SymplecticPacking.Strip.x_lower_margin,
+ SymplecticPacking.Strip.T_margin}
+\uses{cons:str-map, lem:str-normalisation, lem:str-area, lem:str-morse-inverse}
+Let $\delta>0$ and $b_{\rm st}=\delta/\pi$. Then:
+\begin{enumerate}[label=(\roman*)]
+\item $\Psi_\delta$ is a smooth diffeomorphism of $\C$ onto $(0,\infty)\times(0,1)$ with
+$\Psi_\delta^*(dx\wedge dT)=\omega_\C$;
+\item $R_{\rm st}(x)+V_{\rm st}(T)=\mathcal E_{\rm st}(\pi|z|^2)$ for $(x,T)=\Psi_\delta(z)$;
+\item for every $z\in\C$, with $(x,T)=\Psi_\delta(z)$,
+\begin{equation}\label{I:eq:str-x-bound}
+ 0<x<\pi|z|^2+\frac\delta2,\qquad 0<T<1;
+\end{equation}
+\item for $I_{\max}\ge0$, $\mathcal E_{\max}=I_{\max}+b_{\rm st}(\frac\pi2-1)$ and $\pi|z|^2\le I_{\max}$,
+\[
+ x\ge\tfrac12\Big[\mathcal E_{\max}+b_{\rm st}-\sqrt{\mathcal E_{\max}(\mathcal E_{\max}+2b_{\rm st})}\Big]>0,\qquad
+ \big|T-\tfrac12\big|\le\tfrac12\sqrt{1-(1+\mathcal E_{\max}/b_{\rm st})^{-2}}<\tfrac12 .
+\]
+\end{enumerate}
+\end{proposition}
+
+\begin{definition}[Enlarged capacities; \PoneTag{def:str-enlarged}]\label{I:def:str-enlarged}
+\lean{SymplecticPacking.HighDim.RawToricModel.packingSource,
+SymplecticPacking.Branch2.CubicData.rhoBar, SymplecticPacking.Branch2.CubicData.deltaStrip,
+SymplecticPacking.Branch2.CubicData.rhoHat}
+For $1\le i\le k$ put
+\[
+ \delta_i=\frac{a_i-\rho_i}2,\qquad
+ \bar\rho_i=a_i-\frac34\delta_i,\qquad \hat\rho_i=a_i-\frac{\delta_i}2 .
+\]
+Here $\bar\rho_i$ is the closed enlarged source capacity and $\hat\rho_i$ the open domain capacity, and
+$\rho_i<\frac{\rho_i+a_i}2=a_i-\delta_i<\bar\rho_i<\hat\rho_i<a_i$. Put
+$\varepsilon_i=(a_i-\hat\rho_i)/4=\delta_i/8$; the $i$-th ball is placed by $\Psi_{\varepsilon_i}$.
+\end{definition}
+
+\subsection{The ball chart}
+
+\begin{lemma}[The ball chart on representatives; \PoneTag{lem:rtc-ball-chart}]\label{I:lem:rtc-ball-chart}
+\lean[needed]{SymplecticPacking.Return.ballChart, SymplecticPacking.Return.ballChart_gauge,
+ SymplecticPacking.Return.ballChart_symplectic_rep, SymplecticPacking.Return.ballChart_affine,
+ SymplecticPacking.Return.ballChart_norm, SymplecticPacking.Return.ballAffine_eq, SymplecticPacking.Return.ballChart_norm_lt}
+On $S^5_*=\{Z\in\C^3:|Z|=1,\ Z_0\ne0\}$ put $b_{\rm ball}(Z)=\frac{\bar Z_0}{|Z_0|}\frac{(Z_1,Z_2)}{\sqrt\pi}$. This map is gauge
+invariant, $\pi|b_{\rm ball}(Z)|^2=1-|Z_0|^2<1$, and in the affine coordinates $z=(Z_1/Z_0,Z_2/Z_0)$ it is the chart
+$\mathrm{ch}(z)=z/\sqrt{\pi(1+|z|^2)}$ of Lemma~\ref{I:lem:pre-fs}(b). Moreover
+$b_{\rm ball}^*\omega_0=\frac1\pi\sum_{j=0}^2dx_j\wedge dy_j\big|_{S^5_*}=\omega_{\rm FS}|_{S^5_*}$, where $Z_j=x_j+iy_j$. Hence
+$(b_{\rm ball}\circ\varphi)^*\omega_0=\varphi^*\omega_{\rm FS}$ for every smooth map $\varphi$ of a manifold into $S^5_*$.
+\end{lemma}
+

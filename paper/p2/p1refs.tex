@@ -1,0 +1,98 @@
+% Names of the statements of Paper I cited in this paper (generated from the label inventory).
+% \PoneRef{<original label>} prints "Paper~I, <statement name>". With \PoneXRtrue and
+% \externaldocument[P1-]{...} for Paper I, it prints "Paper~I, <kind>~<number>" instead.
+\makeatletter
+\newif\ifPoneXR \PoneXRfalse
+\newcommand{\PoneDef}[3]{\expandafter\def\csname Pone@k@#1\endcsname{#2}\expandafter\def\csname Pone@n@#1\endcsname{#3}}
+\DeclareRobustCommand{\PoneRef}[1]{\@ifundefined{Pone@k@#1}{\PackageError{p1refs}{Unknown Paper I label #1}{}}{%
+  Paper~I, \ifPoneXR\csname Pone@k@#1\endcsname~\ref{P1-#1}\else\csname Pone@n@#1\endcsname\fi}}
+% \PoneTag{<label>} in the title of a restated statement: "Paper~I" (with \PoneXRtrue: "Paper~I, <kind>~<number>").
+\DeclareRobustCommand{\PoneTag}[1]{\@ifundefined{Pone@k@#1}{\PackageError{p1refs}{Unknown Paper I label #1}{}}{%
+  Paper~I\ifPoneXR, \csname Pone@k@#1\endcsname~\ref{P1-#1}\fi}}
+\makeatother
+\PoneDef{cons:ham-branch}{Construction}{Construction (The normalised embeddings)}
+\PoneDef{cons:iso-isotopy}{Construction}{Construction (The common isotopy)}
+\PoneDef{cons:pln-five-segment}{Construction}{Construction (The five-segment path)}
+\PoneDef{cons:pln-hamiltonian}{Construction}{Construction (The Hamiltonian)}
+\PoneDef{cons:rtc-data}{Construction}{Construction (Data of the four-dimensional packing)}
+\PoneDef{def:ham-H}{Definition}{Definition (Source cutoff and the Hamiltonian of an embedding datum)}
+\PoneDef{def:ham-H-final}{Definition}{Definition (The Hamiltonian $H{[2,k,C,c,s]}$ of the linear branch)}
+\PoneDef{def:ham-datum}{Definition}{Definition (Embedding datum)}
+\PoneDef{def:ham-normalise}{Definition}{Definition (Normalisation)}
+\PoneDef{def:intro-the}{Definition}{Definition (Definite description)}
+\PoneDef{def:mech-toric-ball}{Definition}{Definition (Toric ball)}
+\PoneDef{def:pln-charts}{Definition}{Definition (Density family, rescaled charts and schedule)}
+\PoneDef{def:pln-inner-map}{Definition}{Definition (The inner map)}
+\PoneDef{def:pln-isotopy-data}{Definition}{Definition (Isotopy data)}
+\PoneDef{def:pln-normalisations}{Definition}{Definition (Rotation and area normalisation)}
+\PoneDef{def:pln-ordinary-path}{Definition}{Definition (Ordinary path)}
+\PoneDef{def:pre-cutoff}{Definition}{Definition (Radial and interval cutoffs)}
+\PoneDef{def:pre-flat}{Definition}{Definition (Flat step)}
+\PoneDef{def:shd4-data}{Definition}{Definition (Cubic data)}
+\PoneDef{def:str-enlarged}{Definition}{Definition (Enlarged capacities)}
+\PoneDef{it:pln-O1}{item}{condition (O1)}
+\PoneDef{it:pln-O2}{item}{condition (O2)}
+\PoneDef{it:pln-O3}{item}{condition (O3)}
+\PoneDef{it:pln-P1}{item}{condition (P1)}
+\PoneDef{it:pln-P2}{item}{condition (P2)}
+\PoneDef{lem:cub-volume}{Lemma}{Lemma (Integrated profile)}
+\PoneDef{lem:fcp-interval}{Lemma}{Lemma (Increasing rearrangement on an interval)}
+\PoneDef{lem:fcp-rearrangement}{Lemma}{Lemma (Properties of $R_j$)}
+\PoneDef{lem:ham-radii}{Lemma}{Lemma (Radii)}
+\PoneDef{lem:ham-smooth}{Lemma}{Lemma (Smoothness and support)}
+\PoneDef{lem:hdl-shear}{Lemma}{Lemma (Multi-angle shear)}
+\PoneDef{lem:hdl-suspension}{Lemma}{Lemma (Suspension)}
+\PoneDef{lem:hdl-top-power}{Lemma}{Lemma (Top power)}
+\PoneDef{lem:iso-linear-path}{Lemma}{Lemma (The linear path)}
+\PoneDef{lem:iso-parameters}{Lemma}{Lemma (Parameters)}
+\PoneDef{lem:iso-route}{Lemma}{Lemma (The route)}
+\PoneDef{lem:iso-shape}{Lemma}{Lemma (The shape stage)}
+\PoneDef{lem:iso-tail}{Lemma}{Lemma (The tail stage)}
+\PoneDef{lem:mech-toric-volume}{Lemma}{Lemma (The cap integral)}
+\PoneDef{lem:pll-bounds}{Lemma}{Lemma (Bounds for the instance)}
+\PoneDef{lem:pll-physical-chart}{Lemma}{Lemma (The physical chart)}
+\PoneDef{lem:pln-ambient-flow}{Lemma}{Lemma (The ambient flow)}
+\PoneDef{lem:pln-area}{Lemma}{Lemma (Area normalisation)}
+\PoneDef{lem:pln-data}{Lemma}{Lemma (Existence and order of the data)}
+\PoneDef{lem:pln-energy}{Lemma}{Lemma (The density family and the uniform energy bound)}
+\PoneDef{lem:pln-morse-inverse}{Lemma}{Lemma (Morse inverse charts)}
+\PoneDef{lem:pln-normalisation}{Lemma}{Lemma (Normalisation of the whole path)}
+\PoneDef{lem:pln-rotation}{Lemma}{Lemma (Rotation normalisation)}
+\PoneDef{lem:pre-concat}{Lemma}{Lemma (Flat concatenation)}
+\PoneDef{lem:pre-flat}{Lemma}{Lemma (Properties of $S$)}
+\PoneDef{lem:pre-fs}{Lemma}{Lemma (The affine Fubini--Study chart)}
+\PoneDef{lem:pre-moser}{Lemma}{Lemma (Moser lemma)}
+\PoneDef{lem:rtc-ball-chart}{Lemma}{Lemma (The ball chart on representatives)}
+\PoneDef{prop:cmp-linear}{Proposition}{Proposition (Linear comparison datum for equal balls)}
+\PoneDef{prop:ham-end}{Proposition}{Proposition (Hamiltonian of an embedding datum)}
+\PoneDef{prop:ham-isotopy}{Proposition}{Proposition (The common symplectic isotopy)}
+\PoneDef{prop:pln-hamiltonian}{Proposition}{Proposition ($Q$ generates $\hat q$)}
+\PoneDef{prop:shd4-maps}{Proposition}{Proposition (The four-dimensional embeddings into the cover)}
+\PoneDef{prop:str-strip}{Proposition}{Proposition (Disc-to-strip map)}
+\PoneDef{rem:hdl-four}{Remark}{Remark (Dimension four)}
+\PoneDef{rem:rtc-equal}{Remark}{Remark (The equal-capacity branch)}
+\PoneDef{rem:rtc-recorded}{Remark}{Remark (Recorded capacities)}
+\PoneDef{rem:shd-four}{Remark}{Remark (The four-dimensional embeddings)}
+\PoneDef{sec:cub}{\S}{\S\,``Dimension four: the cubic model''}
+\PoneDef{sec:fcp}{\S}{\S\,``Coordinate rearrangement and the equal-ball identities''}
+\PoneDef{sec:fcp-equal}{\S}{\S\,``Equal balls in dimension four''}
+\PoneDef{sec:fcp-setting}{\S}{\S\,``Setting''}
+\PoneDef{sec:guide-four}{\S}{\S\,``The four-dimensional chain''}
+\PoneDef{sec:hdl}{\S}{\S\,``Packing over a handle''}
+\PoneDef{sec:pll}{\S}{\S\,``The explicit inner map for equal balls''}
+\PoneDef{sec:pll-data}{\S}{\S\,``The data of the whole-disc isotopy''}
+\PoneDef{sec:pln}{\S}{\S\,``Area-preserving disc maps from Morse charts''}
+\PoneDef{sec:pln-flow}{\S}{\S\,``The cut-off ambient flow''}
+\PoneDef{sec:pln-ham}{\S}{\S\,``The Hamiltonian''}
+\PoneDef{sec:pre-conventions}{\S}{\S\,``Conventions''}
+\PoneDef{sec:shd-four}{\S}{\S\,``The four-dimensional handle''}
+\PoneDef{sec:str}{\S}{\S\,``The disc-to-strip map and the layer maps''}
+\PoneDef{sec:ver}{\S}{\S\,``Formal verification''}
+\PoneDef{sec:xpl}{\S}{\S\,``The explicitness check''}
+\PoneDef{sec:xpl-interface}{\S}{\S\,``Formal statements that differ in form from the text''}
+\PoneDef{thm:cub-packing}{Theorem}{Theorem (Packing in dimension four)}
+\PoneDef{thm:ham-flow}{Theorem}{Theorem (The Hamiltonian realises the isotopy)}
+\PoneDef{thm:pln-inner}{Theorem}{Theorem (The inner map)}
+\PoneDef{thm:pln-isotopy}{Theorem}{Theorem (Whole-disc Hamiltonian isotopy with prescribed endpoint on the core)}
+\PoneDef{thm:pln-param}{Theorem}{Theorem (Parametrised version)}
+\PoneDef{thm:rtc-transfer}{Theorem}{Theorem (Transfer on the cover)}

@@ -4,6 +4,11 @@ This directory is the entry point to the Lean 4 formalisation. It is meant to le
 decide, from a few short files, *what* has been proved; Lean checks *that* it has been proved
 by elaborating the full dependency closure.
 
+Theorem letters below (A–G) are those of version 1.0.1, which the Lean docstrings keep;
+[REVIEW.md](../REVIEW.md#lean-names-and-the-papers) maps them to Papers I and II of version 1.1
+(Paper I: Theorem A and Proposition B; Paper II: the general theorem, the corollaries and the algorithm).
+The Lean development is unchanged since 1.0.1.
+
 ## What is proved
 
 For every `n ≥ 2`, `k ≥ 1`, `C > 0`, capacities `c₁,…,c_k > 0` and centres `s₁,…,s_k` with
@@ -56,9 +61,9 @@ regardless of the transparency setting. It changes which proofs the
 elaborator finds, not what is accepted: every proof term is checked by the kernel, which does not
 use transparency settings.
 
-## Reading order
+## Reading order (five entry files, about 600 lines)
 
-1. `Problem.lean` — phase space `ℝ^{2n}` with coordinates `(q, p)` (the paper's `(x, y)`), `ω₀ = Σ dqⱼ ∧ dpⱼ`, the
+1. `Problem.lean` — phase space `ℝ^{2n}` with coordinates `(q, p)` (the papers' `(x, y)`), `ω₀ = Σ dqⱼ ∧ dpⱼ`, the
    Hamiltonian vector field (`ι_{X_H} ω₀ = dH`), capacity balls `{π‖y−s‖² ≤ c}`, `Admissible`,
    `BallsDisjoint`, `PackingSpec`, and the Epoch specification.
 2. `Algorithm.lean` — the top level of `packingHamiltonian`: branch selection and the
@@ -67,10 +72,6 @@ use transparency settings.
    each stated for the exact terms of `Algorithm.lean`.
 4. `Computability.lean`, `EpochComputability.lean` — the algorithm. `Computability.lean` also
    shows, by `rfl`, how an output code decodes to `β_B · P`.
-5. `Executable.lean` — axiom and constructive-runtime checks for the compiled total
-   reference algorithm `NativePacking.solveRational` / `solveName`. Its return type
-   carries the full `EpochSpecR` proof. See [the executable guide](../examples/PACKING.md)
-   for execution, interpreter correspondence and the absence of a practical runtime bound.
 
 `PackingSpec n k C c s H` requires: `H` is jointly `C^∞`; one compact set contains the
 support of `H(t,·)` for all `t`; every source point has a global integral curve; and *every*
@@ -84,7 +85,7 @@ are constant names. The capacity stream lists the target at index `0` and `cᵢ`
 
 ## Cases of the construction
 
-Levels L1–L3 are those of Definition 1.3 of the paper; rows are the cases of the
+Levels L1–L3 are those of Section 2 of Paper I (used for the algorithm in Paper II); rows are the cases of the
 construction (`General.selectEmbeddings`).
 
 | Case | L1: embeddings, Hamiltonian | L2: finite form | L3: algorithm (halting and correctness) |
@@ -97,7 +98,7 @@ construction (`General.selectEmbeddings`).
 
 All names are relative to `SymplecticPacking` except the `verification/` theorems. The
 explicitness of every L1 definition is checked by `#check_explicit` (below). `main_finite`
-applies to every compilation datum satisfying the inequalities (C1)–(C7) of the
+applies to every compilation datum satisfying the inequalities (C1)–(C7) of the Paper II
 supplement; the L3 theorems state that one machine halts on every admissible input and that
 its output satisfies `PackingSpec` (resp. `EpochSpecR`).
 
@@ -115,7 +116,7 @@ Choice sites inside Mathlib definitions are accepted only for the reviewed list 
 
 The checker cannot rule out every encoding of a search: a definite description over `ℝ` can
 characterise an integer defined by an undecidable search. The definite descriptions reached from
-`packingHamiltonian` are therefore listed and discussed individually in the supplement (section "The
+`packingHamiltonian` are therefore listed and discussed individually in the Paper I supplement (section "The
 explicitness check").
 
 `#check_constructive c` is stricter: the non-proof closure of `c` may contain no classical
@@ -144,7 +145,7 @@ Two separate grounds support the claim that the proofs use no packing existence 
 * **Vendored usage.** `Audit/VendoredUsage.lean` lists, by module, the vendored
   declarations the main theorems use (charts, forms, primitives, Moser fields, model
   coefficients; 3810 declarations from 112 modules, as logged by the audit) and fails if any
-  comes from the library's curve-analysis directories. The supplement's section "The
+  comes from the library's curve-analysis directories. The Paper I supplement's section "The
   explicitness check" summarises the list and discusses each definite description of the
   construction listed by `#check_explicit`. The checked roots include Proposition B and
   `General.symplectic_neighbourhood_sufficient`.
@@ -156,10 +157,10 @@ Corollary D's necessity direction uses the classical obstructions.
 
 ## Paper correspondence
 
-The statements of the paper that carry a visible mark `[Lean: …]` are Theorem A and Proposition B
-(`four_dim_theorem`, `four_dim_stability`), Definitions 1.1–1.2, Theorem C(i) and (iii), Corollaries D–G and the algorithm theorem of the computability
-section. Each Lean statement in this directory agrees with the paper up to the differences of
-form listed in the section "Formal verification" of the paper. Corollary D is
+The main statements of Papers I and II correspond to the theorems of `Statement.lean`,
+`Computability.lean` and `EpochComputability.lean` as listed in REVIEW.md. Each agrees with the
+paper up to the differences of form listed in the section "Formal verification" of Paper I (Theorem A,
+Proposition B) and of Paper II (the general theorem, the corollaries and the algorithm). Corollary D is
 `neighbourhood_criterion` together with `flow_neighbourhood_embedding`. Theorem C(ii) is
 checked by the metaprogram `#check_explicit`, not by a theorem; uniformity of the machines
 (one program for all inputs) by `#check_constructive`.
@@ -169,7 +170,7 @@ tags are unprinted references without a claim of complete coverage. `\lean[neede
 prints **needed consequence verified**; only the version used by the construction is
 formalised. `\lean[full]{…}` and the main-result `\leanmark{…}` markers print **full statement
 verified**, up to documented presentation differences. `PAPER-INDEX.md` records the scopes;
-every tagged name is checked to exist and to use only the three axioms. The supplement
+every tagged name is checked to exist and to use only the three axioms. The Paper I supplement
 appendix “Formal statements that differ in form from the text” lists the precise
 restrictions. Scope correspondence requires human review. The tags are a map of the formal proof; the claim of
 formal verification is carried by the theorems in `Statement.lean`, `Computability.lean` and
@@ -193,14 +194,14 @@ bash scripts/verify.sh      # builds this project from source, then every check
 
 `verify.sh` runs the source and paper-tag checks, builds the library and the verification
 entry, including all axiom, explicitness, uniformity and independence gates, runs the checker
-regression tests in `test/`, and compiles both papers. Every stage is fatal. The
+regression tests in `test/`, and compiles the three papers. Every stage is fatal. The
 regression suites are Lake targets, so they run alongside independent build jobs and
 reuse their checked artifacts until a source or dependency changes. The verification script
-also re-elaborates the main statement/algorithm entries including `Executable.lean`, the paper-tag and independence
+also re-elaborates the three main statement/algorithm entries, the paper-tag and independence
 gates, and all three regression suites from source, even when their build artifacts were restored.
 
-**Cost of the build.** A build from an empty `.lake/build` takes several hours; a matching
-prebuilt project cache can reduce that to minutes. Once built, `lake build` reuses `.lake/build`
+**Cost of the build.** A build from an empty `.lake/build` takes several hours; with the
+prebuilt project cache below it takes minutes. Once built, `lake build` reuses `.lake/build`
 and rebuilds only the modules whose sources changed.
 
 **Faster check with the bundled project cache.** `python3 scripts/project_cache.py restore`
@@ -209,12 +210,10 @@ configuration, and all cache-part checksums before restoring project artifacts. 
 uses the toolchain's native `leantar` format. It excludes Mathlib, generated C setup files,
 executables, local logs, and repository history; see [`cache/README.md`](../cache/README.md).
 
-The bundled cache and the release's kernel-replay receipt are regenerated for 1.0.1.
+The Lean sources, the bundled cache and its source digest are those of 1.0.1; version 1.1 changed
+only the papers and documentation.
 A later source change, including a Lean comment change, invalidates the raw source digest;
 use a source build or regenerate the cache instead of reusing an earlier receipt.
-The executable-algorithm additions therefore require the current source-build route
-above. The following optional cache route applies only to revisions matching the
-bundled manifest; restoration exits with code 2 on a source mismatch.
 
 ```sh
 lake exe cache get
@@ -236,7 +235,7 @@ sources by elaboration. Mathlib's official dependency cache is used in both rout
 independent project-source workflow is `.github/workflows/full-build.yml`.
 
 **Continuous integration.** `.github/workflows/verify.yml` runs source checks, all Lean and
-audit targets, all checker regressions, and both papers. It restores the bundled project
+audit targets, all checker regressions, and the three papers. It restores the bundled project
 cache when its source digest matches; otherwise it builds from source. Fresh kernel replay
 is **not enabled by default**, including on that source-build fallback: a successful default
 CI run is not evidence of fresh kernel replay. Its artifacts contain PDFs and verification

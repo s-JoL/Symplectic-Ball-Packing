@@ -2,88 +2,78 @@
 
 ## The claim to assess first
 
-The central object is a **specified smooth, compactly supported Hamiltonian**, not an
-existence assertion about some embedding. In ℝ⁴, for each k ≥ 10 and 0 < ε < 1, its time-one
-flow moves the k closed unit balls at `(3i,0,0,0)`, `0 ≤ i < k`, into the open ball of radius
-`(k/(1−ε/4))^(1/4)`. Their occupied volume fraction is exactly `1−ε/4`.
+The central object is a **specified smooth, compactly supported Hamiltonian**, not an existence
+assertion. In ℝ⁴, for each k ≥ 10 and 0 < ε < 1, its time-one flow moves the k closed unit balls
+at `(3i,0,0,0)`, `0 ≤ i < k`, into the open ball of radius `(k/(1−ε/4))^(1/4)`; the occupied
+volume fraction is exactly `1−ε/4`.
 
-Read the abstract and Theorem A at the start of the [paper](paper/main.pdf), then compare
+Read the abstract and Theorem A of [Paper I](paper/p1/main.pdf), then compare
 [`four_dim_theorem`](verification/Statement.lean) with the definitions in
-[`Problem.lean`](verification/Problem.lean). This is the shortest route to the principal
-statement and its formal meaning.
+[`Problem.lean`](verification/Problem.lean).
 
-## Scope and contribution
+## The three papers and the program
 
-The general motion theorem assumes n ≥ 2, k ≥ 1, target capacity C > 0, every cᵢ > 0,
-and pairwise disjoint prescribed closed source balls, in addition to the dimension-specific
-inequalities below.
+| Part | Claims | How checked |
+|---|---|---|
+| I, equal balls in the four-ball ([pdf](paper/p1/main.pdf), [supplement](paper/p1/supplement.pdf)) | Theorem A; Proposition B (robustness); Corollary C (Epoch data, k ≥ 10, ε < 7/8) | Lean, plus the paper |
+| II, general capacities and higher dimensions ([pdf](paper/p2/main.pdf), [supplement](paper/p2/supplement.pdf)) | Theorem 1 for all n ≥ 2 (n = 2: Σcᵢ² < C², 3cᵢ < C; n ≥ 3: Σcᵢⁿ < Cⁿ, cᵢ + cⱼ < C); Corollary 2 (Siegel–Yao criterion by explicit flows); Corollary 3 (equal balls: Biran's k ≥ 9 in ℝ⁴, k ≥ 2ⁿ for n ≥ 3); Corollary 4 (a cone of unequal balls in ℝ⁴); Corollary 5 (full Epoch data); the finite-output algorithm | Lean, plus the paper |
+| III, elementary packings ([pdf](paper/p3/main.pdf)) | Explicit toric/window packings and obstructions for those classes | The paper only; not formalised |
+| [`program/`](program/README.md) | A Hamiltonian in Epoch's interface for a range of (k, ε) | Numerical integration only (RK4 at N and 2N); the returned Hamiltonian is smooth near the trajectories, not globally |
 
-| Question | Answer and location |
-|---|---|
-| What is new relative to an existence theorem? | One construction of a Hamiltonian moving prescribed disjoint balls; its explicit formulas, isotopy, and global motion are the subject of the paper. See the introduction and Hamiltonian section. |
-| What is the geometric route? | Linear comparison for the equal-ball family → planar rearrangement → twisted Fermat cubic disc bundle → symmetry-controlled return → common isotopy → compactly supported Hamiltonian. The introduction's construction chain and mechanism section explain it. |
-| What is covered in higher dimensions? | In ℝ²ⁿ, n ≥ 3, positive capacities with Σcᵢⁿ < Cⁿ and cᵢ+cⱼ < C for i ≠ j. See Theorem C and `main_theorem`. |
-| What is covered in dimension four? | Positive capacities with Σcᵢ² < C² and 3cᵢ < C; the equal-ball stability corollary includes k ≥ 9. This is not a classification of every unequal four-dimensional packing. |
-| What does the algorithm theorem say? | One program, taking names of real inputs, halts on all admissible data with a finite rational-polynomial-times-cutoff Hamiltonian satisfying the packing specification. It gives no feasible runtime bound and need not approximate the first Hamiltonian. |
-| What is the relation to earlier work? | The construction develops the OpenAI twisted disc-bundle mechanism. Attribution and comparison with Biran and earlier constructive work are in the introduction and references. |
-| Which proofs avoid curve methods? | Construction and sufficiency. The converse of the higher-dimensional criterion uses classical volume and two-ball obstructions; the dependency audit explicitly detects the latter's holomorphic-line input. |
+All general statements assume k ≥ 1, C > 0, every cᵢ > 0, and pairwise disjoint closed source balls.
+The four-dimensional general theorem is not a classification of all unequal packings. The algorithm
+theorem gives termination and correctness, no practical runtime bound. Sufficiency of the Siegel–Yao
+criterion in dimension ≥ 6 was first proved in the OpenAI preprint (2026); Paper II gives an explicit
+motion. Construction and sufficiency avoid J-holomorphic curves; the necessity direction of Corollary 2
+uses the classical obstructions, and the dependency audit detects this.
 
-The radius above is a Euclidean radius. Elsewhere `B(c)` uses capacity c, so the radius is
-`√(c/π)`. The source balls are closed; the target in `PackingSpec` is open. The Hamiltonian
-convention is `ι_X ω₀ = dH`, hence `X_H = (∂_p H, −∂_q H)` in the formal coordinates.
+## Lean names and the papers
+
+The docstrings in `verification/Statement.lean` use the lettering of version 1.0.1, when the work was
+one paper. The Lean development is unchanged since then. The Lean theorems are stated for the general
+Hamiltonian of Paper II; Paper I's Hamiltonian H_{k,ε} is the same term on the equal-ball data of Theorem A.
+
+| Lean theorem | 1.0.1 label | Version 1.1 |
+|---|---|---|
+| `four_dim_theorem`, `four_dim_data` | Theorem A | Paper I, Theorem A |
+| `four_dim_stability` | Proposition B | Paper I, Proposition B |
+| `main_theorem`, `main_time_support`, `main_support_radius` | Theorem C | Paper II, Theorem 1(i), all n ≥ 2 (used by Paper I's Theorem A through `four_dim_data`) |
+| `flow_is_integral_curve`, `flow_symplectic_diffeomorphism`, `flow_images_disjoint` | — | Paper II, Theorem 1(i); `flow_images_disjoint` also Paper I, Theorem A |
+| `neighbourhood_criterion`, `flow_neighbourhood_embedding` | Corollary D | Paper II, Corollary 2 |
+| `equal_balls` | Corollary E | Paper II, Corollary 3 |
+| `unequal_cone` | Corollary G | Paper II, Corollary 4 |
+| `epoch_packing`, `epoch_theorem` | Corollary F | Paper II, Corollary 5 (contains Paper I, Corollary C) |
+| `epoch_theorem_ten` | Corollary F | Epoch's own statement (k ≥ 10, closed ball B(R)); contains Paper I, Corollary C |
+| `General.Compile.main_finite` | — | Paper II, finite form (Theorem 5.2) |
+| `original_name_algorithm`, `epoch_name_algorithm`, `epoch_name_algorithm_packing` | algorithm theorem | Paper II, Theorem 1(iii) and the algorithm theorem (Theorem 5.3) |
+| `#check_explicit General.packingHamiltonian` (metaprogram) | Theorem C(ii) | Paper II, Theorem 1(ii); Paper I's explicitness claim for H_{k,ε} |
 
 ## A short formal review
 
-Read these files in order; the construction's hundreds of supporting files need not be read
-before assessing the stated result.
-
-1. [`verification/Problem.lean`](verification/Problem.lean): phase space, symplectic form,
-   balls, admissibility, and packing specifications, from Mathlib alone. Check the hypotheses
-   and the quantifier over **every** integral curve.
-2. [`verification/Algorithm.lean`](verification/Algorithm.lean): definitional equalities tie
-   the named Hamiltonian to branch selection and the common Hamiltonian construction.
-3. [`verification/Statement.lean`](verification/Statement.lean): main theorems, flow properties,
-   stability, and corollaries for those exact terms.
+1. [`verification/Problem.lean`](verification/Problem.lean): phase space, symplectic form, balls,
+   admissibility and the packing specification, from Mathlib alone. Check the hypotheses and the
+   quantifier over **every** integral curve.
+2. [`verification/Algorithm.lean`](verification/Algorithm.lean): the named Hamiltonian, by definitional
+   equalities.
+3. [`verification/Statement.lean`](verification/Statement.lean): the theorems, for those exact terms.
 4. [`verification/Computability.lean`](verification/Computability.lean) and
-   [`verification/EpochComputability.lean`](verification/EpochComputability.lean): input names,
-   one uniform machine, finite output, halting, and certified packing.
-5. [`verification/Executable.lean`](verification/Executable.lean): the compiled
-   total reference algorithm, with constructive-runtime and axiom gates. Its
-   [program guide](examples/PACKING.md) connects the finite output to the actual
-   value, gradient and flow interpreter, explains all-input termination, and
-   provides runnable checks. These executable additions postdate v1.0.1.
+   [`verification/EpochComputability.lean`](verification/EpochComputability.lean): one uniform machine,
+   finite output, halting, certified packing.
 
-For a particular geometric step, use [`PAPER-INDEX.md`](verification/PAPER-INDEX.md) to find its
-Lean declarations, and the [supplement](paper/supplement.pdf) for the complete mathematical
-construction. The PDFs distinguish **full statement verified** from **needed consequence
-verified**; the latter covers the version used by the construction, not every assertion of
-the printed auxiliary statement. The index records these scopes; an unqualified source tag
-is only a reference. The supplement's appendix “Formal statements that differ in form from
-the text” gives the precise restrictions, including return/transfer identities along smooth
-families and the coarser support bound. These correspondences require human review; the
-kernel checks the Lean statements.
+To locate a particular step, [`PAPER-INDEX.md`](verification/PAPER-INDEX.md) lists the Lean
+declarations tagged in each statement of Papers I and II. A tag marked **needed consequence verified**
+covers only the version the construction uses.
 
-## Reproduce the checks
+## What the checks establish
 
-The [README](README.md#verify) gives the complete commands. The checks have distinct roles:
-
-| Check | What it establishes |
+| Check | Establishes |
 |---|---|
-| Source hygiene and tag freshness | Active forbidden-token checks, and agreement between paper tags and generated index/audits. |
-| Lean build and axiom gates | Accepted proof terms for the specified statements; only the three declared standard axioms. |
-| Explicitness and uniformity audits | Defined constructions meet the stated metaprogram criteria; oracle machines do not use classical branching. |
-| Independence audit | Construction-side proof dependencies avoid the named upstream packing existence and curve-analysis inputs. |
-| Checker regression suites | Known acceptable examples pass and known forbidden examples are detected, including a wrapped obstruction. |
-| Fresh kernel replay | Compiled declarations and their imported proof closure are replayed into a fresh environment by the pinned Lean kernel. |
-| Paper build | Both PDFs compile with stable references, no undefined citations, no duplicate labels, and no overfull boxes. |
+| Lean build and axiom gates | Accepted proofs of the stated theorems, using only the three standard axioms |
+| Explicitness and uniformity audits | The definitions meet the stated syntactic criteria; the machines do not branch classically (metaprograms, not verified) |
+| Independence audit | The construction side does not depend on packing existence theorems or curve analysis |
+| Fresh kernel replay (`scripts/check_kernel.sh`) | Stored proof terms re-checked in a new kernel environment |
+| Paper build | The three papers compile with no undefined references |
+| `program/check.py` | The program's flow packs the sampled sphere points at N and 2N RK4 steps (evidence, not proof) |
 
-A bundled cache saves elaboration time. Its checksums detect corruption and its source digest
-identifies the intended proof sources; neither checksum is a mathematical proof. Kernel
-replay adds a check of stored proof terms. A clean source build is the route for checking
-that the supplied sources elaborate to accepted proofs without the project's binary cache.
-
-These checks do not certify novelty, exposition, the paper-to-formal-statement interpretation,
-or a practical runtime bound or a formal refinement proof of the Python interpreter.
-The executable interpreter's correspondence and interval-flow convergence arguments
-are in the program guide and remain explicit review questions. There is
-no claimed successful time-bounded Epoch program submission in this repository's main line.
+None of these certifies novelty, exposition, the correspondence between prose and formal statements,
+or a runtime bound. Commands and the trusted base are in [`verification/README.md`](verification/README.md).

@@ -1,0 +1,60 @@
+\documentclass[11pt]{amsart}
+\input{macros}
+\hypersetup{
+  pdftitle={Explicit Hamiltonian full packings of the four-ball by equal balls},
+  pdfauthor={Liang Song},
+  pdfsubject={Explicit symplectic ball packings and Lean 4 formal verification},
+  pdfkeywords={symplectic geometry, Hamiltonian dynamics, ball packing, Lean 4},
+  pdflang={en-US}
+}
+\usepackage{tikz}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\externaldocument[S-]{build/supplement}[supplement.pdf]
+\renewcommand{\topfraction}{.9}\renewcommand{\bottomfraction}{.8}\renewcommand{\textfraction}{.07}\renewcommand{\floatpagefraction}{.75}
+
+\title[Explicit Hamiltonian packings of the four-ball]{Explicit Hamiltonian full packings of the four-ball\\ by equal balls}
+\author{Liang Song}
+\email{sl12160010@gmail.com}
+\thanks{Version 1.1; supersedes version 1.0.1 (29 October 2026,
+DOI~\href{https://doi.org/10.5281/zenodo.23763498}{10.5281/zenodo.23763498}) of ``Explicit Hamiltonian ball packings in
+every dimension''.}
+\date{}
+
+\begin{document}
+\begin{abstract}
+For every $k\ge10$ and $\eps\in(0,1)$ we construct an explicit smooth compactly supported Hamiltonian $H_{k,\eps}$ on
+$\R\times\R^4$ whose time-one map carries the $k$ closed unit balls centred at $(3i-3,0,0,0)$ into the ball of radius
+$R=(k/(1-\eps/4))^{1/4}$, filling the fraction $1-\eps/4$. Such packings were previously known to exist only through
+Biran's theorem, whose proof does not produce the embeddings, and explicitly only for square $k$. This answers the
+mathematical part of Epoch AI's construction problem. The two main ingredients are a linear comparison function for which the increasing
+rearrangement of the profile defect is exactly linear, in place of a contraction fixed point, and a return from the
+Fermat cubic disc-bundle model to the ball, in which a cube-root symmetry proves avoidance of the line at infinity.
+The construction brings to dimension four the twisted disc-bundle mechanism that a 2026 preprint of OpenAI introduced in
+dimensions $2n\ge6$, and uses neither $J$-holomorphic curves nor Seiberg--Witten theory. We also
+prove robustness under perturbation with an explicit margin. The main theorems are verified in Lean~4. General
+capacities, $k=9$, higher dimensions and an algorithm with finite output are treated in a companion paper.
+\end{abstract}
+\maketitle
+
+\input{main/introduction}
+\input{main/results}
+\input{main/mechanism}
+\input{main/comparison}
+\input{main/handle}
+\input{main/models}
+\input{main/hamiltonian}
+\input{main/verification}
+
+\section*{Authorship and the role of AI}
+
+Liang Song is the sole author and is responsible for the manuscript and its release. The mathematics, the Lean
+formalisation and the text were produced by AI systems, including GPT-6.1 Sol (OpenAI), Claude Opus 5.5
+(Anthropic) and other models, working in a research environment designed and directed by Liang Song, who chose the
+problem, assembled the literature and context given to the systems, designed the verification pipeline and made
+the editorial decisions. The scope of the formal verification is described in Section~\ref{sec:ver}.
+
+\bibliographystyle{amsalpha}
+\bibliography{refs}
+
+\end{document}
