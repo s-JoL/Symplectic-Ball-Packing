@@ -24,10 +24,10 @@ which give no motion; explicit full packings by k ≥ 10 equal balls were known 
 motion is given by formulas, for every k ≥ 10, without those methods. This answers the mathematical part of the
 construction problem posed by [Epoch AI](https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing).
 All main theorems of Papers I–II are checked in Lean 4 against a problem statement written from Mathlib alone,
-using only the three standard axioms. The construction is designed for proof; the separate program below runs in
-Epoch's numerical interface for a range of (k, ε), with numerically checked correctness.
+using only the three standard axioms. The construction is designed for proof. Two separate programs accompany it: one runs in Epoch's numerical
+interface for a range of (k, ε); the other evaluates explicit packing embeddings for every k ≥ 10 and every ε.
 
-## Papers and program
+## Papers and programs
 
 | | Paper | Main results | Lean |
 |---|---|---|---|
@@ -35,6 +35,7 @@ Epoch's numerical interface for a range of (k, ε), with numerically checked cor
 | II | *Explicit Hamiltonian ball packings: general capacities, higher dimensions and the Siegel–Yao criterion* — [paper](paper/p2/main.pdf) (22 pp), [supplement](paper/p2/supplement.pdf) | One explicit Hamiltonian for all admissible data: in ℝ⁴ every packing with Σcᵢ² < C², 3cᵢ < C; in ℝ²ⁿ, n ≥ 3, every packing allowed by the volume and two-ball inequalities. Biran's theorem that B⁴ is fully packed by k ≥ 9 equal balls, without J-holomorphic curves or Seiberg–Witten theory. A terminating algorithm with finite output | yes |
 | III | *Elementary packings of the four-ball and their limits* — [paper](paper/p3/main.pdf) (13 pp) | Toric and window constructions: n(n+1) balls in B(n+½); density ≥ 1 − 1/√k for every k; ten balls at density 360/361. Obstructions explaining why these methods stop short of density 1 for non-square k | no |
 | | [`program/`](program/README.md) — `solution_epoch.py` | A runnable Hamiltonian in Epoch's interface built from the same kind of constructions as Paper III (lattice layouts found by search, windows, sheared windows): k = 10 down to ε = 0.005, squares to ε ≈ 0.002, every k ≤ 10⁵ above an explicit ε_min(k). Checked numerically (RK4 at N and 2N, 12/12 test points pass), not proved; the returned Hamiltonian is smooth near the ball trajectories but not globally (see its README) | no |
+| | [`program/`](program/README.md) — `solution_embedding.py` | Explicit C⁴ symplectic embeddings packing k unit balls into B⁴((k/(1−ε))^{1/4}) for **every** k ≥ 10 and ε ∈ (0, 1), each a composition of closed-form maps (the geometry of Paper I, without flows). Not a Hamiltonian. Proof for exact arithmetic in preparation; float64 sampling checks pass containment and disjointness in all tested cases, the full check only for k = 10, ε ≥ 0.01 (resolution limits; see its README) | no |
 
 The constructions of Papers I and II develop the twisted disc-bundle mechanism of the OpenAI
 preprint *Symplectic Ball Packings in Higher Dimensions* (2026), which treats dimension 2n ≥ 6. The

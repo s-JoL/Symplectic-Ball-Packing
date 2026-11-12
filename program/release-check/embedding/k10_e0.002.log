@@ -1,0 +1,10 @@
+k=10 eps=0.002 R_needed=1.779170  per ball: 500 on the sphere + 500 inside, Jacobian 100; volume check 200000 points; solution() 0.0s
+A containment: R_origin = 1.779166, margin 4.061e-06, finite = True
+C round trip: failed 0 / 10000, largest error among the others 1.222e-10
+B symplecticity: largest defect 4.484e-08 (difference of the two step sizes / |J|: 3.737e-04)
+G continuity: flagged intervals 2; largest image gap at separation 1e-11 8.426e-01; largest Lipschitz estimate 1.254e+11; largest neighbour gap on the coarse grid 3.556e+00
+D disjointness: image points in another ball 0 / 90000 tests
+E volume: covered fraction 0.99795 +- 0.00010 (expected 0.99800), points in two or more balls 0
+F time: 57 s
+RESULT {"k": 10, "eps": 0.002, "R_needed": 1.7791696628384241, "R_origin": 1.7791656015395163, "margin": 4.06129890784257e-06, "finite": true, "roundtrip_bad": 0, "roundtrip_max": 1.2222984719811552e-10, "sym_defect": 4.4837119872391586e-08, "fd_resolution": 0.00037369848296638634, "cont_bad": 2, "cont_gap_fine": 0.8426362516363107, "cont_lipschitz": 125387151510.78528, "overlap_points": 0, "cover": 0.99795, "cover_expected": 0.998, "cover_se": 0.00010113845707741432, "multi_member": 0, "wall_s": 56.6711962223053, "pass": false}
+FAIL

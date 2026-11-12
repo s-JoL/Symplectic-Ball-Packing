@@ -11,14 +11,15 @@ Read the abstract and Theorem A of [Paper I](paper/p1/main.pdf), then compare
 [`four_dim_theorem`](verification/Statement.lean) with the definitions in
 [`Problem.lean`](verification/Problem.lean).
 
-## The three papers and the program
+## The three papers and the programs
 
 | Part | Claims | How checked |
 |---|---|---|
 | I, equal balls in the four-ball ([pdf](paper/p1/main.pdf), [supplement](paper/p1/supplement.pdf)) | Theorem A; Proposition B (robustness); Corollary C (Epoch data, k ≥ 10, ε < 7/8) | Lean, plus the paper |
 | II, general capacities and higher dimensions ([pdf](paper/p2/main.pdf), [supplement](paper/p2/supplement.pdf)) | Theorem 1 for all n ≥ 2 (n = 2: Σcᵢ² < C², 3cᵢ < C; n ≥ 3: Σcᵢⁿ < Cⁿ, cᵢ + cⱼ < C); Corollary 2 (Siegel–Yao criterion by explicit flows); Corollary 3 (equal balls: Biran's k ≥ 9 in ℝ⁴, k ≥ 2ⁿ for n ≥ 3); Corollary 4 (a cone of unequal balls in ℝ⁴); Corollary 5 (full Epoch data); the finite-output algorithm | Lean, plus the paper |
 | III, elementary packings ([pdf](paper/p3/main.pdf)) | Explicit toric/window packings and obstructions for those classes | The paper only; not formalised |
-| [`program/`](program/README.md) | A Hamiltonian in Epoch's interface for a range of (k, ε) | Numerical integration only (RK4 at N and 2N); the returned Hamiltonian is smooth near the trajectories, not globally |
+| [`program/`](program/README.md) `solution_epoch.py` | A Hamiltonian in Epoch's interface for a range of (k, ε) | Numerical integration only (RK4 at N and 2N); the returned Hamiltonian is smooth near the trajectories, not globally |
+| [`program/`](program/README.md) `solution_embedding.py` | Explicit C⁴ packing embeddings for every k ≥ 10 and ε | Sampling checks in float64 (containment, disjointness, volume, round trip, continuity); proof document in preparation, not part of this release |
 
 All general statements assume k ≥ 1, C > 0, every cᵢ > 0, and pairwise disjoint closed source balls.
 The four-dimensional general theorem is not a classification of all unequal packings. The algorithm
@@ -73,7 +74,8 @@ covers only the version the construction uses.
 | Independence audit | The construction side does not depend on packing existence theorems or curve analysis |
 | Fresh kernel replay (`scripts/check_kernel.sh`) | Stored proof terms re-checked in a new kernel environment |
 | Paper build | The three papers compile with no undefined references |
-| `program/check.py` | The program's flow packs the sampled sphere points at N and 2N RK4 steps (evidence, not proof) |
+| `program/check_epoch.py` | The Hamiltonian's flow packs the sampled sphere points at N and 2N RK4 steps (evidence, not proof) |
+| `program/check_embedding.py` | The embeddings pass sampled containment, disjointness, volume, round-trip and continuity checks (evidence, not proof) |
 
 None of these certifies novelty, exposition, the correspondence between prose and formal statements,
 or a runtime bound. Commands and the trusted base are in [`verification/README.md`](verification/README.md).

@@ -13,8 +13,9 @@ dimension*, the title of version 1.0.1; the three papers carry their own titles.
    corollaries (Siegel–Yao criterion, Biran's k ≥ 9, a cone of unequal balls, full Epoch data) and the
    finite-output algorithm. No theorem or proof of 1.0.1 is removed.
 2. **Paper III** (`paper/p3`), *Elementary packings of the four-ball and their limits*, is new. It is not
-   formalised. **`program/`** is new: a numerical implementation for the Epoch interface built from
-   Paper III's constructions, with numerical (not proved) correctness.
+   formalised. **`program/`** is new. `solution_epoch.py` is a numerical implementation for the Epoch interface
+   built from Paper III's constructions, with numerical (not proved) correctness. `solution_embedding.py`
+   evaluates explicit C⁴ packing embeddings for every k ≥ 10 and ε; its proof document is in preparation.
 3. Corrected citation: Traynor, *Symplectic packing constructions*, J. Differential Geom. **42**
    (1995), 411–429 (1.0.1 cited a duplicate record).
 4. The executable reference implementations added to `main` after 1.0.1 (`examples/packing.py`,

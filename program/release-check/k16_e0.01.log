@@ -1,3 +1,3 @@
-k=16 eps=0.01 steps=400: R=2.004045 (need < 2.005031), k/R^4=0.991950, PASS, longest H call 0.019s
-k=16 eps=0.01 steps=800: R=2.004045 (need < 2.005031), k/R^4=0.991950, PASS, longest H call 0.021s
-RESULT {"k": 16, "eps": 0.01, "R_needed": 2.005031486295626, "solution_seconds": 0.01, "points": 4800, "runs": {"400": {"R": 2.004045152209188, "density": 0.9919504388267827, "passed": true, "longest_H_call_s": 0.019, "seconds": 6.9}, "800": {"R": 2.004045189000843, "density": 0.9919503659831211, "passed": true, "longest_H_call_s": 0.021, "seconds": 16.9}}, "max_point_difference": 0.00010554003894400526, "passed": true, "margin": 0.0009862972947831672}
+k=16 eps=0.01 steps=400: R=2.004045 (need < 2.005031), k/R^4=0.991950, PASS, longest H call 0.038s
+k=16 eps=0.01 steps=800: R=2.004045 (need < 2.005031), k/R^4=0.991950, PASS, longest H call 0.041s
+RESULT {"k": 16, "eps": 0.01, "R_needed": 2.005031486295626, "solution_seconds": 0.01, "points": 4800, "runs": {"400": {"R": 2.004045152209188, "density": 0.9919504388267827, "passed": true, "longest_H_call_s": 0.038, "seconds": 9.9}, "800": {"R": 2.004045189000843, "density": 0.9919503659831211, "passed": true, "longest_H_call_s": 0.041, "seconds": 21.3}}, "max_point_difference": 0.00010554003894400526, "passed": true, "margin": 0.0009862972947831672}

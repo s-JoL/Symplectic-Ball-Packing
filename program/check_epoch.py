@@ -12,8 +12,8 @@ For each (k, eps):
      as an integration-error estimate, together with the longest single Hamiltonian call.
 A final line `RESULT {json}` summarises the run.
 
-    python check.py solution_epoch.py --k 10 --eps 0.1 --steps 2592 5184 --N 500
-    python check.py solution_epoch.py --k 16 --eps 0.01 --recommended --N 500     # N_rec and 2 N_rec
+    python check_epoch.py solution_epoch.py --k 10 --eps 0.1 --steps 2592 5184 --N 500
+    python check_epoch.py solution_epoch.py --k 16 --eps 0.01 --recommended --N 500     # N_rec and 2 N_rec
 
 Sampling the sphere is evidence, not proof: points between samples are not checked.
 Coordinates: R^4 = (q1, q2, p1, p2), omega = dq1 ^ dp1 + dq2 ^ dp2.

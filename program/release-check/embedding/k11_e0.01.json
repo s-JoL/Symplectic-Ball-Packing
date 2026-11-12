@@ -1,0 +1,22 @@
+{
+ "k": 11,
+ "eps": 0.01,
+ "R_needed": 1.8257418583505538,
+ "R_origin": 1.8257199555316057,
+ "margin": 2.1902818948094094e-05,
+ "finite": true,
+ "roundtrip_bad": 0,
+ "roundtrip_max": 3.0534974620868617e-10,
+ "sym_defect": 1.4065715071201447e-08,
+ "fd_resolution": 4.657870429876531e-05,
+ "cont_bad": 4,
+ "cont_gap_fine": 0.9806681207712461,
+ "cont_lipschitz": 103426179893.28934,
+ "overlap_points": 0,
+ "cover": 0.990195,
+ "cover_expected": 0.99,
+ "cover_se": 0.00022032773287763792,
+ "multi_member": 0,
+ "wall_s": 68.04116559028625,
+ "pass": false
+}
