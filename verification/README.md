@@ -236,10 +236,8 @@ independent project-source workflow is `.github/workflows/full-build.yml`.
 
 **Continuous integration.** `.github/workflows/verify.yml` runs source checks, all Lean and
 audit targets, all checker regressions, and the three papers. It restores the bundled project
-cache when its source digest matches; otherwise it builds from source. Fresh kernel replay
-is **not enabled by default**, including on that source-build fallback: a successful default
-CI run is not evidence of fresh kernel replay. Its artifacts contain PDFs and verification
-logs. The manually dispatched `.github/workflows/full-build.yml` omits the project cache
-and enables fresh kernel replay; `.github/workflows/kernel-replay.yml` explicitly enables
-replay while allowing the project cache. Those runs save the replay evidence as well.
-None of these workflows publishes a release.
+cache when its source digest matches; otherwise it builds from source, and uploads PDFs and
+verification logs as workflow artifacts. Fresh kernel replay and uncached full builds run in the
+dedicated `.github/workflows/kernel-replay.yml` and `.github/workflows/full-build.yml` workflows
+(as well as during release packaging in `scripts/package_release.py`), which archive the replay
+receipt alongside the build logs.

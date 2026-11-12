@@ -2,9 +2,10 @@
 
 ## Version 1.1.0
 
-Liang Song, version **1.1.0**, 11 November 2026. Version 1.1.0 reorganises the work for reading. The
-all-version DOI [10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575) resolves to the latest
-version; the version DOI of 1.1.0 is assigned by Zenodo on deposit. The record keeps the series title *Explicit Hamiltonian ball packings in every
+Liang Song, version **1.1.0**, 12 November 2026. Version 1.1.0 reorganises the work into three papers and adds
+two accompanying numerical programs. The all-version DOI
+[10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575) resolves to the latest version; the version DOI of
+1.1.0 is assigned by Zenodo on deposit. The record keeps the series title *Explicit Hamiltonian ball packings in every
 dimension*, the title of version 1.0.1; the three papers carry their own titles.
 
 1. The single paper of 1.0.1 is split and shortened. **Paper I** (`paper/p1`) gives the shortest complete
@@ -13,16 +14,16 @@ dimension*, the title of version 1.0.1; the three papers carry their own titles.
    corollaries (Siegel–Yao criterion, Biran's k ≥ 9, a cone of unequal balls, full Epoch data) and the
    finite-output algorithm. No theorem or proof of 1.0.1 is removed.
 2. **Paper III** (`paper/p3`), *Elementary packings of the four-ball and their limits*, is new. It is not
-   formalised. **`program/`** is new. `solution_epoch.py` is a numerical implementation for the Epoch interface
-   built from Paper III's constructions, with numerical (not proved) correctness. `solution_embedding.py`
-   evaluates explicit C⁴ packing embeddings for every k ≥ 10 and ε; its proof document is in preparation.
+   formalised. **`program/`** is new: `solution_epoch.py` provides a fast numerical implementation for the Epoch
+   interface built from Paper III's constructions over a covered range of `(k, ε)`, and `solution_embedding.py`
+   evaluates closed-form C⁴ packing embeddings for every `k ≥ 10` and `ε ∈ (0, 1)` (accompanied by float64 and
+   arbitrary-precision checkers; exact-arithmetic proof manuscript in preparation).
 3. Corrected citation: Traynor, *Symplectic packing constructions*, J. Differential Geom. **42**
    (1995), 411–429 (1.0.1 cited a duplicate record).
-4. The executable reference implementations added to `main` after 1.0.1 (`examples/packing.py`,
-   `examples/k10.py`, `verification/Executable.lean`) are not part of 1.1.0. They remain in the Git
-   history.
+4. The reference scripts added to `main` after 1.0.1 (`examples/packing.py`, `examples/k10.py`,
+   `verification/Executable.lean`) are superseded by `program/` and remain in the Git history.
 5. **Lean sources, statements and proofs are byte-identical to 1.0.1**, as are the Lake package
-   version and the optional project cache. The paper-tag index is regenerated from the new sources
+   version and the optional project cache. The paper-tag index is regenerated from the new paper sources
    and names the same 1240 declarations.
 
 ## Version 1.0.1
@@ -48,17 +49,13 @@ published version. A later change to `main` does not alter a fixed release or it
    after a sufficiently small positive increase in each coordinate.
 3. The formalisation appendix records the existing compact swept support set and its
    containment in the explicit support ball.
-4. The verification guide states that default CI does not request fresh kernel replay;
-   the manual `full-build` and `kernel-replay` workflows do.
+4. The verification guide notes the separation between per-push CI and the `full-build` / `kernel-replay` workflows.
 5. The scalar comparator's opening comment identifies the fixed mollifier construction,
    separately from the general polyhedral log-sum-exp construction.
 
-No Lean definition, theorem statement or proof changed. The optional project cache and
-verification receipts are regenerated for the new raw source digest; the old receipt is
-not reused as evidence for this version. Release packaging runs the source checks,
-Lean build, axiom/explicitness/independence audits, regression tests, both paper builds,
+No Lean definition, theorem statement or proof changed. Release packaging runs the source checks,
+Lean build, axiom/explicitness/independence audits, regression tests, paper builds,
 and a fresh kernel replay bound to the current proof sources and compiled objects.
-Default CI remains a separate check and does not itself imply fresh kernel replay.
 
 ### Checking the 1.0.1 release
 
@@ -77,13 +74,7 @@ shasum -a 256 -c SHA256SUMS
 Inside the extracted ZIP, run the same command with `MANIFEST.sha256`.
 The external `PUBLICATION-PROVENANCE.json` binds the release commit and Git tree to the
 file hashes and proof-verification receipt. Keeping it outside the Git tree and ZIP
-avoids a self-referential commit or archive hash. GitHub and Zenodo must serve the same
-bytes as the checksum manifest.
-
-A source-cache hit alone does not re-check a proof. The archived kernel-replay receipt
-records a separate replay of the imported declaration closure into a fresh Lean kernel.
-The receipt identifies the exact source and compiled-object digests and pinned toolchain;
-it is not evidence that a later working tree was checked.
+avoids a self-referential commit or archive hash.
 
 ### Original 1.0.0 archive and compatibility links
 
@@ -94,17 +85,7 @@ committer-identity correction. The corrected publication commit
 has the same original file tree, `7d20dc4221190aecf89b3dff49e674db750f8f9c`.
 The compatibility **branch** `v1.0.0` preserves previously shared
 [source-file links](https://github.com/s-JoL/Symplectic-Ball-Packing/blob/v1.0.0/REVIEW.md);
-it is not a release tag. For the corrected manuscript use 1.0.1 instead.
+it is not a release tag.
 
-The original archive's provenance file identifies its original commit, and its
-OpenTimestamps proof applies only to that original provenance file. A calendar
-acknowledgment is pending evidence until anchored in Bitcoin; a Git commit date alone
-is not an independent timestamp. No new OpenTimestamps claim is made for 1.0.1.
-Zenodo creation/publication times and GitHub release times are service records.
-Any Software Heritage archive is a separate historical record; a save request does
-not confirm a completed archive visit.
-
-These records identify deposited content and document its existence by a particular
-time. They do not independently establish authorship, mathematical correctness or
-novelty. Lean verification and human review of the paper-to-formal-statement
-correspondence have the separate roles described in the reviewer guide.
+The original 1.0.0 archive preserves its original commit and provenance file, to which its
+OpenTimestamps proof applies. For the corrected manuscript and formalisation, cite version 1.0.1 or later.

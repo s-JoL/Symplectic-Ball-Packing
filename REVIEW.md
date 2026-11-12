@@ -5,7 +5,10 @@
 The central object is a **specified smooth, compactly supported Hamiltonian**, not an existence
 assertion. In ℝ⁴, for each k ≥ 10 and 0 < ε < 1, its time-one flow moves the k closed unit balls
 at `(3i,0,0,0)`, `0 ≤ i < k`, into the open ball of radius `(k/(1−ε/4))^(1/4)`; the occupied
-volume fraction is exactly `1−ε/4`.
+volume fraction is exactly `1−ε/4`. (The Lean files index the same k centres 0-based as
+`epochCenter i = (3i,0,0,0)` for `0 ≤ i < k`, written 1-based as `(3i−3,0,0,0)` for `1 ≤ i ≤ k`
+in the papers; Theorem A packs at density `1 − ε/4`, the Epoch stability and algorithm theorems
+at `1 − ε/2`, both strictly above Epoch's threshold `1 − ε`.)
 
 Read the abstract and Theorem A of [Paper I](paper/p1/main.pdf), then compare
 [`four_dim_theorem`](verification/Statement.lean) with the definitions in
@@ -17,16 +20,16 @@ Read the abstract and Theorem A of [Paper I](paper/p1/main.pdf), then compare
 |---|---|---|
 | I, equal balls in the four-ball ([pdf](paper/p1/main.pdf), [supplement](paper/p1/supplement.pdf)) | Theorem A; Proposition B (robustness); Corollary C (Epoch data, k ≥ 10, ε < 7/8) | Lean, plus the paper |
 | II, general capacities and higher dimensions ([pdf](paper/p2/main.pdf), [supplement](paper/p2/supplement.pdf)) | Theorem 1 for all n ≥ 2 (n = 2: Σcᵢ² < C², 3cᵢ < C; n ≥ 3: Σcᵢⁿ < Cⁿ, cᵢ + cⱼ < C); Corollary 2 (Siegel–Yao criterion by explicit flows); Corollary 3 (equal balls: Biran's k ≥ 9 in ℝ⁴, k ≥ 2ⁿ for n ≥ 3); Corollary 4 (a cone of unequal balls in ℝ⁴); Corollary 5 (full Epoch data); the finite-output algorithm | Lean, plus the paper |
-| III, elementary packings ([pdf](paper/p3/main.pdf)) | Explicit toric/window packings and obstructions for those classes | The paper only; not formalised |
-| [`program/`](program/README.md) `solution_epoch.py` | A Hamiltonian in Epoch's interface for a range of (k, ε) | Numerical integration only (RK4 at N and 2N); the returned Hamiltonian is smooth near the trajectories, not globally |
-| [`program/`](program/README.md) `solution_embedding.py` | Explicit C⁴ packing embeddings for every k ≥ 10 and ε | Sampling checks in float64 (containment, disjointness, volume, round trip, continuity); proof document in preparation, not part of this release |
+| III, elementary packings ([pdf](paper/p3/main.pdf)) | Explicit toric/window packings and rigorous obstructions for lattice, balanced-profile and 8-column configurations | The paper; finite identities checked in exact rational arithmetic |
+| [`program/`](program/README.md) `solution_epoch.py` | A Hamiltonian generator in Epoch's interface for a covered range of `(k, ε)` | Numerical RK4 integration at N and 2N steps; C^∞ near trajectories for k > 10 (exterior branch cuts), piecewise C² across one window seam for k = 10 |
+| [`program/`](program/README.md) `solution_embedding.py` | Closed-form C⁴ packing embeddings for every k ≥ 10 and ε ∈ (0, 1) | Runtime check of hypotheses `(H0)–(H15)`, float64 sampling checks (`check_embedding.py`), and arbitrary-precision checks (`check_embedding_mp.py`); exact-arithmetic proof manuscript in preparation |
 
 All general statements assume k ≥ 1, C > 0, every cᵢ > 0, and pairwise disjoint closed source balls.
-The four-dimensional general theorem is not a classification of all unequal packings. The algorithm
-theorem gives termination and correctness, no practical runtime bound. Sufficiency of the Siegel–Yao
-criterion in dimension ≥ 6 was first proved in the OpenAI preprint (2026); Paper II gives an explicit
-motion. Construction and sufficiency avoid J-holomorphic curves; the necessity direction of Corollary 2
-uses the classical obstructions, and the dependency audit detects this.
+In dimension four the general theorem covers the sufficient regime `Σcᵢ² < C²`, `3cᵢ < C`. Sufficiency
+of the Siegel–Yao criterion in dimension ≥ 6 was first proved in the OpenAI preprint (2026); Paper II
+realises every admissible packing by an explicit Hamiltonian motion. Construction and sufficiency avoid
+J-holomorphic curves; the necessity direction of Corollary 2 uses the classical obstructions, and the
+dependency audit verifies this separation.
 
 ## Lean names and the papers
 
@@ -73,9 +76,11 @@ covers only the version the construction uses.
 | Explicitness and uniformity audits | The definitions meet the stated syntactic criteria; the machines do not branch classically (metaprograms, not verified) |
 | Independence audit | The construction side does not depend on packing existence theorems or curve analysis |
 | Fresh kernel replay (`scripts/check_kernel.sh`) | Stored proof terms re-checked in a new kernel environment |
-| Paper build | The three papers compile with no undefined references |
-| `program/check_epoch.py` | The Hamiltonian's flow packs the sampled sphere points at N and 2N RK4 steps (evidence, not proof) |
-| `program/check_embedding.py` | The embeddings pass sampled containment, disjointness, volume, round-trip and continuity checks (evidence, not proof) |
+| Paper build | The three papers compile with zero undefined references or overfull boxes |
+| `program/check_epoch.py` | The elementary Hamiltonian's flow packs sampled sphere points at N and 2N RK4 steps |
+| `program/check_embedding.py` & `check_embedding_mp.py` | The closed-form embeddings pass sampled containment, disjointness, volume coverage, and arbitrary-precision round-trip, symplecticity, and continuity checks |
 
-None of these certifies novelty, exposition, the correspondence between prose and formal statements,
-or a runtime bound. Commands and the trusted base are in [`verification/README.md`](verification/README.md).
+Human review assesses the correspondence between the mathematical prose and the formal definitions in
+`verification/Problem.lean`. The algorithm theorems establish termination and correctness; practical
+numerical evaluation is documented in [`program/README.md`](program/README.md). Commands and the trusted
+base are in [`verification/README.md`](verification/README.md).

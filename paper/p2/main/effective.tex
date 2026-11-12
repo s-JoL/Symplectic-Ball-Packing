@@ -117,8 +117,9 @@ computability, not running time.
 Epoch \cite{Epoch} asks for a Python function returning a PyTorch implementation of the Hamiltonian, which a numerical
 verifier integrates from sampled boundary points of the source balls within fixed time limits. We read its variables as
 $(Q,P)=(x,y)$, with $X_H=(\partial_PH,-\partial_QH)$, and its target as the time-one map. The construction and the algorithm are designed for proof and computability, not for integration within the
-verifier's limits of ten minutes per solution and ten seconds per evaluation. A numerical implementation for the
-Epoch interface, based on the elementary constructions of the third paper of the release, accompanies it; see the
-repository.
+verifier's limits of ten minutes per solution and ten seconds per evaluation. The repository includes two
+accompanying programs: one for the Epoch Hamiltonian interface, based on the elementary constructions of the third
+paper of the release over a covered range of $(k,\eps)$, and one evaluating closed-form $C^4$ packing embeddings
+directly for all $k\ge10$ and $\eps\in(0,1)$.
 \end{remark}
 \endgroup

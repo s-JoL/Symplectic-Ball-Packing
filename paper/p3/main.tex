@@ -790,13 +790,16 @@ Definition~\ref{def:config} would require configurations that are neither lattic
 (Corollary~\ref{cor:gap}, Theorem~\ref{thm:newton}), and for $k=10$ below $A=\frac{19}6$ at least three items
 without full-height column profile (Theorem~\ref{thm:eight}); we do not know whether such configurations exist.
 
-\begin{remark}[A numerical implementation]\label{rem:program}
-The release of this paper includes a program, \texttt{program/solution\_epoch.py}, which outputs Hamiltonians in
-the format of the Epoch AI problem \cite{Epoch} using lattice layouts found by computer search, windows and
-sheared windows (for some $k$, e.g.\ $k=12$, not the best layout of Section~\ref{sec:families}). For square
+\begin{remark}[Numerical implementations]\label{rem:program}
+The release of this paper includes two programs in \texttt{program/}. The first, \texttt{solution\_epoch.py}, outputs
+Hamiltonians in the format of the Epoch AI problem \cite{Epoch} using lattice layouts found by computer search, windows
+and sheared windows (for some $k$, e.g.\ $k=12$, not the best layout of Section~\ref{sec:families}): for square
 $16\le k\le10^5$ it reaches $\eps\approx0.002$, for other $10<k\le10^5$ an explicit $\eps_{\min}(k)$, and for
-$k=10$ it reaches $\eps=0.005$ with the configuration of Proposition~\ref{prop:ten}. Its correctness is supported by numerical integration, not proved, and is not part of the theorems of this paper;
-the Hamiltonians it returns are smooth near the trajectories of the balls but not globally.
+$k=10$ it reaches $\eps=0.005$ with the configuration of Proposition~\ref{prop:ten}. Its correctness is supported by
+numerical integration, not proved, and is not part of the theorems of this paper; the returned Hamiltonians have
+exterior branch cuts away from the ball trajectories and, for $k=10$, a $C^2$ window seam. The second,
+\texttt{solution\_embedding.py}, evaluates closed-form $C^4$ packing embeddings directly for every $k\ge10$
+and $\eps\in(0,1)$ using the geometry of \cite{SongP1}.
 \end{remark}
 
 \section*{Authorship and the role of AI}

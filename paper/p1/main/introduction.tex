@@ -45,9 +45,10 @@ outputs an explicit smooth Hamiltonian on $\R^4$ whose time-one map sends the cl
 $(3i-3,0,0,0)$ into a closed ball $B^4(R)$ about the origin with $k/R^4>1-\eps$. Theorem~\ref{thm:intro-4d} and
 Proposition~\ref{thm:intro-stability} answer the mathematical part of this construction problem; the algorithm with
 finite output is in~\cite{SongHD}. Epoch also asks for a PyTorch implementation that a numerical verifier integrates within fixed time limits; the
-construction here is designed for proof, not for fast integration. A numerical program for that interface,
-built from the elementary constructions of the third paper of the release (``Elementary packings of the four-ball
-and their limits''), covers a range of $(k,\eps)$ with numerically checked correctness; see the repository.
+construction here is designed for proof, not for fast integration. Two accompanying programs in the repository address
+numerical evaluation: one in Epoch's Hamiltonian interface, built from the elementary constructions of the third paper
+of the release (``Elementary packings of the four-ball and their limits'') over a covered range of $(k,\eps)$, and one
+evaluating closed-form $C^4$ packing embeddings directly for every $k\ge10$ and $\eps\in(0,1)$.
 
 \subsection{What was known}\label{sec:intro-prior}
 
