@@ -1,8 +1,8 @@
 # 辛球填充：中文导读
 
-作者 Liang Song。版本 **1.2.0**。历次版本归档于总 DOI
-[10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575)（1.0.1 版 DOI 为
-[10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498)）。
+作者 Liang Song。版本 **1.2.0** 已归档，版本 DOI 为
+[10.5281/zenodo.24209739](https://doi.org/10.5281/zenodo.24209739)。
+历次版本见[总 DOI](https://doi.org/10.5281/zenodo.23756575)及[归档说明](PROVENANCE.md)。
 [英文说明与核验命令](README.md) · [四页总览导读 (PDF)](paper/overview/main.pdf) · [审阅指南](REVIEW.md) · [Epoch 问题专页](EPOCH.md)
 
 ## 一分钟理解

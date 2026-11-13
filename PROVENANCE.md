@@ -10,9 +10,12 @@ radial–Alexander generator analysis (§8), strengthened checks for the existin
 and AST-transformed `mpmath` checker (`program/embedding_src/`, `program/solution_embedding.py`, `program/check_embedding_mp.py`), the
 Epoch problem guide (`EPOCH.md`), a reproducible numerical verification receipt
 (`program/release-check/NUMERICAL-VERIFICATION.json`), and a separately labelled experimental archive
-(`experiments/hamiltonian_lift/`, excluded from `program/` and certified deliverables). The
-all-version DOI [10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575) resolves to the latest deposited
-version; the version DOI of 1.2.0 is assigned by Zenodo on deposit. The record keeps the series title
+(`experiments/hamiltonian_lift/`, excluded from `program/` and certified deliverables).
+The [version DOI 10.5281/zenodo.24209739](https://doi.org/10.5281/zenodo.24209739) identifies the
+[Zenodo v1.2.0 deposit](https://zenodo.org/records/24209739), whose 11 files match the
+[GitHub v1.2.0 release](https://github.com/s-JoL/Symplectic-Ball-Packing/releases/tag/v1.2.0) by SHA-256.
+The [all-version DOI](https://doi.org/10.5281/zenodo.23756575) resolves to the latest deposited version.
+The record keeps the series title
 *Explicit Hamiltonian ball packings in every dimension*, the title of version 1.0.1; the four papers carry their own
 titles.
 

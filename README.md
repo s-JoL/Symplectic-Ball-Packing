@@ -5,8 +5,8 @@
 [![Verification](https://github.com/s-JoL/Symplectic-Ball-Packing/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/s-JoL/Symplectic-Ball-Packing/actions/workflows/verify.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
-Version **1.2.0**. Earlier versions are archived under [DOI 10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575)
-(version 1.0.1: [DOI 10.5281/zenodo.23763498](https://doi.org/10.5281/zenodo.23763498)); see [PROVENANCE.md](PROVENANCE.md).
+Version **1.2.0** is archived at [DOI 10.5281/zenodo.24209739](https://doi.org/10.5281/zenodo.24209739).
+For earlier releases, see the [all-version DOI](https://doi.org/10.5281/zenodo.23756575) and [PROVENANCE.md](PROVENANCE.md).
 [中文导读](README.zh-CN.md) · [4-page Overview (PDF)](paper/overview/main.pdf) · [Reviewer guide](REVIEW.md) · [Epoch problem guide](EPOCH.md)
 
 ## The result
