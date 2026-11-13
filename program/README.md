@@ -10,7 +10,7 @@ Two self-contained single-file Python generators inspired by the
 | Exact-real parameter range | — | every integer k ≥ 10 and every real ε ∈ (0, 1) ([Paper IV, §§2–7](../paper/p4/main.pdf)) |
 | `float64` operating range | every 10 ≤ k ≤ 10⁵ with ε ≥ `eps_min(k)` | tests implementation margin guards grouped as `(H0)–(H15)` and `split`, down to ε ≈ 10⁻¹⁵; this is a parameter check. Accurate `float64` round-trip is documented for moderate k (≲ 200) and ε ≳ 10⁻⁴ (use `mpmath` outside) |
 | ODE / grading regime | passes the documented sampled RK4 containment tests (`≤ 0.13 s/call`); global regularity differs from the smooth Hamiltonian required by the published problem | not an ODE Hamiltonian: evaluates closed-form maps and exact-real inverse certificates directly, no flow integration |
-| Regularity | C^∞ near trajectories for k > 10 (exterior branch rays); piecewise C² across one window seam for k = 10 | C⁴ symplectic embeddings on B⁰(r₊), r₊ > 1 |
+| Regularity | finite smoothness (`C⁷` spatially at the `kh1` origin and `C³` at trigonometric time junctions for `k > 10`, with exterior branch rays away from trajectories; piecewise `C²` across one window seam for `k = 10`) | C⁴ symplectic embeddings on B⁰(r₊), r₊ > 1 |
 | Mathematical & numerical basis | elementary layouts of [Paper III](../paper/p3/main.pdf); checked numerically (RK4 at N and 2N), not proved | exact-real proof in [Paper IV, Theorem 1.1](../paper/p4/main.pdf); `float64` (`check_embedding.py`) + 100-digit (`check_embedding_mp.py`) |
 | Checker | [`check_epoch.py`](check_epoch.py) | [`check_embedding.py`](check_embedding.py), [`check_embedding_mp.py`](check_embedding_mp.py) |
 
@@ -88,11 +88,14 @@ Results ([`release-check/`](release-check); CPU, float64, numpy blocked):
 ### Smoothness and numerical notes
 
 - **Smoothness scope.** Wrapping segments use an angle coordinate with a branch cut along an exterior ray; the
-  construction keeps the ball trajectories away from those rays. In the k = 10 family one segment is piecewise C² in
-  space across a moving surface that intersects the ball images (the seam between the round cap and straight side of a
-  stadium-shaped window, where third derivatives are bounded with a finite jump), and time junctions have finite
-  smoothness order. Thus the returned function passes the documented sampled RK4 containment and runtime tests, while its
-  global regularity on ℝ⁴ × [0, 1] differs from the globally smooth Hamiltonian required by the published problem.
+  construction keeps the ball trajectories away from those rays. Even near the ball trajectories for `k > 10`, spatial
+  regularity is finite (`C⁷` rather than `C⁸` across the `kh1` keyhole origin `w = 0`, which lies on ball-centre
+  trajectories, and `C³` in time at trigonometric segment junctions such as `sin4`), while in the `k = 10` family one
+  segment is piecewise `C²` in space across a moving surface that intersects the ball images (the seam between the round
+  cap and straight side of a stadium-shaped window, where third derivatives are bounded with a finite jump). Thus the
+  returned function passes the documented sampled RK4 containment and per-call runtime tests, while its regularity
+  differs from the globally `C^∞` Hamiltonian required by the published problem (which is constructed mathematically in
+  Papers I–II).
 - **Pointwise N vs. 2N phase differences in k = 10.** Six final windows are invariant under a circle action, along whose
   orbits RK4 accumulates phase differences (up to 2.5 at ε = 0.1 on dense sphere samples, > 99.99 % tangential to the
   window, changing radius by ≤ 4.6·10⁻⁴ and converging faster than fourth order upon further halving).

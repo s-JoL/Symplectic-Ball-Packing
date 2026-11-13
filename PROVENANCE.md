@@ -27,7 +27,8 @@ titles.
    symplectic packings of the four-ball by equal balls*) proves the ODE-free `C⁴` symplectic embedding chain, exact-real
    non-membership `Preimage` certificates (including Lemma 7.4), universal parameter validity `(H0)–(H15)` for all
    `k ≥ 10` and `ε ∈ (0, 1)`, and a radial–Alexander generator formula in terms of a normalised primitive with abstract
-   ODE trajectory certificates (Proposition 8.1). The global lift of these direct maps remains unfinished.
+   ODE trajectory certificates (Proposition 8.1); lifting these direct maps to a standalone global Hamiltonian flow
+   (distinct from Paper I's `C^∞` flow) is left to future work.
    **`program/`** contains two accompanying Python implementations: `solution_epoch.py`
    (fast PyTorch Hamiltonians in Epoch's ODE format over Paper III's elementary `(k, ε)` regime) and
    `solution_embedding.py` (built deterministically from `program/embedding_src/`, with `check_embedding.py` and

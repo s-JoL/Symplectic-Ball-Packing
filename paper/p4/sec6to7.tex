@@ -121,7 +121,7 @@ on band $j$, $dx_a\wedge dT_a+dx_b\wedge d(v_\ell-T_a)=dc\wedge d\psi_2+dp_2\wed
 by Proposition~\ref{prop:ks-symp}. Pulling back $\omega_0$ by $\chi_\kappa$ gives $\omega_{\mathrm{FS}}$, whose pullback
 by $W$ is $\sum_{l=1}^2dX_l\wedge dT_l$. Finally, consider the three band tests $\mathcal R_j=\{|X_{j+1}-X_{j+2}|<m,\ X_j>\frac13\}$
 (indices modulo $3$). Although the sets $\mathcal R_j$ overlap abstractly on the simplex $\Delta^2$, every actual image
-point of $\mathcal W\circ\mathcal B(\mathcal U_{\mathrm{post}})$ satisfies $p_2<h_K+\delta_{\mathrm{kh}}=\frac13-\frac13(D-3\delta_{\mathrm{kh}})<\frac13-\frac7{30}D$,
+point of $\mathcal W\circ\mathcal B(\mathcal U_{\mathrm{post}})$ satisfies $p_2<h_K+\delta_{\mathrm{kh}}=\frac13-\frac13(D-3\delta_{\mathrm{kh}})=\frac13-\frac7{30}D$,
 and on this image each band $j$ satisfies $\mathcal R_j$ exclusively while no sector point satisfies any $\mathcal R_l$:
 on band $0$, $X_0=x_r>\frac13$ and $|X_1-X_2|=|c|<m$ put the point in $\mathcal R_0$; if also $X_1=p_2+\lambda_+(c)>\frac13$,
 then since $\max_{|t|\le d_2}\lambda_+(t)=0.20D<\frac7{30}D$ we must have $c>d_2$, so $S(c)=c$, $\lambda_-(c)=0$, and
@@ -224,13 +224,26 @@ $\frac16-0.12-0.02>0.02>0$).
 is piecewise affine on $[-w_G,0]\cup[0,G_{\max}]$, its maximum is bounded by $\max\bigl(O(-w_G)-\mu T(1-\lambda_a),O(0)-\mu T,O(G_{\max})-\mu T\bigr)$;
 note $O(0)<O(G_{\max})=h$ when $G_{\max}>0$ ($O(-w_G)$ otherwise), and subtracting $\frac12\mu T(1-\lambda_a)>0$ in $h_K$
 ensures strict inequality $h_K>O(G)-\mu\operatorname{slack}(G)$ everywhere on $[-w_G,G_{\max}]$.
-Finally, since $s\ge\sqrt{10}$ and $\eta<0.005013$, we have $\frac32\mu T=\frac{9\eta}{8(3s-9)}<0.00388$, so
-$D\le\frac12\eta+\frac32\mu T<0.0064$, $\delta_{\mathrm{kh}}=0.10D<6.4\cdot10^{-4}$, and
-$h_K=\frac13(1-D)\ge h-\frac12\mu T>\frac{0.9974}{3}-0.0013>0.331>0.315$. Retaining the denominator of Definition~\ref{def:pistar}(3),
-$\beta_B=0.8\delta_{\mathrm{kh}}/\bigl(\pi(r_B+d_B)(r_B+8.4d_B)\bigr)<0.8\delta_{\mathrm{kh}}/h_K<0.8(6.4\cdot10^{-4})/0.331<0.0016<0.003$.
-Exactly as for $K_C$, $K_B$ satisfies (K1)--(K3) with $\rho_{1,B}\pi(d_B+r_B)^2+\frac12X_{w,B}=(0.7+0.1)\pi(d_B-r_{h,B})^2=0.8\pi(d_B-r_{h,B})^2$,
+Finally, since $3s-9\ge 3\sqrt{10}-9>0.48683$ and $\eta<0.005013$, we have $\frac32\mu T=\frac{9\eta}{8(3s-9)}<0.01159$,
+so $D\le\frac12\eta+\frac32\mu T<0.01410<0.015$, $\delta_{\mathrm{kh}}=0.10D<0.0015$, and
+$h_K=\frac13(1-D)>0.32833$. Setting $x=d_B/r_B=\frac{1}{1.05}\sqrt{0.8\delta_{\mathrm{kh}}/h_K}<0.058$ and retaining
+the full denominator of Definition~\ref{def:pistar}(3), the rational function
+$t\mapsto 1.05^2t^2/\bigl((1+t)(1+8.4t)\bigr)$ is strictly increasing on $(0,\infty)$, so
+\[
+ \beta_B = \frac{0.8\delta_{\mathrm{kh}}}{\pi(r_B+d_B)(r_B+8.4d_B)}
+ = \frac{1.05^2x^2}{(1+x)(1+8.4x)} < 0.0024 < 0.003.
+\]
+Hence $\rho_{1,B}<0.7\bigl(\frac{x}{1+x}\bigr)^2<0.0022<1$,
+$W_{2,B}/\beta_B=\frac{1}{1+\beta_B-\rho_{1,B}}-\frac{1}{3(1+\beta_B)}<\frac{1}{1-0.0022}-\frac{1}{3(1.0024)}<0.68$,
+and $W_{2,B}<0.68\beta_B<0.0017<\frac16$. Exactly as for $K_C$, $K_B$ satisfies (K1)--(K3) with
+$\rho_{1,B}\pi(d_B+r_B)^2+\frac12X_{w,B}=(0.7+0.1)\pi(d_B-r_{h,B})^2=0.8\pi(d_B-r_{h,B})^2$,
 $\delta_{\mathrm{rel},B}=0.8\delta_{\mathrm{kh}}$, $\pi d_B^2=0.8\delta_{\mathrm{kh}}/1.05^2<\delta_{\mathrm{kh}}$, and
-$\delta_{\mathrm{small},B}<0.01\delta_{\mathrm{kh}}$ (since $4\pi^2(1/8.4)(0.68)^2(0.0016)<0.004<0.01$), proving (H12)--(H13). On $[-m,m]$, for $|c|\le d_2$ we have
+\[
+ \frac{\delta_{\mathrm{small},B}}{\delta_{\mathrm{kh}}}
+ = 0.8\cdot 4\pi^2\,\frac{d_B}{r_B+8.4d_B}\,\Bigl(\frac{W_{2,B}}{\beta_B}\Bigr)^2\beta_B
+ < 0.8\cdot\frac{4\pi^2}{8.4}\cdot(0.68)^2\cdot 0.0024 < 0.0042 < 0.01,
+\]
+proving (H12)--(H13). On $[-m,m]$, for $|c|\le d_2$ we have
 $S(c)\le\sqrt{d_2^2+\sigma_0^2}=0.20\sqrt2\,D<0.283D<0.32D=m$, and for $d_2\le|c|\le m$, $S(c)=|c|\le m$; thus
 $S_{\max}=0.32D$, $\eta_1=\frac23-(0.20+0.32)=\frac{11}{75}>0.1466>0$, $3\eta_1=\frac{11}{25}=0.44\ge0.32=m/D$ (H14--H15),
 and $2m/D+3\delta_{\mathrm{kh}}/D=0.64+0.30=0.94<1$ (`split`).

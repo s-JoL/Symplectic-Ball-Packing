@@ -130,8 +130,10 @@ of Epoch AI \cite{Epoch} (see Remark~\ref{rem:eff-epoch-interface} for its numer
 
 \subsection{The construction and what is new}\label{p2:sec-intro-mechanism}
 
-We follow the mechanism of \cite{OpenAI2026}, and its sign convention $\iota_{X_Q}\omega_V=-dQ$ for fibre
-Hamiltonians, opposite to the convention for $H$. The model is a product $\Sigma_\ell\times\C^m$, $m=n-1$, of a compact
+To turn the higher-dimensional existence framework of \cite{OpenAI2026} into an explicit global Hamiltonian---and to
+cover general admissible capacities in dimension four---we work in explicit disc-bundle models (keeping the sign
+convention $\iota_{X_Q}\omega_V=-dQ$ of \cite{OpenAI2026} for fibre Hamiltonians, opposite to the convention for $H$).
+The model is a product $\Sigma_\ell\times\C^m$, $m=n-1$, of a compact
 piece of an affine curve with the fibre, with fibre moments $p_j=\pi|w_j|^2$. A ball $B(a)\subset\C\times\C^m$,
 sliced by the moments of its last $m$ coordinates, is a family of discs of capacity $(a-|p|)_+$, $|p|=\sum_jp_j$. For
 capacities below $\frac12$ the base is the diagonal curve $y_j^2=t^2-j$, and the base area above a fibre point is
@@ -182,7 +184,8 @@ dimensions. Siegel and Yao
 four-dimensional ball packing problems under products with closed surfaces. Explicit constructions go back to
 Traynor \cite{Traynor1995}, including full packings of $B^{2n}$ by $d^n$ equal balls; symplectic folding and wrapping
 are in \cite{SchlenkHand,SchlenkBook,Schlenk2018}, and Witt Nystr\"om \cite{WittNystrom2024} embedded large
-neighbourhoods of zero sections of normal bundles. It uses the rearrangement contraction of \cite[\S2]{OpenAI2026}, and the formal proof uses lemmas of the Lean library accompanying
+neighbourhoods of zero sections of normal bundles. The present paper uses the rearrangement contraction of
+\cite[\S2]{OpenAI2026}, and the formal proof uses generic lemmas of the Lean library accompanying
 \cite{OpenAI2026}; the packing existence theorem of that preprint is not used.
 
 \subsection{Organisation}\label{p2:sec-intro-organisation}

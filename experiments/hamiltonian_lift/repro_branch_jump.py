@@ -1,16 +1,13 @@
-"""Minimal reproduction of the multi-sheeted Liouville primitive branch issue in experimental solution_hamiltonian.py.
+"""Minimal fixed-offset (`+-1e-10`) neighbour failure probe for experimental `solution_hamiltonian.py`.
 
-Records two distinct failure mechanisms uncovered during pre-release review:
-  1. Plateau vs. collar branch-switch jump (resolved in current experimental source):
-     An earlier fast_plateau optimization used un-unwrapped local primitives inside |u| <= r_1 * sqrt(0.999999)
-     and ray-unwrapped primitives outside, jumping by integer multiples of scale_sq (e.g. -83.29 -> +81175.70 at
-     k=11, eps=0.05, t=0.6, ball 9). Unifying both sides on the ray-unwrapped branch eliminates that jump on
-     k=11, eps=0.05 (where H_left = -83.2921633895 and H_right = -83.2921633673 across +-1e-10).
-  2. Remaining unresolved ray-unwrapping sheet jump at smaller eps / larger k (e.g. k=12, eps=0.001, t=0.85, ball 11):
-     When a straight ray in B(r_dom) passes near |Z_0| -> 0 across Transfer3 seams, finite-depth ray bisection on Xb
-     can miss a +-1 turn winding pair of arg(Z_0), producing an integer-sheet jump between neighbouring rays in the
-     cutoff collar (whereas Stages 1..8 are single-valued closed-form and post-comparator convex interpolation
-     avoids |Z_0| = 0 analytically).
+Evaluates scalar `H(Q, P, t)` at fixed offsets `e = +-1e-10` straddling the `|u| = r_1 * sqrt(0.999999)` boundary:
+  1. Former plateau/collar normalization probe (`k=11, eps=0.05, t=0.6, ball 9`, resolved in current prototype):
+     An earlier `fast_plateau` branch used un-unwrapped local primitives inside `|u| <= r_1 * sqrt(0.999999)`
+     and ray-unwrapped primitives outside (`-83.29` vs `+81175.70`). Evaluating both sides with the same
+     basepoint-anchored primitive removes that mismatch (`H = -83.2921633895` vs `-83.2921633673` at `e = +-1e-10`).
+  2. Remaining unresolved neighbour jump probe (`k=12, eps=0.001, t=0.85, ball 11`):
+     At fixed `e = +-1e-10`, the prototype evaluates to `H = -10.3776616129` vs `+7.4615951668` across neighbouring
+     collar rays near small `|Z_0|` (see also `DIAGNOSTICS.md` on local seam-constant matching).
 """
 from __future__ import annotations
 

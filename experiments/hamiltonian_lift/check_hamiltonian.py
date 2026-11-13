@@ -1,30 +1,33 @@
-"""Numerical sampling corroboration of the Picard-Lindelof identity and support/smoothness for solution_hamiltonian.py.
+"""Diagnostic checker for the unfinished experimental prototype `experiments/hamiltonian_lift/solution_hamiltonian.py`.
 
-Mathematical proof vs. numerical check:
-  * Paper IV (paper/p4/main.pdf, Section 8, Theorem 8.1) proves over exact R that H_{k, eps} is C^3 with compact
-    spatial support and satisfies d/dt gamma_t^{(i)}(u) = J_0 grad_y H(t, gamma_t^{(i)}(u)) identically on [0, 1] x B(1),
-    which by Picard-Lindelof ODE uniqueness (also formalised in Lean 4 in verification/RK4Convergence.lean) implies
-    that the exact time-1 Hamiltonian flow of H_{k, eps} equals Embed(i, u - s_i) on every source unit ball.
-  * This script provides numerical sampling corroboration (NOT a proof by sampling, and NOT Epoch AI's fixed-step
-    float64 RK4 grader, which is obstructed on non-toric flows by hyperbolic sp(4) saddle eigenvalues +-lambda):
+Scope vs. formal theorems:
+  * `solution_hamiltonian.py` is an UNFINISHED experimental research prototype — NOT a certified global C^3
+    Hamiltonian deliverable (for instance `k = 11, eps = 0.001` and `k = 12, eps = 0.001` FAIL check 2C below;
+    see `logs/current_honest_check.log`, `README.md`, and `DIAGNOSTICS.md`).
+  * Paper IV (`paper/p4/main.pdf`, Section 8, Proposition 8.1) proves only the radial-collar generator formula in
+    terms of the global radial Poincare primitive and abstract ODE uniqueness / trajectory-residual bounds (the
+    abstract ODE lemmas are formalised in `verification/RK4Convergence.lean`); neither Paper IV nor Lean 4 certifies
+    this prototype, its parameter overrides, sampled collar heuristics, or finite ray-unwrapping scheme.
+  * This script runs diagnostic sampling checks on the prototype:
     it loads the submission from an isolated empty temporary directory, optionally blocks `numpy` (`--block-numpy`),
     and checks on sampled points and stage times:
-      2A hypotheses     all 42 analytic margins (H0)-(H15) of Paper IV hold in float64;
+      2A hypotheses     all 42 analytic margins (H0)-(H15) on the prototype's chosen Chain3 parameters hold in float64;
       2B support        H(Q, P, t) == 0 and grad H == 0 at sampled exterior points and at t in {0, 1},
                         plus scalar-float `t` vs tensor-`t` signature equivalence in Stage 5;
-      2C smoothness & scalar cross-branch continuity
+      2C smoothness & scalar cross-branch continuity diagnostics
                         1. finite autograd gradients (zero NaN/Inf) across sampled origins, cutoff collars, stage
                            junctions, and bisected micro-chords (1e-8 -> 1e-11);
-                        2. scalar `H(Q, P, t)` continuity across the `|u| = r_1` plateau/collar switch (`+-1e-10`
-                           straddle on group + wild balls across Stage 3 and Stage 5, directly catching any
-                           multi-sheeted action-constant mismatch) and radial cutoff profile scan `[0.95*r_1, 1.02*r_2]`;
-      2D Picard-Lindelof residuals  checks on sampled points/times:
+                        2. fixed-offset (`+-1e-10`) neighbour probe across the `|u| = r_1` plateau/collar boundary on
+                           group + wild balls across Stage 3 and Stage 5, plus radial cutoff profile scan
+                           `[0.95*r_1, 1.02*r_2]` (catches sheet jumps such as `k = 12, eps = 0.001`);
+      2D velocity-defect diagnostics  checks on sampled points/times:
                           1. boundary values gamma_0^{(i)}(u) == s_i + u and gamma_1^{(i)}(u) == Embed(i, u);
                           2. inter-stage C^1 junction residuals across all internal stage breaks;
                           3. ||X_H(gamma_t^{(i)}(u), t) - d/dt gamma_t^{(i)}(u)|| / max(1, ||dot||) across all
-                             6 stages t in (0, 1) (matching Paper IV, Theorem 8.1(iii) & Lean `picard_lindelof_curve_unique` / `picard_lindelof_epoch_certificate` in verification/RK4Convergence.lean);
-      2E sp(4) saddle spectrum  measures the hyperbolic symplectic Jacobian eigenvalues +-lambda of D_y X_H,
-                        quantifying why blind float64 initial-value ODE stepping amplifies errors as exp(+lambda * dt).
+                             6 stages t in (0, 1) (cf. Paper IV, Proposition 8.1(ii) & abstract Lean lemmas
+                             `picard_lindelof_curve_unique` / `picard_lindelof_epoch_certificate`);
+      2E sp(4) saddle spectrum  measures frozen spatial Jacobian eigenvalues +-lambda of D_y X_H along sampled curves
+                        (local conditioning diagnostic; see Paper IV, Remark 8.3).
 
   Tier 1 (Optional `--tier 1` — Black-Box Multi-Rate Adaptive Dormand-Prince RK45 ODE Integration, t = 0 -> 1):
     Integrates Hamilton's equations dQ/dt = +dH/dP, dP/dt = -dH/dQ from t = 0 to t = 1 calling ONLY

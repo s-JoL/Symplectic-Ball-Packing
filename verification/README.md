@@ -4,8 +4,10 @@ This directory is the entry point to the Lean 4 formalisation. It is meant to le
 decide, from a few short files, *what* has been proved; Lean checks *that* it has been proved
 by elaborating the full dependency closure.
 
-Theorem letters below (A–G) are those of version 1.0.1, which the Lean docstrings keep;
-[REVIEW.md](../REVIEW.md#lean-names-and-the-papers) maps them to Papers I and II of version 1.2.0
+Theorem letters below (A–G) are those of version 1.0.1, which the Lean docstrings in `Statement.lean` keep
+(notably 1.0.1 Corollary D = Paper II Corollary 2 for the Siegel–Yao criterion, whereas Paper I Corollary D in
+1.2.0 is the RK4 containment theorem in `RK4Convergence.lean`);
+[REVIEW.md](../REVIEW.md#lean-names-and-the-papers) maps all names to Papers I and II of version 1.2.0
 (Paper I: Theorem A, Proposition B, Corollary C, and Corollary D; Paper II: the general theorem, the corollaries and the algorithm).
 All Lean library and statement files of 1.0.1 are unchanged; version 1.2.0 adds `RK4Convergence.lean`
 (perturbed fixed-step RK4 containment and Picard–Lindelöf trajectory certificates).
@@ -62,14 +64,14 @@ regardless of the transparency setting. It changes which proofs the
 elaborator finds, not what is accepted: every proof term is checked by the kernel, which does not
 use transparency settings.
 
-## Reading order (five entry files, about 600 lines)
+## Reading order (six entry files, about 1000 lines)
 
 1. `Problem.lean` — phase space `ℝ^{2n}` with coordinates `(q, p)` (the papers' `(x, y)`), `ω₀ = Σ dqⱼ ∧ dpⱼ`, the
    Hamiltonian vector field (`ι_{X_H} ω₀ = dH`), capacity balls `{π‖y−s‖² ≤ c}`, `Admissible`,
    `BallsDisjoint`, `PackingSpec`, and the Epoch specification.
 2. `Algorithm.lean` — the top level of `packingHamiltonian`: branch selection and the
    Hamiltonian end, as definitional equalities.
-3. `Statement.lean` — Theorems A and C, Proposition B, the time-one map and Corollaries D–G,
+3. `Statement.lean` — 1.0.1 Theorems A and C, Proposition B, the time-one map and 1.0.1 Corollaries D–G,
    each stated for the exact terms of `Algorithm.lean`.
 4. `Computability.lean`, `EpochComputability.lean` — the algorithm. `Computability.lean` also
    shows, by `rfl`, how an output code decodes to `β_B · P`.
@@ -143,7 +145,8 @@ Two separate grounds support the claim that the proofs use no packing existence 
   theorems and `General.symplectic_neighbourhood_sufficient`. The batched command
   `#assert_construction_independence` excludes the vendored packing predicate and existence
   theorems, the holomorphic-line and two-ball obstruction proofs, the project's rigidity
-  wrapper and the listed curve-analysis modules. Corollary D's converse is checked separately:
+  wrapper and the listed curve-analysis modules. Paper II Corollary 2's converse (1.0.1
+  Corollary D, `neighbourhood_criterion`) is checked separately:
   it may use the classical obstructions, but no packing sufficiency theorem. The roots and
   excluded declarations are recorded in the audit source.
 * **Vendored usage.** `Audit/VendoredUsage.lean` lists, by module, the vendored
@@ -154,18 +157,20 @@ Two separate grounds support the claim that the proofs use no packing existence 
   construction listed by `#check_explicit`. The checked roots include Proposition B and
   `General.symplectic_neighbourhood_sufficient`.
 
-A positive control confirms that Corollary D's converse reaches `adapted_affine_line`, and
+A positive control confirms that `neighbourhood_criterion`'s converse reaches `adapted_affine_line`, and
 `test/DependencyAuditTest.lean` confirms that the traversal detects an obstruction used only
 inside a theorem's proof. Thus the no-curve claim applies to the construction and sufficiency;
-Corollary D's necessity direction uses the classical obstructions.
+Paper II Corollary 2's necessity direction uses the classical obstructions.
 
 ## Paper correspondence
 
 The main statements of Papers I and II correspond to the theorems of `Statement.lean`,
-`Computability.lean` and `EpochComputability.lean` as listed in REVIEW.md. Each agrees with the
+`Computability.lean`, `EpochComputability.lean` and `RK4Convergence.lean` as listed in REVIEW.md. Each agrees with the
 paper up to the differences of form listed in the section "Formal verification" of Paper I (Theorem A,
-Proposition B) and of Paper II (the general theorem, the corollaries and the algorithm). Corollary D is
-`neighbourhood_criterion` together with `flow_neighbourhood_embedding`. Theorem C(ii) is
+Proposition B, Corollaries C–D) and of Paper II (the general theorem, the corollaries and the algorithm). Paper II
+Corollary 2 (1.0.1 Corollary D) is
+`neighbourhood_criterion` together with `flow_neighbourhood_embedding`, while Paper I Corollary D is
+`epoch_rk4_convergence` together with `epoch_exact_rk4_convergence`. Theorem C(ii) (Paper II Theorem 1(ii)) is
 checked by the metaprogram `#check_explicit`, not by a theorem; uniformity of the machines
 (one program for all inputs) by `#check_constructive`.
 

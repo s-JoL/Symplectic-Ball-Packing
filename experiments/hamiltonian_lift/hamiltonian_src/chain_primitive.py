@@ -1,8 +1,10 @@
-"""Exact closed-form symplectic primitives S_i(X) and vectorized differentiable inverses for Paper IV Chain3.
+"""Experimental local potential evaluator and autograd patches for the unfinished Hamiltonian-lift prototype.
 
-Upgrades `primitives`, `keyhole`, `comparator`, `transfer`, and `chain` in-place for clean PyTorch
-`autograd` differentiation everywhere (including `X = 0`, `w = 0`, `psi = 0`, and `X = X_w`),
-and computes exact normalized symplectic actions `S_i(X)` satisfying `dS_i = f_i^* lambda_0 - lambda_0`.
+Patches `primitives`, `keyhole`, `comparator`, `transfer`, and `chain` in-place for PyTorch `autograd`
+differentiation and evaluates candidate local stage potentials + finite radial ray-unwrapping heuristics.
+NOTE: This module is part of the unfinished experimental prototype (NOT certified by Paper IV or Lean 4):
+straight-ray unwrapping misses integer turns near small `|Z_0|` and has an unapplied seam-constant discrepancy
+documented in `experiments/hamiltonian_lift/DIAGNOSTICS.md`.
 """
 from __future__ import annotations
 

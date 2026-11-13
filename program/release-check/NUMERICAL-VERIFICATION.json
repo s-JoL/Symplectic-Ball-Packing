@@ -1,12 +1,12 @@
 {
   "schema": "symplectic-numerical-verification-v1",
   "version": "1.2.0",
-  "verified_at_utc": "2026-11-13T13:38:27.539239+00:00",
+  "verified_at_utc": "2026-11-13T17:00:18.498751+00:00",
   "result": "PASS",
   "note": "Numerical corroboration receipt for the frozen program/ sources. Formal mathematical verification of Papers I-II and RK4Convergence.lean is recorded separately in RELEASE-VERIFICATION.json and KERNEL-REPLAY.json. experiments/hamiltonian_lift/ is archived solely as unfinished experimental material and is NOT certified.",
   "program_source_sha256": {
     "program/solution_epoch.py": "c4a5e34fae0f95e08f79c8772dc55870b0a24eaa9542132886ffa501b5a8645f",
-    "program/check_epoch.py": "f771f1a7bb4886894643d9499413e9e6f08dbf550d281dc6d65c6a2fff621322",
+    "program/check_epoch.py": "28ac74129a24dbd55625907b820977204f32916b8164d67b479c90efd2bac144",
     "program/build_embedding.py": "a8c4badd9952513dc1f7f4e7911393d984829ae499b802aa79361d28aa9f4d10",
     "program/solution_embedding.py": "12bc2073e8e6cb937c2f9220d177c4f4f61f7ae449b2d1d3cc7de61df5bdab26",
     "program/check_embedding.py": "e5a8353b98053d1a9bc3d45da359200e4510f781053adc408f611b3295fa75e2",
@@ -34,7 +34,7 @@
       "scope": "Paper III sheared-window k=10 family, fixed-step float64 RK4 at N=2592 and 2N=5184",
       "exit_code": 0,
       "passed": true,
-      "wall_seconds": 217.482,
+      "wall_seconds": 254.526,
       "metrics": {
         "k": 10,
         "eps": 0.1,
@@ -49,7 +49,7 @@
       "scope": "Paper III non-square lattice k=11 family, fixed-step float64 RK4 at N=400 and 2N=800",
       "exit_code": 0,
       "passed": true,
-      "wall_seconds": 7.165,
+      "wall_seconds": 6.661,
       "metrics": {
         "k": 11,
         "eps": 0.11,
@@ -64,7 +64,7 @@
       "scope": "Paper IV closed-form C^4 embeddings & Preimage in float64 (full checks A-G, 17 special + 1000 random/ball, 200k volume)",
       "exit_code": 0,
       "passed": true,
-      "wall_seconds": 14.293,
+      "wall_seconds": 15.711,
       "metrics": {
         "k": 10,
         "eps": 0.1,
@@ -82,7 +82,7 @@
       "scope": "Paper IV non-square k=11 eps=0.01 float64 checks A-F (containment, Richardson symplecticity, round-trip, disjointness, volume)",
       "exit_code": 0,
       "passed": true,
-      "wall_seconds": 2.655,
+      "wall_seconds": 2.185,
       "metrics": {
         "k": 11,
         "eps": 0.01,
@@ -100,7 +100,7 @@
       "scope": "AST-transformed 100-digit mpmath execution (target_iters=300, h=1e-33) on k=10, eps=0.002 across all 10 balls",
       "exit_code": 0,
       "passed": true,
-      "wall_seconds": 93.941,
+      "wall_seconds": 110.762,
       "metrics": {
         "k": 10,
         "eps": "0.002",
@@ -117,7 +117,7 @@
       "scope": "AST-transformed 100-digit mpmath execution (target_iters=300, h=1e-33, plus 1e-30 chord continuity) on non-square k=11, eps=0.01 across all 11 balls",
       "exit_code": 0,
       "passed": true,
-      "wall_seconds": 95.796,
+      "wall_seconds": 114.167,
       "metrics": {
         "k": 11,
         "eps": "0.01",
@@ -134,14 +134,15 @@
     "directory": "experiments/hamiltonian_lift",
     "known_issue": "Straight-ray branch sheet unwrapping in Stages 9-11 exhibits integer-turn scalar jumps across cutoff collars near small |Z_0| (e.g. k=12, eps=0.001, ball 11; see repro_branch_jump.py and logs/current_honest_check.log).",
     "source_sha256": {
-      "experiments/hamiltonian_lift/README.md": "178be93ef001a57a80efce8bce082b7f7ebd4429c045a8675859ee17a71c8a22",
-      "experiments/hamiltonian_lift/build_hamiltonian.py": "67fbee5c1ddea63db9cfa1a35daef24199451c781adbd23c7242cb38ea9da49c",
-      "experiments/hamiltonian_lift/solution_hamiltonian.py": "6d1f02dede709442ace2f27baa82fbb87c619b468a2200e619db56e0cd2edf2c",
-      "experiments/hamiltonian_lift/check_hamiltonian.py": "37d5d367dbdb0054b506e6bffe1a0586aac35db077e055ac7123a96c2f6cd25d",
-      "experiments/hamiltonian_lift/repro_branch_jump.py": "68feaba1cfa42ff95371ce4a4e301943cd194eb89388f869a74e2ed69930dc64",
-      "experiments/hamiltonian_lift/hamiltonian_src/chain_primitive.py": "99e771c1936be5e0b27a72624164ffa2a89b5377c6a781cf1c985cd0625341b2",
+      "experiments/hamiltonian_lift/README.md": "efff0784a5e03574e1f621571011b1e2de561d3aa66ad3ccdfb74c5759425608",
+      "experiments/hamiltonian_lift/DIAGNOSTICS.md": "320578e6ba3cd9590e17619815d5e644c61137edd5f9fa0a95c6491309ea15d6",
+      "experiments/hamiltonian_lift/build_hamiltonian.py": "6f175fb48d97d27634dbe96fb2345b1668befefa964a06eb4c7af36ebf00d013",
+      "experiments/hamiltonian_lift/solution_hamiltonian.py": "346cc8057dda9eafe8eb553a9b2054350a9c5ace9c2aa8d442a15de2c0e4e70e",
+      "experiments/hamiltonian_lift/check_hamiltonian.py": "cf8b6509ce0b0d8ac25878dada954338cc658f3548d7f0b73f259872efcb448e",
+      "experiments/hamiltonian_lift/repro_branch_jump.py": "e9d0b3ccf204520259546f7aad6ca086917b9f6c61f6d2268e6662c525bf674b",
+      "experiments/hamiltonian_lift/hamiltonian_src/chain_primitive.py": "0ba3327165bffeea18240cb17466b67be8a19ba86cf7f82a088a7634608ac056",
       "experiments/hamiltonian_lift/hamiltonian_src/h_primitives.py": "2f708098e2be698c33b28fe400a1d98c963675c6717ce402654f101a800ac8bf",
-      "experiments/hamiltonian_lift/hamiltonian_src/hamiltonian_general.py": "e990a15e3226a2e63db29d4ed4020059b51c6292e0a17bfca0fb8f4742c5d941",
+      "experiments/hamiltonian_lift/hamiltonian_src/hamiltonian_general.py": "b5a6775f0bdbcbec9e995d107a8de75f0c6c5178c345f7641a168f6381614f84",
       "experiments/hamiltonian_lift/logs/repro_branch_jump.log": "defadcf57a2a2a9b78713748a62c6c72890957a2ecc6e52ad0c47b63d78b1a14",
       "experiments/hamiltonian_lift/logs/current_honest_check.log": "841300ad469238980a36469abf536e7362ffd18497daaa5c10f2cf3c05cf7e52",
       "experiments/hamiltonian_lift/logs/current_honest_check.json": "3667e5e37fe43a517309148b220c45d966474ca581b0ae441010ee0e4f902665"

@@ -13,8 +13,8 @@
   spatial support, two-sided `±10⁻¹⁰` scalar continuity across the plateau/collar boundary `|u| = r_1`, and radial
   collar step continuity.
 - [`repro_branch_jump.py`](repro_branch_jump.py) & [`logs/repro_branch_jump.log`](logs/repro_branch_jump.log): minimal
-  standalone two-sided shrinking-offset (`±10⁻¹⁰`) reproducer for both the resolved `fast_plateau` normalization bug and
-  the remaining unresolved straight-ray sheet jump.
+  standalone fixed-offset (`±10⁻¹⁰`) neighbour probe illustrating both the resolved `fast_plateau` normalization bug and
+  the remaining unresolved collar jump (alongside the local seam-constant diagnostic in [`DIAGNOSTICS.md`](DIAGNOSTICS.md)).
 - [`logs/current_honest_check.log`](logs/current_honest_check.log) & [`logs/current_honest_check.json`](logs/current_honest_check.json):
   current honest checker output (`k ∈ {11, 12}, ε ∈ {0.05, 0.001}`: `2 PASS / 2 FAIL`), replacing stale pre-audit logs
   that checked gradients only on `|u| ≤ 1`.
@@ -39,10 +39,11 @@
      also produce large coarse steps), and conversely repeating `round`-based unwrapping on a denser finite grid or
      halting adaptive subdivision at a `tiny-span` threshold is only a numerical heuristic—not a rigorous certificate
      that zero `±1` winding pairs were missed between sample nodes.
-   - Establishing a genuine discontinuity vs. continuity requires two-sided shrinking-distance limits (`e → 0±`, as in
-     `repro_branch_jump.py`) for refutation, and an analytic single-valuedness / winding-free domain proof (for instance
-     interpolating the tail in convex post-comparator coordinates `(G − J(p), v, w)` bounded away from `Z₀ = 0`) for
-     all-`(k, ε)` certification. Fixing an individual counterexample does not prove global `C³` regularity.
+   - Establishing a genuine discontinuity vs. continuity requires two-sided shrinking-distance limits (`e → 0±`; note
+     that `repro_branch_jump.py` evaluates a fixed `±10⁻¹⁰` neighbour probe) for refutation, compatible local seam
+     constants (see [`DIAGNOSTICS.md`](DIAGNOSTICS.md)), and an analytic single-valuedness / winding-free domain proof
+     (for instance interpolating the tail in convex post-comparator coordinates `(G − J(p), v, w)` bounded away from
+     `Z₀ = 0`) for all-`(k, ε)` certification. Fixing an individual counterexample does not prove global `C³` regularity.
 4. **Other unproved heuristics in Stages 0–4:**
    - `box_radii`, `tau`, and the 4D translation lift amplitudes `A_lift0, A_lift4` rely on finite directional/time
      sampling (and an empirical formula for `k > 500`), and the small-`ρ` trajectory diagnostic (`0 < ρ ≤ 10⁻⁴`) uses

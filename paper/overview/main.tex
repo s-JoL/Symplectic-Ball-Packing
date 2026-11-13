@@ -112,14 +112,15 @@ full-packing theorem for all $k\ge9$ equal balls without $J$-holomorphic curves 
 packing with $\sum_ic_i^n<C^n$ and $c_i+c_j<C$ in $\R^{2n}$, $n\ge3$ (making every step of~\cite{OpenAI2026} explicit,
 with a finite rational contraction iterate and separate small-ball and one-large-ball returns).
 \item \emph{Theorems~5.2--5.3 (\texttt{original\_name\_algorithm}, \texttt{epoch\_name\_algorithm}).} One uniform
-halting oracle machine, given rational approximations to admissible data (or, for the Epoch problem, $k\ge9$ and a name
-for $\eps\in(0,1)$), outputs a rational polynomial $P$ and cutoff radius $B$ whose smooth compactly supported
-Hamiltonian $\beta_B\cdot P$ satisfies the packing specification at density $1-\eps/2$.
+halting oracle machine, given rational approximations to admissible data, outputs a rational polynomial $P$ and cutoff
+radius $B$ whose smooth compactly supported Hamiltonian $\beta_B\cdot P$ satisfies the packing specification (for the
+Epoch problem, $k\ge9$ and a name for $\eps\in(0,1)$, packing at density $1-\eps/2$).
 \end{enumerate}
 
 \smallskip\noindent\textbf{Paper~III (Elementary constructions and density barriers).}
-Constructs explicit toric and window embeddings packing $n(n+1)$ balls into $B(n+\frac12)$, every $k$ at density at
-least $1-1/\sqrt k$, and ten balls at density $360/361$ ($A=\frac{19}{6}$). It then proves three sharp obstructions in
+Constructs explicit toric and window embeddings packing $n(n+1)$ open balls of capacity $\lambda<1$ into the open ball
+$\Bo(n+\frac12)$ (written $B(A)$ in Paper~III), every $k$ at density at least $1-1/\sqrt k$, and ten balls at density
+$360/361$ ($A=\frac{19}{6}$). It then proves three sharp obstructions in
 its elementary configuration class: unimodular lattice triangles leave a positive density gap for every non-square $k$;
 $1$-periodically balanced profiles satisfy the Newton barrier $A^2\ge k+\alpha^2$, where
 $\alpha=\operatorname{dist}(A,\Z)$; and for $k=10$, any configuration with eight or more full-height columns satisfies
@@ -140,8 +141,9 @@ ODE trajectory certificates ($\phi_H^t(s_i+u)=\gamma_t^{(i)}(u)$ on $[0,1]$ iff 
 X_H(t,\gamma_t^{(i)}(u))$ on $[0,1]$, with Gr\"onwall endpoint bound $\delta e^L$; in Lean,
 \texttt{picard\_\allowbreak lindelof\_\allowbreak curve\_\allowbreak unique} uses Lipschitzness alone while
 \texttt{picard\_\allowbreak lindelof\_\allowbreak epoch\_\allowbreak certificate} assumes $H\in C^\infty$).
-The formula describes the radial collar stage. A global Hamiltonian lift of these maps is unfinished; the abstract
-Lean ODE lemmas do not certify such a lift.
+The formula describes the radial collar stage; lifting these direct maps to a standalone global Hamiltonian flow
+(distinct from Paper~I's $C^\infty_c$ flow) is left to future work, and the abstract Lean ODE lemmas do not certify
+such a lift.
 \end{enumerate}
 
 \section{Logical dependencies across the series}\label{sec:dependencies}
@@ -184,7 +186,8 @@ across multiple independent models.
 \item \textbf{Programs and Epoch problem mapping (\texttt{program/} and \texttt{EPOCH.md}):} Two official Python
 generators accompany the papers as numerical corroboration (neither is formalised in Lean):
 \texttt{solution\_\allowbreak epoch.py} passes documented sampled fixed-step \texttt{float64} RK4 and per-call timing
-checks in an elementary $(k,\eps)$ regime (with exterior branch rays and, for $k=10$, a piecewise $C^2$ window seam), and
+checks in an elementary $(k,\eps)$ regime (with finite smoothness at the keyhole origin and time junctions, exterior
+branch rays, and for $k=10$ a piecewise $C^2$ window seam), and
 \texttt{solution\_\allowbreak embedding.py} evaluates Paper~IV's closed-form $C^4$ maps and exact-real inverses for all
 $k\ge10$, $\eps\in(0,1)$, checked in \texttt{float64} (\texttt{check\_\allowbreak embedding.py}) and AST-transformed
 100-digit \texttt{mpmath} (\texttt{check\_\allowbreak embedding\_\allowbreak mp.py}). An unfinished prototype exploring

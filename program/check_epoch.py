@@ -23,6 +23,7 @@ import importlib.util
 import json
 import os
 import shutil
+import sys
 import tempfile
 import time
 import types
@@ -123,10 +124,15 @@ if __name__ == "__main__":
     ap.add_argument("--device", default="cpu")
     a = ap.parse_args()
     module = load_module(os.path.abspath(a.solution))
+    all_passed = True
     for k in a.k:
         for e in a.eps:
             steps = a.steps
             if a.recommended or not steps:
                 n_rec = module.recommended_steps(k, e)
                 steps = [n_rec, 2 * n_rec]
-            check(module, k, e, steps, a.N, a.device)
+            res = check(module, k, e, steps, a.N, a.device)
+            if not res.get("passed", False):
+                all_passed = False
+    if not all_passed:
+        sys.exit(1)

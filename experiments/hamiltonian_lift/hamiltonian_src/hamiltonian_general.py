@@ -1,23 +1,20 @@
-"""Compactly supported C^3 PyTorch Hamiltonian `H(Q, P, t)` for arbitrary `(k >= 10, 0 < epsilon < 1)`.
+"""Experimental / unfinished 6-stage PyTorch Hamiltonian prototype `H(Q, P, t)` (NOT a certified deliverable).
 
-Built directly on Paper IV's certified closed-form packing chain `Chain3(k, epsilon)` (verifying all
-42 analytic hypotheses `(H0)-(H15)` at initialization), using a 6-stage isotopy with **provably disjoint
-supports across all stages and O(1)-conditioned local germ nonlinearization**:
+Explores lifting Paper IV's closed-form packing chain `Chain3(k, epsilon)` into a 6-stage isotopy
+(see `experiments/hamiltonian_lift/README.md` and `DIAGNOSTICS.md` for unfinished status and known failure probes):
   - **Stage 0 `[0.00, 0.05]`**: Rigid Euclidean translation from initial separated `sources` `(3*i, 0, 0, 0)`
-    to well-conditioned O(1)-spaced local pivots `local_pivots[i]` (`local_park = local_pivots - a_i`).
+    to O(1)-spaced local pivots `local_pivots[i]` (`local_park = local_pivots - a_i`, lift amplitudes chosen by sampling).
   - **Stage 1 `[0.05, 0.10]`**: Symplectic unitary polar factor `U_i(sigma)` around `local_pivots[i]`.
   - **Stage 2 `[0.10, 0.15]`**: Symplectic SPD stretch factor `P_i(sigma) U_i` around `local_pivots[i]`,
     matching `Df_i(a_i)` at `sigma = 1`.
   - **Stage 3 `[0.15, 0.22]`**: Local Alexander germ nonlinearization `rho = tau * sigma in [0, tau]`
-    around `local_pivots[i]`, using quadratic action cancellation when `rho` is small so `float64`
-    precision holds uniformly even at large `k` where `tau << 1`.
+    around `local_pivots[i]`, using Gauss-Legendre quadrature when `0 < rho <= 1e-4`.
   - **Stage 4 `[0.22, 0.28]`**: Rigid 4D-lifted Euclidean translation from `local_pivots[i]` to the radial
-    entry pivots `park_pivots[i] = f_i(a_i) / tau`, matching Stage 5's `v = tau` state identically.
+    entry pivots `park_pivots[i] = f_i(a_i) / tau` (lift amplitudes chosen by sampling).
   - **Stage 5 `[0.28, 1.00]`**: Global radial-Alexander dilation `v(t): tau -> 1`,
-    `gamma_v^{(i)}(u) = f_i((1 - v)a_i + v u) / v`, reparametrized by a cancellation-free real-analytic clock.
-    Because `(1 - v)a_i + v B^4(r_2(v)) subset B^4(r_dom)` and `f_0(B^4(r_dom)), ..., f_{k-1}(B^4(r_dom))`
-    are pairwise disjoint by `(H15)`, dividing by `v > 0` keeps all `k` collar supports **analytically
-    pairwise disjoint for every `v in [tau, 1]`**.
+    `gamma_v^{(i)}(u) = f_i((1 - v)a_i + v u) / v`, reparametrized by a quadratic clock; while open-ball images
+    `f_i(B^0(r_dom)) / v` are pairwise disjoint for `v > 0`, straight-ray sheet unwrapping in Stages 9-11 still
+    exhibits unresolved scalar jumps in cutoff collars near small `|Z_0|` (e.g. `k = 12, eps = 0.001`).
 """
 from __future__ import annotations
 
@@ -166,7 +163,7 @@ class ExactPolarSymplecticPath:
 
 
 class GeneralPackingHamiltonian:
-    """Compactly supported C^3 Hamiltonian for any `(k >= 10, 0 < epsilon < 1)`."""
+    """Experimental / unfinished 6-stage Hamiltonian-lift prototype (not certified; see README.md & DIAGNOSTICS.md)."""
 
     T_BREAKS = (0.0, 0.05, 0.10, 0.15, 0.22, 0.28, 1.0)
 

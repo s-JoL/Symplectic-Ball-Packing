@@ -42,6 +42,7 @@ TRACKED_PROGRAM_FILES = (
 
 TRACKED_EXPERIMENTAL_FILES = (
     "experiments/hamiltonian_lift/README.md",
+    "experiments/hamiltonian_lift/DIAGNOSTICS.md",
     "experiments/hamiltonian_lift/build_hamiltonian.py",
     "experiments/hamiltonian_lift/solution_hamiltonian.py",
     "experiments/hamiltonian_lift/check_hamiltonian.py",
@@ -53,6 +54,73 @@ TRACKED_EXPERIMENTAL_FILES = (
     "experiments/hamiltonian_lift/logs/current_honest_check.log",
     "experiments/hamiltonian_lift/logs/current_honest_check.json",
 )
+
+LIVE_RUN_SPECS = (
+    {
+        "name": "epoch_k10_e0.1_rk4",
+        "program": "program/solution_epoch.py",
+        "checker": "program/check_epoch.py",
+        "args": ["program/solution_epoch.py", "--k", "10", "--eps", "0.1", "--recommended", "--N", "300"],
+        "with_mpmath": False,
+        "expected_k": 10,
+        "expected_eps": 0.1,
+        "scope": "Paper III sheared-window k=10 family, fixed-step float64 RK4 at N=2592 and 2N=5184",
+    },
+    {
+        "name": "epoch_k11_e0.11_rk4",
+        "program": "program/solution_epoch.py",
+        "checker": "program/check_epoch.py",
+        "args": ["program/solution_epoch.py", "--k", "11", "--eps", "0.11", "--recommended", "--N", "300"],
+        "with_mpmath": False,
+        "expected_k": 11,
+        "expected_eps": 0.11,
+        "scope": "Paper III non-square lattice k=11 family, fixed-step float64 RK4 at N=400 and 2N=800",
+    },
+    {
+        "name": "embedding_f64_k10_e0.1",
+        "program": "program/solution_embedding.py",
+        "checker": "program/check_embedding.py",
+        "args": ["program/solution_embedding.py", "--k", "10", "--eps", "0.1", "--h", "1e-7"],
+        "with_mpmath": False,
+        "expected_k": 10,
+        "expected_eps": 0.1,
+        "scope": "Paper IV closed-form C^4 embeddings & Preimage in float64 (full checks A-G, 17 special + 1000 random/ball, 200k volume)",
+    },
+    {
+        "name": "embedding_f64_k11_e0.01_geom",
+        "program": "program/solution_embedding.py",
+        "checker": "program/check_embedding.py",
+        "args": ["program/solution_embedding.py", "--k", "11", "--eps", "0.01", "--h", "1e-7", "--chords", "0", "--M", "50000"],
+        "with_mpmath": False,
+        "expected_k": 11,
+        "expected_eps": 0.01,
+        "scope": "Paper IV non-square k=11 eps=0.01 float64 checks A-F (containment, Richardson symplecticity, round-trip, disjointness, volume)",
+    },
+    {
+        "name": "embedding_mp100_k10_e0.002",
+        "program": "program/solution_embedding.py",
+        "checker": "program/check_embedding_mp.py",
+        "args": ["program/solution_embedding.py", "--k", "10", "--eps", "0.002", "--dps", "100", "--chords", "10", "--mp-random", "2"],
+        "with_mpmath": True,
+        "expected_k": 10,
+        "expected_eps": "0.002",
+        "scope": "AST-transformed 100-digit mpmath execution (target_iters=300, h=1e-33) on k=10, eps=0.002 across all 10 balls",
+    },
+    {
+        "name": "embedding_mp100_k11_e0.01",
+        "program": "program/solution_embedding.py",
+        "checker": "program/check_embedding_mp.py",
+        "args": ["program/solution_embedding.py", "--k", "11", "--eps", "0.01", "--dps", "100", "--chords", "10", "--mp-random", "2"],
+        "with_mpmath": True,
+        "expected_k": 11,
+        "expected_eps": "0.01",
+        "scope": "AST-transformed 100-digit mpmath execution (target_iters=300, h=1e-33, plus 1e-30 chord continuity) on non-square k=11, eps=0.01 across all 11 balls",
+    },
+)
+
+
+def expected_display_command(spec: dict) -> str:
+    return f"python3 {spec['checker']} " + " ".join(spec["args"])
 
 
 def sha256_file(rel_path: str) -> str:
@@ -132,10 +200,17 @@ def audit_suite_logs() -> dict:
 
 
 def python_runner(with_mpmath: bool = False) -> list[str]:
+    try:
+        import torch  # noqa: F401
+        if with_mpmath:
+            import mpmath  # noqa: F401
+        return [sys.executable]
+    except ImportError:
+        pass
     uv = shutil.which("uv") or str(Path.home() / ".local" / "bin" / "uv")
     if Path(uv).is_file():
         pkgs = ["--with", "torch"] + (["--with", "mpmath"] if with_mpmath else [])
-        return [uv, "run", *pkgs, "python3"]
+        return [uv, "run", "--python", ">=3.11,<3.15", *pkgs, "python3"]
     return [sys.executable]
 
 
@@ -152,62 +227,11 @@ def generate_receipt() -> None:
     )
     suite_summary = audit_suite_logs()
 
-    specs = [
-        {
-            "name": "epoch_k10_e0.1_rk4",
-            "program": "program/solution_epoch.py",
-            "checker": "program/check_epoch.py",
-            "args": ["program/solution_epoch.py", "--k", "10", "--eps", "0.1", "--recommended", "--N", "300"],
-            "with_mpmath": False,
-            "scope": "Paper III sheared-window k=10 family, fixed-step float64 RK4 at N=2592 and 2N=5184",
-        },
-        {
-            "name": "epoch_k11_e0.11_rk4",
-            "program": "program/solution_epoch.py",
-            "checker": "program/check_epoch.py",
-            "args": ["program/solution_epoch.py", "--k", "11", "--eps", "0.11", "--recommended", "--N", "300"],
-            "with_mpmath": False,
-            "scope": "Paper III non-square lattice k=11 family, fixed-step float64 RK4 at N=400 and 2N=800",
-        },
-        {
-            "name": "embedding_f64_k10_e0.1",
-            "program": "program/solution_embedding.py",
-            "checker": "program/check_embedding.py",
-            "args": ["program/solution_embedding.py", "--k", "10", "--eps", "0.1", "--h", "1e-7"],
-            "with_mpmath": False,
-            "scope": "Paper IV closed-form C^4 embeddings & Preimage in float64 (full checks A-G, 17 special + 1000 random/ball, 200k volume)",
-        },
-        {
-            "name": "embedding_f64_k11_e0.01_geom",
-            "program": "program/solution_embedding.py",
-            "checker": "program/check_embedding.py",
-            "args": ["program/solution_embedding.py", "--k", "11", "--eps", "0.01", "--h", "1e-7", "--chords", "0", "--M", "50000"],
-            "with_mpmath": False,
-            "scope": "Paper IV non-square k=11 eps=0.01 float64 checks A-F (containment, Richardson symplecticity, round-trip, disjointness, volume)",
-        },
-        {
-            "name": "embedding_mp100_k10_e0.002",
-            "program": "program/solution_embedding.py",
-            "checker": "program/check_embedding_mp.py",
-            "args": ["program/solution_embedding.py", "--k", "10", "--eps", "0.002", "--dps", "100", "--chords", "10", "--mp-random", "2"],
-            "with_mpmath": True,
-            "scope": "AST-transformed 100-digit mpmath execution (target_iters=300, h=1e-33) on k=10, eps=0.002 across all 10 balls",
-        },
-        {
-            "name": "embedding_mp100_k11_e0.01",
-            "program": "program/solution_embedding.py",
-            "checker": "program/check_embedding_mp.py",
-            "args": ["program/solution_embedding.py", "--k", "11", "--eps", "0.01", "--dps", "100", "--chords", "10", "--mp-random", "2"],
-            "with_mpmath": True,
-            "scope": "AST-transformed 100-digit mpmath execution (target_iters=300, h=1e-33, plus 1e-30 chord continuity) on non-square k=11, eps=0.01 across all 11 balls",
-        },
-    ]
-
     env = dict(os.environ)
     live_runs = []
-    for spec in specs:
+    for spec in LIVE_RUN_SPECS:
         cmd = [*python_runner(spec["with_mpmath"]), spec["checker"], *spec["args"]]
-        display_cmd = f"python3 {spec['checker']} " + " ".join(spec["args"])
+        display_cmd = expected_display_command(spec)
         print(f"[numerical-gate] running {display_cmd} ...", flush=True)
         t0 = time.monotonic()
         proc = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True)
@@ -288,8 +312,32 @@ def check_receipt() -> None:
             "`python3 scripts/verify_numerical_receipt.py --generate`"
         )
     live_runs = receipt.get("live_runs", [])
-    if len(live_runs) < 6 or not all(r.get("exit_code") == 0 and r.get("passed") is True for r in live_runs):
-        raise RuntimeError("NUMERICAL-VERIFICATION.json has missing or failing live_runs")
+    if len(live_runs) != len(LIVE_RUN_SPECS):
+        raise RuntimeError(
+            f"NUMERICAL-VERIFICATION.json expected exactly {len(LIVE_RUN_SPECS)} live_runs, found {len(live_runs)}"
+        )
+    seen_names: set[str] = set()
+    for run, spec in zip(live_runs, LIVE_RUN_SPECS):
+        name = run.get("name")
+        if name != spec["name"] or name in seen_names:
+            raise RuntimeError(
+                f"NUMERICAL-VERIFICATION.json live_runs mismatch or duplicate: expected {spec['name']!r}, got {name!r}"
+            )
+        seen_names.add(name)
+        exp_cmd = expected_display_command(spec)
+        if run.get("command") != exp_cmd:
+            raise RuntimeError(
+                f"NUMERICAL-VERIFICATION.json command mismatch for {name}: expected {exp_cmd!r}, got {run.get('command')!r}"
+            )
+        if run.get("exit_code") != 0 or run.get("passed") is not True:
+            raise RuntimeError(f"NUMERICAL-VERIFICATION.json live_run failed: {name}")
+        metrics = run.get("metrics", {})
+        if metrics.get("k") != spec["expected_k"] or metrics.get("eps") != spec["expected_eps"]:
+            raise RuntimeError(
+                f"NUMERICAL-VERIFICATION.json metrics (k, eps) mismatch for {name}: "
+                f"expected ({spec['expected_k']!r}, {spec['expected_eps']!r}), "
+                f"got ({metrics.get('k')!r}, {metrics.get('eps')!r})"
+            )
     audit_suite_logs()
     print(
         f"Numerical verification receipt check: PASS ({len(live_runs)} live runs, "

@@ -1,8 +1,11 @@
-"""Compactly supported C^3 Hamiltonian flows for symplectic ball packings of the four-ball.
+"""EXPERIMENTAL / UNFINISHED RESEARCH PROTOTYPE: multi-stage Hamiltonian-lift exploration (`solution_hamiltonian.py`).
 
-Generated deterministically from program/embedding_src/ and program/hamiltonian_src/ by program/build_hamiltonian.py.
-Bridges the Epoch AI Hamiltonian ODE interface (`Hamiltonian(Q, P, t)` in pure PyTorch float64) with the
-complete all-(k >= 10, 0 < eps < 1) closed-form C^4 symplectic packing chain of Paper IV (paper/p4/main.pdf, Section 8).
+STATUS: Experimental / Unfinished — NOT a passed or certified deliverable (do NOT cite as a verified global C^3
+Hamiltonian implementation; see experiments/hamiltonian_lift/README.md and DIAGNOSTICS.md).
+
+Generated deterministically from program/embedding_src/ and experiments/hamiltonian_lift/hamiltonian_src/ by
+experiments/hamiltonian_lift/build_hamiltonian.py. Explores lifting Paper IV's closed-form C^4 symplectic packing
+chain (`Chain3`, paper/p4/main.pdf, Section 8) into Epoch AI's `Hamiltonian(Q, P, t)` PyTorch float64 interface.
 
 Interface:
     solution(k, eps) returns self-contained Python source defining
@@ -11,28 +14,25 @@ Interface:
                                              returns H of shape (N,) in torch.float64. Spatial vector field
                                              (dQ/dt, dP/dt) = (+dH/dP, -dH/dQ) is computed via torch.autograd.grad.
         CONFIG                               parameters, analytic margins of (H0)-(H15), stage breaks, and support radius.
-        Embed(i, X) / Preimage(j, Y)         underlying Paper IV time-1 closed-form symplectic maps.
-        ExactTrajectory(t, X_local, i)       reference isotopy curve gamma_t^{(i)}(X_local) on |X_local| <= 1.
-        ExactTrajectoryAndVelocity(t, X, i)  reference (gamma_t^{(i)}(X), d/dt gamma_t^{(i)}(X)) diagnostic
+        Embed(i, X) / Preimage(j, Y)         underlying Paper IV time-1 closed-form symplectic maps (with experimental
+                                             parameter overrides when selected by GeneralPackingHamiltonian).
+        ExactTrajectory(t, X_local, i)       candidate isotopy curve gamma_t^{(i)}(X_local) on |X_local| <= 1.
+        ExactTrajectoryAndVelocity(t, X, i)  candidate (gamma_t^{(i)}(X), d/dt gamma_t^{(i)}(X)) diagnostic
                                              (six-point Gauss-Legendre integral evaluation for 0 < rho <= 1e-4).
     Coordinates (q1, q2, p1, p2) with Q = (q1, q2), P = (p1, p2), omega_0 = dq1 ^ dp1 + dq2 ^ dp2;
     initial unit balls are centred at (3*i, 0, 0, 0) for i = 0..k-1, and target radius is R = (k / (1 - eps))^(1/4).
 
-Mathematical & numerical properties (Paper IV, Theorem 8.1 & Remark 8.2):
-  * Covers every integer k >= 10 and every eps in (0, 1) over exact R (in IEEE-754 float64, checks all 42 analytic
-    hypothesis margins (H0)-(H15) and accepts down to eps ~ 10^-15), including non-square k below the toric/elementary
-    obstructions proved in Paper III (e.g. k = 11, eps = 0.05 < eps_toric(11) ~ 0.104).
-  * Uses a 6-stage compactly supported isotopy with analytically pairwise disjoint collar supports across all stages:
-      Stage 0 [0.00, 0.05]: rigid 4D-lifted translation from (3*i, 0, 0, 0) to well-conditioned O(1)-spaced local_pivots;
-      Stage 1 [0.05, 0.10]: Sp(4) unitary polar factor around local_pivots[i];
-      Stage 2 [0.10, 0.15]: Sp(4) SPD stretch factor matching Df_i(a_i);
-      Stage 3 [0.15, 0.22]: local Alexander germ nonlinearization rho in [0, tau] with exact single-branch action;
-      Stage 4 [0.22, 0.28]: rigid 4D-lifted translation from local_pivots[i] to radial entry pivots f_i(a_i) / tau;
-      Stage 5 [0.28, 1.00]: global radial-Alexander dilation f_i((1 - v)a_i + v u) / v with C^inf quadratic clock.
-  * Mathematical correctness over exact R is proved in Paper IV, Theorem 8.1 (via Picard-Lindelof ODE uniqueness,
-    also formalised in Lean 4); program/check_hamiltonian.py provides fast O(1)-second numerical sampling
-    corroboration of the differential identity d/dt gamma_t^{(i)}(u) = J_0 grad_y H(t, gamma_t^{(i)}(u))
-    (this bypasses Epoch AI's fixed-step float64 RK4 grader rule, which is obstructed by sp(4) saddle stiffness).
+Scope and known limitations (see README.md & DIAGNOSTICS.md):
+  * Paper IV, Proposition 8.1 proves the radial-collar Liouville generator formula in terms of the global radial
+    Poincare primitive and abstract ODE trajectory certificates (also formalised abstractly in Lean 4 in
+    verification/RK4Convergence.lean); neither Paper IV nor Lean 4 certifies this 6-stage prototype or its modified
+    implementation parameters, sampled collar radii, autograd patches, or finite ray-bisection sheet unwrapping.
+  * In Stages 0-4, collar radii, tau, and 4D translation lift amplitudes are selected by finite directional/time
+    sampling heuristics rather than analytic all-(k, eps) disjointness bounds; only Stage 5's open-ball image
+    disjointness follows from dividing f_i(B^0(r_dom)) by v > 0.
+  * In Stages 9-11 (`Transfer3`), straight radial ray unwrapping exhibits unresolved integer-turn scalar jumps across
+    cutoff collars near small |Z_0| (e.g. k = 12, eps = 0.001, ball 11 in repro_branch_jump.py and
+    logs/current_honest_check.log), in addition to the local seam-constant discrepancy recorded in DIAGNOSTICS.md.
 """
 _ORDER = ['primitives', 'keyhole', 'comparator', 'twists', 'transfer', 'chain', 'h_primitives', 'chain_primitive', 'hamiltonian_general']
 
@@ -1228,11 +1228,13 @@ def gauss_legendre_01(n: int = 32) -> tuple[torch.Tensor, torch.Tensor]:
     weights = evecs[0, :] ** 2
     return nodes, weights
 ''',
-    'chain_primitive': r'''"""Exact closed-form symplectic primitives S_i(X) and vectorized differentiable inverses for Paper IV Chain3.
+    'chain_primitive': r'''"""Experimental local potential evaluator and autograd patches for the unfinished Hamiltonian-lift prototype.
 
-Upgrades `primitives`, `keyhole`, `comparator`, `transfer`, and `chain` in-place for clean PyTorch
-`autograd` differentiation everywhere (including `X = 0`, `w = 0`, `psi = 0`, and `X = X_w`),
-and computes exact normalized symplectic actions `S_i(X)` satisfying `dS_i = f_i^* lambda_0 - lambda_0`.
+Patches `primitives`, `keyhole`, `comparator`, `transfer`, and `chain` in-place for PyTorch `autograd`
+differentiation and evaluates candidate local stage potentials + finite radial ray-unwrapping heuristics.
+NOTE: This module is part of the unfinished experimental prototype (NOT certified by Paper IV or Lean 4):
+straight-ray unwrapping misses integer turns near small `|Z_0|` and has an unapplied seam-constant discrepancy
+documented in `experiments/hamiltonian_lift/DIAGNOSTICS.md`.
 """
 from __future__ import annotations
 
@@ -2302,26 +2304,23 @@ class ChainWithPrimitive:
                 out.append((empty_idx, Y_target[:0]))
         return out
 ''',
-    'hamiltonian_general': r'''"""Compactly supported C^3 PyTorch Hamiltonian `H(Q, P, t)` for arbitrary `(k >= 10, 0 < epsilon < 1)`.
+    'hamiltonian_general': r'''"""Experimental / unfinished 6-stage PyTorch Hamiltonian prototype `H(Q, P, t)` (NOT a certified deliverable).
 
-Built directly on Paper IV's certified closed-form packing chain `Chain3(k, epsilon)` (verifying all
-42 analytic hypotheses `(H0)-(H15)` at initialization), using a 6-stage isotopy with **provably disjoint
-supports across all stages and O(1)-conditioned local germ nonlinearization**:
+Explores lifting Paper IV's closed-form packing chain `Chain3(k, epsilon)` into a 6-stage isotopy
+(see `experiments/hamiltonian_lift/README.md` and `DIAGNOSTICS.md` for unfinished status and known failure probes):
   - **Stage 0 `[0.00, 0.05]`**: Rigid Euclidean translation from initial separated `sources` `(3*i, 0, 0, 0)`
-    to well-conditioned O(1)-spaced local pivots `local_pivots[i]` (`local_park = local_pivots - a_i`).
+    to O(1)-spaced local pivots `local_pivots[i]` (`local_park = local_pivots - a_i`, lift amplitudes chosen by sampling).
   - **Stage 1 `[0.05, 0.10]`**: Symplectic unitary polar factor `U_i(sigma)` around `local_pivots[i]`.
   - **Stage 2 `[0.10, 0.15]`**: Symplectic SPD stretch factor `P_i(sigma) U_i` around `local_pivots[i]`,
     matching `Df_i(a_i)` at `sigma = 1`.
   - **Stage 3 `[0.15, 0.22]`**: Local Alexander germ nonlinearization `rho = tau * sigma in [0, tau]`
-    around `local_pivots[i]`, using quadratic action cancellation when `rho` is small so `float64`
-    precision holds uniformly even at large `k` where `tau << 1`.
+    around `local_pivots[i]`, using Gauss-Legendre quadrature when `0 < rho <= 1e-4`.
   - **Stage 4 `[0.22, 0.28]`**: Rigid 4D-lifted Euclidean translation from `local_pivots[i]` to the radial
-    entry pivots `park_pivots[i] = f_i(a_i) / tau`, matching Stage 5's `v = tau` state identically.
+    entry pivots `park_pivots[i] = f_i(a_i) / tau` (lift amplitudes chosen by sampling).
   - **Stage 5 `[0.28, 1.00]`**: Global radial-Alexander dilation `v(t): tau -> 1`,
-    `gamma_v^{(i)}(u) = f_i((1 - v)a_i + v u) / v`, reparametrized by a cancellation-free real-analytic clock.
-    Because `(1 - v)a_i + v B^4(r_2(v)) subset B^4(r_dom)` and `f_0(B^4(r_dom)), ..., f_{k-1}(B^4(r_dom))`
-    are pairwise disjoint by `(H15)`, dividing by `v > 0` keeps all `k` collar supports **analytically
-    pairwise disjoint for every `v in [tau, 1]`**.
+    `gamma_v^{(i)}(u) = f_i((1 - v)a_i + v u) / v`, reparametrized by a quadratic clock; while open-ball images
+    `f_i(B^0(r_dom)) / v` are pairwise disjoint for `v > 0`, straight-ray sheet unwrapping in Stages 9-11 still
+    exhibits unresolved scalar jumps in cutoff collars near small `|Z_0|` (e.g. `k = 12, eps = 0.001`).
 """
 from __future__ import annotations
 
@@ -2470,7 +2469,7 @@ class ExactPolarSymplecticPath:
 
 
 class GeneralPackingHamiltonian:
-    """Compactly supported C^3 Hamiltonian for any `(k >= 10, 0 < epsilon < 1)`."""
+    """Experimental / unfinished 6-stage Hamiltonian-lift prototype (not certified; see README.md & DIAGNOSTICS.md)."""
 
     T_BREAKS = (0.0, 0.05, 0.10, 0.15, 0.22, 0.28, 1.0)
 
