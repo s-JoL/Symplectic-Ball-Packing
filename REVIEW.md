@@ -14,15 +14,16 @@ Read the abstract and Theorem A of [Paper I](paper/p1/main.pdf), then compare
 [`four_dim_theorem`](verification/Statement.lean) with the definitions in
 [`Problem.lean`](verification/Problem.lean).
 
-## The three papers and the programs
+## The four papers and the programs
 
 | Part | Claims | How checked |
 |---|---|---|
-| I, equal balls in the four-ball ([pdf](paper/p1/main.pdf), [supplement](paper/p1/supplement.pdf)) | Theorem A; Proposition B (robustness); Corollary C (Epoch data, k ≥ 10, ε < 7/8) | Lean, plus the paper |
-| II, general capacities and higher dimensions ([pdf](paper/p2/main.pdf), [supplement](paper/p2/supplement.pdf)) | Theorem 1 for all n ≥ 2 (n = 2: Σcᵢ² < C², 3cᵢ < C; n ≥ 3: Σcᵢⁿ < Cⁿ, cᵢ + cⱼ < C); Corollary 2 (Siegel–Yao criterion by explicit flows); Corollary 3 (equal balls: Biran's k ≥ 9 in ℝ⁴, k ≥ 2ⁿ for n ≥ 3); Corollary 4 (a cone of unequal balls in ℝ⁴); Corollary 5 (full Epoch data); the finite-output algorithm | Lean, plus the paper |
-| III, elementary packings ([pdf](paper/p3/main.pdf)) | Explicit toric/window packings and rigorous obstructions for lattice, balanced-profile and 8-column configurations | The paper; finite identities checked in exact rational arithmetic |
-| [`program/`](program/README.md) `solution_epoch.py` | A Hamiltonian generator in Epoch's interface for a covered range of `(k, ε)` | Numerical RK4 integration at N and 2N steps; C^∞ near trajectories for k > 10 (exterior branch cuts), piecewise C² across one window seam for k = 10 |
-| [`program/`](program/README.md) `solution_embedding.py` | Closed-form C⁴ packing embeddings for every k ≥ 10 and ε ∈ (0, 1) | Runtime check of hypotheses `(H0)–(H15)`, float64 sampling checks (`check_embedding.py`), and arbitrary-precision checks (`check_embedding_mp.py`); exact-arithmetic proof manuscript in preparation |
+| I, equal balls in the four-ball ([pdf](paper/p1/main.pdf), [supplement](paper/p1/supplement.pdf)) | Theorem A; Proposition B (robustness); Corollary C (Epoch data, k ≥ 10, ε < 7/8) | Lean 4, plus the paper |
+| II, general capacities and higher dimensions ([pdf](paper/p2/main.pdf), [supplement](paper/p2/supplement.pdf)) | Theorem 1 for all n ≥ 2 (n = 2: Σcᵢ² < C², 3cᵢ < C; n ≥ 3: Σcᵢⁿ < Cⁿ, cᵢ + cⱼ < C); Corollary 2 (Siegel–Yao criterion by explicit flows); Corollary 3 (equal balls: Biran's k ≥ 9 in ℝ⁴, k ≥ 2ⁿ for n ≥ 3); Corollary 4 (a cone of unequal balls in ℝ⁴); Corollary 5 (full Epoch data); the finite-output algorithm | Lean 4, plus the paper |
+| III, elementary packings ([pdf](paper/p3/main.pdf)) | Explicit toric/window packings and rigorous obstructions for lattice, balanced-profile and 8-column configurations | The paper (not formalised in Lean); finite identities checked in exact rational arithmetic |
+| IV, closed-form equal-ball embeddings ([pdf](paper/p4/main.pdf)) | ODE-free C⁴ symplectic embeddings `B⁰(r₊) → B⁰(R)` (`r₊ > 1`) and exact left inverses for all k ≥ 10, ε ∈ (0, 1) over ℝ | The paper (not formalised in Lean) |
+| [`program/`](program/README.md) `solution_epoch.py` | A Hamiltonian generator in Epoch's ODE interface over an elementary `(k, ε)` range | Numerical RK4 integration at N and 2N steps; C^∞ near trajectories for k > 10 (exterior branch cuts), piecewise C² across one window seam for k = 10 |
+| [`program/`](program/README.md) `solution_embedding.py` ([`embedding_src/`](program/embedding_src/)) | Modular & bundled implementation of Paper IV's C⁴ embeddings and cancellation-free left inverses | Paper IV for exact reals; in float64, checks analytic margins `(H0)–(H15)`, special + random samples (`check_embedding.py`), and direct 100-digit `mpmath` execution of the submitted source (`check_embedding_mp.py`) |
 
 All general statements assume k ≥ 1, C > 0, every cᵢ > 0, and pairwise disjoint closed source balls.
 In dimension four the general theorem covers the sufficient regime `Σcᵢ² < C²`, `3cᵢ < C`. Sufficiency
@@ -72,15 +73,15 @@ covers only the version the construction uses.
 
 | Check | Establishes |
 |---|---|
-| Lean build and axiom gates | Accepted proofs of the stated theorems, using only the three standard axioms |
+| Lean build and axiom gates | Accepted proofs of the stated theorems of Papers I–II, using only the three standard axioms |
 | Explicitness and uniformity audits | The definitions meet the stated syntactic criteria; the machines do not branch classically (metaprograms, not verified) |
 | Independence audit | The construction side does not depend on packing existence theorems or curve analysis |
 | Fresh kernel replay (`scripts/check_kernel.sh`) | Stored proof terms re-checked in a new kernel environment |
-| Paper build | The three papers compile with zero undefined references or overfull boxes |
+| Paper & bundle build | All four papers compile with zero undefined references or overfull boxes; `solution_embedding.py` matches `program/embedding_src/` byte-for-byte |
 | `program/check_epoch.py` | The elementary Hamiltonian's flow packs sampled sphere points at N and 2N RK4 steps |
-| `program/check_embedding.py` & `check_embedding_mp.py` | The closed-form embeddings pass sampled containment, disjointness, volume coverage, and arbitrary-precision round-trip, symplecticity, and continuity checks |
+| `program/check_embedding.py` & `check_embedding_mp.py` | The closed-form embeddings pass special + random containment, disjointness, volume coverage, and direct 100-digit `mpmath` source execution (round-trip, normalised Richardson symplecticity, and interval-preserving continuity bisection to `10⁻³⁰`) |
 
 Human review assesses the correspondence between the mathematical prose and the formal definitions in
-`verification/Problem.lean`. The algorithm theorems establish termination and correctness; practical
-numerical evaluation is documented in [`program/README.md`](program/README.md). Commands and the trusted
-base are in [`verification/README.md`](verification/README.md).
+`verification/Problem.lean`, as well as the proofs in Papers III and IV. Practical numerical evaluation
+and its relationship to the Epoch interface are documented in [`program/README.md`](program/README.md).
+Commands and the trusted base are in [`verification/README.md`](verification/README.md).

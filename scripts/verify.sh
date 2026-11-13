@@ -18,6 +18,7 @@ echo '== source checks'
 node scripts/paper_tags.mjs --self-test > "$log/paper-tags-selftest.log"
 node scripts/check_publication_sources.mjs --self-test > "$log/sources-selftest.log"
 node scripts/check_publication_sources.mjs | tee "$log/sources.log"
+python3 program/build_embedding.py --check
 
 if [[ $mode != --paper ]]; then
   echo '== paper-to-Lean tags'

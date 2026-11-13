@@ -1,40 +1,44 @@
 # Programs
 
-Two self-contained single-file programs in the style of the
-[Epoch AI problem](https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing): `solution(k, ε)` returns
-Python source code. They make complementary trade-offs.
+Two self-contained single-file generators inspired by the
+[Epoch AI symplectic ball-packing problem](https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing):
+`solution(k, ε)` returns Python source code. They take complementary computational routes.
 
-| | [`solution_epoch.py`](solution_epoch.py) | [`solution_embedding.py`](solution_embedding.py) |
+| | [`solution_epoch.py`](solution_epoch.py) | [`solution_embedding.py`](solution_embedding.py) (built from [`embedding_src/`](embedding_src/)) |
 |---|---|---|
-| Returns | a Hamiltonian `Hamiltonian(Q, P, t)` (PyTorch, float64), Epoch's format | the k embeddings themselves: `Embed(i, X)`, `Preimage(j, Y)` |
-| Range | every 10 ≤ k ≤ 10⁵, for ε above an explicit `eps_min(k)` | every k ≥ 10 and every ε ∈ (0, 1) |
-| Runtime & RK4 budget | within Epoch's budget: fixed-step float64 RK4, ≤ 0.13 s per Hamiltonian call on 3000–20 000 points | not applicable: evaluates closed-form maps directly, no ODE integration |
-| Smoothness | C^∞ near trajectories for k > 10 (exterior branch rays); piecewise C² across one window seam for k = 10; finite-order at time junctions | C⁴ symplectic embeddings |
-| Correctness | numerical flow checks (RK4 at N and 2N) | runtime check of parameter hypotheses (H0)–(H15) (exact-arithmetic proof manuscript in preparation), plus float64 and arbitrary-precision checks |
+| Returns | a Hamiltonian `Hamiltonian(Q, P, t)` (PyTorch, float64), Epoch's ODE format | the k embeddings directly: `Embed(i, X)`, `Preimage(j, Y)`, `STAGES(i)`, `CONFIG` |
+| Exact-real parameter range | — | every integer k ≥ 10 and every real ε ∈ (0, 1) (proved in [Paper IV](../paper/p4/main.pdf)) |
+| Float64 operating range | every 10 ≤ k ≤ 10⁵ with ε ≥ `eps_min(k)` | checks analytic margins `(H0)–(H15)` in float64 (accepts down to ε ≈ 10⁻¹⁵; round-trip `< 10⁻⁷` for ε ≳ 10⁻⁶ and moderate k) |
+| Runtime & RK4 budget | within Epoch's budget: fixed-step float64 RK4, ≤ 0.13 s per Hamiltonian call on 3000–20 000 points | not an ODE Hamiltonian: evaluates closed-form maps directly, no flow integration |
+| Smoothness | C^∞ near trajectories for k > 10 (exterior branch rays); piecewise C² across one window seam for k = 10; finite-order at time junctions | C⁴ symplectic embeddings on B⁰(r₊), r₊ > 1 |
+| Mathematical & numerical basis | elementary layouts of [Paper III](../paper/p3/main.pdf); correctness checked numerically (RK4 at N and 2N), not proved | complete exact-real proof in [Paper IV](../paper/p4/main.pdf), plus float64 (`check_embedding.py`) and 100-digit (`check_embedding_mp.py`) checks |
 | Checker | [`check_epoch.py`](check_epoch.py) | [`check_embedding.py`](check_embedding.py), [`check_embedding_mp.py`](check_embedding_mp.py) |
 
+**Relation to the Epoch problem as posed.** Epoch asks for a single algorithm that, for every k ≥ 10 and ε ∈ (0, 1),
+outputs a globally smooth `Hamiltonian(Q, P, t)` integrable within fixed runtime limits. Papers I–II solve the
+mathematical and computability parts (with Lean 4 proofs), whereas their smooth non-toric flow is too stiff for
+fixed-step float64 RK4 integration. Here `solution_epoch.py` keeps the fast RK4 Hamiltonian interface over the
+elementary `(k, ε)` regime (with the smoothness caveats below), while `solution_embedding.py` covers all `(k, ε)` in
+exact arithmetic by evaluating the symplectic packing maps directly without ODEs.
+
 The generators and float64 checkers need only Python and PyTorch (`pip install torch`), with no runtime numpy
-dependency; [`check_embedding_mp.py`](check_embedding_mp.py) additionally uses `mpmath` (`pip install mpmath`) for
-arbitrary-precision verification. Neither program is part of the Lean formalisation. The smooth Hamiltonian of Papers
-I–II covers every (k, ε) with a Lean-checked proof, whereas its flow is too stiff for fixed-step float64 integration
-within Epoch's time limits.
+dependency; [`check_embedding_mp.py`](check_embedding_mp.py) additionally uses `mpmath` (`pip install mpmath`). Neither
+program is part of the Lean 4 formalisation.
 
 ## 1. `solution_epoch.py`: Epoch's interface, restricted ε
 
-`solution(k, epsilon)` returns the source of a module defining `Hamiltonian(Q, P, t)` whose time-1 flow is designed to
-move the k closed unit balls centred at `(3i − 3, 0, 0, 0)` into a ball `B(R)` about the origin with `k / R⁴ > 1 − ε`.
+`solution(k, epsilon)` returns the source of a module defining `Hamiltonian(Q, P, t)` whose time-1 flow moves the k
+closed unit balls centred at `(3i − 3, 0, 0, 0)` into a ball `B(R)` about the origin with `k / R⁴ > 1 − ε`.
 `recommended_steps(k, ε)` gives a step count N for fixed-step RK4.
 
 It implements **elementary constructions of the kind studied in Paper III**: lattice-toric layouts found by computer
 search, windows, and for k = 10 the sheared-window configuration of density 360/361 (Paper III, Prop. 3.3); for some k
 (e.g. 12) the layout is not the best one of Paper III. The configurations are moved into place by compositions of
-explicit Hamiltonian segments. The configurations and motions are explicit; that the time-1 flow packs is supported by
-numerical integration, not by a proof.
+explicit Hamiltonian segments. That the time-1 flow packs is supported by numerical integration, not by a proof.
 
 ### Coverage
 
-Inputs outside the covered range raise `NotImplementedError` and report the smallest covered ε; a Hamiltonian that is
-not expected to pack is never returned. `eps_min(k)` gives the bound.
+Inputs outside the covered range raise `NotImplementedError` and report `eps_min(k)`.
 
 | k | smallest ε covered |
 |---|---|
@@ -43,20 +47,18 @@ not expected to pack is never returned. `eps_min(k)` gives the bound.
 | other 10 < k ≤ 10⁵ | static deficit `1 − k/A²` of the best lattice layout, plus ≈ 0.002; e.g. k = 11: 0.104, 12: 0.148, 17: 0.097, 50: 0.051, 101: 0.041, 1000: 0.025 |
 | k > 10⁵ | not covered |
 
-For fixed non-square k these methods stop at a positive ε; Paper III proves obstructions explaining why.
+For fixed non-square k these methods stop at a positive ε; Paper III proves three obstructions explaining why.
 
 ### Numerical check
 
 [`check_epoch.py`](check_epoch.py) samples points on each unit sphere, integrates the flow with fixed-step RK4 (vector
-field by autograd) and reports `R` = the largest image norm, measured about the origin. It runs at
-`N = recommended_steps(k, ε)` and at `2N`; both must pass.
+field by autograd) and reports `R` = the largest image norm about the origin, at `N = recommended_steps(k, ε)` and `2N`.
 
 ```sh
 python check_epoch.py solution_epoch.py --k 10 --eps 0.1 --recommended --N 300
 ```
 
-Results of the release check ([`release-check/`](release-check); CPU, float64, numpy unavailable to the process;
-"difference" is the largest pointwise difference between the runs at N and 2N on these samples):
+Results ([`release-check/`](release-check); CPU, float64, numpy blocked):
 
 | k | ε | sample points | N, 2N | R at 2N | R needed | margin | difference | longest H call | result |
 |---|---|---|---|---|---|---|---|---|---|
@@ -73,99 +75,101 @@ Results of the release check ([`release-check/`](release-check); CPU, float64, n
 | 101 | 0.05 | 10100 | 800, 1600 | 3.209466 | 3.211068 | 1.6e-03 | 2.7e-05 | 0.08 s | pass |
 | 1000 | 0.03 | 20000 | 1600, 3200 | 5.664869 | 5.666398 | 1.5e-03 | 4.3e-06 | 0.13 s | pass |
 
-All twelve pass at both step counts. This checks sampled sphere trajectories under fixed-step float64 RK4; Epoch's
-internal verifier settings are not public.
-
 ### Smoothness and numerical notes
 
-- **Smoothness scope.** The wrapping segments use an angle coordinate with a branch cut (a ray from the wrapping
-  centre); across that ray the Hamiltonian jumps (for example k = 16, ε = 0.01, t = 0.415, Q = (0.2, 0.5),
-  P = (0.3, ±δ): H tends to 26.50 and 54.17 as δ → 0). The construction keeps the ball trajectories away from those
-  exterior rays, so the flow checks are unaffected. In the k = 10 family one segment is piecewise C² in space across a
-  moving surface that intersects the ball images (the seam between the round cap and the straight side of a
-  stadium-shaped window, where third derivatives are bounded with a finite jump), and the time dependence has finite
-  smoothness order at segment junctions. Accordingly, while the RK4 trajectory and runtime budgets are satisfied, the
-  returned function is not globally C^∞ on ℝ⁴ × [0, 1].
-- **Pointwise differences between N and 2N in the k = 10 family.** The final windows of six of the ten balls are
-  invariant under a circle action, and RK4 makes a phase error along its orbits. In a run with 2000 points per sphere at
-  ε = 0.1, a few points differ by up to 2.5 between N = 2592 and 2N, more than 99.99 % of it along the orbits; the
-  radius changes by at most 4.6·10⁻⁴ and every point stays in its window. Doubling the steps again reduces the
-  difference faster than fourth order (2.5, 0.071, 0.0023). A verifier that demands pointwise agreement at N would see
-  this; the packing is unaffected.
-- **Finite-difference symplecticity readings of the time-1 map can be large** (up to about 4·10² at k = 10,
-  ε = 0.005); they scale with the difference step and come from the steep gradients of the map, not from a failure of
-  symplecticity, which holds exactly for a Hamiltonian flow.
+- **Smoothness scope.** Wrapping segments use an angle coordinate with a branch cut along an exterior ray; the
+  construction keeps the ball trajectories away from those rays. In the k = 10 family one segment is piecewise C² in
+  space across a moving surface that intersects the ball images (the seam between the round cap and straight side of a
+  stadium-shaped window, where third derivatives are bounded with a finite jump), and time junctions have finite
+  smoothness order. Thus the returned function satisfies the RK4 trajectory and runtime checks, but is not globally
+  C^∞ on ℝ⁴ × [0, 1].
+- **Pointwise N vs. 2N phase differences in k = 10.** Six final windows are invariant under a circle action, along whose
+  orbits RK4 accumulates phase differences (up to 2.5 at ε = 0.1 on dense sphere samples, > 99.99 % tangential to the
+  window, changing radius by ≤ 4.6·10⁻⁴ and converging faster than fourth order upon further halving).
+- **Steep time-1 gradients.** Finite-difference symplecticity readings of the time-1 flow can reach ~4·10² at k = 10,
+  ε = 0.005 due to large spatial derivatives; symplecticity of the exact Hamiltonian flow holds automatically.
 
-## 2. `solution_embedding.py`: every k and ε, as explicit embeddings
+## 2. `solution_embedding.py` & `embedding_src/`: closed-form C⁴ embeddings for every (k, ε)
 
-`solution(k, eps)` returns the source of a module defining `Embed(i, X)` (the i-th embedding, in coordinates centred at
-ball i), `Preimage(j, Y)` (a candidate preimage under the j-th embedding), `STAGES(i)` (the factors of the i-th
-embedding with their inverses) and `CONFIG` (parameters, hypothesis margins, a float64 self-test). Nothing is
-integrated, so the output is not a Hamiltonian; it is the packing map itself.
+### Readable modular sources and deterministic bundle
 
-**The mathematics.** For every integer k ≥ 10 and every ε ∈ (0, 1) the construction defines r₊ > 1 and C⁴ symplectic
-embeddings f₀, …, f_{k−1} of B⁴(r₊) into B⁴(R), R = (k/(1 − ε))^{1/4}, with pairwise disjoint images. Each fᵢ is a
-composition of ten maps given by piecewise closed formulas in elementary functions, plus the root of one increasing
-scalar function per evaluation of a planar keyhole:
+For human review, the implementation is organised into six short, documented modules in [`embedding_src/`](embedding_src/),
+with zero dead classes:
 
-    f_i = S_out ∘ χ ∘ 𝒲 ∘ Π ∘ Φ_g ∘ Ψ_S ∘ F^(i) ∘ C_i ∘ KR ∘ S_in
+- [`embedding_src/primitives.py`](embedding_src/primitives.py) — trigonometric step `S_m`, antiderivative `I_m`, ramp `R_m`, plateau bump, polar helpers, safeguarded scalar Newton solver (`Paper IV, §2.1–2.2`).
+- [`embedding_src/keyhole.py`](embedding_src/keyhole.py) — generating-function planar keyhole `SmoothKeyhole`, closed-form datum `keyhole_star`, and fibrewise Knothe–Rosenblatt strip map `KRStrip` (`Paper IV, §2.3 & §3`).
+- [`embedding_src/comparator.py`](embedding_src/comparator.py) — non-iterative parameter tuple `PiStar` and 4D keyhole comparator `Comparator3` (`Paper IV, §4 & §7.1`).
+- [`embedding_src/twists.py`](embedding_src/twists.py) — deck-equivariant C⁴ toric twists `SpiralShear` routing the three marked fibres into the free corridor (`Paper IV, §5`).
+- [`embedding_src/transfer.py`](embedding_src/transfer.py) — post-chart corner keyhole `Band`, simplex gluing `W`, rotated ball chart, and cancellation-free left inverse (`Paper IV, §6`).
+- [`embedding_src/chain.py`](embedding_src/chain.py) — composite chain `Chain3`, grid-free analytic margin checks `(H0)–(H15)`, stage table, and deterministic special-point self-test (`Paper IV, §7.2–8`).
 
-(scaling; a Knothe–Rosenblatt strip map; cell to flat chart; a keyhole comparator for i ≥ 9; a twist moving three
-marked fibres into a free corridor; post chart; corner keyholes, sector and corner charts; the ball chart of CP² minus a
-line; scaling). The parameters are explicit functions of (k, ε_c), ε_c = min(ε, 1/100). The geometry is that of Paper I
-(a Fermat cubic model, marked fibres, a return to the ball avoiding a line), written here in closed form so that
-the packing can be evaluated point by point (the full check at k = 10 takes under a minute) without integrating a stiff
-flow. The program evaluates all parameter hypotheses `(H0)–(H15)` at construction time and raises `ValueError` if any
-margin fails; an exact-arithmetic proof manuscript for this closed-form chain is in preparation.
+[`build_embedding.py`](build_embedding.py) packs these six modules deterministically into the standalone single-file
+generator [`solution_embedding.py`](solution_embedding.py); `scripts/verify.sh` runs `python3 program/build_embedding.py --check`
+to guarantee byte-for-byte agreement.
 
-### Numerical and arbitrary-precision checks
+### Mathematical theorem vs. float64 evaluation
 
-[`check_embedding.py`](check_embedding.py) evaluates, on random samples in float64: (A) the images lie in B(R);
-(B) the Jacobian is symplectic (central differences at fixed step h); (C) `Preimage` inverts `Embed`; (D) no image
-point lies in the image of another ball; (E) uniform points in B(R) are covered with the fraction 1 − ε that volume
-preservation demands, never twice; (F) wall time; (G) continuity: chords are bisected to separation 10⁻¹¹ to detect
-jumps. [`check_embedding_mp.py`](check_embedding_mp.py) re-evaluates the exact map family and any float64-flagged
-points in D-digit `mpmath` arithmetic (default D = 100).
+[**Paper IV**](../paper/p4/main.pdf) (*Closed-form symplectic packings of the four-ball by equal balls*) proves in full
+(Theorem 1.1) that over exact real numbers, for **every** integer k ≥ 10 and **every** real ε ∈ (0, 1), there is
+`r₊ > 1` such that `f₀, …, f_{k−1}` are C⁴ symplectic embeddings of `B⁰(r₊)` into `B⁰(R)`, `R = (k/(1 − ε))^{1/4}`,
+with pairwise disjoint images, and `Preimage(i, ·)` is an exact left inverse on `fᵢ(B⁰(r₊))`.
+
+In IEEE-754 **float64**, two numerical effects apply and are explicitly separated:
+1. **Parameter underflow guard:** `solution(k, eps)` evaluates all 42 analytic margins `(H0)–(H15)` on the float64
+   parameters and raises `ValueError` if rounding zeroes a strict margin (for example `solution(10, 1e-16)`, where
+   `1.0 - 1e-16 == 1.0` in float64 makes `η = 0` and `a − ρ_b = 0`; `solution(10, 1e-15)` succeeds).
+2. **Conditioning and local Lipschitz scale:** gaps of width `O(ε_c / √k)` sit next to coordinates of order `1`, so
+   local Lipschitz constants reach `10⁸–10¹⁵` and condition numbers reach `10⁷–3·10⁹` (for instance, at `k = 10,
+   ε = 0.002` the centre `X = 0` of ball 9 maps to `|Z₀| ≈ 6.2·10⁻⁵`, amplifying 53-bit `1 − |y|²` rounding in
+   `unchart` to a float64 round-trip residual of `4.86·10⁻⁷`, which drops to `4.66·10⁻⁹³` in 100-digit arithmetic).
+   Every sector and band moment in `transfer.py` is recovered from non-negative coordinates without `1 − X₁ − X₂`
+   cancellation, so ball centres, axis boundary points `±e_a`, and zero-fibre points never produce `NaN`.
+
+### Checkers and verification logs
+
+1. **[`check_embedding.py`](check_embedding.py)** (float64; exits with code `1` on any failure): tests **17 deterministic
+   special points per ball** (ball centre `0`, `±e₁..±e₄`, and 8 zero-fibre/zero-base unit diagonals) plus random sphere
+   and interior samples for (A) containment `|Y| < R`, (B) **normalised** symplectic residual
+   `max |JᵀΩJ − Ω| / max(1, ‖J‖_F²)` via Richardson-extrapolated central differences at `h` and `h/2` (note: normalised
+   by `max(1, ‖J‖_F²)` because `‖J‖_F` is large), (C) round-trip `‖Preimage(i, Embed(i, X)) − X‖ ≤ rt_tol`,
+   (D) pairwise disjointness, (E) Monte Carlo volume coverage `1 − ε`, (F) wall time, and (G) chord-bisection continuity
+   down to separation `10⁻¹¹`.
+2. **[`check_embedding_mp.py`](check_embedding_mp.py)** (arbitrary-precision `mpmath`, default `D = 100` digits; exits
+   with code `1` on any failure): **executes the submitted Python source directly on a D-digit `mpmath` tensor backend**
+   (not an uncoupled model). Every run enforces in its final `PASS` gate:
+   - **0. Source consistency:** `‖Y_f64 − Y_mp64‖ / max(1, ‖J‖_F) ≤ 10⁻¹⁰` across all `k` balls;
+   - **1–3. Containment, round-trip (`≤ 10⁻⁸⁰`), disjointness, and Richardson symplecticity (`≤ 10⁻⁵⁰`)** on all
+     special points, random samples, and **100 %** of points flagged by B or C in float64;
+   - **4. Interval-preserving continuity bisection:** on **100 %** of chord intervals flagged by G in float64, retains
+     the larger-gap half-interval at every bisection step all the way down to separation `10⁻³⁰` (never switching to a
+     midpoint perturbation that could step to one side of a jump) and requires end-to-end image gap `≤ 10⁻¹⁰` with
+     linear shrinkage.
 
 ```sh
 python check_embedding.py solution_embedding.py --k 10 --eps 0.1 --h 1e-7
-python check_embedding_mp.py solution_embedding.py --k 101 --eps 0.01 --dps 100
+python check_embedding_mp.py solution_embedding.py --k 10 --eps 0.002 --dps 100 --chords 100
 ```
 
-Float64 results ([`release-check/embedding/`](release-check/embedding); CPU, float64, numpy unavailable to the process;
-`--h 1e-7`, `sym_tol = 1e-5`, `rt_tol = 1e-7`; 500 points on and 500 inside each ball, 100 chords of 3000 points per
-ball, 200 000 volume points):
+Float64 results ([`release-check/embedding/`](release-check/embedding); `--h 1e-7`, `sym_tol = 1e-5`, `rt_tol = 1e-7`):
 
-| k | ε | radius margin (A) | overlaps / double cover (D, E) | covered (E; expected 1 − ε) | round-trip > 10⁻⁷ (C) | symplectic defect (B) | G chord flags / Lipschitz est. | time (s) | geometry (A, D, E) | float64 fixed-step flags |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 10 | 0.1 | 4.30e-02 | 0 / 0 | 0.89999 ± 0.00067 | 0 | 1.6e-08 | 0 / 7.2e+08 | 58 | pass | none |
-| 10 | 0.01 | 1.07e-05 | 0 / 0 | 0.98969 ± 0.00023 | 0 | 1.6e-08 | 0 / 7.2e+08 | 58 | pass | none |
-| 10 | 0.002 | 4.06e-06 | 0 / 0 | 0.99795 ± 0.00010 | 0 | 4.5e-08 | 2 / 1.3e+11 | 57 | pass | G (2 chords) |
-| 10 | 0.0001 | 1.02e-05 | 0 / 0 | 0.99991 ± 0.00002 | 0 | 2.7e-05 | 143 / 1.7e+12 | 49 | pass | G (143), B |
-| 11 | 0.01 | 2.19e-05 | 0 / 0 | 0.99020 ± 0.00022 | 0 | 1.4e-08 | 4 / 1.0e+11 | 68 | pass | G (4) |
-| 17 | 0.01 | 3.93e-05 | 0 / 0 | 0.98993 ± 0.00022 | 0 | 6.0e-07 | 57 / 6.8e+11 | 162 | pass | G (57) |
-| 30 | 0.01 | 1.95e-05 | 0 / 0 | 0.99000 ± 0.00022 | 0 | 3.7e-08 | 207 / 1.2e+12 | 295 | pass | G (207) |
-| 50 | 0.01 | 1.26e-05 | 0 / 0 | 0.98977 ± 0.00022 | 0 | 2.3e-02 | 409 / 2.0e+12 | 476 | pass | G (409), B |
-| 101 | 0.01 | 6.76e-06 | 0 / 0 | 0.99006 ± 0.00022 | 2 | 8.6e-02 | 938 / 6.0e+12 | 901 | pass | G (938), B, C |
+| k | ε | radius margin (A) | overlaps / double cover (D, E) | covered (E; expected 1 − ε) | random round-trip > 10⁻⁷ | norm. symp. residual (B) | G chord flags / Lipschitz est. | geometry (A, D, E) | float64 fixed-step flags |
+|---|---|---|---|---|---|---|---|---|---|
+| 10 | 0.1 | 4.30e-02 | 0 / 0 | 0.89999 ± 0.00067 | 0 | 1.6e-08 | 0 / 7.2e+08 | pass | none (`PASS`) |
+| 10 | 0.01 | 1.07e-05 | 0 / 0 | 0.98969 ± 0.00023 | 0 | 1.6e-08 | 0 / 7.2e+08 | pass | none (`PASS`) |
+| 10 | 0.002 | 4.06e-06 | 0 / 0 | 0.99795 ± 0.00010 | 0 (ball 9 centre: 4.9e-07) | 4.5e-08 | 2 / 1.3e+11 | pass | G (2), special C (1) |
+| 10 | 0.0001 | 1.02e-05 | 0 / 0 | 0.99991 ± 0.00002 | 0 | 2.7e-05 | 143 / 1.7e+12 | pass | G (143), B, special C |
+| 11 | 0.01 | 2.19e-05 | 0 / 0 | 0.99020 ± 0.00022 | 0 | 1.4e-08 | 4 / 1.0e+11 | pass | G (4) |
+| 17 | 0.01 | 3.93e-05 | 0 / 0 | 0.98993 ± 0.00022 | 0 | 6.0e-07 | 57 / 6.8e+11 | pass | G (57) |
+| 30 | 0.01 | 1.95e-05 | 0 / 0 | 0.99000 ± 0.00022 | 0 | 3.7e-08 | 207 / 1.2e+12 | pass | G (207) |
+| 50 | 0.01 | 1.26e-05 | 0 / 0 | 0.98977 ± 0.00022 | 0 | 2.3e-02 | 409 / 2.0e+12 | pass | G (409), B |
+| 101 | 0.01 | 6.76e-06 | 0 / 0 | 0.99006 ± 0.00022 | 2 | 8.6e-02 | 938 / 6.0e+12 | pass | G (938), B, C |
 
-**Interpreting the fixed-step float64 flags.** Sampled containment (A), pairwise disjointness (D), and Monte Carlo
-volume coverage (E) pass in all nine runs; `check_embedding.py` exits with `PASS` only when zero fixed-step float64
-flags occur (`k = 10, ε ≥ 0.01`). The B, C, and G flags arise where local Lipschitz constants (10¹¹–6·10¹², from
-margins of order ε/√k next to coordinates of order 1) and condition numbers (10⁷–3·10⁹) exceed 53-bit float64
-resolution at fixed tolerances (`h = 1e-7`, chord separation `1e-11`). Running
-[`check_embedding_mp.py`](check_embedding_mp.py) at 100 decimal digits resolves every flagged point:
+Reproducible 100-digit `check_embedding_mp.py` logs ([`release-check/embedding_mp/`](release-check/embedding_mp)):
 
-- **G (continuity):** on all flagged chord intervals (including all 1117 intervals flagged across ten extended test
-  runs in 80- to 140-digit arithmetic), image gaps shrink strictly linearly down to separation 10⁻³⁰ (e.g. at `k = 10,
-  ε = 0.002`, both flagged intervals shrink to `< 1.4·10⁻¹⁹` at separation `10⁻³⁰` with slope ratio accurate to
-  `10⁻¹⁹`).
-- **B (symplecticity):** with central-difference step `h = 10⁻³³` in 100-digit arithmetic, the points flagged in
-  float64 (such as `2.7·10⁻⁵` at `k = 10, ε = 10⁻⁴` and `8.6·10⁻²` at `k = 101, ε = 0.01`) have symplectic defect
-  below `3·10⁻⁵³`.
-- **C (round trip):** the points exceeding `10⁻⁷` in float64 at `k = 101, ε = 0.01` invert with round-trip error below
-  `5·10⁻⁹²` in 100-digit arithmetic (`< 10⁻⁷³` at 80 digits).
-
-**Float64 operating range.** In standard float64, round-trip residuals stay below 10⁻⁷ for k = 10 down to ε ≈ 3·10⁻⁷
-and for k = 30–1000 down to ε ≈ 10⁻⁶; for ε_c = 0.01 they grow gradually with k (about 10⁻⁷ at k = 10⁴, 10⁻³ at
-k = 10⁶). Beyond those ranges `Embed` continues to return finite images inside B(R) and records 1000-point round-trip
-diagnostics in `CONFIG['float64_selftest']`.
+| k | ε | chords/ball | f64 vs mp64 consistency | 17×k special + random round-trip | re-checked f64 C flags | re-checked f64 B flags (h = 10⁻³³) | re-checked f64 G flags (sep ≤ 10⁻³⁰) | MP result |
+|---|---|---|---|---|---|---|---|---|
+| 10 | 0.1 | 100 | 1.7e-15 | ≤ 4.4e-88 | 0 flags | 0 flags (max 6.5e-71) | 0 flags | `PASS` |
+| 10 | 0.002 | 100 | 1.9e-15 | ≤ 4.5e-88 | 1/1 → 4.7e-93 | 0 flags (max 1.4e-61) | 2/2 → gap ≤ 9.7e-20 | `PASS` |
+| 10 | 0.0001 | 5 | 9.2e-15 | ≤ 1.4e-87 | 5/5 → ≤ 8.4e-90 | 1/1 → 3.1e-75 | 21/21 → gap ≤ 1.1e-14 | `PASS` |
+| 11 | 0.01 | 100 | 2.1e-15 | ≤ 2.2e-88 | 0 flags | 0 flags (max 4.5e-69) | 4/4 → gap ≤ 5.8e-20 | `PASS` |
+| 101 | 0.01 | 10 (rep.) | 9.4e-15 | ≤ 4.4e-88 | 3/3 → ≤ 1.3e-92 | 1/1 → 2.7e-75 | 11/11 → gap ≤ 5.9e-16 | `PASS` |

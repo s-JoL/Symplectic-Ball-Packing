@@ -1,0 +1,10 @@
+k=10 eps=0.002 dps=100 R_needed=1.77916966284
+   Hypotheses in 100-digit arithmetic: all 42 margins positive (tightest H3 K_C r_a=sqrt(a/pi) = 1.0e-12)
+0. Source consistency (float64 vs 100-digit mpmath on all 10 balls): max ||Y_f64 - Y_mp64|| / max(1, ||J||_F) = 1.878e-15 (tol 1.0e-10)
+1. Containment & round-trip (100-digit): finite = True, min radius margin = 3.562e-6, max round-trip error = 4.46e-88
+   Re-evaluated all 1/1 float64 C-flagged point(s): ok=True, max round-trip error = 4.66e-93
+2. Disjointness (100-digit, 10 balls cross-checked): overlaps = 0
+3. Symplecticity (100-digit Richardson, h=1e-25): max normalised residual = 1.37e-61, max ||J||_F = 8.61e+8
+4. Continuity (100-digit interval-preserving bisection to 1e-30): re-evaluated all 2/2 float64 G-flagged interval(s); continuous = True, max end-to-end gap at sep <= 1e-30 = 9.66e-20, max local Lipschitz = 1.33e+11
+RESULT {"k": 10, "eps": "0.002", "dps": 100, "chords": 100, "max_agree_scaled": 1.878330493116071e-15, "finite_mp": true, "min_radius_margin": 3.561789762579724e-06, "max_roundtrip_mp": 4.459960229397993e-88, "f64_c_flags": 1, "max_c_recheck_mp": 4.657234544836512e-93, "mp_overlaps": 0, "max_sym_mp": 1.3747562027145213e-61, "f64_b_flags": 0, "max_b_recheck_mp": 0.0, "f64_g_flags": 2, "g_all_continuous": true, "max_g_gap_1e30": 9.655286793852965e-20, "max_g_lipschitz": 132516191379.33946, "wall_s": 89.58180904388428, "pass_all": true}
+MP CHECK PASS (89.6 s)

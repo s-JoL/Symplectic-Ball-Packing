@@ -1,59 +1,1207 @@
-"""Explicit symplectic packings of the four-ball by k unit balls, for every k >= 10 and every 0 < eps < 1.
+"""Explicit closed-form C^4 symplectic packings of the four-ball by k unit balls.
 
-Interface (a relaxation of the Epoch AI format: an embedding instead of a Hamiltonian):
-    solution(k, eps) returns Python source defining
-        Embed(i, X) -> Y           the i-th embedding f_i, i = 0..k-1; X of shape (n, 4) in coordinates centred at the
-                                   centre of ball i, |X| <= 1; Y of shape (n, 4) in the target R^4.
-        Preimage(j, Y) -> (X, ok)  a candidate preimage of Y under f_j; ok = False means "no preimage".
-        STAGES(i)                  the factors of f_i with their inverses.
-        CONFIG                     the parameters, the margin of every hypothesis, and a float64 self-test.
-    Coordinates (q1, q2, p1, p2), omega = dq1^dp1 + dq2^dp2, R = (k / (1 - eps))^(1/4).
+Generated deterministically from the modular sources in program/embedding_src/ by program/build_embedding.py.
+Complete mathematical proofs of all stages and parameter bounds are given in Paper IV (paper/p4/main.pdf).
 
-The mathematics (for exact real arithmetic; the proof manuscript is in preparation): there are r_+ > 1 and C^4
-symplectic embeddings f_0, ..., f_{k-1} of the ball B^4(r_+) into B^4(R)
-with pairwise disjoint images. Each f_i is a finite composition of maps given by piecewise closed formulas in elementary
-functions, except that each evaluation of a planar keyhole needs the root of one strictly increasing scalar function:
+Interface (a direct-map counterpart of the Epoch AI format: embeddings instead of an ODE Hamiltonian):
+    solution(k, eps) returns self-contained Python source defining
+        Embed(i, X) -> Y           the i-th embedding f_i, i = 0..k-1; X of shape (n, 4) in coordinates centred at
+                                   ball i, |X| <= 1; Y of shape (n, 4) in the target R^4.
+        Preimage(j, Y) -> (X, ok)  left inverse of f_j on B^o(R_s); ok = False means Y has no preimage in B^o(r_+).
+        STAGES(i)                  the conformally symplectic stage factors of f_i with their inverses.
+        CONFIG                     parameters, analytic margins of (H0)-(H15), and float64 self-test diagnostics.
+    Coordinates (q1, q2, p1, p2), omega_0 = dq1 ^ dp1 + dq2 ^ dp2, R = (k / (1 - eps))^(1/4).
 
-    f_i = S_out o chi o W o Pi o Phi_g o Psi_S o F^(i) o C_i o KR o S_in
-
-(scaling; Knothe-Rosenblatt strip map; cell to flat chart; keyhole comparator for i >= 9; marked-fibre twist; post
-chart; corner keyholes, sector and corner charts; ball chart of CP^2 minus a line; scaling). The parameters are explicit
-functions of (k, eps_c), eps_c = min(eps, 1/100); for eps > 1/100 the packing for eps_c is used, which lies in the
-smaller ball B^4(R(eps_c)). The program evaluates the hypotheses of the construction for the numbers it uses and raises
-ValueError if one fails. Nothing is integrated: no ODE is solved anywhere.
-
-Floating point is not covered by the proof. The maps have very large local Lipschitz constants (gaps of size about
-eps / sqrt(k) next to coordinates of size 1), so float64 loses accuracy as eps decreases or k grows; see README.md.
+Mathematical scope vs. float64 scope:
+  * Over exact real numbers (with exact scalar roots in KR^-1 and KS_tau), Theorem 1.1 of Paper IV proves that for
+    every integer k >= 10 and every real eps in (0, 1), there is r_+ = sqrt(a / rho_b) > 1 such that f_0, ..., f_{k-1}
+    are C^4 symplectic embeddings of B^o(r_+) into B^o(R) with pairwise disjoint images, and Preimage(i, .) is an
+    exact left inverse on f_i(B^o(r_+)).
+  * In IEEE-754 float64, solution(k, eps) evaluates the analytic margins of (H0)-(H15) on the float64 parameters and
+    raises ValueError if rounding underflows any strict margin (e.g. eps <= 1e-16 where 1.0 - eps == 1.0). Because
+    the maps have steep local Lipschitz constants (~ 10^8 - 10^15 as eps -> 0 or k grows), float64 evaluation loses
+    precision for extreme (k, eps); see program/README.md and program/check_embedding_mp.py.
 """
-_ORDER = ['keyhole_comparator', 'adapted_layout', 'marked_fibres', 'chain_base', 'chain_strip', 'chain_theorem']
+_ORDER = ['primitives', 'keyhole', 'comparator', 'twists', 'transfer', 'chain']
+
 _SRC = {
-    'keyhole_comparator': '"""Keyhole comparator: an explicit closed-form comparator\nin the flat normal form  Omega = dq^dp + dG^dv  (fibre w = q + i p, x = pi|w|^2, theta = arg w / 2pi).\n\nConvention (Epoch / standard): for each canonical pair (a, b) in {(q,p), (x,theta), (G,v)}:\n    a\' = dH/db,  b\' = -dH/da.\nLevel-G data (normalised units, target capacity 1):\n    s = sqrt k, a = t0/s, h = t0/3, cs = 3s-9, g = 3(1-t0), T = g/cs\n    outer circle O(G) = (G+3)/(3s), hole E(G) = (G/cs)_+, stack slice D(Ptop(G)), Ptop = (ka-3-G)/(k-3s)\n    identity  O - E_lin - Ptop = T  (E_lin = G/cs) for all G >= -g.\nMap at level G:  kappa_G = Shift_{c(G)} o KH_{tau_G(G)}\n    KH_tau : polar lift about the eccentric centre c* = (-d, 0) of the circle isotopy Phi_tau = Psi_tau^{-1},\n             Psi_tau = (1-tau) id + tau Psi (closed form);  (X, phi) -> (X Psi_tau\'(psi), psi), Psi_tau(psi) = phi\n    Shift_c: (x, theta) -> (x + c, theta) about the origin on the window |theta| >= theta0.\n4D map F(G, v, w) = (G, v + dv, kappa_G(w)),  dv = -tau_G\'(G) X (Psi(psi)-psi) - c\'(G) vartheta(theta).\n"""\nimport math\nimport torch\n\nF64 = torch.float64\nPI = math.pi\n\n\nclass TrigStep:\n    """Smooth step Sm on [0,1] with Sm\' = sin^{2m}(pi u)/c0 (C^{2m}); closed-form antiderivative ISm."""\n\n    def __init__(self, m=4):\n        self.m = m\n        c0 = math.comb(2 * m, m)\n        self.a = [2 * (-1) ** j * math.comb(2 * m, m - j) / c0 for j in range(1, m + 1)]\n\n    def d(self, u):\n        u = u.clamp(0, 1)\n        out = torch.ones_like(u)\n        for j, aj in enumerate(self.a, 1):\n            out = out + aj * torch.cos(2 * PI * j * u)\n        return out\n\n    def __call__(self, u):\n        u = u.clamp(0, 1)\n        out = u.clone()\n        for j, aj in enumerate(self.a, 1):\n            out = out + aj * torch.sin(2 * PI * j * u) / (2 * PI * j)\n        return out\n\n    def I(self, u):\n        """int_0^u Sm for u in [0,1] (clamped); I(1) = 1/2."""\n        u = u.clamp(0, 1)\n        out = 0.5 * u * u\n        for j, aj in enumerate(self.a, 1):\n            out = out + aj * (1 - torch.cos(2 * PI * j * u)) / (2 * PI * j) ** 2\n        return out\n\n    def ramp(self, u):\n        """0 (u<=0), ISm(u) (0<=u<=1), u-1/2 (u>=1): C^{2m+1} convex ramp."""\n        return self.I(u) + (u - 1).clamp_min(0)\n\n    def dd(self, u):\n        uc = u.clamp(0, 1)\n        out = torch.zeros_like(uc)\n        for j, aj in enumerate(self.a, 1):\n            out = out - aj * 2 * PI * j * torch.sin(2 * PI * j * uc)\n        return out\n\n\nclass KCParams:\n    """All parameters as explicit functions of (k, eps) and budget fractions.\n\n    kappa_b : density target 1 - eps/kappa_b (kappa_b = 4 is the paper\'s Theorem A budget).\n    lam_a, lam2 : keyhole switch-on band [-lam_a g, -lam2 g], shift ramp [-lam2 g, 0].\n    mu      : guaranteed outer margin  O(G) - x\'\' >= mu * slack(G),  slack(G) = T (1 + min(G,0)/g).\n    f0, f1  : keyhole nesting budget  delta <= max(f0, f1) T  (absolute / relative part).\n    wfrac   : W1 = wfrac (W1 + W2).\n    """\n\n    def __init__(self, k, eps, kappa_b=4.0, lam_a=0.9, lam2=0.3, mu=0.5, f0=0.25, f1=0.25, wfrac=1.0 / 3, m=4,\n                 rho1_safety=0.8, hole_safety=0.9, xc_div=200.0):\n        self.k, self.eps, self.kappa_b = k, eps, kappa_b\n        s = math.sqrt(k)\n        eta = 1 - math.sqrt(1 - eps / kappa_b)\n        t0 = 1 - eta / 2\n        self.s, self.eta, self.t0 = s, eta, t0\n        self.a, self.h, self.cs, self.g = t0 / s, t0 / 3, 3 * s - 9, 3 * (1 - t0)\n        self.rho_ball = (1 - eta) / s\n        self.T = self.g / self.cs\n        self.Gmax = s * t0 - 3\n        self.kk = k - 3 * s                      # slope denominator of Ptop\n        self.lam_a, self.lam2, self.mu, self.f0, self.f1, self.wfrac, self.m = lam_a, lam2, mu, f0, f1, wfrac, m\n        self.wG = lam_a * self.g                 # keyhole switch-on band [-wG, -w2]\n        self.w2 = lam2 * self.g                  # shift ramp [-w2, 0]\n        T = self.T\n        ra = math.sqrt(self.a / PI)\n        self.ra = ra\n        self.uB_over_d = math.sqrt(2 * 1.1 / xc_div)         # u_B/d (rho_out <= 1.1 assumed, checked)\n        self.d = math.sqrt(f0 * T / PI) / (1 + self.uB_over_d)\n        d = self.d\n        self.beta = f1 * T / (PI * (ra + d) * (ra + 8.4 * d))   # rho_out - 1\n        self.rho_out = 1 + self.beta\n        # first pass for W1 with rho1 ~ 0, then fix rho1, then exact Ws\n        Ws = self.beta / self.rho_out\n        for _ in range(4):\n            W1 = wfrac * Ws\n            rh = hole_safety * d * math.sin(2 * PI * W1)\n            rho1 = rho1_safety * ((d - rh) / (d + ra)) ** 2\n            Ws = (self.rho_out - 1) / (self.rho_out - rho1)\n        self.Ws, self.W1, self.W2 = Ws, wfrac * Ws, (1 - wfrac) * Ws\n        self.rh, self.rho1 = rh, rho1\n        self.x0 = PI * rh * rh                     # hole (origin-centred action) after KH\n        self.theta0 = self.W1                      # slit half-width (turns) about the origin\n        self.xc = rho1 * PI * d * d / xc_div       # cutoff scale about c*\n        self.XB = 2 * self.xc * self.rho_out / rho1\n        self.delta0 = PI * (d + math.sqrt(self.XB / PI)) ** 2\n        self.delta_bound = max(self.delta0 + 4 * PI ** 3 * d * (ra + d) * self.W2 ** 2,\n                               self.beta * PI * (ra + d) * (ra + 8.4 * d))\n        self.delta_small = 4 * PI ** 3 * d * (ra + d) * self.W2 ** 2\n        self.delta_rel = self.beta * PI * (ra + d) * (ra + 8.4 * d)\n        self.m_out = mu * T                       # outer margin for G >= 0; in general mu * slack(G)\n        self.m_in = self.x0 + self.w2 / (2 * self.cs)\n        # consumed-slack schedule check: consumed(G) <= (1-mu) slack(G), slack(G) = T (1 + min(G,0)/g)\n        st = TrigStep(m)\n        u = torch.linspace(0, 1, 2001, dtype=F64)\n        band = (f1 * st(u) + self.delta_small / T) - (1 - mu) * (1 - lam_a + u * (lam_a - lam2))\n        ramp = (lam2 * st.ramp(u) + self.delta_bound / T) - (1 - mu) * (1 - lam2 * (1 - u))\n        self.sched_slack = -float(torch.maximum(band.max(), ramp.max()))   # must be >= 0\n        assert self.sched_slack >= 0, (\'slack schedule violated\', float(band.max()), float(ramp.max()))\n        self.L1 = math.log(1 / rho1)\n        self.cmax = (self.Gmax + self.w2 / 2) / self.cs\n        self.L2 = math.log(1 + self.cmax / (self.x0 / 4))\n        assert self.rho_out <= 1.1 and self.m_out > 0 and self.W2 < 0.25, (self.rho_out, self.m_out, self.W2)\n        assert self.Gmax > 0, \'no overlap: stack fits without comparator\'\n        # slices in the switch-on / ramp bands are big discs (needed for the tau-linear nesting bound), small-angle notch\n        assert math.sqrt(self.Ptop(0.0) / PI) >= 3 * d and self.W1 < 0.2, (self.Ptop(0.0), d, self.W1)\n\n    # level functions (python floats or tensors)\n    def O(self, G):\n        return (G + 3) / (3 * self.s)\n\n    def E(self, G):\n        return (G / self.cs).clamp_min(0) if torch.is_tensor(G) else max(G / self.cs, 0.0)\n\n    def Ptop(self, G):\n        return (self.k * self.a - 3 - G) / self.kk\n\n    def slack(self, G):\n        if torch.is_tensor(G):\n            return self.T * (1 + G.clamp(max=0) / self.g)\n        return self.T * (1 + min(G, 0.0) / self.g)\n\n    def n_wild(self):\n        return self.k - math.floor((3 - self.wG) / self.a)\n\n    def table(self):\n        keys = [\'k\', \'eps\', \'kappa_b\', \'lam_a\', \'lam2\', \'mu\', \'f0\', \'f1\', \'sched_slack\', \'delta_rel\', \'t0\', \'a\', \'h\', \'cs\', \'g\', \'T\', \'Gmax\', \'wG\', \'w2\', \'d\', \'beta\', \'W1\', \'W2\',\n                \'rho1\', \'rh\', \'x0\', \'theta0\', \'xc\', \'XB\', \'delta0\', \'delta_bound\', \'m_in\', \'m_out\', \'L1\', \'L2\', \'cmax\']\n        out = {kk: getattr(self, kk) for kk in keys}\n        out[\'n_wild\'] = self.n_wild()\n        return out\n\n\nclass KeyholeComparator:\n    def __init__(self, P, t1=0.8, clock1=\'sin2\', clock2=\'sin4\', exp1=True, mode2=\'pow2\'):\n        self.P = P\n        self.st = TrigStep(P.m)\n        self.t1 = t1\n        self.clock1, self.clock2, self.exp1, self.mode2 = clock1, clock2, exp1, mode2\n\n    # ---------- circle maps ----------\n    def dPsi(self, psi):\n        P = self.P\n        u = (psi.abs() - P.W1) / (P.W2 - P.W1)\n        return P.rho1 + (P.rho_out - P.rho1) * self.st(u)\n\n    def Psi_minus_id(self, psi):\n        P = self.P\n        ap = psi.abs()\n        D = P.W2 - P.W1\n        u = (ap - P.W1) / D\n        val = (P.rho1 - 1) * ap + (P.rho_out - P.rho1) * (D * self.st.I(u) + (ap - P.W2).clamp_min(0))\n        return torch.sign(psi) * val\n\n    def ddPsi(self, psi):\n        P = self.P\n        D = P.W2 - P.W1\n        u = (psi.abs() - P.W1) / D\n        return torch.sign(psi) * (P.rho_out - P.rho1) * self.st.d(u) / D * ((u > 0) & (u < 1))\n\n    def Phi(self, phi, tau, iters=80):\n        """psi with (1-tau) psi + tau Psi(psi) = phi (odd, monotone): safeguarded Newton, last step differentiable."""\n        with torch.no_grad():\n            ap = phi.abs()\n            lo, hi = torch.zeros_like(ap), torch.full_like(ap, 0.5)\n            x = ap.clone().clamp(0, 0.5)\n            for _ in range(iters):\n                f = x + tau * self.Psi_minus_id(x) - ap\n                lo = torch.where(f < 0, x, lo)\n                hi = torch.where(f >= 0, x, hi)\n                df = 1 + tau * (self.dPsi(x) - 1)\n                xn = x - f / df\n                bad = (xn <= lo) | (xn >= hi)\n                x = torch.where(bad, 0.5 * (lo + hi), xn)\n            x = x * torch.sign(phi)\n        f = x + tau * self.Psi_minus_id(x) - phi\n        return x - f / (1 + tau * (self.dPsi(x) - 1))\n\n    # ---------- level functions ----------\n    def tauG(self, G):\n        P = self.P\n        u = (G + P.wG) / (P.wG - P.w2)\n        return self.st(u), self.st.d(u) / (P.wG - P.w2) * ((u > 0) & (u < 1))\n\n    def cG(self, G):\n        P = self.P\n        u = (G + P.w2) / P.w2\n        c = P.w2 / P.cs * self.st.ramp(u)\n        dc = torch.where(u >= 1, torch.ones_like(u), self.st(u)) / P.cs\n        return c, dc\n\n    def vartheta(self, th):\n        """th in (-1/2, 1/2]; = th - sign(th)/2 on |th| >= theta0/2, smooth odd inside: the jet occupies only the\n        inner half of the material-free slit |th| < theta0 (margin against RK4 stage excursions)."""\n        t0 = self.P.theta0 / 2\n        return th - 0.5 * (2 * self.st((th / t0 + 1) / 2) - 1)\n\n    # ---------- polar helpers ----------\n    def polar_c(self, q, p):\n        dq = q + self.P.d\n        return PI * (dq * dq + p * p), torch.atan2(p, dq) / (2 * PI)\n\n    @staticmethod\n    def polar_0(q, p):\n        return PI * (q * q + p * p), torch.atan2(p, q) / (2 * PI)\n\n    def from_polar_c(self, X, psi):\n        r = torch.sqrt(X / PI)\n        return r * torch.cos(2 * PI * psi) - self.P.d, r * torch.sin(2 * PI * psi)\n\n    @staticmethod\n    def from_polar_0(x, th):\n        r = torch.sqrt(x / PI)\n        return r * torch.cos(2 * PI * th), r * torch.sin(2 * PI * th)\n\n    # ---------- exact static maps ----------\n    def kh(self, q, p, tau):\n        """KH_tau forward (homogeneous lift, no cutoff). Returns q\', p\', X, psi."""\n        X, phi = self.polar_c(q, p)\n        psi = self.Phi(phi, tau)\n        Xn = X * (1 + tau * (self.dPsi(psi) - 1))\n        qn, pn = self.from_polar_c(Xn, psi)\n        return qn, pn, X, psi\n\n    def kh_inv(self, q, p, tau):\n        X1, psi = self.polar_c(q, p)\n        phi = psi + tau * self.Psi_minus_id(psi)\n        X = X1 / (1 + tau * (self.dPsi(psi) - 1))\n        return self.from_polar_c(X, phi)\n\n    def F_exact(self, y, stage=2):\n        """Exact map on material: y = (G, v, q, p) -> (G, v\', q\', p\'); also returns flags (exact1, exact2)."""\n        G, v, q, p = y.unbind(-1)\n        tau, dtau = self.tauG(G)\n        q1, p1, X, psi = self.kh(q, p, tau)\n        v1 = v - dtau * X * self.Psi_minus_id(psi)\n        X1 = X * (1 + tau * (self.dPsi(psi) - 1))\n        ex1 = (X1 >= self.P.XB) | (tau == 0)\n        if stage == 1:\n            return torch.stack([G, v1, q1, p1], -1), ex1, torch.ones_like(ex1)\n        x, th = self.polar_0(q1, p1)\n        c, dc = self.cG(G)\n        ex2 = ((x >= self.P.x0 / 2) & (th.abs() >= self.P.theta0)) | (c == 0)\n        q2, p2 = self.from_polar_0(x + c, th)\n        v2 = v1 - dc * self.vartheta(th)\n        return torch.stack([G, v2, q2, p2], -1), ex1, ex2\n\n    def F_exact_inv(self, y):\n        """Closed-form inverse (no Newton), valid on images of material."""\n        G, v, q, p = y.unbind(-1)\n        tau, dtau = self.tauG(G)\n        c, dc = self.cG(G)\n        x, th = self.polar_0(q, p)\n        q1, p1 = self.from_polar_0(x - c, th)\n        v1 = v + dc * self.vartheta(th)\n        X1, psi = self.polar_c(q1, p1)\n        q0, p0 = self.kh_inv(q1, p1, tau)\n        X = X1 / (1 + tau * (self.dPsi(psi) - 1))\n        v0 = v1 + dtau * X * self.Psi_minus_id(psi)\n        return torch.stack([G, v0, q0, p0], -1)\n\n    # ---------- clocks ----------\n    @staticmethod\n    def _tclock(u, kind):\n        u = min(max(u, 0.0), 1.0)\n        a = 2 * PI * u\n        if kind == \'sin2\':\n            return u - math.sin(a) / (2 * PI), 1 - math.cos(a)\n        if kind == \'sin4\':\n            return (u - 2 * math.sin(a) / (3 * PI) + math.sin(2 * a) / (12 * PI),\n                    1 - 4 * math.cos(a) / 3 + math.cos(2 * a) / 3)\n        if kind == \'sin8\':\n            c = [-8 / 5, 4 / 5, -8 / 35, 1 / 35]\n            S = u + sum(cj * math.sin(j * a) / (2 * PI * j) for j, cj in enumerate(c, 1))\n            dS = 1 + sum(cj * math.cos(j * a) for j, cj in enumerate(c, 1))\n            return S, dS\n        raise ValueError(kind)\n\n    def clk1(self, u):\n        """tau-clock of stage 1: 1 - tau(1-rho1) = exp(-L1 sigma) (geometric approach to the blob)."""\n        sg, dsg = self._tclock(u, self.clock1)\n        if not self.exp1:\n            return sg, dsg\n        L = self.P.L1\n        Z = 1 - math.exp(-L)\n        return (1 - math.exp(-L * sg)) / Z, L * dsg * math.exp(-L * sg) / Z\n\n    def clk2(self, u):\n        """shift clock of stage 2: S = sigma^2 (default; r = sqrt(x/pi) is then ~linear in sigma for points near the\n        hole), or the geometric clock S = s0 (exp(L2 sigma) - 1) (mode2=\'exp\'), or S = sigma (mode2=\'lin\')."""\n        sg, dsg = self._tclock(u, self.clock2)\n        if self.mode2 == \'pow2\':\n            return sg * sg, 2 * sg * dsg\n        if self.mode2 == \'lin\':\n            return sg, dsg\n        L = self.P.L2\n        s0 = 1 / math.expm1(L)\n        return s0 * math.expm1(L * sg), s0 * L * dsg * math.exp(L * sg)\n\n    # ---------- Hamiltonian ----------\n    def chi_out(self, x):\n        """1 for x <= h (all material has x <= O(G) <= h), 0 for x >= h + g/36 (< d_n = h + g/18)."""\n        P = self.P\n        return 1 - self.st((x - P.h) / (P.g / 36))\n\n    def H(self, y, t):\n        """Flat-model Hamiltonian, y = (G, v, q, p) (N,4), t in [0,1]; returns (N,)."""\n        P = self.P\n        G, q, p = y[:, 0], y[:, 2], y[:, 3]\n        x, th = self.polar_0(q, p)\n        co = self.chi_out(x)\n        if t < self.t1:\n            cl, dcl = self.clk1(t / self.t1)\n            tg, _ = self.tauG(G)\n            tau = cl * tg\n            X, psi = self.polar_c(q, p)\n            S = -self.Psi_minus_id(psi) / (1 + tau * (self.dPsi(psi) - 1))\n            Xi = X * self.st((X - P.xc) / P.xc)\n            return -(dcl / self.t1) * tg * Xi * S * co\n        cl, dcl = self.clk2((t - self.t1) / (1 - self.t1))\n        c, _ = self.cG(G)\n        ch = self.st((x - P.x0 / 4) / (P.x0 / 4))\n        return (dcl / (1 - self.t1)) * c * self.vartheta(th) * ch * co\n\n    def field(self, y, t):\n        y = y.detach().requires_grad_(True)\n        g, = torch.autograd.grad(self.H(y, t).sum(), y)\n        return torch.stack([g[:, 1], -g[:, 0], g[:, 3], -g[:, 2]], 1)\n\n    def rk4(self, y, N, t_a=0.0, t_b=1.0, N1=None):\n        """Fixed-step RK4. If N1 is given: N1 steps on [0,t1], N-N1 on [t1,1] (integer steps per stage)."""\n        segs = [(t_a, t_b, N)] if N1 is None else [(0.0, self.t1, N1), (self.t1, 1.0, N - N1)]\n        for (ta, tb, n) in segs:\n            hh = (tb - ta) / n\n            for i in range(n):\n                t = ta + i * hh\n                k1 = self.field(y, t)\n                k2 = self.field(y + hh / 2 * k1, t + hh / 2)\n                k3 = self.field(y + hh / 2 * k2, t + hh / 2)\n                k4 = self.field(y + hh * k3, t + hh)\n                y = (y + hh / 6 * (k1 + 2 * k2 + 2 * k3 + k4)).detach()\n        return y\n\n\ndef sample_stack(P, n, seed=0, seam_frac=0.35, bdry_frac=0.3, band_frac=0.3, bank_frac=0.15):\n    """Sample material points y = (G, v, q, p) of the nominal stack with G in [-wG, Gmax]:\n    fibre point in D(Ptop(G)); a fraction on the slice boundary; a fraction with log-dense angles at the seam;\n    a fraction in the thin source wedge of the slit banks (half of it on the slice boundary)."""\n    gen = torch.Generator().manual_seed(seed)\n    U = lambda *sh: torch.rand(*sh, generator=gen, dtype=F64)\n    G = -P.wG + (P.Gmax + P.wG) * U(n)\n    nb = int(band_frac * n)\n    G[:nb] = -P.wG + (P.wG * 1.05) * U(nb)          # switch-on / ramp band, dense\n    G = G.clamp(max=P.Gmax * (1 - 1e-9))\n    Pt = P.Ptop(G)\n    sfrac = U(n)\n    nbd = int(bdry_frac * n)\n    idx = torch.randperm(n, generator=gen)\n    sfrac[idx[:nbd]] = 1.0\n    x = Pt * sfrac\n    phi = U(n) - 0.5\n    ns = int(seam_frac * n)\n    idx2 = torch.randperm(n, generator=gen)[:ns]\n    lg = torch.exp(math.log(1e-13) + (math.log(2e-2) - math.log(1e-13)) * U(ns))\n    phi[idx2] = lg * torch.sign(U(ns) - 0.5)\n    nk = int(bank_frac * n)\n    if nk:                                          # sources of the slit banks: linear-uniform in a thin wedge\n        idx3 = torch.randperm(n, generator=gen)[:nk]\n        wedge = 2 * (P.rho1 * P.W1 + (P.rho1 + P.rho_out) * (P.W2 - P.W1) / 2)\n        phi[idx3] = wedge * (2 * U(nk) - 1)\n        x[idx3] = Pt[idx3] * (0.25 + 0.75 * U(nk)) ** 2\n        x[idx3[: nk // 2]] = Pt[idx3[: nk // 2]]\n    r = torch.sqrt(x / PI)\n    v = U(n)\n    return torch.stack([G, v, r * torch.cos(2 * PI * phi), r * torch.sin(2 * PI * phi)], 1)\n',
-    'adapted_layout': '"""Ball 9 and the keyhole comparator in the N\'-adapted layout.\n\nCharts (all Darboux; fibre w = q + i p_c, p = pi|w|^2, theta = arg w / 2pi):\n  layer chart of ball 9   yl = (X, T, w\')      Omega = dX^dT + dw\'x^dw\'y,   cell = {0 < X < a - p, 0 < T < 1, p < a}\n  flat normal form        y  = (G, v_c, w)     Omega = dG^dv_c + dwx^dwy,   G = X + A10(p), v_c = T + v_cut,\n                                               theta = theta\' - cs T,  A10(p) = -3 + 9a + cs p   (k = 10: ball index 9)\n  comparator              F(G, v, w) = (G, v + dv, kappa_G(w))             (keyhole_comparator.KeyholeComparator, c(G) with plateau)\n  post chart (adapted)    z  = (sigma, psi, w_vt)   Omega = dsigma^dpsi + dwx^dwy,\n                          (G\', theta\') = T_u^lift (G, theta) = (G + lift (3 - 9p), theta + 9 lift v_c),\n                          u_a = G\'/(3-9p), sigma = (3-9p) v_c, psi = psi0 - u_a, vartheta = theta\' - 9 u_a v_c.\nDeck in the flat chart read through the post chart with origin psi0:\n  T_u: (G, v_c, theta) -> (G + 3 - 9p, v_c, theta + 9 v_c);   T_v: (G, v_c, theta) -> (G, v_c + 1, theta + 9 psi0 + 1/2).\npsi0 = -1/6 makes T_v a pure translation.\n"""\nimport math\nimport os\nimport sys\n\nimport torch\n\nHERE = os.path.dirname(os.path.abspath(__file__))\nif HERE not in sys.path:\n    sys.path.insert(0, HERE)\nimport keyhole_comparator as kc   # noqa: E402\n\nF64, PI = torch.float64, math.pi\n\n\ndef rot(w, turns):\n    turns = torch.as_tensor(turns, dtype=F64)\n    c, s = torch.cos(2 * PI * turns), torch.sin(2 * PI * turns)\n    return torch.stack((c * w[..., 0] - s * w[..., 1], s * w[..., 0] + c * w[..., 1]), -1)\n\n\ndef mom(w):\n    return PI * (w[..., 0] ** 2 + w[..., 1] ** 2)\n\n\nclass PlateauComparator(kc.KeyholeComparator):\n    """KeyholeComparator with c(G) flat on |G| <= dp*g.\n\n    c = cp Sm(u)                      on (-w2, -dp g),  u = (G + w2)/(w2 - dp g)\n      = cp                            on |G| <= dp g\n      = cp + (rp g/cs) Ramp(u2)       for G >= dp g,    u2 = (G - dp g)/(rp g)     (slope 1/cs for u2 >= 1)\n    cp = chat * T.  Margins for G >= (dp+rp) g:  inner  x0 + c - E = x0 + (chat - dp - rp/2) T,\n    outer  O - (Ptop + delta_bound + c) = T (1 - chat + dp + rp/2) - delta_bound.\n    plateau=None reproduces the c(G) of keyhole_comparator."""\n\n    def __init__(self, P, plateau=None, safety=0.01, **kw):\n        super().__init__(P, **kw)\n        self.plateau = plateau\n        if plateau is not None:\n            dp, rp = plateau\n            self.dp, self.rp = dp * P.g, rp * P.g\n            # largest plateau value allowed by the outer constraint  cp Sm(u) + delta_bound <= (1-mu) slack(G)\n            # on the ramp band G = -w2 + u (w2 - dp g), u in (0, 1]  (grid of 4001 points), minus a safety\n            u = torch.linspace(0, 1, 4001, dtype=F64)[1:]\n            G = -P.w2 + u * (P.w2 - self.dp)\n            rhs = ((1 - P.mu) * P.slack(G) - P.delta_bound) / P.T\n            chat_max = float((rhs / self.st(u).clamp_min(1e-9)).min()) - safety\n            self.chat = chat_max\n            self.cp = chat_max * P.T\n            self.m1hat = chat_max - dp - rp / 2          # (inner margin - x0)/T for G >= (dp+rp) g\n            assert self.m1hat > 0, (\'plateau too wide\', self.m1hat)\n            viol = self.cp * self.st(u) + P.delta_bound - (1 - P.mu) * P.slack(G)\n            self.ramp_slack = -float(viol.max()) / P.T\n            assert self.ramp_slack >= 0, (\'ramp constraint violated\', self.ramp_slack)\n            # outer margin on the plateau and beyond: O - (Ptop + delta_bound + c) - mu slack >= 0\n            self.m_in = P.x0 + self.m1hat * P.T\n            # slack consumed by the plateau relative to the keyhole_comparator schedule (in units of T)\n            self.cost_T = P.lam2 / 2 - self.m1hat        # inner margin given up relative to keyhole_comparator (units of T)\n            Gq = torch.linspace(-P.w2, P.Gmax, 8001, dtype=F64)\n            cq = self.cG(Gq)[0]\n            self.outer_sched_min_T = float(((1 - P.mu) * P.slack(Gq) - P.delta_bound - (cq - P.E(Gq))).min() / P.T)\n            self.inner_sched_min_T = float((cq - P.E(Gq))[Gq >= 0].min() / P.T)\n            assert self.outer_sched_min_T >= 0 and self.inner_sched_min_T > 0\n        else:\n            self.m_in = P.m_in\n\n    def cG(self, G):\n        if self.plateau is None:\n            return super().cG(G)\n        P = self.P\n        u = (G + P.w2) / (P.w2 - self.dp)\n        u2 = (G - self.dp) / self.rp\n        c = self.cp * self.st(u) + self.rp / P.cs * self.st.ramp(u2)\n        dc = self.cp * self.st.d(u) / (P.w2 - self.dp) * ((u > 0) & (u < 1)) \\\n            + torch.where(u2 >= 1, torch.ones_like(u2), self.st(u2)) / P.cs * (u2 > 0)\n        return c, dc\n\n\nclass Ball9:\n    def __init__(self, P, comp, psi0=-1.0 / 6, vcut=0.5, lift=1, i=None, ngroup=9):\n        self.P, self.C, self.psi0, self.vcut, self.lift = P, comp, psi0, vcut, lift\n        self.i = P.k - 1 if i is None else i               # 0-based index of this (wild) ball\n        self.ngroup = ngroup                               # balls 0..ngroup-1 sit in the adapted v-window cells\n\n    # ---- level / cell functions\n    def A(self, p, i=None):\n        """lower face of ball i (0-based) in the fan: A_i(p) = J(p) + i (a - p)."""\n        P = self.P\n        i = self.i if i is None else i\n        return 3 * P.s * p - 3 + i * (P.a - p)\n\n    def dA(self, i=None):\n        i = self.i if i is None else i\n        return 3 * self.P.s - i\n\n    def J(self, p):\n        return 3 * self.P.s * p - 3\n\n    def K(self, p):\n        return self.P.cs * p\n\n    # ---- layer <-> flat\n    def layer_to_flat(self, yl):\n        X, T, w = yl[..., 0], yl[..., 1], yl[..., 2:]\n        p = mom(w)\n        return torch.cat(((X + self.A(p))[..., None], (T + self.vcut)[..., None], rot(w, -self.dA() * T)), -1)\n\n    def flat_to_layer(self, y):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        p = mom(w)\n        T = v - self.vcut\n        return torch.cat(((G - self.A(p))[..., None], T[..., None], rot(w, self.dA() * T)), -1)\n\n    # ---- flat <-> post\n    def flat_to_post(self, y):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        hb = 3 - 9 * mom(w)\n        ua = G / hb + self.lift\n        return torch.cat(((hb * v)[..., None], (self.psi0 - ua)[..., None], rot(w, -9 * (ua - self.lift) * v)), -1)\n\n    def post_to_flat(self, z):\n        sig, psi, w = z[..., 0], z[..., 1], z[..., 2:]\n        hb = 3 - 9 * mom(w)\n        ua = self.psi0 - psi\n        v = sig / hb\n        return torch.cat((((ua - self.lift) * hb)[..., None], v[..., None], rot(w, 9 * (ua - self.lift) * v)), -1)\n\n    # ---- full maps\n    def fwd(self, yl, flags=False):\n        y = self.layer_to_flat(yl)\n        y2, e1, e2 = self.C.F_exact(y)\n        z = self.flat_to_post(y2)\n        return (z, y2, e1, e2) if flags else z\n\n    def inv(self, z):\n        return self.flat_to_layer(self.C.F_exact_inv(self.post_to_flat(z)))\n\n    # ---- membership of a flat point in the union of the group cells, any deck translate T_u^n\n    def group_margin(self, y, nmax=3):\n        """signed margin (G units) of the flat point y to the open group region {J < G < A_{k-1}, p < a} and its\n        T_u translates: positive = outside all of them (min over n of distance to the G-interval; +inf if p >= a)."""\n        P = self.P\n        G, p = y[..., 0], mom(y[..., 2:])\n        m = torch.full_like(G, float(\'inf\'))\n        for n in range(-nmax, nmax + 1):\n            Gn = G + n * (3 - 9 * p)\n            lo, hi = self.J(p), self.A(p, i=self.ngroup)\n            d = torch.maximum(lo - Gn, Gn - hi)          # > 0 outside the interval\n            m = torch.minimum(m, d)\n        return torch.where(p < P.a, m, torch.full_like(m, float(\'inf\')))\n\n    # ---- samples of ball 9 in the layer chart\n    def sample_layer(self, n, seed=0, rho=None, tmargin=0.0, mode=\'uniform\'):\n        """points of the layer cell {X + p <= rho, T in (tmargin, 1-tmargin)}; rho defaults to a (full cell)."""\n        P = self.P\n        rho = P.a if rho is None else rho\n        gen = torch.Generator().manual_seed(seed)\n        U = lambda *sh: torch.rand(*sh, generator=gen, dtype=F64)\n        # uniform in the simplex {X, p >= 0, X + p <= rho}\n        e = -torch.log(U(n, 3))\n        e = e / e.sum(1, keepdim=True)\n        X, p = rho * e[:, 0], rho * e[:, 1]\n        if mode == \'top\':                                 # on the top face X + p = rho\n            f = U(n)\n            X, p = rho * f, rho * (1 - f)\n        T = tmargin + (1 - 2 * tmargin) * U(n)\n        th = U(n)\n        r = torch.sqrt(p / PI)\n        return torch.stack((X, T, r * torch.cos(2 * PI * th), r * torch.sin(2 * PI * th)), 1)\n\n    def stack_to_layer(self, y):\n        """keyhole_comparator sample_stack points (flat, v in (0,1)) -> layer points of ball 9 (T = v)."""\n        y = y.clone()\n        y[:, 1] = y[:, 1] + self.vcut\n        return self.flat_to_layer(y)\n\n\ndef make(k, eps, plateau=None, psi0=-1.0 / 6, vcut=0.5, i=None, **kw):\n    P = kc.KCParams(k, eps, **kw)\n    C = PlateauComparator(P, plateau=plateau)\n    return P, C, Ball9(P, C, psi0=psi0, vcut=vcut, i=i)\n\n\nOMEGA = torch.tensor([[0., 1, 0, 0], [-1, 0, 0, 0], [0, 0, 0, 1], [0, 0, -1, 0]], dtype=F64)\n\n\ndef fd_jac(f, y, h):\n    """central-difference Jacobian (N,4,4) of f at y with step h."""\n    cols = []\n    for j in range(4):\n        e = torch.zeros(4, dtype=F64); e[j] = h\n        cols.append((f(y + e) - f(y - e)) / (2 * h))\n    return torch.stack(cols, 2)\n\n\ndef symp_defect(Jm):\n    D = Jm.transpose(1, 2) @ OMEGA @ Jm - OMEGA\n    return D.abs().amax(dim=(1, 2)), torch.linalg.matrix_norm(Jm, ord=2)\n',
-    'marked_fibres': '"""Toric twists that move the three marked fibres into the free corridor of the\nadapted layout.\n\nFlat adapted chart (as in adapted_layout): y = (G, v, q, pc), Omega = dG^dv + dq^dpc, p = pi|w|^2, theta = arg w/2pi,\nP(p) = 3 - 9p, u = G/P(p).  Deck:  T_u (G, v, theta) -> (G + P, v, theta + 9v),  T_v (G, v, theta) -> (G, v+1, theta)\n(psi0 = -1/6).  Marked fibres (straight): M1 (u, v) = (5/6, 0), M2 (1/3, 0), M3 (0, 1/2).\n\nTwo closed-form deck-equivariant symplectomorphisms (both time-one maps of flows that are linear in time):\n  B-twist  Psi_S :  (G, v, p, theta) -> (G + S_v(p, v), v, p, theta - S_p(p, v)),        H = S(p, v)\n  A-twist  Phi_g :  (G, v, p, theta) -> (G, v - g(u), p, theta + 9 (Gg(u) - u g(u))),    H = P(p) Gg(G/P(p)),  Gg\' = g\nwith S(p, v) = sum_j s_j(p) B_j(v),  s_j(p) = P(p)(u_j + n_j) - K(p) + delta  (affine in p),  B_j\' = b_j,\nb_j = plateau bump at v_j\' minus a compensating lobe (zero mean, so B_j is periodic),\ng = -ag [bump(u - 5/6) - bump(u - 7/12)]  (zero mean; moves M1 from v = 0 to v_1\' = -ag before the B-twist).\nPsi = Phi_g o Psi_S.  Psi^{-1}(M_j) = { G = K(p) - delta (mod P), v = v_j\' } =: spiral_j, which lies in the corridor\n  { G >= -w2,  max(G,0)/cs <= p < x0 + c(G) }  (free of the stack image by the comparison theorem and of the group cells).\n"""\nimport math\nimport os\nimport sys\n\nimport torch\n\nHERE = os.path.dirname(os.path.abspath(__file__))\nif HERE not in sys.path:\n    sys.path.insert(0, HERE)\nimport adapted_layout as L             # noqa: E402\n\nkc = L.kc\nF64, PI = torch.float64, math.pi\n\n\nclass Bump:\n    """beta(x) = 1 (|x| <= w0), 1 - Sm((|x| - w0)/(w1 - w0)) in between, 0 (|x| >= w1); Sm\' ~ sin^{2m}: beta in C^{2m}.\n    prim(x) = int_{-inf}^x beta (closed form); mass = w0 + w1."""\n\n    def __init__(self, w0, w1, m=2):\n        self.w0, self.w1, self.D, self.st = w0, w1, w1 - w0, kc.TrigStep(m)\n        self.mass = w0 + w1\n        self.dmax = float(self.st.d(torch.tensor(0.5, dtype=F64))) / self.D\n\n    def val(self, x):\n        return 1 - self.st((x.abs() - self.w0) / self.D)\n\n    def d(self, x):\n        u = (x.abs() - self.w0) / self.D\n        return -torch.sign(x) * self.st.d(u) / self.D * ((u > 0) & (u < 1))\n\n    def prim(self, x):\n        D, w0, st = self.D, self.w0, self.st\n        uL = ((-x - w0) / D).clamp(0, 1)\n        uR = ((x - w0) / D).clamp(0, 1)\n        left = D * ((1 - uL) - (0.5 - st.I(uL)))\n        mid = D / 2 + x.clamp(-w0, w0) + w0\n        right = D / 2 + 2 * w0 + D * (uR - st.I(uR))\n        return torch.where(x < -w0, left, torch.where(x <= w0, mid, right))\n\n\ndef wrap(x, lo):\n    return lo + torch.remainder(x - lo, 1.0)\n\n\ndef fdist(t):\n    return (t - torch.round(t)).abs()\n\n\nclass SpiralShear:\n    FIB = ((\'M1\', 5 / 6, 0.0, -1), (\'M2\', 1 / 3, 0.0, 0), (\'M3\', 0.0, 0.5, 0))     # name, u_j, v_j, n_j\n\n    def __init__(self, P, ag=0.1, om0=0.015, om1=0.045, ou0=0.02, ou1=0.12, vcomp=0.25, oc0=0.05, oc1=0.14,\n                 vlo=-1 / 3, ulo=0.2, delta_frac=0.25, m=2, use_phi=True, use_psi=True, global_shift=False):\n        self.P = P\n        # global_shift = True ("version 2"):  S_v(p, v) = c0 + P(p) sum_j phi_j b_j(v),  S_p = -9 sum_j phi_j B_j(v),\n        #   c0 = delta - cs/3 (a constant G-translation of the whole layout: it turns the corridor centre\n        #   {G = K(p) - delta} into the straight line u = u* = -cs/9), phi_j = u_j + n_j - u* (p-independent u-shift,\n        #   n_j chosen to minimise |phi_j|).  Inside the windows this equals version 1 (s_j(p) = c0 + P(p) phi_j with\n        #   the same n_j only if the n_j agree); outside the windows version 1 is the identity, version 2 the translation.\n        self.global_shift = global_shift\n        self.ustar = -P.cs / 9\n        self.c0 = delta_frac * P.w2 - P.cs / 3\n        self.nj = [(-round(uj - self.ustar)) if global_shift else nj for (_, uj, _, nj) in self.FIB]\n        self.phi = [uj + n_ - self.ustar for (_, uj, _, _), n_ in zip(self.FIB, self.nj)]\n        self.ag, self.vlo, self.ulo, self.vcomp = ag, vlo, ulo, vcomp\n        self.delta = delta_frac * P.w2\n        self.bv, self.bc, self.bu = Bump(om0, om1, m), Bump(oc0, oc1, m), Bump(ou0, ou1, m)\n        self.om0, self.ou0 = om0, ou0\n        self.vp = (-ag, 0.0, 0.5)                    # v_j\' = v of Phi_g^{-1}(M_j)\n        self.use_phi, self.use_psi = use_phi, use_psi\n        self.uc = (5 / 6, 7 / 12)                    # centres of the two lobes of g\n        # layout of the windows inside one period [vlo, vlo+1) and [ulo, ulo+1)\n        for vj in self.vp:\n            assert vlo < vj - om1 and vj + om1 < vlo + 1\n        assert vlo < vcomp - oc1 and vcomp + oc1 < vlo + 1\n        iv = sorted([(vj - om1, vj + om1) for vj in self.vp] + [(vcomp - oc1, vcomp + oc1)])\n        assert all(iv[i][1] < iv[i + 1][0] for i in range(len(iv) - 1)), iv\n        for uc in self.uc:\n            assert ulo < uc - ou1 and uc + ou1 < ulo + 1\n        assert self.uc[1] + ou1 < self.uc[0] - ou1\n        # g must vanish near u = 1/3 and u = 0 (mod 1).  The clearance box has |du| <= 0.075 g / P(p); stack material\n        # only exists where P(p) >= 11.85 g (note, section 3), i.e. |du| <= 0.0064: keep 0.01.\n        self.du_guard = 0.01\n        for uj in (1 / 3, 1.0):\n            for uc in self.uc:\n                assert abs(uj - uc) > ou1 + self.du_guard, (uj, uc)\n        assert 0 < self.delta < P.w2 / 2\n\n    # ---- B-twist\n    def s(self, j, p):\n        uj, nj = self.FIB[j][1], self.nj[j]\n        return (3 - 9 * p) * (uj + nj) - self.P.cs * p + self.delta\n\n    def ds(self, j):\n        uj, nj = self.FIB[j][1], self.nj[j]\n        return -9 * (uj + nj) - self.P.cs\n\n    def S(self, p, v):\n        """S, S_v, S_p at (p, v)."""\n        vt = wrap(v, self.vlo)\n        xc = vt - self.vcomp\n        cval, cprim = self.bc.val(xc) / self.bc.mass, self.bc.prim(xc) / self.bc.mass\n        S = torch.zeros_like(p); Sv = torch.zeros_like(p); Sp = torch.zeros_like(p)\n        hb = 3 - 9 * p\n        for j in range(3):\n            x = vt - self.vp[j]\n            b = self.bv.val(x) - self.bv.mass * cval\n            B = self.bv.prim(x) - self.bv.mass * cprim\n            if self.global_shift:\n                S = S + self.phi[j] * hb * B; Sv = Sv + self.phi[j] * hb * b; Sp = Sp - 9 * self.phi[j] * B\n            else:\n                sj = self.s(j, p)\n                S = S + sj * B; Sv = Sv + sj * b; Sp = Sp + self.ds(j) * B\n        if self.global_shift:\n            S = S + self.c0 * v          # multi-valued in v (flux): the map only uses S_v, S_p\n            Sv = Sv + self.c0\n        return S, Sv, Sp\n\n    def psiS(self, y, sign=1.0):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        _, Sv, Sp = self.S(L.mom(w), v)\n        return torch.cat(((G + sign * Sv)[..., None], v[..., None], L.rot(w, -sign * Sp)), -1)\n\n    # ---- A-twist\n    def g(self, u):\n        """g, Gg (periodic primitive), g\'."""\n        ut = wrap(u, self.ulo)\n        x0, x1 = ut - self.uc[0], ut - self.uc[1]\n        g = -self.ag * (self.bu.val(x0) - self.bu.val(x1))\n        Gg = -self.ag * (self.bu.prim(x0) - self.bu.prim(x1))\n        dg = -self.ag * (self.bu.d(x0) - self.bu.d(x1))\n        return g, Gg, dg\n\n    def phiG(self, y, sign=1.0):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        u = G / (3 - 9 * L.mom(w))\n        g, Gg, _ = self.g(u)\n        return torch.cat((G[..., None], (v - sign * g)[..., None], L.rot(w, sign * 9 * (Gg - u * g))), -1)\n\n    # ---- composite\n    def fwd(self, y):\n        if self.use_psi:\n            y = self.psiS(y)\n        if self.use_phi:\n            y = self.phiG(y)\n        return y\n\n    def inv(self, y):\n        if self.use_phi:\n            y = self.phiG(y, -1.0)\n        if self.use_psi:\n            y = self.psiS(y, -1.0)\n        return y\n\n    # ---- Hamiltonians (convention  front\' = dH/d back  for the pairs (G, v), (q, pc))\n    def H_S(self, y):\n        return self.S(L.mom(y[..., 2:]), y[..., 1])[0]\n\n    def H_g(self, y):\n        hb = 3 - 9 * L.mom(y[..., 2:])\n        return hb * self.g(y[..., 0] / hb)[1]\n\n    # ---- distances of flat points to the straight marked fibres (all deck translates)\n    def fibre_dist(self, y):\n        """returns dG (n,3), dv (n,3):  dG_j = P(p) dist(u - u_j, Z),  dv_j = dist(v - v_j, Z)."""\n        G, v, p = y[..., 0], y[..., 1], L.mom(y[..., 2:])\n        hb = 3 - 9 * p\n        dG = torch.stack([hb * fdist(G / hb - uj) for (_, uj, _, _) in self.FIB], -1)\n        dv = torch.stack([fdist(v - vj) for (_, _, vj, _) in self.FIB], -1)\n        return dG, dv\n\n\ndef T_u(y, n=1):\n    G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n    return torch.cat(((G + n * (3 - 9 * L.mom(w)))[..., None], v[..., None], L.rot(w, 9 * n * v)), -1)\n\n\ndef T_v(y, n=1):\n    y = y.clone()\n    y[..., 1] = y[..., 1] + n\n    return y\n\n\ndef to_fundamental(P, y):\n    """deck-reduce a flat point into J(p) < G <= K(p)."""\n    G, p = y[..., 0], L.mom(y[..., 2:])\n    hb = 3 - 9 * p\n    n = torch.floor((P.cs * p - G) / hb)\n    return T_u(y, n), n\n\n\ndef sample_group(P, n_per, seed=0, ngroup=9):\n    """points of the 9 open adapted group cells {J < G < J + 9 (a - p), p < a} x {v in ((m-4)/9, (m-3)/9)}."""\n    gen = torch.Generator().manual_seed(seed)\n    U = lambda *sh: torch.rand(*sh, generator=gen, dtype=F64)\n    out = []\n    for mcell in range(ngroup):\n        e = -torch.log(U(n_per, 3)); e = e / e.sum(1, keepdim=True)\n        X, p = P.a * e[:, 0], P.a * e[:, 1]\n        nb = n_per // 4                              # a quarter on / near the faces X -> 0, X + p -> a\n        X[:nb // 2] = X[:nb // 2] * 1e-3\n        f = U(nb - nb // 2)\n        X[nb // 2:nb], p[nb // 2:nb] = P.a * f * (1 - 1e-6), P.a * (1 - f) * (1 - 1e-6)\n        G = 3 * P.s * p - 3 + ngroup * X\n        v = (mcell - 4 + U(n_per)) / 9\n        th = U(n_per); r = torch.sqrt(p / PI)\n        out.append(torch.stack((G, v, r * torch.cos(2 * PI * th), r * torch.sin(2 * PI * th)), 1))\n    return torch.cat(out)\n\n\ndef classify(P, C, y, k=None, ngroup=9):\n    """0 free, 1 group region (v ignored: conservative), 2 inside the image of an open non-group cell.\n    y: flat points (any deck representative).  Uses the closed-form comparator inverse; candidates (preimage inside a\n    non-group cell) are validated by the forward round trip (< 1e-9) and the exactness flags."""\n    k = P.k if k is None else k\n    yf, _ = to_fundamental(P, y)\n    G, p = yf[:, 0], L.mom(yf[:, 2:])\n    J = 3 * P.s * p - 3\n    in_group = (G > J) & (G < J + ngroup * (P.a - p)) & (p < P.a)\n    cls = torch.zeros(len(G), dtype=torch.long)\n    cls[in_group] = 1\n    y0 = C.F_exact_inv(yf)\n    p0 = L.mom(y0[:, 2:])\n    X = y0[:, 0] - (3 * P.s * p0 - 3 + ngroup * (P.a - p0))                # above the top of the group fan\n    cand = (X > 0) & (X < (k - ngroup) * (P.a - p0)) & (p0 < P.a) & ~in_group & torch.isfinite(X)\n    idx = torch.nonzero(cand)[:, 0]\n    if len(idx):\n        y1, e1, e2 = C.F_exact(y0[idx])\n        valid = ((y1 - yf[idx]).abs().amax(1) < 1e-9) & e1 & e2\n        cls[idx[valid]] = 2\n    return cls, yf\n\n\nCONFIGS = dict(narrow=dict(ag=0.1, om0=0.015, om1=0.045, ou0=0.02, ou1=0.12),\n               wide=dict(ag=1 / 6, om0=0.03, om1=0.08, ou0=0.02, ou1=0.09),\n               narrow_g=dict(ag=0.1, om0=0.015, om1=0.045, ou0=0.02, ou1=0.12, global_shift=True))\n\n\ndef field(Hfun, y):\n    """Hamiltonian vector field in the flat chart, convention front\' = dH/d back for (G, v), (q, pc)."""\n    yg = y.detach().clone().requires_grad_(True)\n    g, = torch.autograd.grad(Hfun(yg).sum(), yg)\n    return torch.stack((g[:, 1], -g[:, 0], g[:, 3], -g[:, 2]), 1)\n\n\ndef rk4(Hfun, y, N):\n    h = 1.0 / N\n    for _ in range(N):\n        k1 = field(Hfun, y); k2 = field(Hfun, y + 0.5 * h * k1); k3 = field(Hfun, y + 0.5 * h * k2)\n        k4 = field(Hfun, y + h * k3)\n        y = y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)\n    return y\n\n\ndef u_reduce(y):\n    """deck representative with u = G/P in [-1/2, 1/2)."""\n    hb = 3 - 9 * L.mom(y[..., 2:])\n    n = -torch.round(y[..., 0] / hb)\n    return T_u(y, n), n\n',
-    'chain_base': '"""Static chain  ball -> layer cell -> flat model (+comparator, +marked-fibre twist)\n-> post chart -> transfer K_post -> B(R)  for general k.\n\nEverything is closed form plus scalar (1D) safeguarded Newton solves; no ODE is integrated anywhere.\nUnits: normalised (target ball capacity 1); a planar point w has action x = pi |w|^2 and angle theta = arg w / 2pi.\n\nPieces (new in this file unless stated):\n  SmoothKeyhole   planar symplectic keyhole family KS_tau (generating function S = X psi + tau M(X) (Psi(psi) - psi)\n                  in polar coordinates about c* = (-d, 0)); identity near c*, C^8, bijection of the plane;\n                  for tau = 1 the image of a centred disc misses the hole D(x0) and the slit |theta| <= theta0.\n                  (Psi is the circle map of keyhole_comparator; the cut-off M replaces its "pure lift".)\n  Comparator      comparator kappa_G = Shift_{c(G)} o KS_{tau(G)} with the smooth keyhole (parameters: KCParams).\n  Transfer        K_post: post chart (sigma, psi, p, vartheta), p < hK, minus three marked fibres -> B(1) = CP^2 - L_kappa.\n                  Closed-form transfer N\' (sector charts, corner bands, N\'\', U) with the RK4 keyhole flows replaced by\n                  SmoothKeyhole and all scales tied to D = 1 - 3 hK.  Independent of k.\n  Chain           layout (9 group cells + k-9 strip balls), strip map (keyhole + polar),\n                  optional marked-fibre twist Psi (marked_fibres.SpiralShear), Embed / Preimage.\n"""\nimport math\nimport os\nimport sys\n\nimport torch\n\nHERE = os.path.dirname(os.path.abspath(__file__)) if \'__file__\' in globals() else None\nif HERE and HERE not in sys.path:\n    sys.path.insert(0, HERE)\nimport keyhole_comparator as kc      # noqa: E402   (KCParams, TrigStep)\nimport marked_fibres as mf                     # noqa: E402   (SpiralShear, CONFIGS)\n\nF64, PI, C128 = torch.float64, math.pi, torch.complex128\n\n\ndef rot(w, turns):\n    c, s = torch.cos(2 * PI * turns), torch.sin(2 * PI * turns)\n    return torch.stack((c * w[..., 0] - s * w[..., 1], s * w[..., 0] + c * w[..., 1]), -1)\n\n\ndef mom(w):\n    return PI * (w[..., 0] ** 2 + w[..., 1] ** 2)\n\n\ndef polar0(w):\n    return mom(w), torch.atan2(w[..., 1], w[..., 0]) / (2 * PI)\n\n\ndef cart0(x, th):\n    r = torch.sqrt(x / PI)\n    return torch.stack((r * torch.cos(2 * PI * th), r * torch.sin(2 * PI * th)), -1)\n\n\ndef newton_bracket(f, lo, hi, x0, iters=60):\n    """root of the increasing function f (returns value, derivative) on [lo, hi]; safeguarded Newton."""\n    x = x0.clone()\n    lo, hi = lo.clone(), hi.clone()\n    for _ in range(iters):\n        v, dv = f(x)\n        lo = torch.where(v < 0, x, lo)\n        hi = torch.where(v >= 0, x, hi)\n        xn = x - v / dv\n        bad = ~((xn > lo) & (xn < hi))\n        x = torch.where(bad, 0.5 * (lo + hi), xn)\n    v, dv = f(x)\n    xn = x - v / dv\n    return torch.where((xn >= lo) & (xn <= hi), xn, x)\n\n\nclass SmoothKeyhole:\n    def __init__(self, d, W1, W2, rho1, rho_out, Xw, m=4):\n        self.d, self.W1, self.W2, self.rho1, self.rho_out, self.Xw = d, W1, W2, rho1, rho_out, Xw\n        self.st = kc.TrigStep(m)\n        self.rh = None\n\n    @classmethod\n    def from_budget(cls, area, delta, f0=0.8, f1=0.8, wfrac=1.0 / 3, rho1_safety=0.7, hole_safety=0.9, cut=0.2, m=4):\n        """keyhole for the centred disc of the given area with nesting budget delta (checked numerically by nesting())."""\n        ra = math.sqrt(area / PI)\n        d = math.sqrt(f0 * delta / PI) / 1.05\n        beta = f1 * delta / (PI * (ra + d) * (ra + 8.4 * d))\n        rho_out = 1 + beta\n        Ws = beta / rho_out\n        for _ in range(8):\n            W1 = wfrac * Ws\n            rh = hole_safety * d * math.sin(2 * PI * W1)\n            rho1 = rho1_safety * ((d - rh) / (d + ra)) ** 2\n            Ws = (rho_out - 1) / (rho_out - rho1)\n        K = cls(d, wfrac * Ws, (1 - wfrac) * Ws, rho1, rho_out, cut * PI * (d - rh) ** 2, m)\n        K.ra, K.rh, K.x0, K.theta0, K.delta, K.area = ra, rh, PI * rh * rh, wfrac * Ws, delta, area\n        assert rho1 * PI * (d + ra) ** 2 + K.Xw / 2 < 0.95 * PI * (d - rh) ** 2\n        return K\n\n    @classmethod\n    def from_kc(cls, P, cut=0.2):\n        K = cls(P.d, P.W1, P.W2, P.rho1, P.rho_out, cut * PI * (P.d - P.rh) ** 2, P.m)\n        K.ra, K.rh, K.x0, K.theta0 = P.ra, P.rh, P.x0, P.theta0\n        assert P.rho1 * PI * (P.d + P.ra) ** 2 + K.Xw / 2 < 0.95 * PI * (P.d - P.rh) ** 2\n        return K\n\n    # circle map Psi (odd, Psi\' = rho1 on |psi| < W1, rho_out on |psi| > W2) as in keyhole_comparator\n    def dPsi(self, psi):\n        u = (psi.abs() - self.W1) / (self.W2 - self.W1)\n        return self.rho1 + (self.rho_out - self.rho1) * self.st(u)\n\n    def Pmi(self, psi):\n        ap = psi.abs()\n        D = self.W2 - self.W1\n        u = (ap - self.W1) / D\n        val = (self.rho1 - 1) * ap + (self.rho_out - self.rho1) * (D * self.st.I(u) + (ap - self.W2).clamp_min(0))\n        return torch.sign(psi) * val\n\n    def M(self, X):\n        u = X / self.Xw\n        return self.Xw * self.st.ramp(u), torch.where(u >= 1, torch.ones_like(u), self.st(u))\n\n    def polar_c(self, w):\n        dq = w[..., 0] + self.d\n        return PI * (dq * dq + w[..., 1] ** 2), torch.atan2(w[..., 1], dq) / (2 * PI)\n\n    def cart_c(self, X, psi):\n        r = torch.sqrt(X / PI)\n        return torch.stack((r * torch.cos(2 * PI * psi) - self.d, r * torch.sin(2 * PI * psi)), -1)\n\n    def fwd(self, w, tau=None):\n        """KS_tau(w); returns (w\', gen) with gen = dS/dtau = M(X) (Psi(psi) - psi)   (X old action, psi new angle)."""\n        X, phi = self.polar_c(w)\n        Mv, dM = self.M(X)\n        tt = dM if tau is None else tau * dM\n        ap = phi.abs()\n        psi = newton_bracket(lambda x: (x + tt * self.Pmi(x) - ap, 1 + tt * (self.dPsi(x) - 1)),\n                             torch.zeros_like(ap), torch.full_like(ap, 0.5), ap.clamp(0, 0.5))\n        psi = psi * torch.sign(phi)\n        t = 1.0 if tau is None else tau\n        Xn = X + t * Mv * (self.dPsi(psi) - 1)\n        return self.cart_c(Xn, psi), Mv * self.Pmi(psi)\n\n    def inv(self, w, tau=None):\n        Xn, psi = self.polar_c(w)\n        t = torch.ones_like(Xn) if tau is None else tau + 0 * Xn\n        a = t * (self.dPsi(psi) - 1)\n        Xlin = (Xn + a * self.Xw / 2) / (1 + a)\n        inner = Xlin < self.Xw\n        X = Xlin\n        if inner.any():\n            ai, Xi = a[inner], Xn[inner]\n            f = lambda x: (x + ai * self.M(x)[0] - Xi, 1 + ai * self.M(x)[1])\n            Xr = newton_bracket(f, torch.zeros_like(Xi), torch.full_like(Xi, self.Xw), Xi.clamp(0, self.Xw))\n            X = X.clone()\n            X[inner] = Xr\n        Mv, dM = self.M(X)\n        phi = psi + t * dM * self.Pmi(psi)\n        return self.cart_c(X, phi), Mv * self.Pmi(psi)\n\n    def nesting(self, n=400000, seed=0):\n        """numerical sup of pi|KS(w)|^2 - pi|w|^2 over the disc, min image action, min |image angle| (turns)."""\n        g = torch.Generator().manual_seed(seed)\n        U = lambda: torch.rand(n, generator=g, dtype=F64)\n        x = self.area * torch.cat((U(), U() ** 3, 1 - U() ** 3 * 0.02))\n        # concentrate near the positive real axis (mouth) and near the origin\n        th = torch.cat((U() - 0.5, (U() - 0.5) * 0.05, (U() - 0.5)))\n        w = cart0(x, th)\n        w1, _ = self.fwd(w)\n        x1, th1 = polar0(w1)\n        return float((x1 - x).max()), float(x1.min()), float(th1.abs().min())\n\n\nclass Comparator:\n    """F(G, v, w) = (G, v + dv, kappa_G(w)),  kappa_G = Shift_{c(G)} o KS_{tau(G)}   (smooth keyhole)."""\n\n    def __init__(self, P):\n        self.P, self.st = P, kc.TrigStep(P.m)\n        self.K = SmoothKeyhole.from_kc(P)\n\n    def tauG(self, G):\n        P = self.P\n        u = (G + P.wG) / (P.wG - P.w2)\n        return self.st(u), self.st.d(u) / (P.wG - P.w2) * ((u > 0) & (u < 1))\n\n    def cG(self, G):\n        P = self.P\n        u = (G + P.w2) / P.w2\n        return P.w2 / P.cs * self.st.ramp(u), torch.where(u >= 1, torch.ones_like(u), self.st(u)) / P.cs\n\n    def vartheta(self, th):\n        t0 = self.P.theta0 / 2\n        return th - 0.5 * (2 * self.st((th / t0 + 1) / 2) - 1)\n\n    def fwd(self, y):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        tau, dtau = self.tauG(G)\n        act = tau > 0\n        out = y.clone()\n        if act.any():\n            w1, gen = self.K.fwd(w[act], tau[act])\n            v1 = v[act] - dtau[act] * gen\n            x, th = polar0(w1)\n            c, dc = self.cG(G[act])\n            out[act, 1] = v1 - dc * self.vartheta(th)\n            out[act, 2:] = cart0(x + c, th)\n        return out\n\n    def inv(self, y):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        tau, dtau = self.tauG(G)\n        act = tau > 0\n        out = y.clone()\n        if act.any():\n            c, dc = self.cG(G[act])\n            x, th = polar0(w[act])\n            v1 = v[act] + dc * self.vartheta(th)\n            w0, gen = self.K.inv(cart0(x - c, th), tau[act])\n            out[act, 1] = v1 + dtau[act] * gen\n            out[act, 2:] = w0\n        return out\n\n\nA_SEC = [torch.tensor(a, dtype=F64) for a in ([[1., 1.], [1., 0.]], [[-5., -1.], [4., 1.]], [[1., 0.], [-8., -1.]])]\nB_SEC = [torch.tensor(b, dtype=F64) for b in ([0., 0.], [2., -1.], [0., 3.])]\n\n\nclass Transfer:\n    """K_post : {(sigma, psi, p, vartheta), p < hK} / deck  minus marked fibres  ->  B(1) (normalised, pi|y|^2 < 1).\n    deck: tau_u psi+1;  tau_v sigma - (3-9p), vartheta - 9 psi - 1/2.   Cuts v_c = sigma/(3-9p) = j/3.\n    Marked fibres (v_c, psi) = (0, 0), (0, 1/2), (1/2, -1/6) -> line L_kappa = {W2 = kappa W1}."""\n\n    def __init__(self, hK, fm=0.25, fd2=0.12, fsig=0.06, fdel=0.15, kappa=(-1 / 12, 1 / 12, 0.), m_st=4):\n        assert 0 < hK < 1 / 3\n        D = 1 - 3 * hK\n        self.hK, self.D = hK, D\n        self.m, self.d2, self.sig0 = fm * D, fd2 * D, fsig * D\n        self.kh = SmoothKeyhole.from_budget(hK, fdel * D)\n        self.st = kc.TrigStep(m_st)\n        assert 2 * fdel * D + max(self.m, self.sig0) < 2 * D / 3 and self.m < D / 2\n        self.kap = kappa\n        k0, k1, k2 = kappa\n        self.off = {0: (0., 0.), 1: (k1, 3 * k1), \'2s\': (k1 + k2, 3 * k1 + 6 * k2), \'2c\': (-k0, 0.)}\n        self.left = {0: self.off[\'2c\'], 1: self.off[0], 2: self.off[1]}\n        arg = -4 * PI * (0. + self.left[0][0] + k0 / 2)\n        self.kappa_line = complex(math.cos(arg), math.sin(arg))\n\n    # profiles of the corner bands (value, derivative)\n    def S(self, c):\n        u = c.abs() / self.d2\n        q = self.sig0 * (1 - self.st(u))\n        dq = -self.sig0 * self.st.d(u) / self.d2 * torch.sign(c)\n        S = torch.sqrt(c * c + q * q)\n        return S, (c + q * dq) / S\n\n    def lam(self, c):\n        S, dS = self.S(c)\n        return (c - S) / 2, (1 - dS) / 2\n\n    def tau(self, c):\n        u = (c.abs() - self.d2) / (self.m - self.d2)\n        return 1 - self.st(u), -self.st.d(u) / (self.m - self.d2) * torch.sign(c)\n\n    def kstep(self, c, j):\n        return self.kap[j] * self.st((c + self.m) / (2 * self.m))\n\n    @staticmethod\n    def reduce(sig, psi, p, vt, lo=1 / 6):\n        n = torch.floor(sig / (3 - 9 * p) + lo)\n        return sig - n * (3 - 9 * p), psi, p, vt - n * (9 * psi + .5)\n\n    def W(self, sig, psi, p, vt, return_info=False):\n        sig, psi, p, vt = self.reduce(sig, psi, p, vt)\n        N = len(sig)\n        W = torch.zeros(N, 3, dtype=C128)\n        piece = torch.full((N,), -1)\n        vc = sig / (3 - 9 * p)\n        mus = [sig, sig - (1 - 3 * p), sig - 2 * (1 - 3 * p)]\n        instrip = [mu.abs() < self.m for mu in mus]\n        anys = instrip[0] | instrip[1] | instrip[2]\n        secs = [(vc >= 0) & (vc < 1 / 3) & ~anys, (vc >= 1 / 3) & (vc < 2 / 3) & ~anys, (vc >= 2 / 3) & ~anys,\n                (vc < 0) & ~anys]\n        for idx, (mk, key) in enumerate(zip(secs, [0, 1, \'2s\', \'2c\'])):\n            if not mk.any():\n                continue\n            a_, b_ = self.off[key]\n            ps, vv, pp, sg = psi[mk] + a_, vt[mk] + b_, p[mk], sig[mk]\n            if key == \'2c\':\n                X1, X2, T1, T2 = pp, pp - sg, vv + ps, -ps\n            else:\n                j = 2 if key == \'2s\' else key\n                X = torch.stack((pp, sg), 1) @ A_SEC[j].T + B_SEC[j]\n                X1, X2 = X[:, 0], X[:, 1]\n                Th = torch.stack((vv, ps), 1) @ torch.linalg.inv(A_SEC[j])\n                T1, T2 = Th[:, 0], Th[:, 1]\n            X0 = 1 - X1 - X2\n            W[mk] = torch.stack((torch.sqrt(X0).to(C128), torch.sqrt(X1) * torch.exp(2j * PI * T1),\n                                 torch.sqrt(X2) * torch.exp(2j * PI * T2)), 1)\n            piece[mk] = 10 + idx\n        for j in range(3):\n            mk = instrip[j]\n            if not mk.any():\n                continue\n            c = mus[j][mk]\n            a_, b_ = self.left[j]\n            kj = self.kstep(c, j)\n            ps = psi[mk] + a_ + kj\n            vv = vt[mk] + b_ + 3 * j * kj\n            vj = vv - 3 * j * ps\n            w0 = cart0(p[mk], vj)\n            T, dT = self.tau(c)\n            w2, gen = self.kh.fwd(w0, T)\n            ps2 = ps - dT * gen\n            p2, ang = polar0(w2)\n            vl = ang - torch.floor(ang)                        # branch cut on the mouth ray (angle 0)\n            lam, lamp = self.lam(c)\n            xb = p2 - lam\n            xa = xb + c\n            xr = 1 - xa - xb\n            Ta = ps2 + lamp * vl\n            loc = torch.stack((torch.sqrt(xr).to(C128), torch.sqrt(xa) * torch.exp(2j * PI * Ta),\n                               torch.sqrt(xb) * torch.exp(2j * PI * (vl - Ta))), 1)\n            perm = [(0, 1, 2), (1, 2, 0), (2, 0, 1)][j]\n            Wg = torch.zeros_like(loc)\n            for li, gi in enumerate(perm):\n                Wg[:, gi] = loc[:, li]\n            W[mk] = Wg\n            piece[mk] = j\n        return (W, piece) if return_info else W\n\n    def chart(self, W):\n        kap = self.kappa_line\n        n = W.abs().pow(2).sum(1).sqrt()\n        Z0 = (W[:, 2] - kap * W[:, 1]) / math.sqrt(2)\n        Z1 = (W[:, 1] + kap.conjugate() * W[:, 2]) / math.sqrt(2)\n        ph = Z0.conj() / Z0.abs()\n        yy = torch.stack((Z1, W[:, 0]), 1) * ph[:, None] / (math.sqrt(PI) * n[:, None])\n        return torch.cat((yy.real, yy.imag), 1), Z0.abs() / n\n\n    def unchart(self, y):\n        yy = torch.complex(y[:, :2], y[:, 2:]) * math.sqrt(PI)\n        Z0 = torch.sqrt(1 - yy.abs().pow(2).sum(1)).to(C128)\n        kap = self.kappa_line\n        W1 = (yy[:, 0] - kap.conjugate() * Z0) / math.sqrt(2)\n        W2 = (Z0 + kap * yy[:, 0]) / math.sqrt(2)\n        return torch.stack((yy[:, 1], W1, W2), 1)\n\n    def fwd(self, sig, psi, p, vt):\n        return self.chart(self.W(sig, psi, p, vt))[0]\n\n    def invert(self, W):\n        """left inverse of W(.) (piece read off the image); returns reduced (sigma, psi, p, vt) and the piece."""\n        W = W / W.abs().pow(2).sum(1, keepdim=True).sqrt()\n        X = W.abs() ** 2\n        ang = torch.angle(W) / (2 * PI)\n        N = len(W)\n        nan = torch.full((N,), float(\'nan\'), dtype=F64)\n        sig, psi, p, vt = nan.clone(), nan.clone(), nan.clone(), nan.clone()\n        piece = torch.full((N,), -1)\n        done = torch.zeros(N, dtype=torch.bool)\n        for j in range(3):\n            a, b = (j + 1) % 3, (j + 2) % 3\n            mu = X[:, a] - X[:, b]\n            mk = (mu.abs() < self.m) & (X[:, j] > 1 / 3)\n            if not mk.any():\n                continue\n            c = mu[mk]\n            lam, dl = self.lam(c)\n            p2 = X[mk, b] + lam\n            Ta = ang[mk, a] - ang[mk, j]\n            Tb = ang[mk, b] - ang[mk, j]\n            vl = torch.remainder(Ta + Tb, 1.)\n            ps2 = Ta - dl * vl\n            T, dT = self.tau(c)\n            w0, gen = self.kh.inv(cart0(p2, vl), T)\n            ps = ps2 + dT * gen\n            kj = self.kstep(c, j)\n            a_, b_ = self.left[j]\n            pp, vj = polar0(w0)\n            sig[mk], psi[mk], p[mk], vt[mk] = c + j * (1 - 3 * pp), ps - kj - a_, pp, vj + 3 * j * ps - 3 * j * kj - b_\n            piece[mk] = j\n            done |= mk\n        e = torch.argmin(X, 1)\n        for key, edge in ((0, 2), (1, 0), (\'2s\', 1)):\n            mk = ~done & (e == edge)\n            if not mk.any():\n                continue\n            jj = 2 if key == \'2s\' else key\n            T1 = ang[mk, 1] - ang[mk, 0]\n            T2 = ang[mk, 2] - ang[mk, 0]\n            pv = torch.linalg.solve(A_SEC[jj], (X[mk][:, 1:] - B_SEC[jj]).T).T\n            th = torch.stack((T1, T2), 1) @ A_SEC[jj]\n            a_, b_ = self.off[key]\n            sig[mk], p[mk], vt[mk], psi[mk] = pv[:, 1], pv[:, 0], th[:, 0] - b_, th[:, 1] - a_\n            piece[mk] = 10 + jj\n        return self.reduce(sig, psi, p, vt), piece\n\n    def inv(self, y):\n        (sig, psi, p, vt), piece = self.invert(self.unchart(y))\n        return sig, psi, p, vt, piece\n\n\nclass Chain:\n    """Static chain for (k, eps).  Ball coordinates X = (q1, q2, p1, p2), |X| <= 1;  target B(R), R = (k/(1-eps))^(1/4)."""\n\n    def __init__(self, k, eps, kappa_b=1.0, twist=\'narrow_g\', psi0=-1.0 / 6, vcut=0.5, lift=1, strip_frac=0.9,\n                 hK=None, kc_kw=None, tr_kw=None):\n        self.k, self.eps = int(k), float(eps)\n        self.R = (k / (1 - eps)) ** 0.25\n        self.rho_b = 1 / self.R ** 2                       # normalised capacity of the closed unit ball\n        self.P = P = kc.KCParams(self.k, self.eps, kappa_b=kappa_b, **(kc_kw or {}))\n        assert P.a > self.rho_b, \'budget: need a = t0/sqrt k > rho_ball\'\n        self.strip = SmoothKeyhole.from_budget(self.rho_b, strip_frac * (P.a - self.rho_b))\n        self.C = Comparator(P)\n        self.tw = mf.SpiralShear(P, **mf.CONFIGS[twist]) if twist else None\n        self.psi0, self.vcut, self.lift = psi0, vcut, lift\n        if hK is None:\n            G = torch.linspace(-P.wG, P.Gmax, 4001, dtype=F64)\n            hK = max(P.a, float((P.O(G) - 0.5 * P.mu * P.slack(G)).max()))\n        self.T = Transfer(hK, **(tr_kw or {}))\n        self.scale = math.sqrt(PI) * self.R\n        self.ngroup = 9\n        self.nreg = self.k - P.n_wild()\n\n    # ---- cell <-> flat\n    def J(self, p):\n        return 3 * self.P.s * p - 3\n\n    def K(self, p):\n        return self.P.cs * p\n\n    def cell_to_flat(self, i, yl):\n        P = self.P\n        X, T, w = yl[..., 0], yl[..., 1], yl[..., 2:]\n        p = mom(w)\n        if i < self.ngroup:\n            return torch.cat(((self.J(p) + 9 * X)[..., None], ((i - 4 + T) / 9)[..., None], rot(w, -3 * P.s * T / 9)), -1)\n        dA = 3 * P.s - i\n        return torch.cat(((X + self.J(p) + i * (P.a - p))[..., None], (T + self.vcut)[..., None], rot(w, -dA * T)), -1)\n\n    def flat_to_cell(self, i, y):\n        """y must be the deck representative with G in [J(p), K(p)) (to_fund); T is reduced to [0, 1)."""\n        P = self.P\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        p = mom(w)\n        if i < self.ngroup:\n            T = 9 * v - (i - 4)\n            T = T - 9 * torch.floor(T / 9)\n            return torch.cat((((G - self.J(p)) / 9)[..., None], T[..., None], rot(w, 3 * P.s * T / 9)), -1)\n        dA = 3 * P.s - i\n        T = v - self.vcut\n        T = T - torch.floor(T)\n        return torch.cat(((G - self.J(p) - i * (P.a - p))[..., None], T[..., None], rot(w, dA * T)), -1)\n\n    def to_fund(self, y):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        hb = 3 - 9 * mom(w)\n        n = torch.floor((G - self.J(mom(w))) / hb)\n        return torch.cat(((G - n * hb)[..., None], v[..., None], rot(w, -9 * n * v)), -1)\n\n    # ---- flat <-> post\n    def flat_to_post(self, y):\n        G, v, w = y[..., 0], y[..., 1], y[..., 2:]\n        p = mom(w)\n        hb = 3 - 9 * p\n        ua = G / hb + self.lift\n        th = torch.atan2(w[..., 1], w[..., 0]) / (2 * PI)\n        return hb * v, self.psi0 - ua, p, th - 9 * (ua - self.lift) * v\n\n    def post_to_flat(self, sig, psi, p, vt):\n        hb = 3 - 9 * p\n        ua = self.psi0 - psi\n        v = sig / hb\n        w = cart0(p, vt + 9 * (ua - self.lift) * v)\n        return torch.cat((((ua - self.lift) * hb)[..., None], v[..., None], w), -1)\n\n    # ---- ball <-> cell (strip map)\n    def ball_to_cell(self, Xb):\n        z = Xb / self.scale\n        z1 = torch.stack((z[:, 0], z[:, 2]), 1)\n        w = torch.stack((z[:, 1], z[:, 3]), 1)\n        x, th = polar0(self.strip.fwd(z1)[0])\n        return torch.cat((x[:, None], (th - torch.floor(th))[:, None], w), 1)\n\n    def cell_to_ball(self, yl):\n        z1 = self.strip.inv(cart0(yl[:, 0], yl[:, 1]))[0]\n        return torch.stack((z1[:, 0], yl[:, 2], z1[:, 1], yl[:, 3]), 1) * self.scale\n\n    # ---- stages\n    def ball_to_flat(self, i, Xb, stage=\'twist\'):\n        y = self.cell_to_flat(i, self.ball_to_cell(Xb))\n        if stage == \'cell\':\n            return y\n        if i >= self.ngroup:\n            y = self.C.fwd(y)\n        if stage == \'comp\' or self.tw is None:\n            return y\n        return self.tw.fwd(y)\n\n    def flat_to_ball(self, j, y):\n        if self.tw is not None:\n            y = self.tw.inv(y)\n        y = self.to_fund(y)\n        if j >= self.ngroup:\n            y = self.C.inv(y)\n        return self.cell_to_ball(self.flat_to_cell(j, y))\n\n    def Embed(self, i, Xb):\n        y = self.ball_to_flat(i, Xb)\n        return self.T.fwd(*self.flat_to_post(y)) * self.scale\n\n    def target_to_flat(self, Y):\n        sig, psi, p, vt, piece = self.T.inv(Y / self.scale)\n        return self.post_to_flat(sig, psi, p, vt), piece\n\n    def Preimage(self, j, Y, flat=None):\n        y = self.target_to_flat(Y)[0] if flat is None else flat\n        Xb = self.flat_to_ball(j, y)\n        return Xb, torch.isfinite(Xb).all(dim=1)\n',
-    'chain_strip': '"""Second version of the static chain of chain_base with\n  * a different strip map (default): the fibrewise Knothe-Rosenblatt map with fibre-angle compensation,\n        (x, y, w) -> (X, T, w e^{2 pi i C}),   r^2 = (a - p)/pi, p = pi|w|^2, c = sqrt(r^2 - x^2),\n        X = r^2 (pi/2 + asin(x/r) + (x/r) sqrt(1 - x^2/r^2))   (area of the disc D(r) to the left of x),\n        T = 1/2 + y/(2c),   C = (X - x c)/(pi r^2) * y/(2c),\n    a closed-form symplectomorphism of the OPEN ball B(a) onto the open cell {0 < X < a - p, 0 < T < 1}; no keyhole,\n    no Newton in the forward direction (inverse: one Kepler-type scalar solve).  strip=\'keyhole\' reproduces v1.\n  * the transfer split into two stages  K_post = Wpost o Band  (Band = the corner keyhole with its psi-drift, identity\n    outside the corner bands; Wpost = sector charts / N\'\' / U / ball chart),\n  * a relative safety margin in the final scale (image inside B(R (1 - margin))),\n  * Chain2.stages(i): the list of stage maps (name, forward, inverse) with Embed = S_n o ... o S_1.\n"""\nimport math\nimport os\nimport sys\n\nimport torch\n\nHERE = os.path.dirname(os.path.abspath(__file__)) if \'__file__\' in globals() else None\nif HERE and HERE not in sys.path:\n    sys.path.insert(0, HERE)\nimport chain_base as rc      # noqa: E402\n\nkc, mf = rc.kc, rc.mf\nF64, PI, C128 = torch.float64, math.pi, torch.complex128\nrot, mom, polar0, cart0, newton_bracket = rc.rot, rc.mom, rc.polar0, rc.cart0, rc.newton_bracket\n\n\nclass KRStrip:\n    """cell coordinates (X, T, wx\', wy\') of a normalised ball point (x, y, wx, wy) with x^2 + y^2 < (a - p)/pi."""\n\n    def __init__(self, a):\n        self.a = a\n\n    def fwd(self, z):\n        x, y, w = z[:, 0], z[:, 1], z[:, 2:]\n        r2 = (self.a - mom(w)) / PI\n        r = torch.sqrt(r2)\n        c = torch.sqrt(r2 - x * x)\n        u = x / r\n        X = r2 * (PI / 2 + torch.asin(u) + u * c / r)\n        C = (X - x * c) / (PI * r2) * y / (2 * c)\n        return torch.cat((X[:, None], (0.5 + y / (2 * c))[:, None], rot(w, C)), 1)\n\n    def inv(self, yl):\n        X, T, w = yl[:, 0], yl[:, 1], yl[:, 2:]\n        r2 = (self.a - mom(w)) / PI\n        r = torch.sqrt(r2)\n        m2 = 2 * (X / r2 - PI / 2)                      # 2 alpha + sin 2 alpha = m2,  alpha = asin(x/r)\n        al = newton_bracket(lambda t: (2 * t + torch.sin(2 * t) - m2, 2 + 2 * torch.cos(2 * t)),\n                            torch.full_like(X, -PI / 2), torch.full_like(X, PI / 2), (m2 / 4).clamp(-PI / 2, PI / 2))\n        x, c = r * torch.sin(al), r * torch.cos(al)\n        y = (2 * T - 1) * c\n        C = (X - x * c) / (PI * r2) * y / (2 * c)\n        return torch.cat((x[:, None], y[:, None], rot(w, -C)), 1)\n\n\nclass _NoKH(rc.Transfer):\n    def tau(self, c):\n        return torch.zeros_like(c), torch.zeros_like(c)\n\n\nclass Transfer2(rc.Transfer):\n    """K_post = Wpost o Band.  Band: post chart -> post chart (corner keyhole + psi drift in the bands, identity outside)."""\n\n    def __init__(self, hK, **kw):\n        super().__init__(hK, **kw)\n        self.post = _NoKH(hK, **kw)\n\n    def _band(self, x, inverse):\n        sig0, psi0, w0 = x[:, 0], x[:, 1], x[:, 2:]\n        p0, vt0 = polar0(w0)\n        n = torch.floor(sig0 / (3 - 9 * p0) + 1 / 6)\n        sig, psi, p, vt = sig0 - n * (3 - 9 * p0), psi0, p0, vt0 - n * (9 * psi0 + .5)\n        out = x.clone()\n        for j in range(3):\n            c = sig - j * (1 - 3 * p)\n            mk = c.abs() < self.m\n            if not mk.any():\n                continue\n            c = c[mk]\n            a_, b_ = self.left[j]\n            kj = self.kstep(c, j)\n            ps = psi[mk] + a_ + kj\n            vj = vt[mk] + b_ + 3 * j * kj - 3 * j * ps\n            T, dT = self.tau(c)\n            if not inverse:\n                w2, gen = self.kh.fwd(cart0(p[mk], vj), T)\n                ps2 = ps - dT * gen\n            else:\n                w2, gen = self.kh.inv(cart0(p[mk], vj), T)\n                ps2 = ps + dT * gen\n            p2, vj2 = polar0(w2)\n            so = c + j * (1 - 3 * p2)\n            po = ps2 - a_ - kj\n            vo = vj2 + 3 * j * ps2 - b_ - 3 * j * kj\n            nn = n[mk]\n            out[mk] = torch.cat(((so + nn * (3 - 9 * p2))[:, None], po[:, None], cart0(p2, vo + nn * (9 * po + .5))), 1)\n        return out\n\n    def band(self, x):\n        return self._band(x, False)\n\n    def band_inv(self, x):\n        return self._band(x, True)\n\n    def wpost(self, x):\n        p, vt = polar0(x[:, 2:])\n        return self.post.chart(self.post.W(x[:, 0], x[:, 1], p, vt))[0]\n\n    # ---- Wpost split in two: post chart -> point of CP^2 (as the rank-one projector W W^*, 9 real numbers, gauge free)\n    #      -> affine ball chart of CP^2 minus L_kappa (the standard map; Lipschitz constant ~ 1/|Z0|)\n    def _Z(self, W):\n        kap = self.kappa_line\n        return torch.stack(((W[:, 2] - kap * W[:, 1]) / math.sqrt(2), (W[:, 1] + kap.conjugate() * W[:, 2]) / math.sqrt(2), W[:, 0]), 1)\n\n    @staticmethod\n    def _proj(Z):\n        Z = Z / Z.abs().pow(2).sum(1, keepdim=True).sqrt()\n        a, b, c = Z[:, 1] * Z[:, 0].conj(), Z[:, 2] * Z[:, 0].conj(), Z[:, 1] * Z[:, 2].conj()\n        return torch.stack((Z[:, 0].abs() ** 2, Z[:, 1].abs() ** 2, Z[:, 2].abs() ** 2, a.real, a.imag, b.real, b.imag, c.real, c.imag), 1)\n\n    def wproj(self, x):\n        """post chart -> projector Z Z^* in the basis Z0 = (W2 - kappa W1)/sqrt 2, Z1 = (W1 + conj(kappa) W2)/sqrt 2, Z2 = W0:\n        (|Z0|^2, |Z1|^2, |Z2|^2, Re/Im Z1 conj Z0, Re/Im Z2 conj Z0, Re/Im Z1 conj Z2)."""\n        p, vt = polar0(x[:, 2:])\n        return self._proj(self._Z(self.post.W(x[:, 0], x[:, 1], p, vt)))\n\n    def wproj_inv(self, q):\n        a, b, c = torch.complex(q[:, 3], q[:, 4]), torch.complex(q[:, 5], q[:, 6]), torch.complex(q[:, 7], q[:, 8])\n        d = q[:, :3].to(C128)\n        cols = [torch.stack((d[:, 0], a, b), 1), torch.stack((a.conj(), d[:, 1], c.conj()), 1), torch.stack((b.conj(), c, d[:, 2]), 1)]\n        j = torch.argmax(q[:, :3], 1)\n        Z = torch.where((j == 0)[:, None], cols[0], torch.where((j == 1)[:, None], cols[1], cols[2]))\n        kap = self.kappa_line\n        W = torch.stack((Z[:, 2], (Z[:, 1] - kap.conjugate() * Z[:, 0]) / math.sqrt(2), (Z[:, 0] + kap * Z[:, 1]) / math.sqrt(2)), 1)\n        (sig, psi, p, vt), piece = self.post.invert(W)\n        return torch.cat((sig[:, None], psi[:, None], cart0(p, vt)), 1)\n\n    def chart9(self, q):\n        nrm = torch.sqrt(PI * q[:, 0] * (q[:, 0] + q[:, 1] + q[:, 2]))\n        return torch.stack((q[:, 3] / nrm, q[:, 5] / nrm, q[:, 4] / nrm, q[:, 6] / nrm), 1)\n\n    def chart9_inv(self, y):\n        yy = torch.complex(y[:, :2], y[:, 2:]) * math.sqrt(PI)\n        Z0 = torch.sqrt(1 - yy.abs().pow(2).sum(1)).to(C128)\n        return self._proj(torch.stack((Z0, yy[:, 0], yy[:, 1]), 1))\n\n    def wpost_inv(self, y):\n        (sig, psi, p, vt), piece = self.post.invert(self.post.unchart(y))\n        return torch.cat((sig[:, None], psi[:, None], cart0(p, vt)), 1)\n\n\nFALLBACKS = [dict(kappa_b=1.0, f=0.25), dict(kappa_b=1.0, f=0.1), dict(kappa_b=2.0, f=0.25), dict(kappa_b=4.0, f=0.25),\n             dict(kappa_b=4.0, f=0.1)]\n\n\nclass Chain2(rc.Chain):\n    def __init__(self, k, eps, kappa_b=1.0, f=0.25, strip=\'kr\', margin=2e-6, twist=\'narrow_g\', tr_kw=None, kc_kw=None,\n                 strip_frac=0.9):\n        kw = dict(f0=f, f1=f)\n        kw.update(kc_kw or {})\n        self.margin, self.strip_kind = margin, strip\n        self.k, self.eps = int(k), float(eps)\n        self.R = (k / (1 - eps)) ** 0.25\n        self.Rs = self.R * (1 - margin)                       # the image lies in the open ball of radius Rs\n        self.rho_b = 1 / self.Rs ** 2\n        self.P = P = kc.KCParams(self.k, self.eps, kappa_b=kappa_b, **kw)\n        assert P.a > self.rho_b, \'budget: need a = t0/sqrt k > rho_ball\'\n        self.strip = rc.SmoothKeyhole.from_budget(self.rho_b, strip_frac * (P.a - self.rho_b)) if strip == \'keyhole\' else KRStrip(P.a)\n        self.C = rc.Comparator(P)\n        self.tw = mf.SpiralShear(P, **mf.CONFIGS[twist]) if twist else None\n        self.psi0, self.vcut, self.lift = -1.0 / 6, 0.5, 1\n        G = torch.linspace(-P.wG, P.Gmax, 4001, dtype=F64)\n        hK = max(P.a, float((P.O(G) - 0.5 * P.mu * P.slack(G)).max()))\n        self.T = Transfer2(hK, **(tr_kw or {}))\n        self.scale = math.sqrt(PI) * self.Rs\n        self.ngroup = 9\n        self.nreg = self.k - P.n_wild()\n        self.config = dict(kappa_b=kappa_b, f=f, strip=strip, margin=margin, twist=twist, tr_kw=tr_kw or {}, hK=hK)\n\n    # ---- comparator split into its two stages (identity where tau = 0)\n    def _comp1(self, y, inverse=False):\n        C = self.C\n        G, v, w = y[:, 0], y[:, 1], y[:, 2:]\n        tau, dtau = C.tauG(G)\n        act = tau > 0\n        out = y.clone()\n        if act.any():\n            if not inverse:\n                w1, gen = C.K.fwd(w[act], tau[act]); out[act, 1] = v[act] - dtau[act] * gen\n            else:\n                w1, gen = C.K.inv(w[act], tau[act]); out[act, 1] = v[act] + dtau[act] * gen\n            out[act, 2:] = w1\n        return out\n\n    def _comp2(self, y, inverse=False):\n        C = self.C\n        G, v, w = y[:, 0], y[:, 1], y[:, 2:]\n        c, dc = C.cG(G)\n        act = c > 0\n        out = y.clone()\n        if act.any():\n            x, th = polar0(w[act])\n            sgn = -1.0 if inverse else 1.0\n            out[act, 1] = v[act] - sgn * dc[act] * C.vartheta(th)\n            out[act, 2:] = cart0(x + sgn * c[act], th)\n        return out\n\n    def _post(self, y):\n        sig, psi, p, vt = self.flat_to_post(y)\n        return torch.cat((sig[:, None], psi[:, None], cart0(p, vt)), 1)\n\n    def _post_inv(self, x):\n        p, vt = polar0(x[:, 2:])\n        return self.post_to_flat(x[:, 0], x[:, 1], p, vt)\n\n    def stages(self, i):\n        """[(name, forward, inverse)], Embed(i, .) = composition in order.  Arrays (n, 4); charts:\n        ball X=(q1,q2,p1,p2) | z=(x,y,wx,wy) normalised | cell (X,T,w) | flat (G,v,w) | post (sigma,psi,w) | target Y."""\n        sc = self.scale\n        perm, iperm = [0, 2, 1, 3], [0, 2, 1, 3]\n        S = [(\'scale\', lambda X: X[:, perm] / sc, lambda z: z[:, iperm] * sc)]\n        if self.strip_kind == \'keyhole\':\n            K = self.strip\n            S.append((\'strip keyhole\', lambda z: torch.cat((K.fwd(z[:, :2])[0], z[:, 2:]), 1),\n                      lambda z: torch.cat((K.inv(z[:, :2])[0], z[:, 2:]), 1)))\n\n            def pol(z):\n                x, th = polar0(z[:, :2])\n                return torch.cat((x[:, None], (th - torch.floor(th))[:, None], z[:, 2:]), 1)\n            S.append((\'polar (X,T)\', pol, lambda yl: torch.cat((cart0(yl[:, 0], yl[:, 1]), yl[:, 2:]), 1)))\n        else:\n            S.append((\'strip (KR)\', self.strip.fwd, self.strip.inv))\n        S.append((\'cell -> flat\', lambda yl: self.cell_to_flat(i, yl), lambda y: self.flat_to_cell(i, y)))\n        if i >= self.ngroup:\n            S.append((\'comparator keyhole\', self._comp1, lambda y: self._comp1(y, True)))\n            S.append((\'comparator shift\', self._comp2, lambda y: self._comp2(y, True)))\n        if self.tw is not None:\n            S.append((\'twist B (Psi_S)\', self.tw.psiS, lambda y: self.tw.psiS(y, -1.0)))\n            S.append((\'twist A (Phi_g)\', self.tw.phiG, lambda y: self.tw.phiG(y, -1.0)))\n        S.append((\'post chart\', self._post, self._post_inv))\n        S.append((\'corner keyhole (Band)\', self.T.band, self.T.band_inv))\n        S.append((\'CP2 point (projector)\', self.T.wproj, self.T.wproj_inv))\n        S.append((\'ball chart of CP2 minus L + scale\', lambda q: self.T.chart9(q) * sc, lambda Y: self.T.chart9_inv(Y / sc)))\n        return S\n\n    def Embed(self, i, Xb):\n        y = Xb\n        for _, f, _ in self.stages(i):\n            y = f(y)\n        return y\n\n    def target_to_flat(self, Y):\n        x = self.T.band_inv(self.T.wpost_inv(Y / self.scale))\n        y = self._post_inv(x)\n        if self.tw is not None:\n            y = self.tw.inv(y)\n        return self.to_fund(y), None\n\n    def Preimage(self, j, Y, flat=None):\n        y = self.target_to_flat(Y)[0] if flat is None else flat\n        st = self.stages(j)\n        names = [s[0] for s in st]\n        lo, hi = names.index(\'cell -> flat\'), (names.index(\'twist B (Psi_S)\') if self.tw is not None else names.index(\'post chart\'))\n        for _, _, g in reversed(st[:hi]):\n            y = g(y)\n        return y, torch.isfinite(y).all(dim=1)\n\n\nTR_KEYS, KC_KEYS = (\'fm\', \'fd2\', \'fsig\', \'fdel\'), (\'lam_a\', \'lam2\', \'mu\', \'wfrac\')\nDEFAULT_TR = dict(fm=0.32, fd2=0.2, fsig=0.2, fdel=0.1)     # v2 corner-band fractions of D (v1: 0.25, 0.12, 0.06, 0.15)\nCHARTS = {\'scale\': (\'ball\', \'norm\'), \'strip keyhole\': (\'norm\', \'norm\'), \'polar (X,T)\': (\'norm\', \'cell\'), \'strip (KR)\': (\'norm\', \'cell\'),\n          \'cell -> flat\': (\'cell\', \'flat\'), \'comparator keyhole\': (\'flat\', \'flat\'), \'comparator shift\': (\'flat\', \'flat\'),\n          \'twist B (Psi_S)\': (\'flat\', \'flat\'), \'twist A (Phi_g)\': (\'flat\', \'flat\'), \'post chart\': (\'flat\', \'post\'),\n          \'corner keyhole (Band)\': (\'post\', \'post\'), \'CP2 point (projector)\': (\'post\', \'cp2\'),\n          \'ball chart of CP2 minus L + scale\': (\'cp2\', \'target\')}\n\n\ndef stage_dicts(ch, i):\n    """stage list with chart names and the conformal factor c in  J^T Omega_out J = c Omega_in  (charts \'ball\' and \'target\':\n    Omega = dq1^dp1 + dq2^dp2 on (q1, q2, p1, p2); chart \'cp2\': a point of CP^2 as the 9 real numbers\n    (|Z0|^2, |Z1|^2, |Z2|^2, Re/Im Z1 conj Z0, Re/Im Z2 conj Z0, Re/Im Z1 conj Z2) of its projector, Fubini-Study form;\n    all other charts: Omega = dx0^dx1 + dx2^dx3).  For the two last stages conf refers to their composition."""\n    out = []\n    for nm, f, g in ch.stages(i):\n        ci, co = CHARTS[nm]\n        conf = 1.0 / ch.scale ** 2 if nm == \'scale\' else (ch.scale ** 2 if co == \'target\' else 1.0)\n        out.append(dict(name=nm, fwd=f, inv=g, chart_in=ci, chart_out=co, conf=conf))\n    return out\n\n\ndef make_chain(k, eps, **kw):\n    """Chain2 with the first admissible budget split (explicit kappa_b / f override the fallback list).\n    Tuning knobs: fm, fd2, fsig, fdel (corner bands, fractions of D); lam_a, lam2, mu, wfrac (comparator, KCParams)."""\n    kw = dict(kw)\n    cap = kw.pop(\'eps_cap\', None)\n    if cap is not None:\n        eps = min(eps, cap)          # a packing for a smaller eps is a packing for the requested one (R only grows with eps)\n    tr = {q: kw.pop(q) for q in TR_KEYS if q in kw}\n    kcw = {q: kw.pop(q) for q in KC_KEYS if q in kw}\n    kw[\'tr_kw\'] = dict(DEFAULT_TR, **dict(kw.get(\'tr_kw\') or {}, **tr))\n    if kcw:\n        kw[\'kc_kw\'] = dict(kw.get(\'kc_kw\') or {}, **kcw)\n    if \'kappa_b\' in kw or \'f\' in kw:\n        return Chain2(k, eps, **kw), dict(kappa_b=kw.get(\'kappa_b\', 1.0), f=kw.get(\'f\', 0.25))\n    last = None\n    for fb in FALLBACKS:\n        try:\n            return Chain2(k, eps, kappa_b=fb[\'kappa_b\'], f=fb[\'f\'], **kw), fb\n        except AssertionError as e:\n            last = e\n    raise ValueError(\'no admissible parameter set for k=%r eps=%r: %r\' % (k, eps, last))\n',
-    'chain_theorem': '"""The static chain of chain_strip with exactly the data of the explicit packing theorem (Theorem 1.1 of the proof\ndocument, in preparation; section numbers below refer to that document):\n\n  * cell parameter eps_c = min(eps, 1/100)                                   (section 13.4; the code of v2 capped at 0.1);\n  * the explicit, non-iterative parameter set Pi*(k, eps_c; f), f = 1/4      (section 13.2; v2 iterated the keyholes);\n  * ball capacity rho_b = (1 - eta)/(s (1 - m_s)^2) with a relative radius margin 0 <= m_s < eta/4  (Lemma 13.1(ii));\n    here m_s = min(2e-6, eta/8)                                              (v2: fixed 2e-6, which fails for eps <~ 1e-5);\n  * h_K by the closed formula of section 13.2 step 4                         (v2: maximum over a 4001-point grid; equal);\n  * the sharp angle function  theta - 1/2 on (0, 1)  in the comparator shift F_2 (section 8.1; v2 smoothed it inside\n    the slit, where no ball point is ever evaluated - Theorem 8.2(iii));\n  * no fallback list, no kappa_b, no assertions of KCParams / Transfer: instead the hypotheses (H0)-(H15) of section 13.1\n    are evaluated for the numbers actually used and ValueError is raised if one fails (Proposition 13.2 proves they hold;\n    the evaluation guards against implementation slips and against float64 break-down).\n\nThe maps themselves (KR strip map, cell -> flat, keyhole comparator, marked-fibre twist, post chart, corner keyhole,\nsector / corner charts, ball chart) are the unchanged code of chain_base / chain_strip / marked_fibres.\n"""\nimport math\nimport os\nimport sys\n\nimport torch\n\nHERE = os.path.dirname(os.path.abspath(__file__)) if \'__file__\' in globals() else None\nif HERE and HERE not in sys.path:\n    sys.path.insert(0, HERE)\nimport chain_base as rc      # noqa: E402\nimport chain_strip as r2     # noqa: E402\n\nkc, mf = rc.kc, rc.mf\nF64, PI = torch.float64, math.pi\n\nPROOF = \'the explicit packing theorem (proof document in preparation)\'\nEPS_C_MAX = 1.0 / 100                                   # section 13.4\nF_STAR = 0.25                                           # Proposition 13.2(b) (Sm = Sm_4)\nLAM_A, LAM2, MU = 9.0 / 10, 3.0 / 10, 0.5               # section 13.2 step 1\nUPS = math.sqrt(11.0 / 1000)                            # section 13.2 step 2\nFR = dict(fm=0.32, fd2=0.2, fsig=0.2, fdel=0.1)         # section 13.2 step 5:  m, d2, sigma0, delta_kh as fractions of D\nTWIST = dict(ag=0.1, om0=0.015, om1=0.045, ou0=0.02, ou1=0.12, vcomp=0.25, oc0=0.05, oc1=0.14)   # section 9.1 (narrow_g)\nM_ST = 4                                                # step functions of the keyholes, the comparator and W\nMS_ABS, MS_FRAC = 2e-6, 1.0 / 8                         # m_s = min(MS_ABS, MS_FRAC * eta) < eta/4\n\n\ndef keyhole_star(ra, d, beta, rho1_safety):\n    """the keyhole datum (r_a; d, W1, W2, rho1, beta, X_w, r_h) of section 13.2 steps 2 and 6 (closed formulas)."""\n    W1 = beta / (3 * (1 + beta))\n    rh = 0.9 * d * math.sin(2 * PI * W1)\n    rho1 = rho1_safety * ((d - rh) / (d + ra)) ** 2\n    W2 = beta / (1 + beta - rho1) - W1\n    Xw = 0.2 * PI * (d - rh) ** 2\n    K = rc.SmoothKeyhole(d, W1, W2, rho1, 1 + beta, Xw, M_ST)\n    K.ra, K.rh, K.x0, K.theta0, K.beta = ra, rh, PI * rh * rh, W1, beta\n    K.delta_rel = beta * PI * (ra + d) * (ra + 8.4 * d)             # section 7.1\n    K.delta_small = 4 * PI ** 3 * d * (ra + d) * W2 ** 2\n    return K\n\n\nclass PiStar(kc.KCParams):\n    """Pi*(k, eps_c; f): sections 3.1 and 13.2.  Attribute-compatible with KCParams (whose __init__ is NOT run)."""\n\n    def __init__(self, k, eps_c, f=F_STAR):\n        self.k, self.eps, self.kappa_b = int(k), float(eps_c), 1.0\n        s = math.sqrt(k)\n        eta = eps_c / (1 + math.sqrt(1 - eps_c))      # = 1 - sqrt(1 - eps_c), evaluated without cancellation\n        t0 = 1 - eta / 2\n        self.s, self.eta, self.t0 = s, eta, t0\n        self.a, self.h, self.cs, self.g = t0 / s, t0 / 3, 3 * s - 9, 3 * eta / 2       # g = 3 (1 - t0)\n        self.rho_ball = (1 - eta) / s                 # = 1 / R(eps_c)^2\n        self.T = self.g / self.cs\n        self.Gmax = s * t0 - 3\n        self.kk = k - 3 * s\n        self.lam_a, self.lam2, self.mu, self.f0, self.f1, self.wfrac, self.m = LAM_A, LAM2, MU, f, f, None, M_ST\n        self.wG, self.w2 = LAM_A * self.g, LAM2 * self.g\n        ra = math.sqrt(self.a / PI)\n        d = math.sqrt(f * self.T / PI) / (1 + UPS)\n        beta = f * self.T / (PI * (ra + d) * (ra + 8.4 * d))\n        K = keyhole_star(ra, d, beta, 0.8)\n        self.ra, self.d, self.beta, self.rho_out = ra, d, beta, 1 + beta\n        self.W1, self.W2, self.Ws, self.rh, self.rho1, self.Xw = K.W1, K.W2, K.W1 + K.W2, K.rh, K.rho1, K.Xw\n        self.x0, self.theta0 = K.x0, K.theta0\n        self.delta_rel, self.delta_small = K.delta_rel, K.delta_small\n        # h_K and D = 1 - 3 h_K (section 13.2 step 4); D is evaluated from the three candidates without cancellation\n        cand = (self.a, self.O(-self.wG) - 0.5 * MU * self.T * (1 - LAM_A), self.h - 0.5 * MU * self.T)\n        Dc = ((s - 3 + 1.5 * eta) / s, (s - 3 + self.wG) / s + 1.5 * MU * self.T * (1 - LAM_A), eta / 2 + 1.5 * MU * self.T)\n        j = max(range(3), key=lambda q: cand[q])\n        self.hK, self.D, self.hK_case = cand[j], Dc[j], j\n\n\nclass Comparator3(rc.Comparator):\n    """the comparator with the angle function of section 8.1:  theta in (0, 1),  theta - 1/2  (no smoothing in the slit)."""\n\n    def vartheta(self, th):                  # th = arg w / 2 pi in (-1/2, 1/2]\n        return th - 0.5 * torch.sign(th)\n\n\nclass Transfer3(r2.Transfer2):\n    """Transfer2 with explicit data: h_K, D, the four band numbers and the corner keyhole K_B of Pi*."""\n\n    def __init__(self, hK, D, khB, fr=FR, kappa=(-1 / 12, 1 / 12, 0.)):\n        self._init_data(hK, D, khB, fr, kappa)\n        self.post = r2._NoKH.__new__(r2._NoKH)\n        Transfer3._init_data(self.post, hK, D, khB, fr, kappa)\n\n    def _init_data(self, hK, D, khB, fr, kappa):\n        self.hK, self.D = hK, D\n        self.m, self.d2, self.sig0, self.dkh = fr[\'fm\'] * D, fr[\'fd2\'] * D, fr[\'fsig\'] * D, fr[\'fdel\'] * D\n        self.kh = khB\n        self.st = kc.TrigStep(M_ST)\n        self.kap = kappa\n        k0, k1, k2 = kappa\n        self.off = {0: (0., 0.), 1: (k1, 3 * k1), \'2s\': (k1 + k2, 3 * k1 + 6 * k2), \'2c\': (-k0, 0.)}\n        self.left = {0: self.off[\'2c\'], 1: self.off[0], 2: self.off[1]}\n        arg = -4 * PI * (0. + self.left[0][0] + k0 / 2)\n        self.kappa_line = complex(math.cos(arg), math.sin(arg))\n\n\ndef _circ(x):\n    x = abs(x) % 1.0\n    return min(x, 1 - x)\n\n\ndef hypotheses(ch, ngrid=4001):\n    """(H0)-(H15) of section 13.1 for the numbers used by the chain ch.  Returns {name: (holds, margin)}; every margin\n    is \'right-hand side minus left-hand side\' (or the stated quantity) and must be > 0 (>= 0 where the hypothesis is not\n    strict).  (H6), (H7) are evaluated on ngrid points of [0, 1]; (H14), (H15) use S_max <= max(m, sqrt(d2^2 + sigma0^2))\n    (section 10.1), which is sufficient.  \'split\' is the condition of Remark 10.10 for evaluating W as Band + chart."""\n    P, T, KB, tw = ch.P, ch.T, ch.T.kh, ch.tw\n    st = kc.TrigStep(M_ST)\n    out = {}\n\n    def put(name, margin, strict=True):\n        ok = (margin > 0) if strict else (margin >= 0)\n        out[name] = (bool(ok and math.isfinite(margin)), float(margin))\n\n    put(\'H0 k>=10 integer\', (1.0 if (int(P.k) == P.k and P.k >= 10) else -1.0))\n    put(\'H0 0<eps_c<1\', min(P.eps, 1 - P.eps))\n    put(\'H1 0<lam2<lam_a<=1\', min(P.lam2, P.lam_a - P.lam2) if P.lam_a <= 1 else -1.0)\n    put(\'H1 0<mu<1\', min(P.mu, 1 - P.mu))\n    put(\'H2 0<rho_b<a\', min(ch.rho_b, (P.a - ch.rho_b) / P.a))\n\n    def keyhole(tag, K):\n        put(tag + \' positive\', min(K.ra, K.d, K.W1, K.W2, K.rho1, K.beta, K.Xw, K.rh))\n        put(tag + \' (K1) W1<W2\', (K.W2 - K.W1) / K.W2)\n        put(tag + \' (K1) W2<=1/6\', 1.0 / 6 - K.W2, strict=False)\n        put(tag + \' (K1) rho1<1\', 1 - K.rho1)\n        put(tag + \' (K1) (W1+W2)(1+beta-rho1)=beta\', 1e-12 - abs((K.W1 + K.W2) * (1 + K.beta - K.rho1) / K.beta - 1), strict=False)\n        put(tag + \' (K2) rh<=d sin(2 pi W1)\', 1 - K.rh / (K.d * math.sin(2 * PI * K.W1)), strict=False)\n        put(tag + \' (K3)\', 1 - (K.rho1 * PI * (K.d + K.ra) ** 2 + K.Xw / 2) / (PI * (K.d - K.rh) ** 2))\n\n    KC = ch.C.K                      # built by SmoothKeyhole.from_kc(P) from the numbers of Pi*\n    KC.beta = P.beta\n    assert (KC.d, KC.W1, KC.W2, KC.rho1, KC.rho_out, KC.rh, KC.Xw) == (P.d, P.W1, P.W2, P.rho1, 1 + P.beta, P.rh, P.Xw)\n    KC.delta_rel = KC.beta * PI * (KC.ra + KC.d) * (KC.ra + 8.4 * KC.d)\n    KC.delta_small = 4 * PI ** 3 * KC.d * (KC.ra + KC.d) * KC.W2 ** 2\n    put(\'H3 K_C r_a=sqrt(a/pi)\', 1e-12 - abs(KC.ra / math.sqrt(P.a / PI) - 1), strict=False)\n    keyhole(\'H3-H5 K_C\', KC)\n    u = torch.linspace(0, 1, ngrid, dtype=F64)\n    Tt = P.T\n    h6 = (1 - P.mu) * (1 - P.lam_a + u * (P.lam_a - P.lam2)) - torch.maximum(st(u) * KC.delta_rel, torch.full_like(u, KC.delta_small)) / Tt\n    put(\'H6 (grid)\', float(h6.min()), strict=False)\n    h7 = (1 - P.mu) * (1 - P.lam2 * (1 - u)) - (max(KC.delta_rel, KC.delta_small) / Tt + P.lam2 * st.ramp(u))\n    put(\'H7 (grid)\', float(h7.min()), strict=False)\n    put(\'H8 pi d^2<=T(1-mu-lam2/2)\', (1 - P.mu - P.lam2 / 2) - PI * KC.d ** 2 / Tt, strict=False)\n    put(\'H8 pi d^2+lam2 T/2+mu T<=O(-lam_a g)\', P.O(-P.wG) - (PI * KC.d ** 2 + P.lam2 * Tt / 2 + P.mu * Tt), strict=False)\n    put(\'H9\', 1 - (P.cs * PI * KC.rh ** 2 + 1.5 * P.lam2 * P.g) / P.g, strict=False)\n    # (H10): twist constants\n    c = ch.twist_const\n    put(\'H10 constants ordered\', min(c[\'ag\'], c[\'om0\'], c[\'om1\'] - c[\'om0\'], c[\'ou0\'], c[\'ou1\'] - c[\'ou0\'], c[\'oc0\'], c[\'oc1\'] - c[\'oc0\']))\n    iv = [(-c[\'ag\'], c[\'om1\']), (0.0, c[\'om1\']), (0.5, c[\'om1\']), (c[\'vcomp\'], c[\'oc1\'])]\n    put(\'H10 (T-a)\', min(_circ(iv[i][0] - iv[j][0]) - iv[i][1] - iv[j][1] for i in range(4) for j in range(i)))\n    lobes = (5.0 / 6, 7.0 / 12)\n    put(\'H10 (T-b) lobes disjoint\', _circ(lobes[0] - lobes[1]) - 2 * c[\'ou1\'])\n    put(\'H10 (T-b) distance to 1/3 and 0\', min(_circ(l - q) - c[\'ou1\'] for l in lobes for q in (1.0 / 3, 0.0)) - c[\'ou0\'], strict=False)\n    put(\'H10 n_j integers\', 1.0 if all(float(n) == int(n) for n in tw.nj) else -1.0)\n    put(\'H10 code constants = checked constants\', 1.0 if (tw.ag == c[\'ag\'] and tw.vcomp == c[\'vcomp\'] and tw.bv.w0 == c[\'om0\'] and tw.bv.w1 == c[\'om1\']\n                                                         and tw.bu.w0 == c[\'ou0\'] and tw.bu.w1 == c[\'ou1\'] and tw.bc.w0 == c[\'oc0\'] and tw.bc.w1 == c[\'oc1\']\n                                                         and tw.global_shift and tw.delta == P.w2 / 4 and tuple(tw.vp) == (-c[\'ag\'], 0.0, 0.5)) else -1.0)\n    # (H11)\n    put(\'H11 a<=hK\', (T.hK - P.a), strict=False)\n    put(\'H11 hK<1/3\', T.D)\n    # hK - O(G) + mu slack(G) = ((s - 3 - G)/s - D)/3 + mu slack(G); convex piecewise linear in G, so the end points\n    # (and the kink G = 0) suffice; (s - 3 - G)/s is eta/2 at G = Gmax and (s - 3 + wG)/s at G = -wG  (no cancellation)\n    Gs = [((P.s - 3 + P.wG) / P.s, P.T * (1 - P.lam_a)), (P.eta / 2, P.T)] + ([((P.s - 3) / P.s, P.T)] if P.Gmax > 0 else [])\n    put(\'H11 hK>O-mu slack\', min((q - T.D) / 3 + P.mu * sl for q, sl in Gs))\n    put(\'H11 D consistent with hK\', 1e-9 - abs((1 - 3 * T.hK) - T.D) / max(T.D, 1e-300) if T.D > 1e-6 else 1.0, strict=False)\n    # (H12)-(H15)\n    put(\'H12 K_B r_a=sqrt(hK/pi)\', 1e-12 - abs(KB.ra / math.sqrt(T.hK / PI) - 1), strict=False)\n    keyhole(\'H12 K_B\', KB)\n    put(\'H13\', 1 - max(PI * KB.d ** 2, KB.delta_rel, KB.delta_small) / T.dkh, strict=False)\n    put(\'H14 d2<m\', (T.m - T.d2) / T.m)\n    Sb = max(T.m, math.hypot(T.d2, T.sig0))\n    cgrid = torch.linspace(-T.m, T.m, 20001, dtype=F64)\n    Sv = T.S(cgrid)\n    Smax = float((Sv[0] if isinstance(Sv, tuple) else Sv).max())\n    put(\'H14 S_max<=bound of 10.1\', (Sb - Smax) / Sb + 1e-12, strict=False)\n    eta1 = 2.0 / 3 - (2 * T.dkh + Sb) / T.D\n    put(\'H14 2 delta_kh+S_max<2D/3 (eta_1)\', eta1)\n    put(\'H15 m<=3 eta_1 D\', 3 * eta1 - T.m / T.D, strict=False)\n    put(\'split (Remark 10.10) 2m<D-3 delta_kh\', 1 - 3 * T.dkh / T.D - 2 * T.m / T.D)\n    return out\n\n\nclass Chain3(r2.Chain2):\n    """the chain of Theorem 1.1 for (k, eps):  eps_c = min(eps, 1/100), parameters Pi*(k, eps_c; f)."""\n\n    def __init__(self, k, eps, f=F_STAR, check=True):\n        if int(k) != k or k < 10 or not (0.0 < float(eps) < 1.0):\n            raise ValueError(\'need an integer k >= 10 and 0 < eps < 1\')\n        self.k, self.eps_requested = int(k), float(eps)\n        self.eps = min(self.eps_requested, EPS_C_MAX)                 # eps_c\n        try:\n            self._build(f)\n        except (AssertionError, ZeroDivisionError, OverflowError) as ex:      # under/overflow of the float64 formulas\n            raise ValueError(\'float64 break-down while evaluating the parameters for k=%r eps=%r: %s: %s\'\n                             % (k, eps, type(ex).__name__, str(ex)[:200]))\n        bad = [n for n, (ok, _) in self.hyp.items() if not ok]\n        if check and bad:\n            raise ValueError(\'hypotheses of section 13.1 fail in float64 for k=%r eps=%r (eps_c=%r): %s\'\n                             % (k, eps, self.eps, \'; \'.join(\'%s [%.3e]\' % (n, self.hyp[n][1]) for n in bad)))\n\n    def _build(self, f):\n        k, eps = self.k, self.eps_requested\n        self.P = P = PiStar(self.k, self.eps, f)\n        self.R_requested = (self.k / (1 - self.eps_requested)) ** 0.25\n        self.R = 1 / math.sqrt(P.rho_ball)                            # R(eps_c) = (k/(1 - eps_c))^(1/4)\n        self.margin = min(MS_ABS, MS_FRAC * P.eta)                    # m_s < eta/4  (Lemma 13.1(ii))\n        self.Rs = self.R * (1 - self.margin)                          # the image lies in the open ball of radius Rs\n        self.rho_b = P.rho_ball / (1 - self.margin) ** 2              # normalised capacity of the closed unit ball\n        self.strip_kind, self.strip = \'kr\', r2.KRStrip(P.a)\n        self.C = Comparator3(P)\n        self.twist_const = dict(TWIST)\n        self.tw = mf.SpiralShear(P, global_shift=True, **TWIST)\n        self.psi0, self.vcut, self.lift = -1.0 / 6, 0.5, 1\n        d2k = FR[\'fdel\'] * P.D                                        # delta_kh\n        rB = math.sqrt(P.hK / PI)\n        dB = math.sqrt(0.8 * d2k / PI) / 1.05\n        KB = keyhole_star(rB, dB, 0.8 * d2k / (PI * (rB + dB) * (rB + 8.4 * dB)), 0.7)\n        self.T = Transfer3(P.hK, P.D, KB)\n        self.scale = math.sqrt(PI) * self.Rs\n        self.ngroup = 9\n        self.nreg = self.k - P.n_wild()                               # not used by the maps\n        self.config = dict(eps_c=self.eps, f=f, margin=self.margin, hK=P.hK, D=P.D, twist=\'narrow_g\', strip=\'kr\', proof=PROOF)\n        self.hyp = hypotheses(self)\n\n\nstage_dicts = r2.stage_dicts\n\n\ndef selftest(ch, n=200, seed=7):\n    """float64 sanity numbers (NOT a verification): Embed and Preimage on n points (half on the unit sphere) of the\n    balls 0, 4, 8, 9, k-1: all outputs finite, largest |Embed|/R(eps), largest round-trip error |Preimage(Embed(X)) - X|."""\n    g = torch.Generator().manual_seed(seed)\n    X = torch.randn(n, 4, generator=g, dtype=F64)\n    X = X / X.norm(dim=1, keepdim=True)\n    X[n // 2:] *= torch.rand(n - n // 2, 1, generator=g, dtype=F64) ** 0.25\n    fin, rmax, rt = True, 0.0, 0.0\n    for i in sorted({0, 4, 8, 9, ch.k - 1}):\n        Y = ch.Embed(i, X)\n        Xb, ok = ch.Preimage(i, Y)\n        fin = fin and bool(torch.isfinite(Y).all()) and bool(torch.isfinite(Xb).all())\n        rmax = max(rmax, float(torch.nan_to_num(Y.norm(dim=1), nan=float(\'inf\')).max()))\n        rt = max(rt, float(torch.nan_to_num((Xb - X).abs(), nan=float(\'inf\')).max()))\n    return dict(points=n, balls=sorted({0, 4, 8, 9, ch.k - 1}), finite=fin, max_radius_over_R=rmax / ch.R_requested, roundtrip_max=rt)\n\n\ndef make_chain(k, eps):\n    return Chain3(k, eps)\n',
+    'primitives': r'''"""Elementary smooth steps, periodic bumps, polar helpers, and safeguarded scalar root-finding.
+
+Mathematical counterparts in Paper IV (paper/p4/main.pdf):
+  * TrigStep       : Section 2.1, trigonometric step S_m in C^{2m}(R), antiderivative I_m, ramp R_m in C^{2m+1}(R).
+  * Bump           : Section 2.1, symmetric plateau bump beta_{w_0, w_1, m} in C^{2m}(R) and primitive.
+  * rot/mom/polar0 : Section 1.2, fibre action p = pi |w|^2 and normalised angle theta = arg(w) / (2 pi).
+  * newton_bracket : Section 2.2, safeguarded Newton solver for strictly increasing scalar functions on [lo, hi].
+"""
+import math
+import torch
+
+F64 = torch.float64
+C128 = torch.complex128
+PI = math.pi
+
+
+class TrigStep:
+    """Smooth step S_m on [0, 1] with S_m'(u) = sin^{2m}(pi u) / c_0, c_0 = C(2m, m) / 2^{2m}.
+
+    Clamped to 0 on (-inf, 0] and 1 on [1, +inf), S_m lies in C^{2m}(R), S_m' in C^{2m-1}(R),
+    and the convex ramp R_m(u) = I_m(clamp(u, 0, 1)) + max(u - 1, 0) lies in C^{2m+1}(R) with I_m(1) = 1/2.
+    """
+
+    def __init__(self, m=4):
+        self.m = m
+        c0 = float(math.comb(2 * m, m))
+        self.a = [2 * ((-1) ** j) * math.comb(2 * m, m - j) / c0 for j in range(1, m + 1)]
+
+    def __call__(self, u):
+        u = u.clamp(0.0, 1.0)
+        out = u.clone()
+        for j, aj in enumerate(self.a, 1):
+            out = out + aj * torch.sin(2.0 * PI * j * u) / (2.0 * PI * j)
+        return out
+
+    def d(self, u):
+        u = u.clamp(0.0, 1.0)
+        out = torch.ones_like(u)
+        for j, aj in enumerate(self.a, 1):
+            out = out + aj * torch.cos(2.0 * PI * j * u)
+        return out
+
+    def I(self, u):
+        """Antiderivative int_0^u S_m(t) dt for u in [0, 1] (clamped); I(1) = 1/2."""
+        u = u.clamp(0.0, 1.0)
+        out = 0.5 * u * u
+        for j, aj in enumerate(self.a, 1):
+            denom = 2.0 * PI * j
+            out = out + aj * (1.0 - torch.cos(denom * u)) / (denom * denom)
+        return out
+
+    def ramp(self, u):
+        """C^{2m+1} convex ramp: 0 (u <= 0), I_m(u) (0 <= u <= 1), u - 1/2 (u >= 1)."""
+        return self.I(u) + (u - 1.0).clamp_min(0.0)
+
+
+class Bump:
+    """Symmetric C^{2m} plateau bump: 1 on |x| <= w0, 1 - S_m((|x| - w0)/(w1 - w0)) on [w0, w1], 0 on |x| >= w1.
+
+    Since S_m(u) = O(u^{2m+1}) as u -> 0+, the composition with |x| is C^{2m} across x = +-w0 and x = +-w1.
+    prim(x) = int_{-inf}^x beta(t) dt has total mass w0 + w1.
+    """
+
+    def __init__(self, w0, w1, m=2):
+        self.w0, self.w1, self.D = w0, w1, w1 - w0
+        self.st = TrigStep(m)
+        self.mass = w0 + w1
+
+    def val(self, x):
+        return 1.0 - self.st((x.abs() - self.w0) / self.D)
+
+    def prim(self, x):
+        D, w0, st = self.D, self.w0, self.st
+        uL = ((-x - w0) / D).clamp(0.0, 1.0)
+        uR = ((x - w0) / D).clamp(0.0, 1.0)
+        left = D * ((1.0 - uL) - (0.5 - st.I(uL)))
+        mid = 0.5 * D + x.clamp(-w0, w0) + w0
+        right = 0.5 * D + 2.0 * w0 + D * (uR - st.I(uR))
+        return torch.where(x < -w0, left, torch.where(x <= w0, mid, right))
+
+
+def rot(w, turns):
+    c, s = torch.cos(2.0 * PI * turns), torch.sin(2.0 * PI * turns)
+    return torch.stack((c * w[..., 0] - s * w[..., 1], s * w[..., 0] + c * w[..., 1]), -1)
+
+
+def mom(w):
+    return PI * (w[..., 0] ** 2 + w[..., 1] ** 2)
+
+
+def polar0(w):
+    return mom(w), torch.atan2(w[..., 1], w[..., 0]) / (2.0 * PI)
+
+
+def cart0(x, th):
+    r = torch.sqrt(x.clamp_min(0.0) / PI)
+    return torch.stack((r * torch.cos(2.0 * PI * th), r * torch.sin(2.0 * PI * th)), -1)
+
+
+def newton_bracket(f, lo, hi, x0, iters=60):
+    """Safeguarded Newton root-finder for a strictly increasing function f -> (val, deriv) on [lo, hi]."""
+    x = x0.clone()
+    lo, hi = lo.clone(), hi.clone()
+    for _ in range(iters):
+        v, dv = f(x)
+        lo = torch.where(v < 0.0, x, lo)
+        hi = torch.where(v >= 0.0, x, hi)
+        xn = x - v / dv
+        bad = ~((xn > lo) & (xn < hi))
+        x = torch.where(bad, 0.5 * (lo + hi), xn)
+    v, dv = f(x)
+    xn = x - v / dv
+    return torch.where((xn >= lo) & (xn <= hi), xn, x)
+''',
+    'keyhole': r'''"""Planar smooth symplectic keyhole KS_tau and fibrewise Knothe-Rosenblatt strip map KR.
+
+Mathematical counterparts in Paper IV (paper/p4/main.pdf):
+  * SmoothKeyhole : Section 3 (Construction 3.1, Proposition 3.2, Theorem 3.3 — C^8 global symplectomorphism,
+                    disc nesting with constant 8.4 > 2 + 2*pi, hole clearance > x0, slit clearance |theta| > theta0).
+  * keyhole_star  : Section 7.1, closed-form keyhole datum (r_a; d, W_1, W_2, rho_1, beta, X_w, r_h).
+  * KRStrip       : Section 2.3 (Proposition 2.3 — real-analytic symplectomorphism of open ball B(a) onto open cell).
+"""
+import math
+import torch
+
+import primitives as pr
+
+F64, PI = pr.F64, pr.PI
+
+
+class SmoothKeyhole:
+    """Planar C^8 symplectomorphism family KS_tau generated by S(X, psi) = X psi + tau M(X)(Psi(psi) - psi)
+    in polar action-angle coordinates (X, phi) about the eccentric centre c* = (-d, 0).
+    """
+
+    def __init__(self, d, W1, W2, rho1, rho_out, Xw, m=4):
+        self.d, self.W1, self.W2 = d, W1, W2
+        self.rho1, self.rho_out, self.Xw = rho1, rho_out, Xw
+        self.st = pr.TrigStep(m)
+        self.rh = None
+
+    def dPsi(self, psi):
+        u = (psi.abs() - self.W1) / (self.W2 - self.W1)
+        return self.rho1 + (self.rho_out - self.rho1) * self.st(u)
+
+    def Pmi(self, psi):
+        """Psi(psi) - psi on [-1/2, 1/2]: odd, C^9, vanishes identically at psi = 0 and psi = +-1/2."""
+        ap = psi.abs()
+        D = self.W2 - self.W1
+        u = (ap - self.W1) / D
+        val = (self.rho1 - 1.0) * ap + (self.rho_out - self.rho1) * (D * self.st.I(u) + (ap - self.W2).clamp_min(0.0))
+        return torch.sign(psi) * val
+
+    def M(self, X):
+        u = X / self.Xw
+        return self.Xw * self.st.ramp(u), torch.where(u >= 1.0, torch.ones_like(u), self.st(u))
+
+    def polar_c(self, w):
+        dq = w[..., 0] + self.d
+        return PI * (dq * dq + w[..., 1] ** 2), torch.atan2(w[..., 1], dq) / (2.0 * PI)
+
+    def cart_c(self, X, psi):
+        r = torch.sqrt(X.clamp_min(0.0) / PI)
+        return torch.stack((r * torch.cos(2.0 * PI * psi) - self.d, r * torch.sin(2.0 * PI * psi)), -1)
+
+    def fwd(self, w, tau=None):
+        """Forward map KS_tau(w); returns (w', gen) with gen = dS/dtau = M(X)(Psi(psi) - psi)."""
+        X, phi = self.polar_c(w)
+        Mv, dM = self.M(X)
+        tt = dM if tau is None else tau * dM
+        ap = phi.abs()
+        psi = pr.newton_bracket(
+            lambda x: (x + tt * self.Pmi(x) - ap, 1.0 + tt * (self.dPsi(x) - 1.0)),
+            torch.zeros_like(ap),
+            torch.full_like(ap, 0.5),
+            ap.clamp(0.0, 0.5),
+        )
+        psi = psi * torch.sign(phi)
+        t = 1.0 if tau is None else tau
+        Xn = X + t * Mv * (self.dPsi(psi) - 1.0)
+        return self.cart_c(Xn, psi), Mv * self.Pmi(psi)
+
+    def inv(self, w, tau=None):
+        """Exact inverse KS_tau^{-1}(w'); closed-form for X >= X_w, scalar Newton on [0, X_w] inside."""
+        Xn, psi = self.polar_c(w)
+        t = torch.ones_like(Xn) if tau is None else tau + 0.0 * Xn
+        a = t * (self.dPsi(psi) - 1.0)
+        Xlin = (Xn + 0.5 * a * self.Xw) / (1.0 + a)
+        inner = Xlin < self.Xw
+        X = Xlin
+        if inner.any():
+            ai, Xi = a[inner], Xn[inner]
+            Xr = pr.newton_bracket(
+                lambda x: (x + ai * self.M(x)[0] - Xi, 1.0 + ai * self.M(x)[1]),
+                torch.zeros_like(Xi),
+                torch.full_like(Xi, self.Xw),
+                Xi.clamp(0.0, self.Xw),
+            )
+            X = X.clone()
+            X[inner] = Xr
+        Mv, dM = self.M(X)
+        phi = psi + t * dM * self.Pmi(psi)
+        return self.cart_c(X, phi), Mv * self.Pmi(psi)
+
+
+def keyhole_star(ra, d, beta, rho1_safety, m_st=4):
+    """Closed-form keyhole datum (r_a; d, W_1, W_2, rho_1, beta, X_w, r_h) of Paper IV, Section 7.1."""
+    W1 = beta / (3.0 * (1.0 + beta))
+    rh = 0.9 * d * math.sin(2.0 * PI * W1)
+    rho1 = rho1_safety * ((d - rh) / (d + ra)) ** 2
+    W2 = beta / (1.0 + beta - rho1) - W1
+    Xw = 0.2 * PI * (d - rh) ** 2
+    K = SmoothKeyhole(d, W1, W2, rho1, 1.0 + beta, Xw, m_st)
+    K.ra, K.rh, K.x0, K.theta0, K.beta = ra, rh, PI * rh * rh, W1, beta
+    K.delta_rel = beta * PI * (ra + d) * (ra + 8.4 * d)
+    K.delta_small = 4.0 * (PI ** 3) * d * (ra + d) * (W2 ** 2)
+    return K
+
+
+class KRStrip:
+    """Fibrewise Knothe-Rosenblatt symplectomorphism of the open ball B(a) onto {0 < X < a - p, 0 < T < 1, p < a}.
+
+    Forward evaluation is purely algebraic/trigonometric (no root-finding); the inverse solves Kepler's
+    strictly monotone equation 2 alpha + sin(2 alpha) = 2(X / r^2 - pi / 2) on (-pi/2, pi/2).
+    """
+
+    def __init__(self, a):
+        self.a = a
+
+    def fwd(self, z):
+        x, y, w = z[:, 0], z[:, 1], z[:, 2:]
+        r2 = (self.a - pr.mom(w)) / PI
+        r = torch.sqrt(r2)
+        c = torch.sqrt(r2 - x * x)
+        u = x / r
+        X = r2 * (0.5 * PI + torch.asin(u) + u * c / r)
+        C = (X - x * c) / (PI * r2) * y / (2.0 * c)
+        return torch.cat((X[:, None], (0.5 + y / (2.0 * c))[:, None], pr.rot(w, C)), 1)
+
+    def inv(self, yl):
+        X, T, w = yl[:, 0], yl[:, 1], yl[:, 2:]
+        p = pr.mom(w)
+        in_cell = (p < self.a) & (X > 0.0) & (X < self.a - p) & (T > 0.0) & (T < 1.0)
+        out = torch.full_like(yl, float("nan"))
+        if not in_cell.any():
+            return out
+        Xm, Tm, wm, pm = X[in_cell], T[in_cell], w[in_cell], p[in_cell]
+        r2 = (self.a - pm) / PI
+        r = torch.sqrt(r2)
+        m2 = 2.0 * (Xm / r2 - 0.5 * PI)
+        al = pr.newton_bracket(
+            lambda t: (2.0 * t + torch.sin(2.0 * t) - m2, 2.0 + 2.0 * torch.cos(2.0 * t)),
+            torch.full_like(Xm, -0.5 * PI),
+            torch.full_like(Xm, 0.5 * PI),
+            (0.25 * m2).clamp(-0.5 * PI, 0.5 * PI),
+        )
+        x, c = r * torch.sin(al), r * torch.cos(al)
+        y = (2.0 * Tm - 1.0) * c
+        C = (Xm - x * c) / (PI * r2) * y / (2.0 * c)
+        out[in_cell] = torch.cat((x[:, None], y[:, None], pr.rot(wm, -C)), 1)
+        return out
+''',
+    'comparator': r'''"""Explicit parameter set Pi*(k, eps_c; f) and the 4D keyhole comparator F = F_2 o F_1.
+
+Mathematical counterparts in Paper IV (paper/p4/main.pdf):
+  * PiStar      : Section 7.1 (Definition 7.1 — non-iterative parameter formulas without cancellation).
+  * Comparator3 : Section 4 (Proposition 4.2, Theorem 4.3 — 4D C^7 symplectic comparator on the flat model).
+"""
+import math
+import torch
+
+import primitives as pr
+import keyhole as kh
+
+F64, PI = pr.F64, pr.PI
+
+EPS_C_MAX = 1.0 / 100.0
+F_STAR = 0.25
+LAM_A, LAM2, MU = 9.0 / 10.0, 3.0 / 10.0, 0.5
+UPS = math.sqrt(11.0 / 1000.0)
+M_ST = 4
+
+
+class PiStar:
+    """Explicit parameter set Pi*(k, eps_c; f) for k >= 10 and 0 < eps_c <= 1/100."""
+
+    def __init__(self, k, eps_c, f=F_STAR):
+        self.k, self.eps, self.kappa_b = int(k), float(eps_c), 1.0
+        s = math.sqrt(self.k)
+        eta = eps_c / (1.0 + math.sqrt(1.0 - eps_c))
+        t0 = 1.0 - 0.5 * eta
+        self.s, self.eta, self.t0 = s, eta, t0
+        self.a, self.h, self.cs, self.g = t0 / s, t0 / 3.0, 3.0 * s - 9.0, 1.5 * eta
+        self.rho_ball = (1.0 - eta) / s
+        self.T = self.g / self.cs
+        self.Gmax = s * t0 - 3.0
+        self.kk = self.k - 3.0 * s
+        self.lam_a, self.lam2, self.mu, self.f0, self.f1, self.m = LAM_A, LAM2, MU, f, f, M_ST
+        self.wG, self.w2 = LAM_A * self.g, LAM2 * self.g
+        ra = math.sqrt(self.a / PI)
+        d = math.sqrt(f * self.T / PI) / (1.0 + UPS)
+        beta = f * self.T / (PI * (ra + d) * (ra + 8.4 * d))
+        K = kh.keyhole_star(ra, d, beta, 0.8, M_ST)
+        self.ra, self.d, self.beta, self.rho_out = ra, d, beta, 1.0 + beta
+        self.W1, self.W2, self.Ws, self.rh, self.rho1, self.Xw = K.W1, K.W2, K.W1 + K.W2, K.rh, K.rho1, K.Xw
+        self.x0, self.theta0 = K.x0, K.theta0
+        self.delta_rel, self.delta_small = K.delta_rel, K.delta_small
+        self.KC = K
+        # h_K and D = 1 - 3 h_K evaluated from the three linear candidates without cancellation:
+        cand = (self.a, self.O(-self.wG) - 0.5 * MU * self.T * (1.0 - LAM_A), self.h - 0.5 * MU * self.T)
+        Dc = (
+            (s - 3.0 + 1.5 * eta) / s,
+            (s - 3.0 + self.wG) / s + 1.5 * MU * self.T * (1.0 - LAM_A),
+            0.5 * eta + 1.5 * MU * self.T,
+        )
+        j = max(range(3), key=lambda q: cand[q])
+        self.hK, self.D, self.hK_case = cand[j], Dc[j], j
+
+    def O(self, G):
+        return (G + 3.0) / (3.0 * self.s)
+
+    def E(self, G):
+        return (G / self.cs).clamp_min(0.0) if torch.is_tensor(G) else max(G / self.cs, 0.0)
+
+    def Ptop(self, G):
+        return (self.k * self.a - 3.0 - G) / self.kk
+
+    def slack(self, G):
+        if torch.is_tensor(G):
+            return self.T * (1.0 + G.clamp(max=0.0) / self.g)
+        return self.T * (1.0 + min(G, 0.0) / self.g)
+
+    def n_wild(self):
+        return self.k - math.floor((3.0 - self.wG) / self.a)
+
+
+class Comparator3:
+    """4D keyhole comparator F = F_2 o F_1 on the flat chart (G, v, w), Omega = dG ^ dv + dw_x ^ dw_y.
+
+    Where c(G) > 0 (i.e. G > -w_2), tau(G) == 1 identically, so KS_1(w) maps the stack disc D(P_top(G))
+    strictly outside the origin hole D(x_0) and outside the slit |theta| <= theta_0. On C \\ [0, +inf),
+    vartheta(theta) = theta - 1/2 sign(theta) = arg(-w_1) / (2 pi) is real-analytic across the negative real axis.
+    """
+
+    def __init__(self, P):
+        self.P = P
+        self.st = pr.TrigStep(P.m)
+        self.K = P.KC
+
+    def tauG(self, G):
+        P = self.P
+        u = (G + P.wG) / (P.wG - P.w2)
+        return self.st(u), self.st.d(u) / (P.wG - P.w2) * ((u > 0.0) & (u < 1.0))
+
+    def cG(self, G):
+        P = self.P
+        u = (G + P.w2) / P.w2
+        return (P.w2 / P.cs) * self.st.ramp(u), torch.where(u >= 1.0, torch.ones_like(u), self.st(u)) / P.cs
+
+    @staticmethod
+    def vartheta(th):
+        return th - 0.5 * torch.sign(th)
+
+    def comp1(self, y, inverse=False):
+        G, v, w = y[:, 0], y[:, 1], y[:, 2:]
+        tau, dtau = self.tauG(G)
+        act = tau > 0.0
+        out = y.clone()
+        if act.any():
+            if not inverse:
+                w1, gen = self.K.fwd(w[act], tau[act])
+                out[act, 1] = v[act] - dtau[act] * gen
+            else:
+                w1, gen = self.K.inv(w[act], tau[act])
+                out[act, 1] = v[act] + dtau[act] * gen
+            out[act, 2:] = w1
+        return out
+
+    def comp2(self, y, inverse=False):
+        G, v, w = y[:, 0], y[:, 1], y[:, 2:]
+        c, dc = self.cG(G)
+        act = c > 0.0
+        out = y.clone()
+        if act.any():
+            x, th = pr.polar0(w[act])
+            sgn = -1.0 if inverse else 1.0
+            out[act, 1] = v[act] - sgn * dc[act] * self.vartheta(th)
+            out[act, 2:] = pr.cart0(x + sgn * c[act], th)
+        return out
+''',
+    'twists': r'''"""Deck-equivariant C^4 toric twists Psi = Phi_g o Psi_S routing the three marked fibres into the free corridor.
+
+Mathematical counterparts in Paper IV (paper/p4/main.pdf):
+  * SpiralShear : Section 5 (Construction 5.1, Proposition 5.2 — exact identity
+                  Psi^{-1}(deck(M_j)) = {G = K(p) - delta (mod P(p)), v = v_j' (mod 1)}).
+"""
+import torch
+
+import primitives as pr
+
+TWIST = dict(ag=0.1, om0=0.015, om1=0.045, ou0=0.02, ou1=0.12, vcomp=0.25, oc0=0.05, oc1=0.14)
+
+
+def _wrap(x, lo):
+    return lo + torch.remainder(x - lo, 1.0)
+
+
+class SpiralShear:
+    """Closed-form C^4 symplectomorphisms Psi_S (B-twist) and Phi_g (A-twist) preserving p = pi |w|^2 pointwise."""
+
+    FIB = (("M1", 5.0 / 6.0, 0.0, -1), ("M2", 1.0 / 3.0, 0.0, 0), ("M3", 0.0, 0.5, 0))
+
+    def __init__(self, P, ag=0.1, om0=0.015, om1=0.045, ou0=0.02, ou1=0.12,
+                 vcomp=0.25, oc0=0.05, oc1=0.14, vlo=-1.0 / 3.0, ulo=0.2, delta_frac=0.25, m=2):
+        self.P = P
+        self.global_shift = True
+        self.ustar = -P.cs / 9.0
+        self.delta = delta_frac * P.w2
+        self.c0 = self.delta - P.cs / 3.0
+        self.nj = [-round(uj - self.ustar) for (_, uj, _, _) in self.FIB]
+        self.phi = [uj + n_ - self.ustar for (_, uj, _, _), n_ in zip(self.FIB, self.nj)]
+        self.ag, self.vlo, self.ulo, self.vcomp = ag, vlo, ulo, vcomp
+        self.bv = pr.Bump(om0, om1, m)
+        self.bc = pr.Bump(oc0, oc1, m)
+        self.bu = pr.Bump(ou0, ou1, m)
+        self.vp = (-ag, 0.0, 0.5)
+        self.uc = (5.0 / 6.0, 7.0 / 12.0)
+
+    def S(self, p, v):
+        vt = _wrap(v, self.vlo)
+        xc = vt - self.vcomp
+        cval = self.bc.val(xc) / self.bc.mass
+        cprim = self.bc.prim(xc) / self.bc.mass
+        Sv = torch.zeros_like(p)
+        Sp = torch.zeros_like(p)
+        hb = 3.0 - 9.0 * p
+        for j in range(3):
+            x = vt - self.vp[j]
+            b = self.bv.val(x) - self.bv.mass * cval
+            B = self.bv.prim(x) - self.bv.mass * cprim
+            Sv = Sv + self.phi[j] * hb * b
+            Sp = Sp - 9.0 * self.phi[j] * B
+        Sv = Sv + self.c0
+        return Sv, Sp
+
+    def psiS(self, y, sign=1.0):
+        G, v, w = y[..., 0], y[..., 1], y[..., 2:]
+        Sv, Sp = self.S(pr.mom(w), v)
+        return torch.cat(((G + sign * Sv)[..., None], v[..., None], pr.rot(w, -sign * Sp)), -1)
+
+    def g(self, u):
+        ut = _wrap(u, self.ulo)
+        x0, x1 = ut - self.uc[0], ut - self.uc[1]
+        g_val = -self.ag * (self.bu.val(x0) - self.bu.val(x1))
+        Gg = -self.ag * (self.bu.prim(x0) - self.bu.prim(x1))
+        return g_val, Gg
+
+    def phiG(self, y, sign=1.0):
+        G, v, w = y[..., 0], y[..., 1], y[..., 2:]
+        u = G / (3.0 - 9.0 * pr.mom(w))
+        g_val, Gg = self.g(u)
+        return torch.cat((G[..., None], (v - sign * g_val)[..., None], pr.rot(w, sign * 9.0 * (Gg - u * g_val))), -1)
+
+    def inv(self, y):
+        return self.psiS(self.phiG(y, -1.0), -1.0)
+''',
+    'transfer': r'''"""Closed-form transfer K_post = b_{ball, kappa} o W_{noKH} o Band from the post chart into B(1).
+
+Mathematical counterparts in Paper IV (paper/p4/main.pdf):
+  * Transfer3 : Section 6 (Construction 6.1, Proposition 6.2, Theorem 6.4 — C^7 deck-invariant symplectic embedding
+                of {p < h_K} \\ deck({M_1, M_2, M_3}) into B^o(1) = CP^2 \\ L_kappa, with cancellation-free inverse).
+"""
+import math
+import torch
+
+import primitives as pr
+
+F64, C128, PI = pr.F64, pr.C128, pr.PI
+
+FR = dict(fm=0.32, fd2=0.2, fsig=0.2, fdel=0.1)
+
+
+class _PostChartW:
+    """Piecewise closed-form map W (with corner keyhole set to identity, evaluated after Band) and its left inverse."""
+
+    def __init__(self, hK, D, khB, fr=FR, kappa=(-1.0 / 12.0, 1.0 / 12.0, 0.0), m_st=4):
+        self.hK, self.D = hK, D
+        self.m, self.d2 = fr["fm"] * D, fr["fd2"] * D
+        self.sig0, self.dkh = fr["fsig"] * D, fr["fdel"] * D
+        self.kh = khB
+        self.st = pr.TrigStep(m_st)
+        self.kap = kappa
+        k0, k1, k2 = kappa
+        self.off = {0: (0.0, 0.0), 1: (k1, 3.0 * k1), "2s": (k1 + k2, 3.0 * k1 + 6.0 * k2), "2c": (-k0, 0.0)}
+        self.left = {0: self.off["2c"], 1: self.off[0], 2: self.off[1]}
+        arg = -4.0 * PI * (self.left[0][0] + 0.5 * k0)
+        self.kappa_line = complex(math.cos(arg), math.sin(arg))
+
+    def S(self, c):
+        u = c.abs() / self.d2
+        q = self.sig0 * (1.0 - self.st(u))
+        dq = -self.sig0 * self.st.d(u) / self.d2 * torch.sign(c) * (u < 1.0)
+        S = torch.hypot(c, q)
+        dS = torch.where(S > 0.0, (c + q * dq) / S, torch.ones_like(c))
+        return S, dS
+
+    def lam_split(self, c):
+        """Cancellation-free decomposition (lp, lm, lam') with lp = c - lam(c) >= 0, lm = -lam(c) >= 0."""
+        u = c.abs() / self.d2
+        q = self.sig0 * (1.0 - self.st(u))
+        dq = -self.sig0 * self.st.d(u) / self.d2 * torch.sign(c) * (u < 1.0)
+        S = torch.hypot(c, q)
+        dS = torch.where(S > 0.0, (c + q * dq) / S, torch.ones_like(c))
+        denom = 2.0 * (S + c.abs())
+        rem = torch.where(denom > 0.0, (q * q) / denom.clamp_min(1e-300), torch.zeros_like(c))
+        lp = torch.where(c >= 0.0, c + rem, rem)
+        lm = torch.where(c >= 0.0, rem, -c + rem)
+        return lp, lm, 0.5 * (1.0 - dS)
+
+    def kstep(self, c, j):
+        return self.kap[j] * self.st((c + self.m) / (2.0 * self.m))
+
+    @staticmethod
+    def reduce(sig, psi, p, vt, lo=1.0 / 6.0):
+        n = torch.floor(sig / (3.0 - 9.0 * p) + lo)
+        return sig - n * (3.0 - 9.0 * p), psi, p, vt - n * (9.0 * psi + 0.5)
+
+    def W(self, sig, psi, p, vt):
+        """Evaluate homogeneous unit vector W in C^3 after Band (no second corner keyhole)."""
+        sig, psi, p, vt = self.reduce(sig, psi, p, vt)
+        N = len(sig)
+        W = torch.zeros(N, 3, dtype=C128)
+        vc = sig / (3.0 - 9.0 * p)
+        mus = [sig, sig - (1.0 - 3.0 * p), sig - 2.0 * (1.0 - 3.0 * p)]
+        instrip = [mu.abs() < self.m for mu in mus]
+        anys = instrip[0] | instrip[1] | instrip[2]
+        secs = [
+            (vc >= 0.0) & (vc < 1.0 / 3.0) & ~anys,
+            (vc >= 1.0 / 3.0) & (vc < 2.0 / 3.0) & ~anys,
+            (vc >= 2.0 / 3.0) & ~anys,
+            (vc < 0.0) & ~anys,
+        ]
+        for mk, key in zip(secs, (0, 1, "2s", "2c")):
+            if not mk.any():
+                continue
+            a_, b_ = self.off[key]
+            ps, vv, pp, sg = psi[mk] + a_, vt[mk] + b_, p[mk], sig[mk]
+            if key == "2c":
+                X0, X1, X2 = 1.0 - 2.0 * pp + sg, pp, pp - sg
+                T1, T2 = vv + ps, -ps
+            elif key == 0:
+                X0, X1, X2 = 1.0 - 2.0 * pp - sg, pp + sg, pp
+                T1, T2 = ps, vv - ps
+            elif key == 1:
+                X0, X1, X2 = pp, 2.0 - 5.0 * pp - sg, 4.0 * pp + sg - 1.0
+                T1, T2 = -vv + 4.0 * ps, -vv + 5.0 * ps
+            else:
+                X0, X1, X2 = 7.0 * pp + sg - 2.0, pp, 3.0 - 8.0 * pp - sg
+                T1, T2 = vv - 8.0 * ps, -ps
+            W[mk] = torch.stack(
+                (
+                    torch.sqrt(X0.clamp_min(0.0)).to(C128),
+                    torch.sqrt(X1.clamp_min(0.0)) * torch.exp(2j * PI * T1),
+                    torch.sqrt(X2.clamp_min(0.0)) * torch.exp(2j * PI * T2),
+                ),
+                1,
+            )
+        for j in range(3):
+            mk = instrip[j]
+            if not mk.any():
+                continue
+            c = mus[j][mk]
+            a_, b_ = self.left[j]
+            kj = self.kstep(c, j)
+            ps = psi[mk] + a_ + kj
+            vv = vt[mk] + b_ + 3.0 * j * kj
+            vj = vv - 3.0 * j * ps
+            # In Band + W_noKH, Band has already applied the corner keyhole; here p2 = p, ang = vj (mod 1).
+            w2 = pr.cart0(p[mk], vj)
+            p2, ang = pr.polar0(w2)
+            vl = ang - torch.floor(ang)
+            lp, lm, lamp = self.lam_split(c)
+            xa = p2 + lp
+            xb = p2 + lm
+            xr = (1.0 - xa - xb).clamp_min(0.0)
+            Ta = ps + lamp * vl
+            loc = torch.stack(
+                (
+                    torch.sqrt(xr).to(C128),
+                    torch.sqrt(xa) * torch.exp(2j * PI * Ta),
+                    torch.sqrt(xb) * torch.exp(2j * PI * (vl - Ta)),
+                ),
+                1,
+            )
+            perm = ((0, 1, 2), (1, 2, 0), (2, 0, 1))[j]
+            Wg = torch.zeros_like(loc)
+            for li, gi in enumerate(perm):
+                Wg[:, gi] = loc[:, li]
+            W[mk] = Wg
+        return W
+
+    def invert(self, W):
+        """Cancellation-free left inverse of W (prior to Band_inv), recovering non-negative moments directly."""
+        W = W / W.abs().pow(2).sum(1, keepdim=True).sqrt()
+        X = W.abs() ** 2
+        ang = torch.angle(W) / (2.0 * PI)
+        N = len(W)
+        nan = torch.full((N,), float("nan"), dtype=F64)
+        sig, psi, p, vt = nan.clone(), nan.clone(), nan.clone(), nan.clone()
+        piece = torch.full((N,), -1)
+        done = torch.zeros(N, dtype=torch.bool)
+        for j in range(3):
+            a, b = (j + 1) % 3, (j + 2) % 3
+            mu = X[:, a] - X[:, b]
+            mk = (mu.abs() < self.m) & (X[:, j] > 1.0 / 3.0)
+            if not mk.any():
+                continue
+            c = mu[mk]
+            lp, lm, dl = self.lam_split(c)
+            p2 = torch.where(c >= 0.0, X[mk, b] - lm, X[mk, a] - lp).clamp_min(0.0)
+            Ta = ang[mk, a] - ang[mk, j]
+            Tb = ang[mk, b] - ang[mk, j]
+            vl = torch.remainder(Ta + Tb, 1.0)
+            ps2 = Ta - dl * vl
+            kj = self.kstep(c, j)
+            a_, b_ = self.left[j]
+            pp, vj = pr.polar0(pr.cart0(p2, vl))
+            sig[mk] = c + j * (1.0 - 3.0 * pp)
+            psi[mk] = ps2 - kj - a_
+            p[mk] = pp
+            vt[mk] = vj + 3.0 * j * ps2 - 3.0 * j * kj - b_
+            piece[mk] = j
+            done |= mk
+        e = torch.argmin(X, 1)
+        # Recover non-negative fibre moment p directly from X_2, X_0, X_1 (never via 1 - X_1 - X_2 cancellation).
+        for key, edge in ((0, 2), (1, 0), ("2s", 1)):
+            mk = ~done & (e == edge)
+            if not mk.any():
+                continue
+            jj = 2 if key == "2s" else key
+            T1 = ang[mk, 1] - ang[mk, 0]
+            T2 = ang[mk, 2] - ang[mk, 0]
+            if key == 0:
+                pp = X[mk, 2]
+                sg = X[mk, 1] - X[mk, 2]
+                vv, ps = T1 + T2, T1
+            elif key == 1:
+                pp = X[mk, 0]
+                sg = 1.0 + X[mk, 2] - 4.0 * X[mk, 0]
+                vv, ps = -5.0 * T1 + 4.0 * T2, -T1 + T2
+            else:
+                pp = X[mk, 1]
+                sg = 3.0 - X[mk, 2] - 8.0 * X[mk, 1]
+                vv, ps = T1 - 8.0 * T2, -T2
+            a_, b_ = self.off[key]
+            sig[mk], p[mk], vt[mk], psi[mk] = sg, pp, vv - b_, ps - a_
+            piece[mk] = 10 + jj
+        return self.reduce(sig, psi, p, vt), piece
+
+    def unchart(self, y):
+        yy = torch.complex(y[:, :2], y[:, 2:]) * math.sqrt(PI)
+        rad = 1.0 - yy.abs().pow(2).sum(1)
+        Z0 = torch.sqrt(rad).to(C128)  # NaN when |y|^2 > 1/pi (outside B(R_s)) -> Preimage marks ok=False
+        kap = self.kappa_line
+        W1 = (yy[:, 0] - kap.conjugate() * Z0) / math.sqrt(2.0)
+        W2 = (Z0 + kap * yy[:, 0]) / math.sqrt(2.0)
+        return torch.stack((yy[:, 1], W1, W2), 1)
+
+
+class Transfer3(_PostChartW):
+    """Split transfer K_post = chart9 o wproj o band, with explicit stage inverses."""
+
+    def __init__(self, hK, D, khB, fr=FR, kappa=(-1.0 / 12.0, 1.0 / 12.0, 0.0), m_st=4):
+        super().__init__(hK, D, khB, fr, kappa, m_st)
+        self.post = _PostChartW(hK, D, khB, fr, kappa, m_st)
+
+    def tau(self, c):
+        u = (c.abs() - self.d2) / (self.m - self.d2)
+        return 1.0 - self.st(u), -self.st.d(u) / (self.m - self.d2) * torch.sign(c) * ((u > 0.0) & (u < 1.0))
+
+    def _band(self, x, inverse):
+        sig0, psi0, w0 = x[:, 0], x[:, 1], x[:, 2:]
+        p0, vt0 = pr.polar0(w0)
+        n = torch.floor(sig0 / (3.0 - 9.0 * p0) + 1.0 / 6.0)
+        sig, psi, p, vt = sig0 - n * (3.0 - 9.0 * p0), psi0, p0, vt0 - n * (9.0 * psi0 + 0.5)
+        out = x.clone()
+        for j in range(3):
+            c = sig - j * (1.0 - 3.0 * p)
+            mk = c.abs() < self.m
+            if not mk.any():
+                continue
+            c = c[mk]
+            a_, b_ = self.left[j]
+            kj = self.kstep(c, j)
+            ps = psi[mk] + a_ + kj
+            vj = vt[mk] + b_ + 3.0 * j * kj - 3.0 * j * ps
+            T_v, dT = self.tau(c)
+            if not inverse:
+                w2, gen = self.kh.fwd(pr.cart0(p[mk], vj), T_v)
+                ps2 = ps - dT * gen
+            else:
+                w2, gen = self.kh.inv(pr.cart0(p[mk], vj), T_v)
+                ps2 = ps + dT * gen
+            p2, vj2 = pr.polar0(w2)
+            so = c + j * (1.0 - 3.0 * p2)
+            po = ps2 - a_ - kj
+            vo = vj2 + 3.0 * j * ps2 - b_ - 3.0 * j * kj
+            nn = n[mk]
+            out[mk] = torch.cat(((so + nn * (3.0 - 9.0 * p2))[:, None], po[:, None], pr.cart0(p2, vo + nn * (9.0 * po + 0.5))), 1)
+        return out
+
+    def band(self, x):
+        return self._band(x, False)
+
+    def band_inv(self, x):
+        return self._band(x, True)
+
+    def _Z(self, W):
+        kap = self.kappa_line
+        return torch.stack(((W[:, 2] - kap * W[:, 1]) / math.sqrt(2.0), (W[:, 1] + kap.conjugate() * W[:, 2]) / math.sqrt(2.0), W[:, 0]), 1)
+
+    @staticmethod
+    def _proj(Z):
+        Z = Z / Z.abs().pow(2).sum(1, keepdim=True).sqrt()
+        a, b, c = Z[:, 1] * Z[:, 0].conj(), Z[:, 2] * Z[:, 0].conj(), Z[:, 1] * Z[:, 2].conj()
+        return torch.stack((Z[:, 0].abs() ** 2, Z[:, 1].abs() ** 2, Z[:, 2].abs() ** 2, a.real, a.imag, b.real, b.imag, c.real, c.imag), 1)
+
+    def wproj(self, x):
+        """Gauge-free rank-one projector Z Z^* in R^9 representing [Z] in CP^2."""
+        p, vt = pr.polar0(x[:, 2:])
+        return self._proj(self._Z(self.post.W(x[:, 0], x[:, 1], p, vt)))
+
+    def wproj_inv(self, q):
+        a, b, c = torch.complex(q[:, 3], q[:, 4]), torch.complex(q[:, 5], q[:, 6]), torch.complex(q[:, 7], q[:, 8])
+        d = q[:, :3].to(C128)
+        cols = [torch.stack((d[:, 0], a, b), 1), torch.stack((a.conj(), d[:, 1], c.conj()), 1), torch.stack((b.conj(), c, d[:, 2]), 1)]
+        j = torch.argmax(q[:, :3], 1)
+        Z = torch.where((j == 0)[:, None], cols[0], torch.where((j == 1)[:, None], cols[1], cols[2]))
+        kap = self.kappa_line
+        W = torch.stack((Z[:, 2], (Z[:, 1] - kap.conjugate() * Z[:, 0]) / math.sqrt(2.0), (Z[:, 0] + kap * Z[:, 1]) / math.sqrt(2.0)), 1)
+        (sig, psi, p, vt), _ = self.post.invert(W)
+        return torch.cat((sig[:, None], psi[:, None], pr.cart0(p, vt)), 1)
+
+    @staticmethod
+    def chart9(q):
+        nrm = torch.sqrt(PI * q[:, 0] * (q[:, 0] + q[:, 1] + q[:, 2]))
+        return torch.stack((q[:, 3] / nrm, q[:, 5] / nrm, q[:, 4] / nrm, q[:, 6] / nrm), 1)
+
+    def chart9_inv(self, y):
+        yy = torch.complex(y[:, :2], y[:, 2:]) * math.sqrt(PI)
+        Z0 = torch.sqrt(1.0 - yy.abs().pow(2).sum(1)).to(C128)
+        return self._proj(torch.stack((Z0, yy[:, 0], yy[:, 1]), 1))
+
+    def wpost_inv(self, y):
+        (sig, psi, p, vt), _ = self.post.invert(self.post.unchart(y))
+        return torch.cat((sig[:, None], psi[:, None], pr.cart0(p, vt)), 1)
+''',
+    'chain': r'''"""Assembled closed-form C^4 packing chain Chain3, analytic hypothesis checks (H0)-(H15), and self-test.
+
+Mathematical counterparts in Paper IV (paper/p4/main.pdf):
+  * hypotheses : Section 7.2 (Proposition 7.3 — exact analytic inequalities for (H0)-(H15) and split,
+                 replacing grid checks on (H6), (H7), and S_max by closed-form convexity/concavity bounds).
+  * Chain3     : Theorem 1.1 & Section 8 (composition f_i = S_out o chi o W o Band o post o Phi_g o Psi_S o F o cell o KR o S_in,
+                 with explicit inverse Preimage).
+"""
+import math
+import torch
+
+import primitives as pr
+import keyhole as kh
+import comparator as cmp
+import twists as tw_mod
+import transfer as tr_mod
+
+F64, PI = pr.F64, pr.PI
+
+PROOF = "Paper IV: Closed-form symplectic packings of the four-ball by equal balls (paper/p4/main.pdf)"
+MS_ABS, MS_FRAC = 2e-6, 1.0 / 8.0
+
+CHARTS = {
+    "scale": ("ball", "norm"),
+    "strip (KR)": ("norm", "cell"),
+    "cell -> flat": ("cell", "flat"),
+    "comparator keyhole": ("flat", "flat"),
+    "comparator shift": ("flat", "flat"),
+    "twist B (Psi_S)": ("flat", "flat"),
+    "twist A (Phi_g)": ("flat", "flat"),
+    "post chart": ("flat", "post"),
+    "corner keyhole (Band)": ("post", "post"),
+    "CP2 point (projector)": ("post", "cp2"),
+    "ball chart of CP2 minus L + scale": ("cp2", "target"),
 }
-_RUNTIME = '\nimport sys as _sys, types as _types, math\nimport torch\ntorch.set_default_dtype(torch.float64)\nfor _name in _ORDER:\n    _m = _types.ModuleType(_name)\n    _m.__file__ = \'/nonexistent/embedded/\' + _name + \'.py\'\n    _sys.modules[_name] = _m\n    exec(compile(_SRC[_name], \'<embedded \' + _name + \'>\', \'exec\'), _m.__dict__)\n_r3 = _sys.modules[\'chain_theorem\']\n_CH = _r3.Chain3(_K, _EPS)          # raises ValueError if a hypothesis (H0)-(H15) fails for the numbers used\nCONFIG = dict(_CH.config, k=_K, eps=_EPS, R_needed=_CH.R_requested, R_cell=_CH.R, R_image_bound=_CH.Rs,\n              hypotheses={n: m for n, (ok, m) in _CH.hyp.items()}, theorem=\'Theorem 1.1 of \' + _r3.PROOF)\nCONFIG[\'float64_selftest\'] = _r3.selftest(_CH)      # sanity numbers on 1000 points; large round-trip error = float64 break-down\n_cache = {}\n\n\ndef Embed(i, X):\n    return _CH.Embed(int(i), X.to(torch.float64))\n\n\ndef Preimage(j, Y):\n    Y = Y.to(torch.float64)\n    hit = _cache.get(\'Y\')\n    if hit is None or hit.shape != Y.shape or not torch.equal(hit, Y):   # cache the shared first stage\n        _cache[\'Y\'] = Y.detach().clone()\n        _cache[\'flat\'] = _CH.target_to_flat(Y)[0]\n    return _CH.Preimage(int(j), Y, flat=_cache[\'flat\'])\n\n\ndef STAGES(i):\n    """list of dicts (name, fwd, inv, chart_in, chart_out, conf):  Embed(i, .) = fwd_n o ... o fwd_1;  each fwd is a\n    conformally symplectic map between the named charts,  J^T Omega_out J = conf * Omega_in."""\n    return _r3.stage_dicts(_CH, int(i))\n'
+
+
+def _circ(x):
+    x = abs(x) % 1.0
+    return min(x, 1.0 - x)
+
+
+def hypotheses(ch):
+    """Evaluate all hypotheses (H0)-(H15) and split of Paper IV, Section 7, using analytic margins (no grids).
+
+    In float64, extremely small eps (<~ 1e-15) or extreme k can underflow strict margins such as H2 (a - rho_b > 0);
+    Chain3 raises ValueError whenever any float64 margin ceases to hold.
+    """
+    P, T, KB, tw = ch.P, ch.T, ch.T.kh, ch.tw
+    st = pr.TrigStep(cmp.M_ST)
+    out = {}
+
+    def put(name, margin, strict=True):
+        ok = (margin > 0.0) if strict else (margin >= 0.0)
+        out[name] = (bool(ok and math.isfinite(margin)), float(margin))
+
+    put("H0 k>=10 integer", 1.0 if (int(P.k) == P.k and P.k >= 10) else -1.0)
+    put("H0 0<eps_c<1", min(P.eps, 1.0 - P.eps))
+    put("H1 0<lam2<lam_a<=1", min(P.lam2, P.lam_a - P.lam2) if P.lam_a <= 1.0 else -1.0)
+    put("H1 0<mu<1", min(P.mu, 1.0 - P.mu))
+    put("H2 0<rho_b<a", min(ch.rho_b, (P.a - ch.rho_b) / P.a))
+
+    def check_kh(tag, K):
+        put(tag + " positive", min(K.ra, K.d, K.W1, K.W2, K.rho1, K.beta, K.Xw, K.rh))
+        put(tag + " (K1) W1<W2", (K.W2 - K.W1) / K.W2)
+        put(tag + " (K1) W2<=1/6", 1.0 / 6.0 - K.W2, strict=False)
+        put(tag + " (K1) rho1<1", 1.0 - K.rho1)
+        put(tag + " (K1) (W1+W2)(1+beta-rho1)=beta", 1e-12 - abs((K.W1 + K.W2) * (1.0 + K.beta - K.rho1) / K.beta - 1.0), strict=False)
+        put(tag + " (K2) rh<=d sin(2 pi W1)", 1.0 - K.rh / (K.d * math.sin(2.0 * PI * K.W1)), strict=False)
+        put(tag + " (K3)", 1.0 - (K.rho1 * PI * (K.d + K.ra) ** 2 + 0.5 * K.Xw) / (PI * (K.d - K.rh) ** 2))
+
+    KC = P.KC
+    put("H3 K_C r_a=sqrt(a/pi)", 1e-12 - abs(KC.ra / math.sqrt(P.a / PI) - 1.0), strict=False)
+    check_kh("H3-H5 K_C", KC)
+
+    # Analytic (grid-free) lower bound for (H6) on [0, 1] (Paper IV, Lemma 7.2):
+    #   * On [0, 1/2], convexity of S_4 gives S_4(u) <= u, so (1-mu)(1-lam_a + u(lam_a-lam2)) - r_rel S_4(u)
+    #     >= (1-mu)(1-lam_a) + u ((1-mu)(lam_a-lam2) - r_rel).
+    #   * On [1/2, 1], concavity of S_4 bounds S_4(u) <= S_4(2/3) + S_4'(2/3)(u - 2/3), reducing to the two endpoints u = 1/2, 1.
+    Tt = P.T
+    r_rel = KC.delta_rel / Tt
+    r_sm = KC.delta_small / Tt
+    u0 = torch.tensor(2.0 / 3.0, dtype=F64)
+    st_u0, dst_u0 = float(st(u0)), float(st.d(u0))
+    c_a0 = (1.0 - P.mu) * (1.0 - P.lam_a)
+    c_a1 = (1.0 - P.mu) * (P.lam_a - P.lam2)
+    h6_left = min(c_a0, c_a0 + 0.5 * (c_a1 - r_rel))
+    h6_right = min(
+        c_a0 + 0.5 * c_a1 - r_rel * (st_u0 + dst_u0 * (0.5 - 2.0 / 3.0)),
+        c_a0 + c_a1 - r_rel * (st_u0 + dst_u0 * (1.0 - 2.0 / 3.0)),
+    )
+    h6_analytic = min(h6_left, h6_right, c_a0 - r_sm)
+    put("H6 (analytic)", h6_analytic, strict=False)
+
+    # Analytic (grid-free) lower bound for (H7) on [0, 1] (Paper IV, Lemma 7.2):
+    #   When lam2 <= 2(1 - mu), ((1-mu) lam2 u - lam2 I_4(u))' = lam2 ((1-mu) - S_4(u)) switches sign at most once (+ then -),
+    #   so its global minimum on [0, 1] is attained at the endpoints u = 0 and u = 1 (recall I_4(0) = 0, I_4(1) = 1/2).
+    rmax_kc = max(r_rel, r_sm)
+    if P.lam2 <= 2.0 * (1.0 - P.mu):
+        h7_analytic = min(
+            (1.0 - P.mu) * (1.0 - P.lam2) - rmax_kc,
+            (1.0 - P.mu) - (rmax_kc + 0.5 * P.lam2),
+        )
+    else:
+        h7_analytic = -1.0
+    put("H7 (analytic)", h7_analytic, strict=False)
+
+    put("H8 pi d^2<=T(1-mu-lam2/2)", (1.0 - P.mu - 0.5 * P.lam2) - PI * KC.d ** 2 / Tt, strict=False)
+    put("H8 pi d^2+lam2 T/2+mu T<=O(-lam_a g)", P.O(-P.wG) - (PI * KC.d ** 2 + 0.5 * P.lam2 * Tt + P.mu * Tt), strict=False)
+    put("H9", 1.0 - (P.cs * PI * KC.rh ** 2 + 1.5 * P.lam2 * P.g) / P.g, strict=False)
+    # Corridor separation between group region top K(p) - (3 - 9a) and marked-fibre spiral K(p) - delta:
+    put("H9b corridor (3-9a)>delta", (3.0 - 9.0 * P.a) - tw.delta)
+
+    c = ch.twist_const
+    put("H10 constants ordered", min(c["ag"], c["om0"], c["om1"] - c["om0"], c["ou0"], c["ou1"] - c["ou0"], c["oc0"], c["oc1"] - c["oc0"]))
+    iv = [(-c["ag"], c["om1"]), (0.0, c["om1"]), (0.5, c["om1"]), (c["vcomp"], c["oc1"])]
+    put("H10 (T-a)", min(_circ(iv[i][0] - iv[j][0]) - iv[i][1] - iv[j][1] for i in range(4) for j in range(i)))
+    lobes = (5.0 / 6.0, 7.0 / 12.0)
+    put("H10 (T-b) lobes disjoint", _circ(lobes[0] - lobes[1]) - 2.0 * c["ou1"])
+    put("H10 (T-b) distance to 1/3 and 0", min(_circ(l - q) - c["ou1"] for l in lobes for q in (1.0 / 3.0, 0.0)) - c["ou0"], strict=False)
+    put("H10 n_j integers", 1.0 if all(float(n) == int(n) for n in tw.nj) else -1.0)
+    put(
+        "H10 code constants = checked constants",
+        1.0
+        if (
+            tw.ag == c["ag"]
+            and tw.vcomp == c["vcomp"]
+            and tw.bv.w0 == c["om0"]
+            and tw.bv.w1 == c["om1"]
+            and tw.bu.w0 == c["ou0"]
+            and tw.bu.w1 == c["ou1"]
+            and tw.bc.w0 == c["oc0"]
+            and tw.bc.w1 == c["oc1"]
+            and tw.global_shift
+            and tw.delta == 0.25 * P.w2
+            and tuple(tw.vp) == (-c["ag"], 0.0, 0.5)
+        )
+        else -1.0,
+    )
+
+    put("H11 a<=hK", T.hK - P.a, strict=False)
+    put("H11 hK<1/3", T.D)
+    Gs = [((P.s - 3.0 + P.wG) / P.s, P.T * (1.0 - P.lam_a)), (0.5 * P.eta, P.T)] + ([((P.s - 3.0) / P.s, P.T)] if P.Gmax > 0.0 else [])
+    put("H11 hK>O-mu slack", min((q - T.D) / 3.0 + P.mu * sl for q, sl in Gs))
+    put("H11 D consistent with hK", 1e-9 - abs((1.0 - 3.0 * T.hK) - T.D) / max(T.D, 1e-300) if T.D > 1e-6 else 1.0, strict=False)
+
+    put("H12 K_B r_a=sqrt(hK/pi)", 1e-12 - abs(KB.ra / math.sqrt(T.hK / PI) - 1.0), strict=False)
+    check_kh("H12 K_B", KB)
+    put("H13", 1.0 - max(PI * KB.d ** 2, KB.delta_rel, KB.delta_small) / T.dkh, strict=False)
+
+    # Analytic S_max bound on [-m, m]: for |c| <= d2, 0 <= q(c) <= sig0 so S(c) <= hypot(d2, sig0); for d2 <= |c| <= m, q(c) = 0 so S(c) = |c| <= m.
+    put("H14 d2<m", (T.m - T.d2) / T.m)
+    Sb = max(T.m, math.hypot(T.d2, T.sig0))
+    eta1 = 2.0 / 3.0 - (2.0 * T.dkh + Sb) / T.D
+    put("H14 2 delta_kh+S_max<2D/3 (eta_1)", eta1)
+    put("H15 m<=3 eta_1 D", 3.0 * eta1 - T.m / T.D, strict=False)
+    put("split 2m<D-3 delta_kh", 1.0 - 3.0 * T.dkh / T.D - 2.0 * T.m / T.D)
+    return out
+
+
+class Chain3:
+    """Closed-form C^4 symplectic packing chain for (k, eps), using eps_c = min(eps, 1/100) and Pi*(k, eps_c; 1/4)."""
+
+    def __init__(self, k, eps, f=cmp.F_STAR, check=True):
+        if int(k) != k or k < 10 or not (0.0 < float(eps) < 1.0):
+            raise ValueError("need an integer k >= 10 and 0 < eps < 1")
+        self.k, self.eps_requested = int(k), float(eps)
+        self.eps = min(self.eps_requested, cmp.EPS_C_MAX)
+        try:
+            self._build(f)
+        except (AssertionError, ZeroDivisionError, OverflowError) as ex:
+            raise ValueError(
+                "float64 break-down while evaluating parameters for k=%r eps=%r: %s: %s"
+                % (k, eps, type(ex).__name__, str(ex)[:200])
+            )
+        bad = [n for n, (ok, _) in self.hyp.items() if not ok]
+        if check and bad:
+            raise ValueError(
+                "hypotheses fail in float64 for k=%r eps=%r (eps_c=%r): %s"
+                % (k, eps, self.eps, "; ".join("%s [%.3e]" % (n, self.hyp[n][1]) for n in bad))
+            )
+
+    def _build(self, f):
+        self.P = P = cmp.PiStar(self.k, self.eps, f)
+        self.R_requested = (self.k / (1.0 - self.eps_requested)) ** 0.25
+        self.R = 1.0 / math.sqrt(P.rho_ball)
+        self.margin = min(MS_ABS, MS_FRAC * P.eta)
+        self.Rs = self.R * (1.0 - self.margin)
+        self.rho_b = P.rho_ball / ((1.0 - self.margin) ** 2)
+        self.r_dom = math.sqrt(P.a / self.rho_b)
+        self.strip = kh.KRStrip(P.a)
+        self.C = cmp.Comparator3(P)
+        self.twist_const = dict(tw_mod.TWIST)
+        self.tw = tw_mod.SpiralShear(P, **tw_mod.TWIST)
+        self.psi0, self.vcut, self.lift = -1.0 / 6.0, 0.5, 1
+        d2k = tr_mod.FR["fdel"] * P.D
+        rB = math.sqrt(P.hK / PI)
+        dB = math.sqrt(0.8 * d2k / PI) / 1.05
+        KB = kh.keyhole_star(rB, dB, 0.8 * d2k / (PI * (rB + dB) * (rB + 8.4 * dB)), 0.7, cmp.M_ST)
+        self.T = tr_mod.Transfer3(P.hK, P.D, KB)
+        self.scale = math.sqrt(PI) * self.Rs
+        self.ngroup = 9
+        self.config = dict(
+            eps_c=self.eps,
+            f=f,
+            margin=self.margin,
+            r_domain=self.r_dom,
+            hK=P.hK,
+            D=P.D,
+            twist="narrow_g",
+            strip="kr",
+            proof=PROOF,
+        )
+        self.hyp = hypotheses(self)
+
+    def J(self, p):
+        return 3.0 * self.P.s * p - 3.0
+
+    def cell_to_flat(self, i, yl):
+        P = self.P
+        X, T, w = yl[..., 0], yl[..., 1], yl[..., 2:]
+        p = pr.mom(w)
+        if i < self.ngroup:
+            return torch.cat(((self.J(p) + 9.0 * X)[..., None], ((i - 4 + T) / 9.0)[..., None], pr.rot(w, -3.0 * P.s * T / 9.0)), -1)
+        dA = 3.0 * P.s - i
+        return torch.cat(((X + self.J(p) + i * (P.a - p))[..., None], (T + self.vcut)[..., None], pr.rot(w, -dA * T)), -1)
+
+    def flat_to_cell(self, i, y):
+        P = self.P
+        G, v, w = y[..., 0], y[..., 1], y[..., 2:]
+        p = pr.mom(w)
+        if i < self.ngroup:
+            T = 9.0 * v - (i - 4)
+            T = T - 9.0 * torch.floor(T / 9.0)
+            return torch.cat((((G - self.J(p)) / 9.0)[..., None], T[..., None], pr.rot(w, 3.0 * P.s * T / 9.0)), -1)
+        dA = 3.0 * P.s - i
+        T = v - self.vcut
+        T = T - torch.floor(T)
+        return torch.cat(((G - self.J(p) - i * (P.a - p))[..., None], T[..., None], pr.rot(w, dA * T)), -1)
+
+    def to_fund(self, y):
+        G, v, w = y[..., 0], y[..., 1], y[..., 2:]
+        hb = 3.0 - 9.0 * pr.mom(w)
+        n = torch.floor((G - self.J(pr.mom(w))) / hb)
+        return torch.cat(((G - n * hb)[..., None], v[..., None], pr.rot(w, -9.0 * n * v)), -1)
+
+    def _post(self, y):
+        G, v, w = y[:, 0], y[:, 1], y[:, 2:]
+        p, th = pr.polar0(w)
+        hb = 3.0 - 9.0 * p
+        ua = G / hb + self.lift
+        sig, psi, vt = hb * v, self.psi0 - ua, th - 9.0 * (ua - self.lift) * v
+        return torch.cat((sig[:, None], psi[:, None], pr.cart0(p, vt)), 1)
+
+    def _post_inv(self, x):
+        sig, psi = x[:, 0], x[:, 1]
+        p, vt = pr.polar0(x[:, 2:])
+        hb = 3.0 - 9.0 * p
+        ua = self.psi0 - psi
+        v = sig / hb
+        w = pr.cart0(p, vt + 9.0 * (ua - self.lift) * v)
+        return torch.cat((((ua - self.lift) * hb)[:, None], v[:, None], w), 1)
+
+    def stages(self, i):
+        sc = self.scale
+        perm = [0, 2, 1, 3]
+        S = [
+            ("scale", lambda X: X[:, perm] / sc, lambda z: z[:, perm] * sc),
+            ("strip (KR)", self.strip.fwd, self.strip.inv),
+            ("cell -> flat", lambda yl: self.cell_to_flat(i, yl), lambda y: self.flat_to_cell(i, y)),
+        ]
+        if i >= self.ngroup:
+            S.append(("comparator keyhole", self.C.comp1, lambda y: self.C.comp1(y, True)))
+            S.append(("comparator shift", self.C.comp2, lambda y: self.C.comp2(y, True)))
+        S.extend(
+            [
+                ("twist B (Psi_S)", self.tw.psiS, lambda y: self.tw.psiS(y, -1.0)),
+                ("twist A (Phi_g)", self.tw.phiG, lambda y: self.tw.phiG(y, -1.0)),
+                ("post chart", self._post, self._post_inv),
+                ("corner keyhole (Band)", self.T.band, self.T.band_inv),
+                ("CP2 point (projector)", self.T.wproj, self.T.wproj_inv),
+                ("ball chart of CP2 minus L + scale", lambda q: self.T.chart9(q) * sc, lambda Y: self.T.chart9_inv(Y / sc)),
+            ]
+        )
+        return S
+
+    def Embed(self, i, Xb):
+        y = Xb
+        for _, f, _ in self.stages(i):
+            y = f(y)
+        return y
+
+    def target_to_flat(self, Y):
+        x = self.T.band_inv(self.T.wpost_inv(Y / self.scale))
+        y = self._post_inv(x)
+        return self.to_fund(self.tw.inv(y)), None
+
+    def Preimage(self, j, Y, flat=None):
+        y = self.target_to_flat(Y)[0] if flat is None else flat
+        st = self.stages(j)
+        hi = [s[0] for s in st].index("twist B (Psi_S)")
+        for _, _, g in reversed(st[:hi]):
+            y = g(y)
+        return y, torch.isfinite(y).all(dim=1)
+
+
+def stage_dicts(ch, i):
+    out = []
+    for nm, f, g in ch.stages(i):
+        ci, co = CHARTS[nm]
+        conf = 1.0 / ch.scale ** 2 if nm == "scale" else (ch.scale ** 2 if co == "target" else 1.0)
+        out.append(dict(name=nm, fwd=f, inv=g, chart_in=ci, chart_out=co, conf=conf))
+    return out
+
+
+def special_points():
+    """Deterministic test points: ball centre, +-e_a axis boundary points, and zero-fibre/zero-base diagonals."""
+    pts = [torch.zeros(4, dtype=F64)]
+    for d in range(4):
+        for sgn in (-1.0, 1.0):
+            v = torch.zeros(4, dtype=F64)
+            v[d] = sgn
+            pts.append(v)
+    rt2 = 1.0 / math.sqrt(2.0)
+    for s1 in (-rt2, rt2):
+        for s2 in (-rt2, rt2):
+            pts.append(torch.tensor([s1, 0.0, s2, 0.0], dtype=F64))
+            pts.append(torch.tensor([0.0, s1, 0.0, s2], dtype=F64))
+    return torch.stack(pts)
+
+
+def selftest(ch, n=200, seed=7):
+    """Float64 sanity diagnostics on deterministic special points + n random points of representative balls."""
+    g = torch.Generator().manual_seed(seed)
+    X_rnd = torch.randn(n, 4, generator=g, dtype=F64)
+    X_rnd = X_rnd / X_rnd.norm(dim=1, keepdim=True)
+    X_rnd[n // 2 :] *= torch.rand(n - n // 2, 1, generator=g, dtype=F64) ** 0.25
+    X = torch.cat([special_points(), X_rnd], dim=0)
+    fin, rmax, rt = True, 0.0, 0.0
+    balls = sorted({0, 4, 8, 9, ch.k - 1})
+    for i in balls:
+        Y = ch.Embed(i, X)
+        Xb, ok = ch.Preimage(i, Y)
+        fin = fin and bool(torch.isfinite(Y).all()) and bool(torch.isfinite(Xb).all()) and bool(ok.all())
+        rmax = max(rmax, float(torch.nan_to_num(Y.norm(dim=1), nan=float("inf")).max()))
+        rt = max(rt, float(torch.nan_to_num((Xb - X).norm(dim=1), nan=float("inf")).max()))
+    return dict(points=len(X), balls=balls, finite=fin, max_radius_over_R=rmax / ch.R_requested, roundtrip_max=rt)
+''',
+}
+
+_RUNTIME = r"""
+import sys as _sys, types as _types
+import torch
+torch.set_default_dtype(torch.float64)
+for _name in _ORDER:
+    _m = _types.ModuleType(_name)
+    _m.__file__ = '/nonexistent/embedded/' + _name + '.py'
+    _sys.modules[_name] = _m
+    exec(compile(_SRC[_name], '<embedded ' + _name + '>', 'exec'), _m.__dict__)
+_ch_mod = _sys.modules['chain']
+_CH = _ch_mod.Chain3(_K, _EPS)
+CONFIG = dict(
+    _CH.config,
+    k=_K,
+    eps=_EPS,
+    R_needed=_CH.R_requested,
+    R_cell=_CH.R,
+    R_image_bound=_CH.Rs,
+    hypotheses={n: m for n, (ok, m) in _CH.hyp.items()},
+    theorem='Theorem 1.1 of ' + _ch_mod.PROOF,
+)
+CONFIG['float64_selftest'] = _ch_mod.selftest(_CH)
+_cache = {}
+
+
+def Embed(i, X):
+    return _CH.Embed(int(i), X.to(torch.float64))
+
+
+def Preimage(j, Y):
+    Y = Y.to(torch.float64)
+    hit = _cache.get('Y')
+    if hit is None or hit.shape != Y.shape or not torch.equal(hit, Y):
+        _cache['Y'] = Y.detach().clone()
+        _cache['flat'] = _CH.target_to_flat(Y)[0]
+    return _CH.Preimage(int(j), Y, flat=_cache['flat'])
+
+
+def STAGES(i):
+    return _ch_mod.stage_dicts(_CH, int(i))
+"""
 
 _probe = {}
 
 
 def _load():
-    if 'r3' not in _probe:
+    if "chain" not in _probe:
         import sys, types
-        for name in _ORDER:
-            m = types.ModuleType(name)
-            m.__file__ = '/nonexistent/embedded/' + name + '.py'
-            sys.modules[name] = m
-            exec(compile(_SRC[name], '<embedded ' + name + '>', 'exec'), m.__dict__)
-        _probe['r3'] = sys.modules['chain_theorem']
-    return _probe['r3']
+        saved = {name: sys.modules.get(name) for name in _ORDER}
+        try:
+            for name in _ORDER:
+                m = types.ModuleType(name)
+                m.__file__ = "/nonexistent/embedded/" + name + ".py"
+                sys.modules[name] = m
+                exec(compile(_SRC[name], "<embedded " + name + ">", "exec"), m.__dict__)
+            _probe["chain"] = sys.modules["chain"]
+            _probe["mods"] = {name: sys.modules[name] for name in _ORDER}
+        finally:
+            for name, prev in saved.items():
+                if prev is None:
+                    sys.modules.pop(name, None)
+                else:
+                    sys.modules[name] = prev
+    return _probe["chain"]
 
 
 def solution(k, eps):
     if int(k) != k or k < 10 or not (0.0 < float(eps) < 1.0):
-        raise ValueError('need an integer k >= 10 and 0 < eps < 1')
-    k = int(k); eps = float(eps)
-    _load().Chain3(k, eps)          # evaluates (H0)-(H15); ValueError if one fails in float64
-    return ('_K = %d\n_EPS = %r\n_ORDER = %r\n_SRC = %r\n' % (k, eps, _ORDER, _SRC)) + _RUNTIME
+        raise ValueError("need an integer k >= 10 and 0 < eps < 1")
+    k = int(k)
+    eps = float(eps)
+    _load().Chain3(k, eps)  # raises ValueError if any float64 hypothesis margin fails
+    return ("_K = %d\n_EPS = %r\n_ORDER = %r\n_SRC = %r\n" % (k, eps, _ORDER, _SRC)) + _RUNTIME

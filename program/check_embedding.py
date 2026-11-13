@@ -1,26 +1,24 @@
-"""Sampling checks of an explicit packing given as embeddings (solution_embedding.py).
+"""Sampling and deterministic special-point checks of an explicit packing given as embeddings (solution_embedding.py).
 
-solution(k, eps) returns Python source defining Embed(i, X) -> Y and Preimage(j, Y) -> (X, ok) (see that file).
-Nothing is integrated; every check is evaluated on random samples:
-  A containment   images of points on and inside each unit ball satisfy |Y| < R = (k / (1 - eps))^(1/4).
+solution(k, eps) returns Python source defining Embed(i, X) -> Y and Preimage(j, Y) -> (X, ok).
+Nothing is integrated; checks are evaluated on 17 deterministic special points per ball (centre, +-e_a axis boundary
+points, zero-fibre and zero-base diagonals) together with random sphere and interior samples:
+  A containment   images of special, boundary, and interior points of each unit ball satisfy |Y| < R = (k / (1 - eps))^(1/4).
   B symplecticity the Jacobian J (central differences at h and h/2, Richardson) satisfies J^T Omega J = Omega; reported
-                  as max |J^T Omega J - Omega| / max(1, |J|^2), with the difference of the two step sizes.
-  C round trip    Preimage(i, Embed(i, X)) is found (ok) and within rt_tol of X.
-  D disjointness  no image point of ball i is in the image of another ball j ("in": ok, |X_j| <= 1 and
+                  as the normalised residual max |J^T Omega J - Omega| / max(1, ||J||_F^2), together with the step-size
+                  difference ||J_{h/2} - J_h||_max / max(1, ||J||_F).
+  C round trip    Preimage(i, Embed(i, X)) is found (ok) and within rt_tol of X (checked on all special + random points).
+  D disjointness  no image point of ball i lies in the image of another ball j ("in": ok, |X_j| <= 1 and
                   |Embed(j, X_j) - Y| <= cert_tol).
   E volume        M uniform points in B(R): none may lie in two images, and the covered fraction must equal
                   k / R^4 = 1 - eps (symplectic maps preserve volume), within 4 standard errors. This catches a
                   Preimage that misses members and would hide an overlap.
   F time          total wall-clock time (default limit 3600 s).
-  G continuity    A-E cannot see a map that cuts a ball into pieces and moves them separately, so Embed is checked
-                  for jumps: on random chords, the intervals with the largest image gaps (absolute and relative to
-                  their neighbours) are bisected to separations 1e-8 and 1e-11. A continuous map's gap shrinks; a jump
-                  does not. Flagged: gap(1e-11) > 0.02 gap(1e-8) and > 1e-9. The largest gap / separation is reported
-                  (a lower estimate of the local Lipschitz constant).
-PASS: G flags nothing; A finite and inside; B defect <= sym_tol; C all pass; D no overlap; E no multiple membership and
-coverage within 4 standard errors (+ cover_tol); F within time_limit.
-In float64 a flag of G can also come from a continuous map whose local Lipschitz constant exceeds about 1e11 (the
-interval cannot be resolved at separation 1e-11); README.md explains how such flags were examined in higher precision.
+  G continuity    on random chords, intervals with the largest image gaps (absolute and relative to neighbours) are
+                  bisected to separations 1e-8 and 1e-11. Flagged when gap(1e-11) > 0.02 gap(1e-8) and > 1e-9.
+PASS requires zero flags in A-G; exits with status 0 on PASS and status 1 on FAIL.
+Where high local Lipschitz constants (> ~1e11) exceed float64 resolution at fixed step sizes, use check_embedding_mp.py
+to re-evaluate all flagged points and intervals in arbitrary-precision arithmetic.
 
     python check_embedding.py solution_embedding.py --k 10 --eps 0.1 --h 1e-7
 """
@@ -48,6 +46,22 @@ def load_pair(src):
     exec(compile(src, "<embedding>", "exec"), m.__dict__)
     assert hasattr(m, "Embed") and hasattr(m, "Preimage"), "the source must define Embed and Preimage"
     return m.Embed, m.Preimage
+
+
+def special_samples():
+    """17 deterministic points in B^4(1): centre 0, +-e_1..+-e_4, 4 zero-fibre and 4 zero-base unit diagonals."""
+    pts = [torch.zeros(4)]
+    for d in range(4):
+        for sgn in (-1.0, 1.0):
+            v = torch.zeros(4)
+            v[d] = sgn
+            pts.append(v)
+    rt2 = 1.0 / math.sqrt(2.0)
+    for s1 in (-rt2, rt2):
+        for s2 in (-rt2, rt2):
+            pts.append(torch.tensor([s1, 0.0, s2, 0.0]))
+            pts.append(torch.tensor([0.0, s1, 0.0, s2]))
+    return torch.stack(pts)
 
 
 def unit_samples(N, N_int, seed):
@@ -141,27 +155,39 @@ def main():
     k = a.k
     R_need = (k / (1 - a.eps)) ** 0.25
     log = lambda s: print(s, flush=True)
-    log(f"k={k} eps={a.eps} R_needed={R_need:.6f}  per ball: {a.N} on the sphere + {a.N_int} inside, Jacobian {a.N_jac}; volume check {a.M} points; solution() {t_sol:.1f}s")
+    X_spec = special_samples()
+    n_spec = len(X_spec)
+    log(f"k={k} eps={a.eps} R_needed={R_need:.6f}  per ball: {n_spec} special + {a.N} sphere + {a.N_int} interior, Jacobian {a.N_jac}; volume check {a.M} points; solution() {t_sol:.1f}s")
     S, B = unit_samples(a.N, a.N_int, a.seed)
-    X0 = torch.cat([S, B], dim=0)
-    res = dict(k=k, eps=a.eps, R_needed=R_need)
+    X0 = torch.cat([X_spec, S, B], dim=0)
+    res = dict(k=k, eps=a.eps, R_needed=R_need, special_per_ball=n_spec)
     # A, C
-    Ys, R_max, finite, rt_max, rt_bad = [], 0.0, True, 0.0, 0
+    Ys, R_max, finite, inv_nonfinite, rt_max, rt_bad, spec_rt_bad = [], 0.0, True, 0, 0.0, 0, 0
     for i in range(k):
         Y = Embed(i, X0).detach()
         Ys.append(Y)
         finite &= bool(torch.isfinite(Y).all())
         R_max = max(R_max, float(Y.norm(dim=1).max()))
         Xb, ok = Preimage(i, Y)
+        inv_nonfinite += int((~torch.isfinite(Xb).all(dim=1)).sum())
         d = (Xb - X0).norm(dim=1)
         bad = (~ok) | ~torch.isfinite(d) | (d > a.rt_tol)
         rt_bad += int(bad.sum())
+        spec_rt_bad += int(bad[:n_spec].sum())
         if (~bad).any():
             rt_max = max(rt_max, float(d[~bad].max()))
-    res.update(R_origin=R_max, margin=R_need - R_max, finite=finite, roundtrip_bad=rt_bad, roundtrip_max=rt_max)
+    res.update(
+        R_origin=R_max,
+        margin=R_need - R_max,
+        finite=finite,
+        inv_nonfinite=inv_nonfinite,
+        roundtrip_bad=rt_bad,
+        special_roundtrip_bad=spec_rt_bad,
+        roundtrip_max=rt_max,
+    )
     log(f"A containment: R_origin = {R_max:.6f}, margin {R_need - R_max:.3e}, finite = {finite}")
-    log(f"C round trip: failed {rt_bad} / {k * X0.shape[0]}, largest error among the others {rt_max:.3e}")
-    # B
+    log(f"C round trip: failed {rt_bad} / {k * X0.shape[0]} (special: {spec_rt_bad} / {k * n_spec}, non-finite preimages: {inv_nonfinite}), largest error among passing {rt_max:.3e}")
+    # B (normalised residual ||J^T Omega J - Omega||_max / max(1, ||J||_F^2))
     sym_max, fd_max = 0.0, 0.0
     nj = max(2, a.N_jac)
     for i in range(k):
@@ -173,7 +199,7 @@ def main():
         sym_max = max(sym_max, float((D.flatten(1).abs().max(dim=1).values / nrm).max()))
         fd_max = max(fd_max, float(((J2 - J1).flatten(1).abs().max(dim=1).values / nrm.sqrt()).max()))
     res.update(sym_defect=sym_max, fd_resolution=fd_max)
-    log(f"B symplecticity: largest defect {sym_max:.3e} (difference of the two step sizes / |J|: {fd_max:.3e})")
+    log(f"B symplecticity (normalised by max(1, ||J||_F^2)): largest residual {sym_max:.3e} (step diff / ||J||_F: {fd_max:.3e})")
     # G
     g_bad, g_gap, g_lip, g_coarse = 0, 0.0, 0.0, 0.0
     if a.chords > 0:
@@ -204,14 +230,25 @@ def main():
     wall = time.time() - t_all
     res.update(wall_s=wall)
     log(f"F time: {wall:.0f} s")
-    ok = (g_bad == 0 and finite and R_max < R_need and sym_max <= a.sym_tol and rt_bad == 0 and overlaps == 0 and multi == 0
-          and abs(cov - (1 - a.eps)) <= 4 * se + a.cover_tol and wall <= a.time_limit)
+    ok = (
+        g_bad == 0
+        and finite
+        and inv_nonfinite == 0
+        and R_max < R_need
+        and sym_max <= a.sym_tol
+        and rt_bad == 0
+        and overlaps == 0
+        and multi == 0
+        and abs(cov - (1 - a.eps)) <= 4 * se + a.cover_tol
+        and wall <= a.time_limit
+    )
     res["pass"] = bool(ok)
     log("RESULT " + json.dumps(res))
     log("PASS" if ok else "FAIL")
     if a.json:
         with open(a.json, "w") as f:
             json.dump(res, f, indent=1)
+    sys.exit(0 if ok else 1)
 
 
 if __name__ == "__main__":

@@ -23,7 +23,7 @@ PUBLIC_FILES = (
     "README.md", "README.zh-CN.md", "REVIEW.md", "PROVENANCE.md", "cache/README.md", ".gitattributes", "LICENSE", "NOTICE", "CITATION.cff", ".zenodo.json", ".gitignore",
     "lakefile.toml", "lake-manifest.json", "lean-toolchain", "SymplecticPacking.lean",
 )
-DOCUMENTS = ("p1/main", "p1/supplement", "p2/main", "p2/supplement", "p3/main")
+DOCUMENTS = ("p1/main", "p1/supplement", "p2/main", "p2/supplement", "p3/main", "p4/main")
 PUBLIC_DIRS = ("SymplecticPacking", "verification", "vendor", "scripts", "test", ".github", "program")
 
 

@@ -1,0 +1,277 @@
+% =====================================================================================================
+\section{Closed-form transfer to the four-ball}\label{sec:transfer}
+
+\subsection{Post chart, corner bands, and simplex gluing}\label{sec:transfer-def}
+
+On $\{p<h_K\}$ ($0<h_K<\frac13$, $D=1-3h_K>0$), the post chart $\Pi_{\mathrm{post}}(G,v,w)=(\sigma,\psi,w_{\mathrm{post}})$
+with $\psi_0=-\frac16$ and $\ell=1$ sets $u_a=G/P(p)+1$, $\sigma=P(p)v$, $\psi=-\frac16-u_a$, and
+$\vartheta=\theta-9(u_a-1)v$ ($w_{\mathrm{post}}=\sqrt{p/\pi}\,e^{2\pi i\vartheta}$). Direct differentiation gives
+$d\sigma\wedge d\psi+dp\wedge d\vartheta = (P\,dv-9v\,dp)\wedge(-P^{-1}dG-9GP^{-2}dp)+dp\wedge(d\theta-9\frac{G}{P}dv-9v\frac{dG}{P}-81\frac{Gv}{P^2}dp)
+=dG\wedge dv+dp\wedge d\theta$. Under $\Pi_{\mathrm{post}}$, $T_u$ becomes $\tau_u\colon\psi\mapsto\psi-1$, $T_v$
+becomes $\tau_v\colon(\sigma,\psi,p,\vartheta)\mapsto(\sigma+P(p),\psi,p,\vartheta+9\psi+\frac12)$ (because $-9\psi_0=\frac32\equiv\frac12\pmod1$),
+and the three straight marked fibres $(\mathcal M_1,\mathcal M_2,\mathcal M_3)$ become
+\[
+ (v_c,\psi)\equiv(0,0),\quad (0,\tfrac12),\quad (\tfrac12,-\tfrac16)\qquad\bigl(v_c=\sigma/P(p),\ \psi\bmod1\bigr).
+\]
+
+Fix fractions $(f_m,f_{d_2},f_{\sigma_0},f_\delta)=(0.32,0.20,0.20,0.10)$ of $D$, so $m=0.32D$, $d_2=0.20D$,
+$\sigma_0=0.20D$, and $\delta_{\mathrm{kh}}=0.10D$, and let $K_B$ be the corner keyhole on $\bar D(h_K)$ with budget
+$0.8\delta_{\mathrm{kh}}$. Set $(\kappa_0,\kappa_1,\kappa_2)=(-\frac1{12},\frac1{12},0)$, phase offsets
+$\mathrm{off}_0=(0,0)$, $\mathrm{off}_1=(\frac1{12},\frac14)$, $\mathrm{off}_{2s}=(\frac1{12},\frac14)$,
+$\mathrm{off}_{2c}=(\frac1{12},0)$, $\mathrm{left}_0=\mathrm{off}_{2c}$, $\mathrm{left}_1=\mathrm{off}_0$,
+$\mathrm{left}_2=\mathrm{off}_1$, and $\kappa=e^{-2\pi i/12}=e^{-i\pi/6}$.
+
+Reduce $(\sigma,\psi,p,\vartheta)$ by $\tau_v^{-n}$ ($n=\lfloor v_c+\frac16\rfloor$) into the fundamental strip
+$v_c\in[-\frac16,\frac56)$, and put $c_j=\sigma-j(1-3p)$ for $j\in\{0,1,2\}$. Under the split inequality
+$2m<D-3\delta_{\mathrm{kh}}$ ($0.64<0.70$), for any $p_2<h_K+\delta_{\mathrm{kh}}$ we have $1-3p_2>D-3\delta_{\mathrm{kh}}>2m$,
+so the three bands $\{|c_j|<m\}$ ($j=0,1,2$) are pairwise disjoint both before and after the corner keyhole!
+
+\begin{enumerate}[label=(\arabic*)]
+\item \emph{Corner keyhole $\mathcal B$ (\texttt{Band}).} Outside $\bigcup_{j=0}^2\{|c_j|<m\}$, $\mathcal B=\mathrm{id}$.
+On $\{|c_j|<m\}$, put $\tau_B(c)=1-S_4((|c|-d_2)/(m-d_2))$, $k_j(c)=\kappa_j S_4((c+m)/(2m))$, $\psi_1=\psi+a_j+k_j(c)$,
+$v_j=\vartheta+b_j+3jk_j(c)-3j\psi_1$ ($(a_j,b_j)=\mathrm{left}_j$), apply $(w_2,g_B)=K_B^{\tau_B(c)}(\sqrt{p/\pi}e^{2\pi iv_j})$,
+set $\psi_2=\psi_1-\tau_B'(c)g_B$, $p_2=\pi|w_2|^2$, $v_{j,2}=\arg(w_2)/(2\pi)$, recover
+$\sigma_{\mathrm{out}}=c+j(1-3p_2)$ (preserving $c_j$!), $\psi_{\mathrm{out}}=\psi_2-a_j-k_j(c)$,
+$\vartheta_{\mathrm{out}}=v_{j,2}+3j\psi_2-b_j-3jk_j(c)$, and restore $\tau_v^n$.
+\item \emph{Simplex gluing $\mathcal W$.} On the output of $\mathcal B$ (reduced to $v_c\in[-\frac16,\frac56)$):
+ \begin{itemize}
+ \item On the four sector pieces outside $\bigcup_{j=0}^2\{|c_j|<m\}$ ($0\le v_c<\frac13$, $\frac13\le v_c<\frac23$,
+ $\frac23\le v_c<\frac56$, and $-\frac16\le v_c<0$, indexed by $s\in\{0,1,2s,2c\}$), set $(\tilde\psi,\tilde\vartheta)=(\psi,\vartheta)+\mathrm{off}_s$ and define $(X_0,X_1,X_2;T_1,T_2)$ by
+ \begin{align*}
+  s=0:\quad &(1-2p-\sigma,\ p+\sigma,\ p;\ \tilde\psi,\ \tilde\vartheta-\tilde\psi),\\
+  s=1:\quad &(p,\ 2-5p-\sigma,\ 4p+\sigma-1;\ -\tilde\vartheta+4\tilde\psi,\ -\tilde\vartheta+5\tilde\psi),\\
+  s=2s:\quad &(7p+\sigma-2,\ p,\ 3-8p-\sigma;\ \tilde\vartheta-8\tilde\psi,\ -\tilde\psi),\\
+  s=2c:\quad &(1-2p+\sigma,\ p,\ p-\sigma;\ \tilde\vartheta+\tilde\psi,\ -\tilde\psi),
+ \end{align*}
+ and $W=(\sqrt{X_0},\sqrt{X_1}e^{2\pi iT_1},\sqrt{X_2}e^{2\pi iT_2})\in S^5\subset\C^3$.
+ \item On band $j\in\{0,1,2\}$ ($|c|<m$, $c=c_j$), put $q(c)=\sigma_0(1-S_4(|c|/d_2))$, $S(c)=\sqrt{c^2+q(c)^2}$,
+ $\lambda_+(c)=\frac12(S(c)+c)\ge0$, $\lambda_-(c)=\frac12(S(c)-c)\ge0$ (evaluated without cancellation via
+ $q(c)^2/(2(S(c)+|c|))$), $\lambda(c)=\frac12(c-S(c))=-\lambda_-(c)$, $v_\ell=\operatorname{frac}(\vartheta+b_j+3jk_j(c)-3j(\psi+a_j+k_j(c)))\in(0,1)$
+ (since $|c|\le d_2\implies\tau_B(c)=1\implies v_\ell\notin\{0,1\}$ on band interiors where $\lambda'\ne0,1$!),
+ $x_a=p+\lambda_+(c)$, $x_b=p+\lambda_-(c)$, $x_r=1-x_a-x_b$, $T_a=\psi+a_j+k_j(c)+\lambda'(c)v_\ell$, and permute
+ $(\sqrt{x_r},\sqrt{x_a}e^{2\pi iT_a},\sqrt{x_b}e^{2\pi i(v_\ell-T_a)})$ by the cyclic shift $(j,j+1,j+2)\bmod3$.
+ \end{itemize}
+\item \emph{Rotated ball chart $\chi_\kappa$.} Set $Z_0=(W_2-\kappa W_1)/\sqrt2$, $Z_1=(W_1+\bar\kappa W_2)/\sqrt2$,
+$Z_2=W_0$ (unitary rotation in $(W_1,W_2)$, so $|Z|^2=|W|^2=1$). For $Z_0\ne0$, set
+$\chi_\kappa([Z])=\frac{\bar Z_0}{\sqrt\pi|Z_0|}(Z_1,Z_2)\in\Bo(1)\subset\C^2\cong\R^4$.
+\end{enumerate}
+
+\begin{theorem}[Global regularity, symplecticity, injectivity, and line avoidance of $K_{\mathrm{post}}$]\label{thm:transfer}
+Suppose $0<h_K<\frac13$, $K_B$ satisfies \eqref{eq:K123} on $\bar D(h_K)$ with
+$\max(\pi d_B^2,\delta_{\mathrm{rel},B},\delta_{\mathrm{small},B})\le\delta_{\mathrm{kh}}$ \emph{(H13)}, $0<d_2<m$,
+$2m<D-3\delta_{\mathrm{kh}}$, $\eta_1:=\frac23-(2\delta_{\mathrm{kh}}+S_{\max})/D>0$, and $m\le3\eta_1 D$ \emph{(H14)--(H15)}.
+Then on $\mathcal U_{\mathrm{post}}=\{(\sigma,\psi,w_{\mathrm{post}}):p<h_K\}$:
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Well-definedness and $C^7$ seams.} After $\mathcal B$, $p_2<h_K+\delta_{\mathrm{kh}}$. On every sector piece,
+$X_0,X_1,X_2\ge0$ with $X_0+X_1+X_2=1$, and only the coordinate not carrying an angle can vanish (at $p=0$, the angle
+matches polar coordinates $w_{\mathrm{post}}=\sqrt{p/\pi}e^{2\pi i\vartheta}$ smoothly). On band $j$, for $|c|\le d_2$
+we have $\tau_B(c)=1$, so $p_2>x_{0,B}>0$ and $v_\ell\in(\theta_{0,B},1-\theta_{0,B})$ avoids the branch cut $\{0,1\}$;
+for $d_2\le|c|<m$, $q(c)\equiv0$, so $S(c)=|c|$ ($\lambda'(c)=0$ for $c\ge d_2$, $\lambda'(c)=1$ for $c\le-d_2$), making
+$e^{2\pi iT_a}$ and $e^{2\pi i(v_\ell-T_a)}$ independent of the integer lift of $v_\ell$ and smooth across $p_2=0$! Across
+all six seams $c_j=\pm m$ (where $\tau_B=0$, $k_j(-m)=0$, $k_j(+m)=\kappa_j$) and across the fundamental cut
+$v_c=-\frac16\leftrightarrow\frac56$ (via $\mathrm{off}_{2c}-\mathrm{off}_{2s}=(0,-\frac14)$ and $\tau_v$), the
+rank-one projector $ZZ^*\in\R^9$ matches identically to order $C^7$ and is invariant under $\tau_u,\tau_v$.
+\item \emph{Exact zero set of $Z_0$ (line avoidance).} For $x\in\mathcal U_{\mathrm{post}}$, $Z_0(\mathcal W(\mathcal B(x)))=0$
+if and only if $x$ lies in the $(\tau_u,\tau_v)$-orbit of one of the three straight marked fibres
+$(0,0)$, $(0,\frac12)$, $(\frac12,-\frac16)$.
+\item \emph{Symplectic embedding and cancellation-free inverse.} On $\mathcal U_{\mathrm{post}}\setminus\operatorname{deck}\{\mathcal M_1,\mathcal M_2,\mathcal M_3\}$,
+$K_{\mathrm{post}}=\chi_\kappa\circ\mathcal W\circ\mathcal B$ takes values in $\Bo(1)$, satisfies
+$K_{\mathrm{post}}^*\omega_0=d\sigma\wedge d\psi+dw_{\mathrm{post},x}\wedge dw_{\mathrm{post},y}$, and identifies two
+points if and only if they lie in the same $(\tau_u,\tau_v)$-orbit. Its left inverse (\texttt{transfer.py}) recovers
+every sector moment directly from the non-negative coordinate $p=X_2,X_0,X_1$ (never by $1-X_a-X_b$) and every band
+moment from $p_2=X_b-\lambda_-(c)$ ($c\ge0$) or $X_a-\lambda_+(c)$ ($c<0$).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+% Clean proof of (i)-(iii) of Theorem 6.1:
+(i) On band $j$, $x_r=1-2p_2-S(c)>1-2(h_K+\delta_{\mathrm{kh}})-S_{\max}=\frac13+\frac23D-2\delta_{\mathrm{kh}}-S_{\max}=\frac13+\eta_1 D>\frac13$
+by (H14). On each sector, $\min_l|c_l|\ge m>0$ ensures both non-$p$ coordinates are $\ge m>0$ (for instance on sector $1$,
+$c_1\ge m\implies X_2=p+c_1\ge m>0$ and $c_2\le-m\implies X_1=-c_2+p\ge m>0$).
+At $c_0=-m$: $k_0(-m)=0$, $\mathrm{left}_0=\mathrm{off}_{2c}$, $\lambda(-m)=-m$, and $\lambda'(-m)=1$, giving
+$(x_r,x_a,x_b)=(1-2p+m,p,p+m)$ and $(T_a,v_\ell-T_a)=(\tilde\vartheta+\tilde\psi,-\tilde\psi)$, matching sector $2c$;
+at $c_0=+m$: $k_0(+m)=\kappa_0=-\frac1{12}$, $\mathrm{left}_0+(\kappa_0,0)=(0,0)=\mathrm{off}_0$, $\lambda(+m)=0$, and
+$\lambda'(+m)=0$, giving $(1-2p-m,p+m,p)$ and $(\tilde\psi,\tilde\vartheta-\tilde\psi)$, matching sector $0$.
+Similarly $c_1=\pm m$ matches sectors $0\leftrightarrow1$ ($\mathrm{left}_1+(\kappa_1,3\kappa_1)=\mathrm{off}_1$) and
+$c_2=\pm m$ matches sectors $1\leftrightarrow2s$ ($\mathrm{left}_2+(0,0)=\mathrm{off}_{2s}$). Under $\tau_v$, a point near
+$v_c=-\frac16$ in sector $2c$ maps to $v_c'=v_c+1\in[\frac56,1)$, where substituting $\sigma'=\sigma+3-9p$ and
+$\vartheta'=\vartheta+9\psi+\frac12$ into sector $2s$'s formula gives $(X'_0,X'_1,X'_2)=(X_0,X_1,X_2)$, $T'_2=T_2$, and
+$T'_1=(\vartheta+9\psi+\frac12+\frac14)-8(\psi+\frac1{12})=\vartheta+\psi+\frac1{12}=T_1\pmod1$.
+
+(ii) Since $|\kappa|=1$, $Z_0=0\iff W_2=\kappa W_1$, which requires $X_1=X_2$ and (when $X_1=X_2>0$)
+$T_2-T_1\equiv-\frac1{12}\pmod1$. Across all seven pieces:
+\begin{itemize}
+\item On band $1$ ($X_1=x_r,X_2=x_a$), $X_1-X_2=1-3p_2-(\frac32S(c)+\frac12c)>0.70D-(\frac32\cdot0.32+0.16)D=+0.06D>0$;
+symmetrically $X_2-X_1>+0.06D>0$ on band $2$.
+\item On sectors $0$, $2c$, $2s$: $X_1-X_2=\sigma\ge m>0$ ($s=0$), $X_1-X_2=\sigma\le-m<0$ ($s=2c$), and
+$X_2-X_1=3-9p-\sigma>\frac16(3-9p)>0$ ($s=2s$).
+\item On band $0$ ($X_1=x_a,X_2=x_b$): $X_1=X_2\iff\lambda_+(c)=\lambda_-(c)\iff c=0$ ($v_c=0$). At $c=0$, $\tau_B(0)=1$,
+$\tau_B'(0)=0$, $\lambda'(0)=\frac12$, $k_0(0)=-\frac1{24}$, and $\mathrm{left}_0=(\frac1{12},0)$, so
+$T_a=\psi+\frac1{24}+\frac12v_\ell$ and $T_2-T_1=v_\ell-2T_a=-2\psi-\frac1{12}$ ($v_\ell$ cancels identically), which equals
+$-\frac1{12}\pmod1$ if and only if $\psi\in\{0,\frac12\}\pmod1$ ($\mathcal M_1$ and $\mathcal M_2$).
+\item On sector $1$: $X_1=X_2\iff 2-5p-\sigma=4p+\sigma-1\iff v_c=\frac12$ (where $|c_1|=|c_2|=\frac12(1-3p)>\frac12D>m$,
+outside all bands). There $X_1=X_2=\frac12(1-p)>\frac13$ and $T_2-T_1=\tilde\psi=\psi+\frac1{12}\equiv-\frac1{12}\pmod1
+\iff\psi\equiv-\frac16\pmod1$ ($\mathcal M_3$).
+\end{itemize}
+
+(iii) On each sector, $(X_1,X_2)=A_s(p,\sigma)+B_s$ with $A_s\in\mathrm{GL}_2(\Z)$ and
+$(T_1,T_2)=(\tilde\vartheta,\tilde\psi)A_s^{-1}$ gives $\sum_{l=1}^2 dX_l\wedge dT_l=dp\wedge d\vartheta+d\sigma\wedge d\psi$;
+on band $j$, $dx_a\wedge dT_a+dx_b\wedge d(v_\ell-T_a)=dc\wedge d\psi_2+dp_2\wedge dv_\ell
+=d\sigma_{\mathrm{out}}\wedge d\psi_{\mathrm{out}}+dp_2\wedge d\vartheta_{\mathrm{out}}$, and $\mathcal B$ is symplectic
+by Proposition~\ref{prop:ks-symp}. Pulling back $\omega_0$ by $\chi_\kappa$ gives $\omega_{\mathrm{FS}}$, whose pullback
+by $W$ is $\sum_{l=1}^2dX_l\wedge dT_l$. Finally, the three band image sets $\mathcal R_j=\{|X_{j+1}-X_{j+2}|<m,\ X_j>\frac13\}$
+are pairwise disjoint: on $\mathcal R_0$, if $X_1=p_2+\lambda_+(c)>\frac13$, then since $p_2<\frac13-\frac7{30}D$ and
+$\max_{|t|\le d_2}\lambda_+(t)=0.20D<\frac7{30}D$, we must have $c>d_2$, so $S(c)=c$, $\lambda_-(c)=0$, and
+$X_0-X_2=1-3p_2-c>\frac7{10}D-0.32D=0.38D>m$; symmetrically $X_0-X_1>0.38D>m$ whenever $X_2>\frac13$. Outside
+$\mathcal R_0\cup\mathcal R_1\cup\mathcal R_2$, $\operatorname{argmin}(X_0,X_1,X_2)$ uniquely identifies sector $0$
+($X_2$ minimal), sector $1$ ($X_0$ minimal), or sector $2s$/$2c$ ($X_1=p$ minimal: on $2c$, $X_2\ge p+m>p$ and
+$X_0-X_1=1-3p+\sigma\ge\frac12(1-3p)>0$; since $2c$ is the $\tau_v^{-1}$-image of $v_c'\in[\frac56,1)$ where $2s$'s
+formula produces the identical $W$, $2s$'s inverse followed by \texttt{reduce} recovers $(v_c,\psi,p,\vartheta)$ exactly).
+\end{proof}
+
+% =====================================================================================================
+\section{Explicit parameter verification and proof of Theorem~\ref{thm:main}}\label{sec:assembly}
+
+\subsection{The closed-form parameter tuple $\Pi^*(k,\eps_c;\frac14)$}\label{sec:pistar}
+
+\begin{definition}[Parameter tuple $\Pi^*(k,\eps_c;f)$]\label{def:pistar}
+For an integer $k\ge10$, $\eps_c\in(0,\frac1{100}]$, and $f=\frac14$, put $s=\sqrt k$,
+$\eta=\eps_c/(1+\sqrt{1-\eps_c})$, $t_0=1-\frac12\eta$, $a=t_0/s$, $h=t_0/3$, $c_s=3s-9$, $g=\frac32\eta$, $T=g/c_s$,
+$(\lambda_a,\lambda_2,\mu)=(\frac9{10},\frac3{10},\frac12)$, $w_G=\lambda_a g$, $w_2=\lambda_2 g$, $\upsilon=\sqrt{11/1000}$.
+\begin{enumerate}[label=(\arabic*)]
+\item \emph{Comparator keyhole $K_C$:} $r_a=\sqrt{a/\pi}$, $d=\sqrt{fT/\pi}/(1+\upsilon)$,
+$\beta=fT/\bigl(\pi(r_a+d)(r_a+8.4d)\bigr)$, $W_1=\beta/(3(1+\beta))$, $r_h=0.9d\sin(2\pi W_1)$,
+$\rho_1=0.8((d-r_h)/(d+r_a))^2$, $W_2=\beta/(1+\beta-\rho_1)-W_1$, $X_w=0.2\pi(d-r_h)^2$.
+\item \emph{Post height $h_K$ and $D=1-3h_K$:}
+$h_K=\max\bigl(a,\ O(-w_G)-\frac12\mu T(1-\lambda_a),\ h-\frac12\mu T\bigr)$, so
+$D=\min\bigl(\frac{s-3+\frac32\eta}{s},\ \frac{s-3+w_G}{s}+\frac32\mu T(1-\lambda_a),\ \frac12\eta+\frac32\mu T\bigr)>0$.
+\item \emph{Corner keyhole $K_B$:} $(m,d_2,\sigma_0,\delta_{\mathrm{kh}})=(0.32,0.20,0.20,0.10)D$,
+$r_B=\sqrt{h_K/\pi}$, $d_B=\sqrt{0.8\delta_{\mathrm{kh}}/\pi}/1.05$,
+$\beta_B=0.8\delta_{\mathrm{kh}}/\bigl(\pi(r_B+d_B)(r_B+8.4d_B)\bigr)$, with $(W_{1,B},r_{h,B},\rho_{1,B},W_{2,B},X_{w,B})$
+by the same `keyhole\_star` formulas with $\rho_1$-factor $0.7$.
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}[Grid-free analytic bounds for (H6) and (H7)]\label{lem:h67}
+With $(\lambda_a,\lambda_2,\mu,f)=(\frac9{10},\frac3{10},\frac12,\frac14)$, suppose $\delta_{\mathrm{rel}}=fT=\frac14T$
+and $\delta_{\mathrm{small}}\le0.04T$. Then (H6) and (H7) hold on all of $[0,1]$ with margin $>0.012T$.
+\end{lemma}
+
+\begin{proof}
+Divide by $T$. For (H6), $(1-\mu)(1-\lambda_a+u(\lambda_a-\lambda_2))=0.05+0.30u\ge0.05>0.04\ge\delta_{\mathrm{small}}/T$.
+It remains to bound $h_6(u)=0.05+0.30u-0.25S_4(u)$ on $[0,1]$. On $[0,\frac12]$, Lemma~\ref{lem:steps}(i) gives
+$S_4(u)\le u$, so $h_6(u)\ge0.05+0.05u\ge0.05$. On $[\frac12,1]$, $S_4$ is concave, so for $u_0=\frac23$
+($S_4(\frac23)<0.9414$, $S_4'(\frac23)=\frac{256}{70}\sin^8(\frac{2\pi}{3})=\frac{81}{70}<1.1572$),
+$S_4(u)\le S_4(u_0)+S_4'(u_0)(u-u_0)$, bounding $h_6(u)$ from below by an affine function whose values at $u=\frac12$
+and $u=1$ are $>0.0128$ and $>0.0182$.
+For (H7), since $\max(\delta_{\mathrm{rel}},\delta_{\mathrm{small}})/T=\frac14$, we must bound
+$h_7(u)=0.5(0.7+0.3u)-0.25-0.3I_4(u)=0.10+0.15u-0.30I_4(u)$ on $[0,1]$. Its derivative $0.30(\frac12-S_4(u))$ is
+$\ge0$ on $[0,\frac12]$ and $\le0$ on $[\frac12,1]$, so $\min_{[0,1]}h_7=\min(h_7(0),h_7(1))=0.10>0$.
+\end{proof}
+
+\begin{proposition}[Universal validity of (H0)--(H15)]\label{prop:all-hyps}
+For every integer $k\ge10$ and every $\eps_c\in(0,\frac1{100}]$, $\Pi^*(k,\eps_c;\frac14)$ satisfies all hypotheses of
+Theorems~\ref{thm:kh-bounds}, \ref{thm:comparator}, \ref{prop:twists}, and \ref{thm:transfer}, as well as $r_+>1$.
+\end{proposition}
+
+\begin{proof}
+Since $s\ge\sqrt{10}>3.16227$ and $0<\eta\le1-\sqrt{0.99}<0.005013$, we have $t_0>0.9974$,
+$s/(s-3)\le\sqrt{10}/(\sqrt{10}-3)=10+3\sqrt{10}<19.49$, and
+\[
+ \frac{T}{a} = \frac{\frac12\eta/(s-3)}{t_0/s} = \frac{\eta}{2t_0}\,\frac{s}{s-3}
+ < \frac{0.005013}{1.9948}\cdot 19.49 < 0.049.
+\]
+\emph{(H2) and $r_+>1$:} Since $0<m_s\le\frac18\eta$ and $\eta<0.01$, $(1-m_s)^2>1-2m_s\ge1-\frac14\eta$, while
+$(1-\frac12\eta)/(1-\eta)=1+\frac{\eta}{2(1-\eta)}>1+\frac12\eta$. Thus
+$r_+^2=(1-m_s)^2(1-\frac12\eta)/(1-\eta)>(1-\frac14\eta)(1+\frac12\eta)=1+\frac14\eta(1-\frac12\eta)>1$, which is
+equivalent to $\rho_b=\rho_{\mathrm{ball}}/(1-m_s)^2<a$.
+
+\emph{(H3)--(H5) for $K_C$:} Since $\pi(r_a+d)(r_a+8.4d)>\pi r_a^2=a$, $\beta<\frac14(T/a)<0.0123$. Also
+$\pi d^2=\frac14T/(1+\upsilon)^2<0.205T$, so $(d/r_a)^2<0.205(0.049)<0.0101$ ($d/r_a<0.101$). By definition, (K1) and
+(K2) hold with equality/$0.9<1$, $r_h<0.9d(2\pi W_1)<0.024d<d$, $\rho_1<0.8(0.101/1.101)^2<0.0068<1$,
+$W_2-W_1=\beta\bigl(\frac1{1+\beta-\rho_1}-\frac2{3(1+\beta)}\bigr)\ge\frac{\beta}{3(1+\beta)}>0$, and
+$W_2<W_1+W_2=\beta/(1+\beta-\rho_1)<0.0123/0.993<0.013<\frac16$. For (K3),
+$\rho_1\pi(d+r_a)^2+\frac12X_w=(0.8+0.1)\pi(d-r_h)^2=0.9\pi(d-r_h)^2<\pi(d-r_h)^2$ holds identically! Moreover,
+$d/(r_a+8.4d)<\frac1{8.4}$ and $W_2/\beta<\frac1{0.993}-\frac1{3.04}<0.68$, so
+\[
+ \frac{\delta_{\mathrm{small}}}{fT} = 4\pi^2\,\frac{d}{r_a+8.4d}\,\Bigl(\frac{W_2}{\beta}\Bigr)^2\beta
+ < \frac{4\pi^2}{8.4}\cdot(0.68)^2\cdot 0.0123 < 0.027 < 0.04.
+\]
+Lemma~\ref{lem:h67} then gives (H6) and (H7).
+
+\emph{(H8), (H9), (H9b):} $\pi d^2<0.205T<0.35T=T(1-\mu-\frac12\lambda_2)$, and
+$s(\pi d^2+0.65T)<0.855sT=0.4275\eta\frac{s}{s-3}<0.042<1-0.45\eta=sO(-w_G)$, giving (H8). For (H9),
+$c_s\pi r_h^2<c_s\pi(0.024d)^2<6\cdot10^{-4}c_s(0.205T)<2\cdot10^{-4}g$, so $c_s\pi r_h^2+1.5\lambda_2g<(0.45+0.001)g<g$.
+For (H9b), $a<1/\sqrt{10}\implies 3-9a>3(1-9/\sqrt{10})>0.1539$, while $\delta=\frac14w_2=\frac{9}{80}\eta<0.0006<0.1539$.
+(H10) is a check of fixed rational constants ($0.045+0.045<0.10$, $0.045+0.14<0.25$, $2\cdot0.12<\frac14$,
+$\frac16-0.12-0.02>0.02>0$).
+
+\emph{(H11)--(H15):} By Definition~\ref{def:pistar}(2), $D>0$ ($h_K<\frac13$), $h_K\ge a$, and since $O(G)-\mu\operatorname{slack}(G)$
+is piecewise affine on $[-w_G,0]\cup[0,G_{\max}]$, its maximum is bounded by $\max\bigl(O(-w_G)-\mu T(1-\lambda_a),O(0)-\mu T,O(G_{\max})-\mu T\bigr)$;
+note $O(0)<O(G_{\max})=h$ when $G_{\max}>0$ ($O(-w_G)$ otherwise), and subtracting $\frac12\mu T(1-\lambda_a)>0$ in $h_K$
+ensures strict inequality $h_K>O(G)-\mu\operatorname{slack}(G)$ everywhere on $[-w_G,G_{\max}]$.
+Finally, $h_K\ge a>\frac{0.997}{s}$ while $\delta_{\mathrm{kh}}=0.1D$: since $D=1-3h_K\le 1-3a<1$ and even as $s\to\infty$,
+$h_K\ge\max(a,\frac13-\frac13(\frac12\eta+\frac32\mu T))>\frac13-0.01>0.32$, we always have $h_K>0.31$ (for $k=10$,
+$a>0.315$; for $k\ge11$, $O(-w_G)$ or $h=\frac13t_0>0.332$ gives $h_K>0.315$!). Thus $\delta_{\mathrm{kh}}/h_K<0.10/0.315<0.32$
+and $\beta_B<0.8(\delta_{\mathrm{kh}}/h_K)/(1)<0.003$ (since $D\le\frac12\eta+\frac32\mu T<0.015\implies\delta_{\mathrm{kh}}<0.0015$).
+Exactly as for $K_C$, $K_B$ satisfies (K1)--(K3) with $\rho_{1,B}\pi(d_B+r_B)^2+\frac12X_{w,B}=0.8\pi(d_B-r_{h,B})^2$,
+$\delta_{\mathrm{rel},B}=0.8\delta_{\mathrm{kh}}$, $\pi d_B^2=0.8\delta_{\mathrm{kh}}/1.05^2<\delta_{\mathrm{kh}}$, and
+$\delta_{\mathrm{small},B}<0.01\delta_{\mathrm{kh}}$, proving (H12)--(H13). On $[-m,m]$, for $|c|\le d_2$ we have
+$S(c)\le\sqrt{d_2^2+\sigma_0^2}=0.20\sqrt2\,D<0.283D<0.32D=m$, and for $d_2\le|c|\le m$, $S(c)=|c|\le m$; thus
+$S_{\max}=0.32D$, $\eta_1=\frac23-(0.20+0.32)=\frac{11}{75}>0.1466>0$, $3\eta_1=\frac{11}{25}=0.44\ge0.32=m/D$ (H14--H15),
+and $2m/D+3\delta_{\mathrm{kh}}/D=0.64+0.30=0.94<1$ (`split`).
+\end{proof}
+
+\subsection{Completion of the proof of Theorem~\ref{thm:main}}\label{sec:proof-end}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Fix $k\ge10$ and $\eps\in(0,1)$. Since $\eps_c=\min(\eps,\frac1{100})\le\eps$, $R_c\le R_{\mathrm{req}}$, and
+Proposition~\ref{prop:all-hyps} gives $r_+>1$ and all hypotheses (H0)--(H15).
+\begin{enumerate}[label=(\arabic*)]
+\item Let $X=(q_1,q_2,p_1,p_2)\in\EB^{\circ}(r_+)$. Stage~1, $S_{\mathrm{in}}(X)=(q_1,p_1,q_2,p_2)/(\sqrt\pi R_s)$,
+satisfies $\pi|S_{\mathrm{in}}(X)|^2=|X|^2/R_s^2<r_+^2\rho_b=a$ and pulls back $dx\wedge dy+\omega_V$ to
+$(\pi R_s^2)^{-1}\omega_0$.
+\item By Proposition~\ref{prop:kr}, $\mathrm{KR}$ maps $\Bo(a)$ real-analytically, bijectively, and symplectically onto
+$\mathcal C_a$.
+\item By Lemma~\ref{lem:cell-flat} and Theorem~\ref{thm:comparator}, $F^{(i)}\circ C_i$ ($0\le i<k$) are $C^7$
+symplectic embeddings on $\mathcal C_a$ whose images $U_i=F^{(i)}(C_i(\mathcal C_a))$ are pairwise disjoint modulo
+$\langle T_u,T_v\rangle$, lie in $\{p<h_K\}$, and miss the corridor $\mathcal K_{\mathrm{free}}$.
+\item By Proposition~\ref{prop:twists}, $\Psi=\Phi_g\circ\Psi_S$ is a $C^4$ deck-equivariant symplectomorphism preserving
+$\{p<h_K\}$ and mapping $\Psi(U_i)$ into $\{p<h_K\}\setminus\operatorname{deck}\{\mathcal M_1,\mathcal M_2,\mathcal M_3\}$,
+keeping $\Psi(U_0),\dots,\Psi(U_{k-1})$ pairwise disjoint modulo $\langle T_u,T_v\rangle$.
+\item By Theorem~\ref{thm:transfer}, $K_{\mathrm{post}}\circ\Pi_{\mathrm{post}}$ is $C^7$, symplectic, deck-invariant,
+and injective modulo $\langle T_u,T_v\rangle$ on $\{p<h_K\}\setminus\operatorname{deck}\{\mathcal M_1,\mathcal M_2,\mathcal M_3\}$
+into $\Bo(1)$. Hence $\tilde f_i=K_{\mathrm{post}}\circ\Pi_{\mathrm{post}}\circ\Psi\circ F^{(i)}\circ C_i\circ\mathrm{KR}$
+are $C^4$ symplectic embeddings on $\Bo(a)$ with pairwise disjoint images in $\Bo(1)$.
+\item Finally, $S_{\mathrm{out}}(y_1,y_2,y_3,y_4)=\sqrt\pi R_s(y_1,y_2,y_3,y_4)$ maps $\Bo(1)$ onto $\EB^{\circ}(R_s)\subset\EB^{\circ}(R_{\mathrm{req}})$
+with conformal factor $\pi R_s^2$, cancelling Stage~1's $(\pi R_s^2)^{-1}$ so that $f_i^*\omega_0=\omega_0$.
+\item For $Y\in\R^4$, $\mathrm{Preimage}(j,Y)$ checks $|Y|<R_s$ (via $1-\pi|Y/(\sqrt\pi R_s)|^2>0$ in `unchart`), applies
+$\mathrm{to\_fund}\circ\Psi^{-1}\circ\Pi_{\mathrm{post}}^{-1}\circ\mathcal B^{-1}\circ(\chi_\kappa\circ\mathcal W)^{-1}$
+to obtain the unique fundamental representative $y_{\mathrm{fl}}\in\mathcal F_{\mathrm{fl}}$, applies
+$(F^{(j)})^{-1}$ and $C_j^{-1}$ to obtain $(X_{\mathrm{cell}},T_{\mathrm{cell}},w)$, tests membership in $\mathcal C_a$
+($p<a$, $0<X_{\mathrm{cell}}<a-p$, $0<T_{\mathrm{cell}}<1$), and applies $S_{\mathrm{in}}^{-1}\circ\mathrm{KR}^{-1}$.
+When $Y=f_i(X)$ with $X\in\EB^{\circ}(r_+)$, deck invariance of $K_{\mathrm{post}}\circ\Pi_{\mathrm{post}}$ and
+Theorem~\ref{thm:comparator}(ii) guarantee that $\mathrm{to\_fund}$ recovers the exact point $(F^{(i)}\circ C_i\circ\mathrm{KR}\circ S_{\mathrm{in}})(X)\in\mathcal F_{\mathrm{fl}}$,
+giving $\mathrm{Preimage}(i,f_i(X))=(X,\mathrm{true})$ and disjointness for $j\ne i$.\qedhere
+\end{enumerate}
+\end{proof}
+
+\begin{remark}[Exact arithmetic versus IEEE-754 \texttt{float64}]\label{rem:float64}
+Theorem~\ref{thm:main} holds over $\R$ for all $k\ge10$ and $\eps\in(0,1)$. In \texttt{float64}, \texttt{solution(k, eps)}
+evaluates the analytic margins of Proposition~\ref{prop:all-hyps} on the rounded parameters and raises \texttt{ValueError}
+if machine precision underflows a strict inequality (for instance $\eps\le10^{-16}$, where \texttt{1.0 - eps == 1.0}
+makes $a-\rho_b=0$). Within the \texttt{float64}-admissible range, all three scalar Newton solvers run $60$ safeguarded
+iterations on bounded brackets (reaching $53$-bit accuracy in $\le8$ steps once quadratic), and the inverse transfer
+recovers every moment coordinate without subtraction cancellation. Because gaps of size $O(\eps_c/\sqrt k)$ sit next to
+$O(1)$ coordinates, local Lipschitz constants reach $10^8$--$10^{15}$ for small $\eps$ or large $k$; arbitrary-precision
+evaluation via \texttt{program/check\_embedding\_mp.py} verifies the submitted Python source directly to $100+$ digits.
+\end{remark}
+
+\section*{Authorship and the role of AI}
+
+Liang Song is the sole author and is responsible for the manuscript and its release. The mathematics, the code and the
+text were produced by AI systems, including GPT-6.1 Sol (OpenAI), Claude Opus 5.5 (Anthropic), Gemini (Google) and
+other models, working in a research environment designed and directed by Liang Song, who chose the problem, assembled
+the context, designed the verification pipeline and made the editorial decisions. The theorems of this paper are not
+part of the Lean~4 formalisation of Papers~I--II; numerical and arbitrary-precision checks are documented in
+\texttt{program/README.md}.

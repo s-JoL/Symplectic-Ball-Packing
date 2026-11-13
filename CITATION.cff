@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 title: "Explicit Hamiltonian ball packings in every dimension"
 version: "1.1.0"
-date-released: "2026-11-12"
+date-released: "2026-11-13"
 license: Apache-2.0
 repository-code: "https://github.com/s-JoL/Symplectic-Ball-Packing"
 authors:
@@ -16,11 +16,12 @@ abstract: >-
   realises every ball packing allowed by the volume and two-ball inequalities in dimension
   2n ≥ 6, and every packing with Σc_i² < C² and 3c_i < C in dimension four, proving Biran's
   full-packing theorem for k ≥ 9 equal balls without J-holomorphic curves or Seiberg–Witten theory.
-  Includes three papers (equal balls in the four-ball, general capacities and higher dimensions
-  with a uniform finite-output algorithm, and elementary packings and their obstructions),
-  supplements, a Lean 4 formalisation of the main packing, stability and algorithm theorems,
-  and two PyTorch programs (an elementary-flow generator for Epoch's interface and a closed-form
-  C^4 embedding evaluator for all k ≥ 10 and ε in (0,1)).
+  Includes four papers (equal balls in the four-ball, general capacities and higher dimensions
+  with a uniform finite-output algorithm, elementary packings and their obstructions, and
+  closed-form C^4 equal-ball embeddings), supplements, a Lean 4 formalisation of the main packing,
+  stability and algorithm theorems of Papers I–II, and two PyTorch programs (an elementary-flow
+  generator for Epoch's ODE interface and a modular closed-form C^4 embedding evaluator for all
+  k ≥ 10 and ε in (0,1) with arbitrary-precision verification).
 keywords:
   - symplectic ball packing
   - Hamiltonian dynamics

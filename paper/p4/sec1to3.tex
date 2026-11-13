@@ -1,0 +1,293 @@
+\section{Introduction and main theorem}\label{sec:intro}
+
+\subsection{Statement of the result}\label{sec:intro-thm}
+
+Write $\R^4$ with coordinates $X=(q_1,q_2,p_1,p_2)$ and standard symplectic form
+$\omega_0=dq_1\wedge dp_1+dq_2\wedge dp_2$. Let $\EB(r)=\{X\in\R^4:|X|\le r\}$ and
+$\EB^{\circ}(r)=\{X\in\R^4:|X|<r\}$ denote the closed and open Euclidean balls of radius $r$ about the origin; in
+capacity units, $B(c)=\{\pi|z|^2\le c\}$ and $\Bo(c)=\{\pi|z|^2<c\}$, so $\EB(1)=B(\pi)$ and $\EB(R)=B(\pi R^2)$.
+
+Paper~I \cite{SongP1} constructs, for every $k\ge10$ and $\eps\in(0,1)$, a $C^\infty$ compactly supported Hamiltonian
+on $\R\times\R^4$ whose time-one flow packs $k$ closed unit balls into $\EB^{\circ}((k/(1-\eps/4))^{1/4})$, verified in
+Lean~4. Several steps of that construction---the handle Moser isotopy and the deformation-to-the-normal-cone transport
+and return---are defined as time-one maps of stiff vector fields. When only direct evaluation of the packing embeddings
+and their inverses is required, every differential equation can be replaced by closed-form charts and generating
+functions.
+
+\begin{theorem}[Closed-form $C^4$ equal-ball packings]\label{thm:main}
+Let $k\ge10$ be an integer and $\eps\in(0,1)$. Put $\eps_c=\min(\eps,\frac1{100})$,
+$\eta=\eps_c/(1+\sqrt{1-\eps_c})=1-\sqrt{1-\eps_c}$, $m_s=\min(2\cdot10^{-6},\frac18\eta)$, and
+\[
+ R_{\mathrm{req}}=\left(\frac{k}{1-\eps}\right)^{1/4},\quad
+ R_c=\left(\frac{k}{1-\eps_c}\right)^{1/4},\quad
+ R_s=(1-m_s)R_c,\quad
+ r_+=(1-m_s)\left(\frac{1-\eta/2}{1-\eta}\right)^{1/2}.
+\]
+Then $r_+>1$ and $R_s<R_c\le R_{\mathrm{req}}$, and with the explicit parameter tuple $\Pi^*(k,\eps_c;\frac14)$ of
+Definition~\ref{def:pistar}, the compositions
+\[
+ f_i = S_{\mathrm{out}}\circ\chi_\kappa\circ\mathcal W\circ\mathcal B\circ\Pi_{\mathrm{post}}
+       \circ\Phi_g\circ\Psi_S\circ F^{(i)}\circ C_i\circ\mathrm{KR}\circ S_{\mathrm{in}}
+ \qquad(0\le i\le k-1)
+\]
+defined in Sections~\ref{sec:prim}--\ref{sec:assembly} satisfy over $\R$:
+\begin{enumerate}[label=(\roman*)]
+\item Each $f_i\colon\EB^{\circ}(r_+)\to\R^4$ is $C^4$, injective, and symplectic ($f_i^*\omega_0=\omega_0$), mapping
+$\EB^{\circ}(r_+)$ onto an open subset of $\EB^{\circ}(R_s)\subset\EB^{\circ}(R_{\mathrm{req}})$.
+\item The open images $f_0(\EB^{\circ}(r_+)),\dots,f_{k-1}(\EB^{\circ}(r_+))$ are pairwise disjoint; in particular the
+restrictions $f_i|_{\EB(1)}$ pack $k$ closed unit balls disjointly into $\EB^{\circ}(R_{\mathrm{req}})$ with occupied
+volume fraction $k/R_{\mathrm{req}}^4=1-\eps$.
+\item Each stage factor of $f_i$ has an explicit inverse, and the composite inverse procedure
+$\mathrm{Preimage}(j,Y)$ of Section~\ref{sec:assembly} satisfies $\mathrm{Preimage}(i,f_i(X))=(X,\mathrm{true})$ for
+every $X\in\EB^{\circ}(r_+)$ and $0\le i<k$, while certifying non-membership ($|X|>1$ or $\mathrm{ok}=\mathrm{false}$)
+whenever $Y\notin f_j(\EB(1))$.
+\end{enumerate}
+\end{theorem}
+
+\subsection{Architecture and correspondence with code}\label{sec:intro-arch}
+
+Table~\ref{tab:stages} lists the stage maps of $f_i$ in evaluation order together with their domains, symplectic forms,
+and modular source files in \texttt{program/embedding\_src/} (bundled into \texttt{program/solution\_embedding.py} by
+\texttt{program/build\_embedding.py}). Regularity is $C^\omega$ on the algebraic/trigonometric charts, $C^8$ on the
+planar keyholes ($m=4$), $C^7$ on the four-dimensional keyhole suspensions ($S_4'\in C^7$ enters the conjugate drift),
+and $C^4$ on the marked-fibre twists ($m=2$ plateau bumps); hence $f_i\in C^4$.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}L{0.16\textwidth}L{0.23\textwidth}L{0.35\textwidth}L{0.18\textwidth}@{}}
+\toprule
+Stage & Map & Domain $\to$ target \& form & Section / file\\
+\midrule
+1.\ Input scale & $S_{\mathrm{in}}(q_1,q_2,p_1,p_2)$ & $\EB^{\circ}(r_+)\to\Bo(a)$, conformal $\pi^{-1}R_s^{-2}$ & \S\ref{sec:assembly}; \texttt{chain.py}\\
+2.\ Strip map & $\mathrm{KR}(x,y,w)$ & $\Bo(a)\xrightarrow{\sim}\mathcal C_a=\{0<X<a-p,0<T<1\}$ & \S\ref{sec:kr}; \texttt{keyhole.py}\\
+3.\ Cell to flat & $C_i(X,T,w)$ & $i<9$: group windows; $i\ge9$: fan stack & \S\ref{sec:cmp-4d}; \texttt{chain.py}\\
+4--5.\ Comparator & $F^{(i)}$ ($F_2\circ F_1$ for $i\ge9$) & Keyhole $KS_{\tau(G)}$ + slit shift $c(G)$ & \S\ref{sec:cmp-4d}; \texttt{comparator.py}\\
+6--7.\ Twists & $\Psi=\Phi_g\circ\Psi_S$ & Routes $\mathcal M_1,\mathcal M_2,\mathcal M_3$ into free corridor & \S\ref{sec:twists}; \texttt{twists.py}\\
+8.\ Post chart & $\Pi_{\mathrm{post}}(G,v,w)$ & Deck-adapted Darboux chart on $\{p<h_K\}$ & \S\ref{sec:transfer}; \texttt{chain.py}\\
+9.\ Corner band & $\mathcal B$ (\texttt{Band}) & Corner keyhole $K_B$ along $\sigma=j(1-3p)$ & \S\ref{sec:transfer}; \texttt{transfer.py}\\
+10.\ Simplex glue & $\mathcal W(\sigma,\psi,p,\vartheta)$ & $4$ sector pieces + $3$ bands $\to\CP^2\setminus L_\kappa$ & \S\ref{sec:transfer}; \texttt{transfer.py}\\
+11.\ Ball chart & $S_{\mathrm{out}}\circ\chi_\kappa([Z])$ & $\CP^2\setminus L_\kappa\xrightarrow{\sim}\Bo(1)\to\EB^{\circ}(R_s)$ & \S\ref{sec:transfer}; \texttt{transfer.py}\\
+\bottomrule
+\end{tabular}
+\caption{Stage decomposition (`STAGES(i)` in \texttt{solution\_embedding.py}). For a planar fibre coordinate
+$w=w_x+iw_y\in\C$, $p=\pi|w|^2$ and $\theta=\arg(w)/(2\pi)\in\R/\Z$ satisfy $\omega_V=dw_x\wedge dw_y=dp\wedge d\theta$.}
+\label{tab:stages}
+\end{table}
+
+% =====================================================================================================
+\section{Smooth primitives and the Knothe--Rosenblatt strip map}\label{sec:prim}
+
+\subsection{Trigonometric steps, ramps, and plateau bumps}\label{sec:prim-steps}
+
+For an integer $m\ge1$, let $c_0=2^{-2m}\binom{2m}{m}$ and $a_j=2(-1)^j\binom{2m}{m-j}/\binom{2m}{m}$ ($1\le j\le m$),
+so that $\sin^{2m}(\pi u)=c_0\bigl(1+\sum_{j=1}^m a_j\cos(2\pi ju)\bigr)$. Define $S_m\colon\R\to[0,1]$ by $S_m(u)=0$
+for $u\le0$, $S_m(u)=1$ for $u\ge1$, and
+\[
+ S_m(u)=u+\sum_{j=1}^m\frac{a_j}{2\pi j}\sin(2\pi ju)\qquad(0\le u\le1).
+\]
+
+\begin{lemma}[Properties of $S_m$, $I_m$, $R_m$, and $\beta_{w_0,w_1,m}$]\label{lem:steps}
+\begin{enumerate}[label=(\roman*)]
+\item $S_m'(u)=\sin^{2m}(\pi u)/c_0$ on $[0,1]$ vanishes to order $2m$ at $u=0,1$. Hence $S_m\in C^{2m}(\R)$,
+$S_m'\in C^{2m-1}(\R)$, $S_m$ is strictly increasing on $[0,1]$ with $S_m(1-u)=1-S_m(u)$, convex on $[0,\frac12]$ and
+concave on $[\frac12,1]$; in particular $S_m(u)\le u$ for all $u\in[0,\frac12]$.
+\item The antiderivative $I_m(u)=\int_0^{\operatorname{clamp}(u,0,1)}S_m(t)\,dt$ equals
+$\frac12u^2+\sum_{j=1}^m\frac{a_j}{(2\pi j)^2}(1-\cos(2\pi ju))$ on $[0,1]$ with $I_m(1)=\frac12$. The convex ramp
+$R_m(u)=I_m(\operatorname{clamp}(u,0,1))+\max(u-1,0)$ belongs to $C^{2m+1}(\R)$, equals $0$ on $(-\infty,0]$ and
+$u-\frac12$ on $[1,\infty)$, and satisfies $\max(0,u-\frac12)\le R_m(u)\le\max(0,u)$ for all $u\in\R$.
+\item For $0<w_0<w_1$, $\beta_{w_0,w_1,m}(x)=1-S_m\bigl((|x|-w_0)/(w_1-w_0)\bigr)$ belongs to $C^{2m}(\R)$ ($|x|$ is
+not differentiated on $(-w_0,w_0)$ where $\beta_{w_0,w_1,m}\equiv1$, and all derivatives up to order $2m$ vanish at
+$|x|=w_0,w_1$), and its primitive $\mathcal B(x)=\int_{-\infty}^x\beta_{w_0,w_1,m}(t)\,dt\in C^{2m+1}(\R)$ has total mass
+$\mathcal B(\infty)=w_0+w_1$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Since $\sin(\pi u)$ has simple zeros at $u=0,1$, $\sin^{2m}(\pi u)$ vanishes to order $2m$, giving $S_m\in C^{2m}(\R)$.
+On $(0,\frac12)$, $S_m''(u)=(2m\pi/c_0)\sin^{2m-1}(\pi u)\cos(\pi u)>0$, so convexity with $S_m(0)=0$, $S_m(\frac12)=\frac12$
+yields $S_m(u)\le u$ on $[0,\frac12]$ and concavity on $[\frac12,1]$ via $S_m(1-u)=1-S_m(u)$. Integrating the symmetry
+identity gives $I_m(1)=\frac12$, and $R_m'=S_m\in C^{2m}(\R)$ gives $R_m\in C^{2m+1}(\R)$ with supporting lines $0$ and
+$u-\frac12$. Part~(iii) follows from $w_0>0$ and $\int_{-\infty}^\infty\beta_{w_0,w_1,m}=2w_0+2(w_1-w_0)(1-I_m(1))=w_0+w_1$.
+\end{proof}
+
+\subsection{The fibrewise Knothe--Rosenblatt strip map}\label{sec:kr}
+
+Let $\Bo(a)=\{(x,y,w)\in\R^2\times\C:\pi(x^2+y^2)+p<a\}$ ($p=\pi|w|^2$) and
+$\mathcal C_a=\{(X,T,w)\in\R^2\times\C:p<a,\ 0<X<a-p,\ 0<T<1\}$.
+
+\begin{proposition}[Knothe--Rosenblatt ball-to-cell map]\label{prop:kr}
+For $(x,y,w)\in\Bo(a)$, set $r(p)=\sqrt{(a-p)/\pi}>0$ and $c(x,p)=\sqrt{r(p)^2-x^2}>0$, and define
+\begin{equation}\label{eq:kr}
+ \begin{aligned}
+ X(x,p) &= r^2\Bigl(\frac\pi2+\arcsin\frac xr+\frac{xc}{r^2}\Bigr)=\int_{-r}^x 2\sqrt{r^2-s^2}\,ds,\\
+ T(x,y,p) &= \frac12+\frac{y}{2c},\qquad
+ C(x,y,p) = \frac{X-xc}{\pi r^2}\,\frac{y}{2c},\qquad
+ \mathrm{KR}(x,y,w)=\bigl(X,T,w e^{2\pi iC}\bigr).
+ \end{aligned}
+\end{equation}
+Then $\mathrm{KR}\colon\Bo(a)\to\mathcal C_a$ is a real-analytic symplectomorphism satisfying
+$\mathrm{KR}^*(dX\wedge dT+dw_x\wedge dw_y)=dx\wedge dy+dw_x\wedge dw_y$. Its inverse on $\mathcal C_a$ solves Kepler's
+equation $2\alpha+\sin(2\alpha)=2(X/r^2-\pi/2)$ for the unique $\alpha\in(-\frac\pi2,\frac\pi2)$, sets $x=r\sin\alpha$,
+$c=r\cos\alpha$, $y=(2T-1)c$, $C$ by \eqref{eq:kr}, and returns $(x,y,w e^{-2\pi iC})$.
+\end{proposition}
+
+\begin{proof}
+For $(x,y,w)\in\Bo(a)$ we have $p<a$, $|x|<r(p)$, and $|y|<c(x,p)$, so $r,c>0$ and $|x/r|<1$; hence $\mathrm{KR}$ is
+real-analytic on all of $\Bo(a)$ (including $w=0$). At fixed $p<a$, $X(x,p)\in(0,\pi r^2)=(0,a-p)$ has
+$\partial_xX=2c>0$, and substituting $x=r\sin\alpha$ gives $X/r^2=\frac\pi2+\alpha+\frac12\sin(2\alpha)$, whose
+derivative $1+\cos(2\alpha)=2\cos^2\alpha>0$ on $(-\frac\pi2,\frac\pi2)$ makes $\mathrm{KR}^{-1}$ the exact inverse on
+$\mathcal C_a$.
+
+For symplecticity it suffices by real-analyticity to check $w\ne0$. Put $w'=w e^{2\pi iC}$, so $p'=p$ and
+$dw'_x\wedge dw'_y=dp\wedge d(\theta+C)=dp\wedge d\theta+dp\wedge d_{x,y}C$. Since
+$d_{x,y}X\wedge d_{x,y}T=(2c\,dx)\wedge(\frac{dy}{2c}+\partial_xT\,dx)=dx\wedge dy$, expanding $dX\wedge dT$ gives
+\[
+ dX\wedge dT + dw'_x\wedge dw'_y
+ = dx\wedge dy + dp\wedge d\theta + dp\wedge\bigl(\partial_pX\,d_{x,y}T - \partial_pT\,d_{x,y}X + d_{x,y}C\bigr).
+\]
+Differentiating $X=\int_{-r}^x2\sqrt{r^2-s^2}\,ds$ with respect to $r^2=(a-p)/\pi$ yields
+$\partial_pX=-\frac{1}{\pi}\int_{-r}^x(r^2-s^2)^{-1/2}ds=-\frac{X-xc}{\pi r^2}$, while
+$\partial_pc=-\frac{1}{2\pi c}$ gives $\partial_pT=\frac{y}{4\pi c^3}$. Since $C=(-\partial_pX)(T-\frac12)$ and
+$\partial_x\bigl(\frac{X-xc}{\pi r^2}\bigr)=\frac{2c-(c-x^2/c)}{\pi r^2}=\frac{1}{\pi c}$, we obtain
+\[
+ \partial_pX\,d_{x,y}T - \partial_pT\,d_{x,y}X + d_{x,y}C
+ = -\frac{y}{4\pi c^3}(2c\,dx) - \frac{y}{2c}\Bigl(-\frac{dx}{\pi c}\Bigr) = 0.\qedhere
+\]
+\end{proof}
+
+% =====================================================================================================
+\section{The smooth planar keyhole and full-disc bounds}\label{sec:keyhole}
+
+\subsection{Generating-function construction}\label{sec:kh-def}
+
+Let $r_a>0$, $d>0$, $0<W_1<W_2\le\frac16$, $0<\rho_1<1$, $\beta>0$, $X_w>0$, and $r_h>0$ satisfy
+\begin{subequations}\label{eq:K123}
+\begin{align}
+ &(W_1+W_2)(1+\beta-\rho_1)=\beta,\label{eq:K1}\\
+ &0<r_h\le d\sin(2\pi W_1),\label{eq:K2}\\
+ &\rho_1\pi(d+r_a)^2 + \frac12 X_w < \pi(d-r_h)^2.\label{eq:K3}
+\end{align}
+\end{subequations}
+Notice that \eqref{eq:K3} implies $r_h<d$. Around the eccentric centre $c_*=(-d,0)\in\C$, write $w=c_*+Re^{2\pi i\phi}$
+with action $X=\pi R^2\ge0$ and angle $\phi\in[-\frac12,\frac12]$. Set $M(X)=X_w R_4(X/X_w)$, so $M'(X)=S_4(\min(X/X_w,1))\in[0,1]$
+and $X-\frac12X_w\le M(X)\le X$ for all $X\ge0$ (Lemma~\ref{lem:steps}(ii)). Define the odd map $\Psi$ on
+$[-\frac12,\frac12]$ by $\Psi(0)=0$ and
+\[
+ \Psi'(\psi)=\rho_1+(1+\beta-\rho_1)S_4\Bigl(\frac{|\psi|-W_1}{W_2-W_1}\Bigr)\qquad\bigl(|\psi|\le\tfrac12\bigr).
+\]
+
+\begin{lemma}[Properties of $\Psi(\psi)-\psi$]\label{lem:psi}
+Under \eqref{eq:K1}, $\Psi(\pm\frac12)=\pm\frac12$, and $\Psi(\psi)-\psi$ extends $1$-periodically to an odd function in
+$C^9(\R)$. On $[0,\frac12]$, $\Psi(\psi)-\psi\le0$, with $\Psi(\psi)-\psi=-\beta(\frac12-\psi)$ on $[W_2,\frac12]$,
+$0\le\psi-\Psi(\psi)\le(1-\rho_1)\psi<W_2$ on $[0,W_2]$, and $|\Psi(\psi)-\psi|\le\frac12\beta$ everywhere.
+\end{lemma}
+
+\begin{proof}
+Using $I_4(1)=\frac12$, $\Psi(\frac12)-\frac12=(\rho_1-1)W_1+\frac12(\rho_1+\beta-1)(W_2-W_1)+\beta(\frac12-W_2)
+=\frac12\bigl(\beta-(W_1+W_2)(1+\beta-\rho_1)\bigr)=0$ by \eqref{eq:K1}. Since $\Psi' \equiv 1+\beta$ near $\pm\frac12$,
+$\Psi(\psi)-\psi$ is affine of slope $\beta$ across $\pm\frac12\pmod1$, hence $C^9$ on $\R/\Z$. On $[0,\frac12]$,
+$\Psi'$ is non-decreasing, so $\Psi(\psi)-\psi$ is convex and vanishes at $0,\frac12$, giving $\Psi(\psi)-\psi\le0$. At
+its unique minimum $\psi_*\in(W_1,W_2)$ (where $\Psi'(\psi_*)=1$), integrating $\Psi'-1\ge\rho_1-1$ from $0$ and
+$\Psi'-1\le\beta$ to $\frac12$ gives the two upper bounds.
+\end{proof}
+
+\begin{proposition}[Global $C^8$ symplectomorphism $KS_\tau$]\label{prop:ks-symp}
+For $\tau\in[0,1]$, define $KS_\tau\colon\C\to\C$ via the generating function
+$S(X,\psi;\tau)=X\psi+\tau M(X)(\Psi(\psi)-\psi)$ about $c_*=(-d,0)$:
+\begin{equation}\label{eq:KS}
+ \phi = \psi + \tau M'(X)\bigl(\Psi(\psi)-\psi\bigr),\qquad
+ X_n = X + \tau M(X)\bigl(\Psi'(\psi)-1\bigr),
+\end{equation}
+sending $w=c_*+\sqrt{X/\pi}\,e^{2\pi i\phi}$ to $w'=c_*+\sqrt{X_n/\pi}\,e^{2\pi i\psi}$, with generator
+$g_\tau(w)=\partial_\tau S=M(X)(\Psi(\psi)-\psi)$. Then $KS_\tau\in C^8(\C,\C)$ is a global symplectomorphism of
+$(\C,dw_x\wedge dw_y)$ with explicit inverse, $g_\tau\in C^9(\C,\R)$, and for any $C^k$ ($2\le k\le8$) profile
+$\tau=\tau(G)\in[0,1]$, the suspension $(G,v,w)\mapsto\bigl(G,v-\tau'(G)g_{\tau(G)}(w),KS_{\tau(G)}(w)\bigr)$ is a
+$C^{k-1}$ symplectomorphism of $(\R^2\times\C,dG\wedge dv+dw_x\wedge dw_y)$.
+\end{proposition}
+
+\begin{proof}
+Since $\partial_\psi\phi=1+\tau M'(X)(\Psi'(\psi)-1)\ge(1-\tau M')+\tau M'\rho_1\ge\rho_1>0$ and
+$\partial_XX_n=1+\tau(\Psi'(\psi)-1)M'(X)\ge\rho_1>0$ with $X_n(0)=0$ and $\lim_{X\to\infty}X_n=\infty$, both scalar
+equations have unique global roots on $\R/\Z$ and $[0,\infty)$ (for $X\ge X_w$, $M(X)=X-\frac12X_w$ gives the closed-form
+inverse $X=(X_n+\frac12\tau(\Psi'(\psi)-1)X_w)/(1+\tau(\Psi'(\psi)-1))$). As $X=\pi|w-c_*|^2\to0$, $S_4'(u)=O(u^8)$
+implies $M'(X)=O(|w-c_*|^{18})$ and $M(X)=O(|w-c_*|^{20})$, so $KS_\tau(w)-w=O(|w-c_*|^{17})$ and
+$g_\tau(w)=O(|w-c_*|^{20})$ are $C^8$ and $C^9$ across $w=c_*$. Finally, $dS=\phi\,dX+X_n\,d\psi+g_\tau\,d\tau$ gives
+$dX_n\wedge d\psi-dX\wedge d\phi=-dg_\tau\wedge d\tau$, so substituting $\tau=\tau(G)$ yields
+$dG\wedge d(v-\tau'g_\tau)+dX_n\wedge d\psi=dG\wedge dv+dX\wedge d\phi$.
+\end{proof}
+
+\subsection{Full-disc quantitative nesting, hole clearance, and slit clearance}\label{sec:kh-bounds}
+
+\begin{theorem}[Quantitative keyhole bounds and the constant $8.4>2+2\pi$]\label{thm:kh-bounds}
+Assume \eqref{eq:K123}. Put $x_0=\pi r_h^2$, $\theta_0=W_1$, and
+\[
+ \delta_{\mathrm{rel}} = \beta\pi(r_a+d)(r_a+8.4\,d),\qquad
+ \delta_{\mathrm{small}} = 4\pi^3 d(r_a+d)W_2^2.
+\]
+\begin{enumerate}[label=(\roman*)]
+\item \emph{(Disc nesting for all $\tau\in[0,1]$.)} For every $P_0\in[0,\pi r_a^2]$, every $\tau\in[0,1]$, and every
+$w\in\bar D(P_0)=\{z\in\C:\pi|z|^2\le P_0\}$, $w'=KS_\tau(w)$ satisfies
+\begin{equation}\label{eq:kh-nest}
+ \pi|w'|^2 \le \max\Bigl(P_0 + \max\bigl(\tau\,\delta_{\mathrm{rel}},\ \delta_{\mathrm{small}}\bigr),\ \pi d^2\Bigr).
+\end{equation}
+In particular, whenever $P_0\ge\pi d^2$, $\pi|w'|^2\le P_0+\max(\tau\,\delta_{\mathrm{rel}},\delta_{\mathrm{small}})$.
+\item \emph{(Hole and slit clearance at $\tau=1$.)} For every $w\in\bar D(\pi r_a^2)$, $w'=KS_1(w)$ satisfies
+\[
+ \pi|w'|^2 > x_0=\pi r_h^2 \qquad\text{and}\qquad |\theta(w')| > \theta_0=W_1,
+\]
+where $\theta(w')=\arg(w')/(2\pi)\in(-\frac12,\frac12]$; thus $KS_1(\bar D(\pi r_a^2))$ is disjoint from $\bar D(x_0)$
+and from the closed sector $\{|\theta|\le\theta_0\}\cup[0,\infty)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Let $w\in\bar D(P_0)\subset\bar D(\pi r_a^2)$. Then $R=|w-c_*|\le|w|+d\le r_a+d$ and $X=\pi R^2\le\pi(r_a+d)^2$. Write
+$w'=c_*+R_ne^{2\pi i\psi}$ ($X_n=\pi R_n^2$). By conjugation symmetry $\bar w\mapsto\overline{w'}$, assume
+$\psi\in[0,\frac12]$; then Lemma~\ref{lem:psi} gives $0\le\phi\le\psi\le\frac12$. From
+$|c_*+re^{2\pi i\alpha}|^2=d^2+r^2-2dr\cos(2\pi\alpha)$ we have
+\begin{equation}\label{eq:Delta}
+ \pi|w'|^2-\pi|w|^2 = (X_n-X) + 2\pi d(R-R_n)\cos(2\pi\psi) + 2\pi dR\bigl(\cos(2\pi\phi)-\cos(2\pi\psi)\bigr).
+\end{equation}
+
+\emph{Proof of (i).} Split $[0,\frac12]$ by the sign of $\Psi'(\psi)-1$.
+
+\emph{Case A: $\Psi'(\psi)\le1$ (so $\psi\le W_2\le\frac16$, $\cos(2\pi\psi)\ge\frac12>0$, and $R_n\le R$).}
+If $R+R_n<2d\cos(2\pi\psi)$, then $2R_n\le R+R_n<2d\cos(2\pi\psi)$, so $R_n<d\cos(2\pi\psi)$ and directly
+\[
+ |w'|^2 = d^2 + R_n\bigl(R_n-2d\cos(2\pi\psi)\bigr) \le d^2 \implies \pi|w'|^2\le\pi d^2.
+\]
+If instead $R+R_n\ge 2d\cos(2\pi\psi)$, then
+$(X_n-X)+2\pi d(R-R_n)\cos(2\pi\psi)=\pi(R-R_n)\bigl(2d\cos(2\pi\psi)-(R+R_n)\bigr)\le0$. Moreover, since
+$0\le\phi\le\psi\le W_2$, $\cos(2\pi\phi)-\cos(2\pi\psi)\le 1-\cos(2\pi\psi)=2\sin^2(\pi\psi)\le 2\pi^2\psi^2\le 2\pi^2W_2^2$.
+Hence \eqref{eq:Delta} gives $\pi|w'|^2-\pi|w|^2\le 2\pi d(r_a+d)(2\pi^2W_2^2)=4\pi^3 d(r_a+d)W_2^2=\delta_{\mathrm{small}}$.
+
+\emph{Case B: $\Psi'(\psi)>1$ (so $1<\Psi'(\psi)\le 1+\beta$ and $R_n\ge R$).}
+First, $X_n-X=\tau M(X)(\Psi'(\psi)-1)\le\tau\beta X\le\tau\beta\pi(r_a+d)^2$. Second, if $\cos(2\pi\psi)\ge0$ then
+$2\pi d(R-R_n)\cos(2\pi\psi)\le0$; if $\cos(2\pi\psi)<0$ then
+$R_n-R=(X_n-X)/(\pi(R_n+R))\le\tau\beta\pi R^2/(2\pi R)=\frac12\tau\beta R$, so
+$2\pi d(R-R_n)\cos(2\pi\psi)\le 2\pi d(R_n-R)\le\tau\beta\pi d(r_a+d)$. Third, by Lemma~\ref{lem:psi},
+$0\le\psi-\phi=\tau M'(X)(\psi-\Psi(\psi))\le\frac12\tau\beta$, so
+$\cos(2\pi\phi)-\cos(2\pi\psi)\le 2\pi(\psi-\phi)\le\pi\tau\beta$, giving
+$2\pi dR(\cos(2\pi\phi)-\cos(2\pi\psi))\le 2\pi^2\tau\beta d(r_a+d)=(2\pi)\tau\beta\pi d(r_a+d)$. Summing the three
+terms in \eqref{eq:Delta} yields
+\[
+ \pi|w'|^2-\pi|w|^2 \le \tau\beta\pi(r_a+d)\bigl[(r_a+d)+d+2\pi d\bigr]
+ = \tau\beta\pi(r_a+d)\bigl[r_a+(2+2\pi)d\bigr] \le \tau\,\delta_{\mathrm{rel}},
+\]
+since $2+2\pi=8.283185\dots<8.4$. Combining Cases~A and~B proves \eqref{eq:kh-nest}.
+
+\emph{Proof of (ii).} Set $\tau=1$. If $\psi\in[0,W_1]$, then $\Psi'(\psi)=\rho_1$ and $M(X)\ge X-\frac12X_w$, so by
+\eqref{eq:K3},
+\[
+ X_n = X - (1-\rho_1)M(X) \le \rho_1 X + \tfrac12(1-\rho_1)X_w
+ < \rho_1\pi(d+r_a)^2 + \tfrac12X_w < \pi(d-r_h)^2.
+\]
+Hence $R_n<d-r_h$, which places $w'$ strictly in the left half-plane $\operatorname{Re}(w')=-d+R_n\cos(2\pi\psi)<-r_h<0$;
+consequently $|w'|\ge|\operatorname{Re}(w')|>r_h$ ($\pi|w'|^2>x_0$) and $|\theta(w')|>\frac14>\frac16\ge W_2>W_1$.
+If instead $\psi\in(W_1,\frac12]$, then for $\psi\ge\frac14$ we again have $\operatorname{Re}(w')\le-d<-r_h$, whereas
+for $\psi\in(W_1,\frac14)$ the ray $\{c_*+te^{2\pi i\psi}:t\ge0\}$ has perpendicular distance $d\sin(2\pi\psi)>d\sin(2\pi W_1)\ge r_h$
+from the origin by \eqref{eq:K2}, so $|w'|>r_h$ for all $R_n\ge0$; moreover, whenever $\operatorname{Re}(w')>0$ (so
+$R_n\cos(2\pi\psi)>d$), $\tan(2\pi\theta(w'))=\frac{R_n\sin(2\pi\psi)}{R_n\cos(2\pi\psi)-d}>\tan(2\pi\psi)>\tan(2\pi W_1)$,
+whence $\theta(w')>\psi>W_1=\theta_0$.
+\end{proof}

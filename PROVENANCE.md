@@ -2,22 +2,23 @@
 
 ## Version 1.1.0
 
-Liang Song, version **1.1.0**, 12 November 2026. Version 1.1.0 reorganises the work into three papers and adds
-two accompanying numerical programs. The all-version DOI
+Liang Song, version **1.1.0**, 13 November 2026. Version 1.1.0 reorganises the work into four papers and adds
+two accompanying Python programs. The all-version DOI
 [10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575) resolves to the latest version; the version DOI of
 1.1.0 is assigned by Zenodo on deposit. The record keeps the series title *Explicit Hamiltonian ball packings in every
-dimension*, the title of version 1.0.1; the three papers carry their own titles.
+dimension*, the title of version 1.0.1; the four papers carry their own titles.
 
 1. The single paper of 1.0.1 is split and shortened. **Paper I** (`paper/p1`) gives the shortest complete
    route to the equal-ball theorem in the four-ball (Theorem A, robustness, the Epoch data for k ≥ 10).
    **Paper II** (`paper/p2`) contains the general theorem for all admissible data in every dimension, the
    corollaries (Siegel–Yao criterion, Biran's k ≥ 9, a cone of unequal balls, full Epoch data) and the
    finite-output algorithm. No theorem or proof of 1.0.1 is removed.
-2. **Paper III** (`paper/p3`), *Elementary packings of the four-ball and their limits*, is new. It is not
-   formalised. **`program/`** is new: `solution_epoch.py` provides a fast numerical implementation for the Epoch
-   interface built from Paper III's constructions over a covered range of `(k, ε)`, and `solution_embedding.py`
-   evaluates closed-form C⁴ packing embeddings for every `k ≥ 10` and `ε ∈ (0, 1)` (accompanied by float64 and
-   arbitrary-precision checkers; exact-arithmetic proof manuscript in preparation).
+2. **Paper III** (`paper/p3`), *Elementary packings of the four-ball and their limits*, and **Paper IV** (`paper/p4`),
+   *Closed-form symplectic packings of the four-ball by equal balls*, are new; neither is formalised in Lean.
+   **`program/`** is new: `solution_epoch.py` provides a fast numerical implementation for the Epoch ODE interface
+   built from Paper III's constructions over a covered range of `(k, ε)`, and `solution_embedding.py` (built
+   deterministically from modular sources in `program/embedding_src/`) evaluates the closed-form C⁴ packing embeddings
+   and cancellation-free inverses proved in Paper IV, accompanied by float64 and 100-digit `mpmath` checkers.
 3. Corrected citation: Traynor, *Symplectic packing constructions*, J. Differential Geom. **42**
    (1995), 411–429 (1.0.1 cited a duplicate record).
 4. The reference scripts added to `main` after 1.0.1 (`examples/packing.py`, `examples/k10.py`,

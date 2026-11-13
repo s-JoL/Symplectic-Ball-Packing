@@ -1,0 +1,22 @@
+{
+  "k": 10,
+  "eps": "0.0001",
+  "dps": 100,
+  "chords": 5,
+  "max_agree_scaled": 9.21352506013324e-15,
+  "finite_mp": true,
+  "min_radius_margin": 3.556659117955218e-06,
+  "max_roundtrip_mp": 1.3837710188687813e-87,
+  "f64_c_flags": 5,
+  "max_c_recheck_mp": 8.355085409884941e-90,
+  "mp_overlaps": 0,
+  "max_sym_mp": 2.5210194361949984e-63,
+  "f64_b_flags": 1,
+  "max_b_recheck_mp": 3.0798176242931204e-75,
+  "f64_g_flags": 21,
+  "g_all_continuous": true,
+  "max_g_gap_1e30": 1.0677317503330563e-14,
+  "max_g_lipschitz": 1.2720153450254844e+16,
+  "wall_s": 256.46575808525085,
+  "pass_all": true
+}

@@ -1,29 +1,41 @@
-"""Arbitrary-precision (mpmath) check of the closed-form embeddings in solution_embedding.py.
+"""Arbitrary-precision (mpmath) verifier for explicit packing embeddings (solution_embedding.py).
 
-Re-evaluates the exact Chain3 map family of solution_embedding.py in D-digit floating-point
-arithmetic (default D = 100 decimal digits, Newton tolerance 10^{-(D-8)}), without solving ODEs.
+Unlike a separate model-only script, this checker executes the SUBMITTED Python source code directly on
+an arbitrary-precision mpmath tensor backend (converting decimal literals in the source and embedded
+modules to exact D-digit mpmath numbers), cross-checks it against standard float64 PyTorch execution,
+and exits with status 1 if any check fails.
 
-Checks performed for a given (k, eps):
-  0. Formula agreement: compares Embed(i, X) from solution_embedding.py (float64) against this
-     mpmath evaluator with float64-matched eps_c on random interior/boundary points.
-  1. Hypotheses (H0)-(H15): evaluates all parameter margins in D-digit arithmetic.
-  2. Round-trip (C) & containment (A): evaluates Preimage_mp(i, Embed_mp(i, X)) in D-digit
-     arithmetic, including any points where float64 Preimage(i, Embed(i, X)) exceeded --rt-tol.
-  3. Symplecticity (B): evaluates the Jacobian by central differences at step h = 10^{-(D // 3)}
-     in D-digit arithmetic, including any points where float64 finite differences exceeded --sym-tol.
-  4. Continuity (G): runs the chord-bisection detector of check_embedding.py in float64 to locate
-     intervals flagged at separation 1e-11 (if --chords > 0), then re-evaluates those exact chord
-     intervals in D-digit arithmetic down to separation 1e-30 to verify linear image-gap shrinkage.
+Checks performed (all enforced in the final PASS gate):
+  0. Float64 / mpmath consistency: verifies on deterministic special points and random samples across all k
+     balls that float64 PyTorch execution of the submitted source agrees with D-digit mpmath execution at the
+     float64 parameter value within local Jacobian conditioning (||Y_f64 - Y_mp64|| <= agree_tol * max(1, ||J||_F)).
+  1. Containment (A) & round-trip (C): checks all 17*k deterministic special points (centres, +-e_a axis
+     points, zero-fibre and zero-base diagonals), random samples on all balls, and 100% of points flagged by C
+     in float64.
+  2. Pairwise disjointness (D): verifies in D-digit arithmetic that images of distinct balls do not overlap.
+  3. Symplecticity (B): checks the normalised symplectic residual ||J^T Omega J - Omega||_max / max(1, ||J||_F^2)
+     by central differences at step h = 10^{-(D // 3)} on deterministic/random samples and 100% of points
+     flagged by B in float64.
+  4. Continuity (G) via interval-preserving bisection: scans random chords in float64 (matching check_embedding.py)
+     and re-evaluates 100% of flagged intervals in D-digit arithmetic by keeping the larger-gap half-interval at
+     every bisection step all the way down to separation 10^-30 (never switching to a midpoint perturbation that
+     could step to one side of a jump).
 
 Usage:
-    python check_embedding_mp.py solution_embedding.py --k 10 --eps 0.002 --dps 100 --chords 20
-    python check_embedding_mp.py solution_embedding.py --k 101 --eps 0.01 --dps 100 --chords 0
+    python check_embedding_mp.py solution_embedding.py --k 10 --eps 0.002 --dps 100 --chords 100
+    python check_embedding_mp.py solution_embedding.py --k 101 --eps 0.01 --dps 100 --chords 20
 """
+from __future__ import annotations
+
 import argparse
+import io
+import json
 import math
 import os
 import sys
 import time
+import tokenize
+import types
 
 import mpmath as mp
 import torch
@@ -35,699 +47,815 @@ import check_embedding as ce
 torch.set_default_dtype(torch.float64)
 
 
-def _sign(x):
-    if x > 0:
-        return mp.mpf(1)
-    if x < 0:
-        return mp.mpf(-1)
-    return mp.mpf(0)
+# ---------------------------------------------------------------------------
+# Arbitrary-precision tensor & math backend for executing submitted sources
+# ---------------------------------------------------------------------------
+
+def _to_mp_scalar(x):
+    if isinstance(x, (mp.mpf, mp.mpc, bool)):
+        return x
+    if hasattr(x, "_mpf_"):
+        return +x
+    if isinstance(x, int):
+        return mp.mpf(x)
+    if isinstance(x, float):
+        if math.isnan(x):
+            return mp.mpf("nan")
+        if math.isinf(x):
+            return mp.mpf("inf") if x > 0 else mp.mpf("-inf")
+        return mp.mpf(repr(x))
+    if isinstance(x, complex):
+        return mp.mpc(_to_mp_scalar(x.real), _to_mp_scalar(x.imag))
+    raise TypeError(f"unsupported scalar type: {type(x)}")
 
 
-def _clamp(x, lo, hi):
-    if x < lo:
-        return lo
-    if x > hi:
-        return hi
-    return x
+def _safe_div(x, y):
+    if y == 0:
+        if isinstance(x, mp.mpc) or isinstance(y, mp.mpc):
+            return mp.mpc(mp.mpf("nan"), mp.mpf("nan"))
+        if mp.isnan(x) or x == 0:
+            return mp.mpf("nan")
+        return mp.mpf("inf") if x > 0 else mp.mpf("-inf")
+    return x / y
 
 
-class MpTrigStep:
-    def __init__(self, m=4):
-        self.m = m
-        c0 = math.comb(2 * m, m)
-        self.a = [mp.mpf(2 * ((-1) ** j) * math.comb(2 * m, m - j)) / mp.mpf(c0) for j in range(1, m + 1)]
+class _MpTensor:
+    """1D or 2D tensor backed by Python lists of mpmath mpf/mpc/bool scalars."""
 
-    def __call__(self, u):
-        u = _clamp(u, mp.mpf(0), mp.mpf(1))
-        out = u
-        twopi = 2 * mp.pi
-        for j, aj in enumerate(self.a, 1):
-            out = out + aj * mp.sin(twopi * j * u) / (twopi * j)
-        return out
-
-    def d(self, u):
-        u = _clamp(u, mp.mpf(0), mp.mpf(1))
-        out = mp.mpf(1)
-        twopi = 2 * mp.pi
-        for j, aj in enumerate(self.a, 1):
-            out = out + aj * mp.cos(twopi * j * u)
-        return out
-
-    def I(self, u):
-        u = _clamp(u, mp.mpf(0), mp.mpf(1))
-        out = u * u / 2
-        twopi = 2 * mp.pi
-        for j, aj in enumerate(self.a, 1):
-            denom = twopi * j
-            out = out + aj * (1 - mp.cos(denom * u)) / (denom * denom)
-        return out
-
-    def ramp(self, u):
-        return self.I(u) + (u - 1 if u > 1 else mp.mpf(0))
-
-
-def _newton_scalar(f, lo, hi, x0):
-    x = _clamp(x0, lo, hi)
-    tol = mp.mpf(10) ** (-(mp.mp.dps - 8))
-    max_iters = max(80, 2 * mp.mp.dps)
-    for _ in range(max_iters):
-        v, dv = f(x)
-        if v < 0:
-            lo = x
+    def __init__(self, data, ndim=None):
+        if isinstance(data, _MpTensor):
+            self.ndim = data.ndim
+            self.d = [list(r) for r in data.d] if self.ndim == 2 else list(data.d)
+            return
+        if ndim == 2 or (isinstance(data, list) and data and isinstance(data[0], list)):
+            self.ndim = 2
+            self.d = [[_to_mp_scalar(v) if not isinstance(v, bool) else v for v in row] for row in data]
         else:
-            hi = x
-        if abs(v) <= tol * max(mp.mpf(1), abs(dv) * max(mp.mpf(1), abs(x))) or abs(hi - lo) <= tol * max(mp.mpf(1), abs(x)):
-            if dv != 0:
-                xn = x - v / dv
-                if lo <= xn <= hi:
-                    x = xn
-            break
-        if dv != 0:
-            xn = x - v / dv
-            x = xn if (lo < xn < hi) else (lo + hi) / 2
-        else:
-            x = (lo + hi) / 2
-    return x
+            self.ndim = 1
+            self.d = [_to_mp_scalar(v) if not isinstance(v, bool) else v for v in data]
 
+    @property
+    def shape(self):
+        if self.ndim == 2:
+            return (len(self.d), len(self.d[0]) if self.d else 0)
+        return (len(self.d),)
 
-def _rot(w0, w1, turns):
-    ang = 2 * mp.pi * turns
-    c, s = mp.cos(ang), mp.sin(ang)
-    return c * w0 - s * w1, s * w0 + c * w1
+    def __len__(self):
+        return len(self.d)
 
+    def clone(self):
+        return _MpTensor(self)
 
-def _mom(w0, w1):
-    return mp.pi * (w0 * w0 + w1 * w1)
+    def detach(self):
+        return self
 
+    def to(self, _dtype):
+        if _dtype is _MpTorch.complex128:
+            return self._uop(lambda x: mp.mpc(x))
+        if _dtype is _MpTorch.float64:
+            return self._uop(lambda x: mp.mpf(x))
+        if _dtype is _MpTorch.bool:
+            return self._uop(bool)
+        return self
 
-def _polar0(w0, w1):
-    return _mom(w0, w1), mp.atan2(w1, w0) / (2 * mp.pi)
+    def _uop(self, fn):
+        if self.ndim == 1:
+            return _MpTensor([fn(x) for x in self.d], ndim=1)
+        return _MpTensor([[fn(x) for x in r] for r in self.d], ndim=2)
 
+    def _bop(self, other, fn):
+        if isinstance(other, _MpTensor):
+            if self.ndim == 1 and other.ndim == 1:
+                if len(self.d) == 1 and len(other.d) > 1:
+                    s0 = self.d[0]
+                    return _MpTensor([fn(s0, y) for y in other.d], ndim=1)
+                if len(other.d) == 1 and len(self.d) > 1:
+                    o0 = other.d[0]
+                    return _MpTensor([fn(x, o0) for x in self.d], ndim=1)
+                return _MpTensor([fn(x, y) for x, y in zip(self.d, other.d)], ndim=1)
+            if self.ndim == 2 and other.ndim == 2:
+                r_self, c_self = self.shape
+                r_oth, c_oth = other.shape
+                rows = max(r_self, r_oth)
+                cols = max(c_self, c_oth)
+                out = []
+                for r in range(rows):
+                    rs = self.d[0 if r_self == 1 else r]
+                    ro = other.d[0 if r_oth == 1 else r]
+                    out.append([fn(rs[0 if c_self == 1 else c], ro[0 if c_oth == 1 else c]) for c in range(cols)])
+                return _MpTensor(out, ndim=2)
+            if self.ndim == 2 and other.ndim == 1:
+                return _MpTensor([[fn(x, y) for x, y in zip(r, other.d)] for r in self.d], ndim=2)
+            if self.ndim == 1 and other.ndim == 2:
+                return _MpTensor([[fn(x, y) for x, y in zip(self.d, r)] for r in other.d], ndim=2)
+        sc = _to_mp_scalar(other) if not isinstance(other, bool) else other
+        return self._uop(lambda x: fn(x, sc))
 
-def _cart0(x, th):
-    r = mp.sqrt(x / mp.pi)
-    ang = 2 * mp.pi * th
-    return r * mp.cos(ang), r * mp.sin(ang)
+    def __pos__(self): return self.clone()
+    def __neg__(self): return self._uop(lambda x: -x)
+    def __invert__(self): return self._uop(lambda x: not bool(x))
+    def __add__(self, o): return self._bop(o, lambda x, y: x + y)
+    def __radd__(self, o): return self._bop(o, lambda x, y: y + x)
+    def __sub__(self, o): return self._bop(o, lambda x, y: x - y)
+    def __rsub__(self, o): return self._bop(o, lambda x, y: y - x)
+    def __mul__(self, o): return self._bop(o, lambda x, y: x * y)
+    def __rmul__(self, o): return self._bop(o, lambda x, y: y * x)
+    def __truediv__(self, o): return self._bop(o, _safe_div)
+    def __rtruediv__(self, o): return self._bop(o, lambda x, y: _safe_div(y, x))
+    def __pow__(self, o): return self._bop(o, lambda x, y: x ** y)
+    def __lt__(self, o): return self._bop(o, lambda x, y: bool(x < y))
+    def __le__(self, o): return self._bop(o, lambda x, y: bool(x <= y))
+    def __gt__(self, o): return self._bop(o, lambda x, y: bool(x > y))
+    def __ge__(self, o): return self._bop(o, lambda x, y: bool(x >= y))
+    def __eq__(self, o): return self._bop(o, lambda x, y: bool(x == y))  # type: ignore[override]
+    def __ne__(self, o): return self._bop(o, lambda x, y: bool(x != y))  # type: ignore[override]
+    def __and__(self, o): return self._bop(o, lambda x, y: bool(x) and bool(y))
+    def __or__(self, o): return self._bop(o, lambda x, y: bool(x) or bool(y))
 
+    def __float__(self):
+        if self.ndim == 1 and len(self.d) == 1:
+            return float(self.d[0])
+        raise TypeError("only single-element tensors convert to float")
 
-class MpSmoothKeyhole:
-    def __init__(self, ra, d, beta, rho1_safety, m=4):
-        F = mp.mpf
-        self.ra, self.d, self.beta = ra, d, beta
-        self.rho_out = 1 + beta
-        self.W1 = beta / (3 * (1 + beta))
-        self.rh = (F(9) / 10) * d * mp.sin(2 * mp.pi * self.W1)
-        self.rho1 = rho1_safety * ((d - self.rh) / (d + ra)) ** 2
-        self.W2 = beta / (1 + beta - self.rho1) - self.W1
-        self.Xw = (F(2) / 10) * mp.pi * (d - self.rh) ** 2
-        self.x0 = mp.pi * self.rh * self.rh
-        self.theta0 = self.W1
-        self.delta_rel = beta * mp.pi * (ra + d) * (ra + (F(84) / 10) * d)
-        self.delta_small = 4 * (mp.pi ** 3) * d * (ra + d) * (self.W2 ** 2)
-        self.st = MpTrigStep(m)
+    def __bool__(self):
+        if self.ndim == 1 and len(self.d) == 1:
+            return bool(self.d[0])
+        raise TypeError("boolean value of multi-element tensor is ambiguous")
 
-    def dPsi(self, psi):
-        u = (abs(psi) - self.W1) / (self.W2 - self.W1)
-        return self.rho1 + (self.rho_out - self.rho1) * self.st(u)
+    def abs(self): return self._uop(abs)
+    def pow(self, e): return self ** e
+    def sqrt(self): return _MpTorch.sqrt(self)
+    def conj(self): return self._uop(mp.conj)
 
-    def Pmi(self, psi):
-        ap = abs(psi)
-        D = self.W2 - self.W1
-        u = (ap - self.W1) / D
-        tail = ap - self.W2 if ap > self.W2 else mp.mpf(0)
-        val = (self.rho1 - 1) * ap + (self.rho_out - self.rho1) * (D * self.st.I(u) + tail)
-        return _sign(psi) * val
+    @property
+    def real(self): return self._uop(mp.re)
 
-    def M(self, X):
-        u = X / self.Xw
-        return self.Xw * self.st.ramp(u), (mp.mpf(1) if u >= 1 else self.st(u))
+    @property
+    def imag(self): return self._uop(mp.im)
 
-    def polar_c(self, w0, w1):
-        dq = w0 + self.d
-        return mp.pi * (dq * dq + w1 * w1), mp.atan2(w1, dq) / (2 * mp.pi)
+    def clamp(self, lo=None, hi=None):
+        lo_m = _to_mp_scalar(lo) if lo is not None else None
+        hi_m = _to_mp_scalar(hi) if hi is not None else None
+        def _c(x):
+            if mp.isnan(x):
+                return x
+            if lo_m is not None and x < lo_m:
+                x = lo_m
+            if hi_m is not None and x > hi_m:
+                x = hi_m
+            return x
+        return self._uop(_c)
 
-    def cart_c(self, X, psi):
-        r = mp.sqrt(X / mp.pi)
-        ang = 2 * mp.pi * psi
-        return r * mp.cos(ang) - self.d, r * mp.sin(ang)
+    def clamp_min(self, lo): return self.clamp(lo=lo, hi=None)
+    def clamp_max(self, hi): return self.clamp(lo=None, hi=hi)
 
-    def fwd(self, w0, w1, tau):
-        X, phi = self.polar_c(w0, w1)
-        Mv, dM = self.M(X)
-        tt = tau * dM
-        ap = abs(phi)
-        half = mp.mpf(1) / 2
-        psi = _newton_scalar(lambda x: (x + tt * self.Pmi(x) - ap, 1 + tt * (self.dPsi(x) - 1)),
-                             mp.mpf(0), half, _clamp(ap, mp.mpf(0), half))
-        psi = _sign(phi) * psi
-        Xn = X + tau * Mv * (self.dPsi(psi) - 1)
-        nw0, nw1 = self.cart_c(Xn, psi)
-        return nw0, nw1, Mv * self.Pmi(psi)
+    def any(self):
+        if self.ndim == 1:
+            return any(bool(x) for x in self.d)
+        return any(bool(x) for r in self.d for x in r)
 
-    def inv(self, w0, w1, tau):
-        Xn, psi = self.polar_c(w0, w1)
-        a = tau * (self.dPsi(psi) - 1)
-        Xlin = (Xn + a * self.Xw / 2) / (1 + a)
-        if Xlin < self.Xw:
-            X = _newton_scalar(lambda x: (x + a * self.M(x)[0] - Xn, 1 + a * self.M(x)[1]),
-                               mp.mpf(0), self.Xw, _clamp(Xn, mp.mpf(0), self.Xw))
-        else:
-            X = Xlin
-        Mv, dM = self.M(X)
-        phi = psi + tau * dM * self.Pmi(psi)
-        pw0, pw1 = self.cart_c(X, phi)
-        return pw0, pw1, Mv * self.Pmi(psi)
+    def all(self, dim=None):
+        if dim is None:
+            if self.ndim == 1:
+                return all(bool(x) for x in self.d)
+            return all(bool(x) for r in self.d for x in r)
+        if dim in (1, -1) and self.ndim == 2:
+            return _MpTensor([all(bool(x) for x in r) for r in self.d], ndim=1)
+        raise ValueError(f"unsupported all(dim={dim})")
 
+    def sum(self, dim=None, keepdim=False):
+        if dim is None:
+            vals = self.d if self.ndim == 1 else [x for r in self.d for x in r]
+            return sum(vals, mp.mpf(0))
+        if dim in (1, -1) and self.ndim == 2:
+            s = [sum(r, mp.mpf(0)) for r in self.d]
+            return _MpTensor([[v] for v in s], ndim=2) if keepdim else _MpTensor(s, ndim=1)
+        raise ValueError(f"unsupported sum(dim={dim})")
 
-class MpBump:
-    def __init__(self, w0, w1, m=2):
-        self.w0, self.w1, self.D = w0, w1, w1 - w0
-        self.mass = w0 + w1
-        self.st = MpTrigStep(m)
+    def norm(self, dim=None, keepdim=False):
+        if dim is None:
+            vals = self.d if self.ndim == 1 else [x for r in self.d for x in r]
+            return mp.sqrt(sum((abs(v) ** 2 for v in vals), mp.mpf(0)))
+        if dim in (1, -1) and self.ndim == 2:
+            n = [mp.sqrt(sum((abs(v) ** 2 for v in r), mp.mpf(0))) for r in self.d]
+            return _MpTensor([[v] for v in n], ndim=2) if keepdim else _MpTensor(n, ndim=1)
+        raise ValueError(f"unsupported norm(dim={dim})")
 
-    def val(self, x):
-        return 1 - self.st((abs(x) - self.w0) / self.D)
+    def max(self):
+        vals = self.d if self.ndim == 1 else [x for r in self.d for x in r]
+        m = vals[0]
+        for v in vals[1:]:
+            if mp.isnan(v):
+                return v
+            if v > m:
+                m = v
+        return m
 
-    def prim(self, x):
-        D, w0, st = self.D, self.w0, self.st
-        if x < -w0:
-            uL = _clamp((-x - w0) / D, mp.mpf(0), mp.mpf(1))
-            return D * ((1 - uL) - (mp.mpf(1) / 2 - st.I(uL)))
-        if x <= w0:
-            return D / 2 + x + w0
-        uR = _clamp((x - w0) / D, mp.mpf(0), mp.mpf(1))
-        return D / 2 + 2 * w0 + D * (uR - st.I(uR))
+    def min(self):
+        vals = self.d if self.ndim == 1 else [x for r in self.d for x in r]
+        m = vals[0]
+        for v in vals[1:]:
+            if mp.isnan(v):
+                return v
+            if v < m:
+                m = v
+        return m
 
+    def _mask_indices(self, mask):
+        return [i for i, flag in enumerate(mask.d) if bool(flag)]
 
-class MpChain3:
-    """Exact mpmath counterpart of Chain3 in solution_embedding.py."""
+    def __getitem__(self, idx):
+        if self.ndim == 1:
+            if idx is Ellipsis:
+                return self.clone()
+            if isinstance(idx, tuple):
+                if len(idx) == 2 and idx[0] is Ellipsis and idx[1] is None:
+                    return _MpTensor([[v] for v in self.d], ndim=2)
+                if len(idx) == 2 and idx[1] is None:
+                    sub = self[idx[0]]
+                    return _MpTensor([[v] for v in sub.d], ndim=2)
+                if len(idx) == 1:
+                    return self[idx[0]]
+            if isinstance(idx, _MpTensor):
+                return _MpTensor([self.d[i] for i in self._mask_indices(idx)], ndim=1)
+            if isinstance(idx, slice):
+                return _MpTensor(self.d[idx], ndim=1)
+            return self.d[idx]
 
-    def __init__(self, k, eps_str, match_float64=False):
-        F = mp.mpf
-        self.k = int(k)
-        if match_float64:
-            eps_req = F(float(eps_str))
-            eps_c = F(min(float(eps_str), 1.0 / 100.0))
-        else:
-            eps_req = F(str(eps_str))
-            eps_c = min(eps_req, F(1) / 100)
-        self.eps_requested = eps_req
-        self.eps = eps_c
+        # 2D indexing
+        if isinstance(idx, tuple):
+            r_idx, c_idx = idx
+            if r_idx is Ellipsis:
+                r_idx = slice(None)
+            # First select rows
+            if isinstance(r_idx, _MpTensor):
+                rows = [self.d[i] for i in self._mask_indices(r_idx)]
+            elif isinstance(r_idx, slice):
+                rows = self.d[r_idx]
+            elif isinstance(r_idx, int):
+                row = self.d[r_idx]
+                if isinstance(c_idx, slice):
+                    return _MpTensor(row[c_idx], ndim=1)
+                if isinstance(c_idx, list):
+                    return _MpTensor([row[j] for j in c_idx], ndim=1)
+                return row[c_idx]
+            else:
+                raise IndexError(f"unsupported row index: {type(r_idx)}")
 
-        s = mp.sqrt(F(self.k))
-        eta = eps_c / (1 + mp.sqrt(1 - eps_c))
-        t0 = 1 - eta / 2
-        self.s, self.eta, self.t0 = s, eta, t0
-        self.a, self.h, self.cs, self.g = t0 / s, t0 / 3, 3 * s - 9, 3 * eta / 2
-        self.rho_ball = (1 - eta) / s
-        self.T = self.g / self.cs
-        self.Gmax = s * t0 - 3
-        self.lam_a, self.lam2, self.mu = F(9) / 10, F(3) / 10, F(1) / 2
-        self.f = F(1) / 4
-        self.wG, self.w2 = self.lam_a * self.g, self.lam2 * self.g
-        ups = mp.sqrt(F(11) / 1000)
-        ra = mp.sqrt(self.a / mp.pi)
-        d = mp.sqrt(self.f * self.T / mp.pi) / (1 + ups)
-        beta = self.f * self.T / (mp.pi * (ra + d) * (ra + (F(84) / 10) * d))
-        self.KC = MpSmoothKeyhole(ra, d, beta, F(8) / 10, m=4)
-        self.st4 = MpTrigStep(4)
+            if c_idx is None:
+                raise IndexError("unsupported 3D expansion")
+            if isinstance(c_idx, int):
+                return _MpTensor([r[c_idx] for r in rows], ndim=1)
+            if isinstance(c_idx, slice):
+                return _MpTensor([r[c_idx] for r in rows], ndim=2)
+            if isinstance(c_idx, (list, tuple)):
+                return _MpTensor([[r[j] for j in c_idx] for r in rows], ndim=2)
+            raise IndexError(f"unsupported col index: {type(c_idx)}")
 
-        cand = (
-            self.a,
-            (3 - self.wG) / (3 * s) - (F(1) / 2) * self.mu * self.T * (1 - self.lam_a),
-            self.h - (F(1) / 2) * self.mu * self.T,
-        )
-        Dc = (
-            (s - 3 + (F(3) / 2) * eta) / s,
-            (s - 3 + self.wG) / s + (F(3) / 2) * self.mu * self.T * (1 - self.lam_a),
-            eta / 2 + (F(3) / 2) * self.mu * self.T,
-        )
-        j = max(range(3), key=lambda q: cand[q])
-        self.hK, self.D = cand[j], Dc[j]
+        if isinstance(idx, _MpTensor):
+            return _MpTensor([list(self.d[i]) for i in self._mask_indices(idx)], ndim=2)
+        if isinstance(idx, slice):
+            return _MpTensor([list(r) for r in self.d[idx]], ndim=2)
+        if isinstance(idx, int):
+            return _MpTensor(list(self.d[idx]), ndim=1)
+        raise IndexError(f"unsupported index: {type(idx)}")
 
-        self.R_requested = (F(self.k) / (1 - eps_req)) ** (F(1) / 4)
-        self.R = 1 / mp.sqrt(self.rho_ball)
-        ms_abs = F(2) / F(10 ** 6)
-        self.margin = min(ms_abs, eta / 8)
-        self.Rs = self.R * (1 - self.margin)
-        self.rho_b = self.rho_ball / ((1 - self.margin) ** 2)
-        self.scale = mp.sqrt(mp.pi) * self.Rs
-
-        # Twist (SpiralShear with global_shift=True, m=2)
-        self.ag = F(1) / 10
-        self.vlo, self.ulo, self.vcomp = -F(1) / 3, F(2) / 10, F(1) / 4
-        self.delta = self.w2 / 4
-        self.ustar = -self.cs / 9
-        self.c0 = self.delta - self.cs / 3
-        fib_u = (F(5) / 6, F(1) / 3, F(0))
-        self.nj = [-int(round(float(uj - self.ustar))) for uj in fib_u]
-        self.phi_tw = [uj + F(n_) - self.ustar for uj, n_ in zip(fib_u, self.nj)]
-        self.vp = (-self.ag, F(0), F(1) / 2)
-        self.uc = (F(5) / 6, F(7) / 12)
-        self.bv = MpBump(F(15) / 1000, F(45) / 1000, m=2)
-        self.bc = MpBump(F(5) / 100, F(14) / 100, m=2)
-        self.bu = MpBump(F(2) / 100, F(12) / 100, m=2)
-
-        # Transfer3
-        self.m_tr = (F(32) / 100) * self.D
-        self.d2 = (F(2) / 10) * self.D
-        self.sig0 = (F(2) / 10) * self.D
-        self.dkh = (F(1) / 10) * self.D
-        rB = mp.sqrt(self.hK / mp.pi)
-        dB = mp.sqrt((F(8) / 10) * self.dkh / mp.pi) / (F(105) / 100)
-        betaB = (F(8) / 10) * self.dkh / (mp.pi * (rB + dB) * (rB + (F(84) / 10) * dB))
-        self.KB = MpSmoothKeyhole(rB, dB, betaB, F(7) / 10, m=4)
-        self.kap = (-F(1) / 12, F(1) / 12, F(0))
-        k0, k1, k2 = self.kap
-        self.off = {0: (F(0), F(0)), 1: (k1, 3 * k1), '2s': (k1 + k2, 3 * k1 + 6 * k2), '2c': (-k0, F(0))}
-        self.left = {0: self.off['2c'], 1: self.off[0], 2: self.off[1]}
-        arg = -4 * mp.pi * (self.left[0][0] + k0 / 2)
-        self.kappa_line = mp.mpc(mp.cos(arg), mp.sin(arg))
-        self.psi0, self.vcut, self.lift = -F(1) / 6, F(1) / 2, F(1)
-
-    def hypotheses(self):
-        F = mp.mpf
-        out = {}
-        out['H0_k'] = F(self.k - 9)
-        out['H0_eps'] = min(self.eps, 1 - self.eps)
-        out['H2_rho_b<a'] = (self.a - self.rho_b) / self.a
-        out['KC_K3'] = 1 - (self.KC.rho1 * mp.pi * (self.KC.d + self.KC.ra) ** 2 + self.KC.Xw / 2) / (mp.pi * (self.KC.d - self.KC.rh) ** 2)
-        out['H8_1'] = (1 - self.mu - self.lam2 / 2) - mp.pi * self.KC.d ** 2 / self.T
-        out['H9'] = 1 - (self.cs * mp.pi * self.KC.rh ** 2 + (F(3) / 2) * self.lam2 * self.g) / self.g
-        out['H11_D>0'] = self.D
-        out['KB_K3'] = 1 - (self.KB.rho1 * mp.pi * (self.KB.d + self.KB.ra) ** 2 + self.KB.Xw / 2) / (mp.pi * (self.KB.d - self.KB.rh) ** 2)
-        out['H13'] = 1 - max(mp.pi * self.KB.d ** 2, self.KB.delta_rel, self.KB.delta_small) / self.dkh
-        Sb = max(self.m_tr, mp.hypot(self.d2, self.sig0))
-        eta1 = F(2) / 3 - (2 * self.dkh + Sb) / self.D
-        out['H14_eta1'] = eta1
-        out['H15'] = 3 * eta1 - self.m_tr / self.D
-        out['split'] = 1 - 3 * self.dkh / self.D - 2 * self.m_tr / self.D
-        return out
-
-    # ---- Stage helpers ----
-    def _kr_fwd(self, x, y, w0, w1):
-        p = _mom(w0, w1)
-        r2 = (self.a - p) / mp.pi
-        r = mp.sqrt(r2)
-        c = mp.sqrt(r2 - x * x)
-        u = x / r
-        X = r2 * (mp.pi / 2 + mp.asin(u) + u * c / r)
-        T = mp.mpf(1) / 2 + y / (2 * c)
-        C = (X - x * c) / (mp.pi * r2) * y / (2 * c)
-        nw0, nw1 = _rot(w0, w1, C)
-        return X, T, nw0, nw1
-
-    def _kr_inv(self, X, T, w0, w1):
-        p = _mom(w0, w1)
-        r2 = (self.a - p) / mp.pi
-        r = mp.sqrt(r2)
-        m2 = 2 * (X / r2 - mp.pi / 2)
-        half_pi = mp.pi / 2
-        al = _newton_scalar(lambda t: (2 * t + mp.sin(2 * t) - m2, 2 + 2 * mp.cos(2 * t)),
-                            -half_pi, half_pi, _clamp(m2 / 4, -half_pi, half_pi))
-        x, c = r * mp.sin(al), r * mp.cos(al)
-        y = (2 * T - 1) * c
-        C = (X - x * c) / (mp.pi * r2) * y / (2 * c)
-        pw0, pw1 = _rot(w0, w1, -C)
-        return x, y, pw0, pw1
-
-    def _cell_to_flat(self, i, X, T, w0, w1):
-        p = _mom(w0, w1)
-        Jp = 3 * self.s * p - 3
-        if i < 9:
-            rw0, rw1 = _rot(w0, w1, -3 * self.s * T / 9)
-            return Jp + 9 * X, (mp.mpf(i - 4) + T) / 9, rw0, rw1
-        dA = 3 * self.s - i
-        rw0, rw1 = _rot(w0, w1, -dA * T)
-        return X + Jp + i * (self.a - p), T + self.vcut, rw0, rw1
-
-    def _flat_to_cell(self, i, G, v, w0, w1):
-        p = _mom(w0, w1)
-        Jp = 3 * self.s * p - 3
-        if i < 9:
-            T = 9 * v - mp.mpf(i - 4)
-            T = T - 9 * mp.floor(T / 9)
-            rw0, rw1 = _rot(w0, w1, 3 * self.s * T / 9)
-            return (G - Jp) / 9, T, rw0, rw1
-        dA = 3 * self.s - i
-        T = v - self.vcut
-        T = T - mp.floor(T)
-        rw0, rw1 = _rot(w0, w1, dA * T)
-        return G - Jp - i * (self.a - p), T, rw0, rw1
-
-    def _comp_fwd(self, G, v, w0, w1):
-        u = (G + self.wG) / (self.wG - self.w2)
-        tau = self.st4(u)
-        dtau = self.st4.d(u) / (self.wG - self.w2) if (0 < u < 1) else mp.mpf(0)
-        if tau > 0:
-            w0, w1, gen = self.KC.fwd(w0, w1, tau)
-            v = v - dtau * gen
-        u2 = (G + self.w2) / self.w2
-        c = (self.w2 / self.cs) * self.st4.ramp(u2)
-        dc = (mp.mpf(1) if u2 >= 1 else self.st4(u2)) / self.cs
-        if c > 0:
-            x, th = _polar0(w0, w1)
-            vt = th - (mp.mpf(1) / 2) * _sign(th)
-            v = v - dc * vt
-            w0, w1 = _cart0(x + c, th)
-        return G, v, w0, w1
-
-    def _comp_inv(self, G, v, w0, w1):
-        u2 = (G + self.w2) / self.w2
-        c = (self.w2 / self.cs) * self.st4.ramp(u2)
-        dc = (mp.mpf(1) if u2 >= 1 else self.st4(u2)) / self.cs
-        if c > 0:
-            x, th = _polar0(w0, w1)
-            vt = th - (mp.mpf(1) / 2) * _sign(th)
-            v = v + dc * vt
-            w0, w1 = _cart0(x - c, th)
-        u = (G + self.wG) / (self.wG - self.w2)
-        tau = self.st4(u)
-        dtau = self.st4.d(u) / (self.wG - self.w2) if (0 < u < 1) else mp.mpf(0)
-        if tau > 0:
-            w0, w1, gen = self.KC.inv(w0, w1, tau)
-            v = v + dtau * gen
-        return G, v, w0, w1
-
-    def _twist_S(self, p, v):
-        vt = self.vlo + ((v - self.vlo) - mp.floor(v - self.vlo))
-        xc = vt - self.vcomp
-        cval = self.bc.val(xc) / self.bc.mass
-        cprim = self.bc.prim(xc) / self.bc.mass
-        Sv, Sp = mp.mpf(0), mp.mpf(0)
-        hb = 3 - 9 * p
-        for j in range(3):
-            x = vt - self.vp[j]
-            b = self.bv.val(x) - self.bv.mass * cval
-            B = self.bv.prim(x) - self.bv.mass * cprim
-            Sv = Sv + self.phi_tw[j] * hb * b
-            Sp = Sp - 9 * self.phi_tw[j] * B
-        Sv = Sv + self.c0
-        return Sv, Sp
-
-    def _twist_g(self, u):
-        ut = self.ulo + ((u - self.ulo) - mp.floor(u - self.ulo))
-        x0, x1 = ut - self.uc[0], ut - self.uc[1]
-        g = -self.ag * (self.bu.val(x0) - self.bu.val(x1))
-        Gg = -self.ag * (self.bu.prim(x0) - self.bu.prim(x1))
-        return g, Gg
-
-    def _twist_fwd(self, G, v, w0, w1):
-        p = _mom(w0, w1)
-        Sv, Sp = self._twist_S(p, v)
-        G = G + Sv
-        w0, w1 = _rot(w0, w1, -Sp)
-        u = G / (3 - 9 * p)
-        g, Gg = self._twist_g(u)
-        v = v - g
-        w0, w1 = _rot(w0, w1, 9 * (Gg - u * g))
-        return G, v, w0, w1
-
-    def _twist_inv(self, G, v, w0, w1):
-        p = _mom(w0, w1)
-        u = G / (3 - 9 * p)
-        g, Gg = self._twist_g(u)
-        v = v + g
-        w0, w1 = _rot(w0, w1, -9 * (Gg - u * g))
-        Sv, Sp = self._twist_S(p, v)
-        G = G - Sv
-        w0, w1 = _rot(w0, w1, Sp)
-        return G, v, w0, w1
-
-    def _to_fund(self, G, v, w0, w1):
-        p = _mom(w0, w1)
-        hb = 3 - 9 * p
-        Jp = 3 * self.s * p - 3
-        n = mp.floor((G - Jp) / hb)
-        rw0, rw1 = _rot(w0, w1, -9 * n * v)
-        return G - n * hb, v, rw0, rw1
-
-    def _S_prof(self, c):
-        u = abs(c) / self.d2
-        q = self.sig0 * (1 - self.st4(u))
-        dq = -self.sig0 * self.st4.d(u) / self.d2 * _sign(c) if (0 < u < 1) else mp.mpf(0)
-        S = mp.hypot(c, q)
-        return S, (c + q * dq) / S
-
-    def _lam_prof(self, c):
-        S, dS = self._S_prof(c)
-        return (c - S) / 2, (1 - dS) / 2
-
-    def _tau_prof(self, c):
-        u = (abs(c) - self.d2) / (self.m_tr - self.d2)
-        return 1 - self.st4(u), (-self.st4.d(u) / (self.m_tr - self.d2) * _sign(c) if (0 < u < 1) else mp.mpf(0))
-
-    def _kstep(self, c, j):
-        return self.kap[j] * self.st4((c + self.m_tr) / (2 * self.m_tr))
-
-    def _band(self, sig0, psi0, w0, w1, inverse=False):
-        p0, vt0 = _polar0(w0, w1)
-        n = mp.floor(sig0 / (3 - 9 * p0) + mp.mpf(1) / 6)
-        sig = sig0 - n * (3 - 9 * p0)
-        psi = psi0
-        p = p0
-        vt = vt0 - n * (9 * psi0 + mp.mpf(1) / 2)
-        for j in range(3):
-            c = sig - j * (1 - 3 * p)
-            if abs(c) < self.m_tr:
-                a_, b_ = self.left[j]
-                kj = self._kstep(c, j)
-                ps = psi + a_ + kj
-                vj = vt + b_ + 3 * j * kj - 3 * j * ps
-                T, dT = self._tau_prof(c)
-                cw0, cw1 = _cart0(p, vj)
-                if not inverse:
-                    nw0, nw1, gen = self.KB.fwd(cw0, cw1, T)
-                    ps2 = ps - dT * gen
+    def __setitem__(self, idx, val):
+        if self.ndim == 1:
+            if isinstance(idx, _MpTensor):
+                inds = self._mask_indices(idx)
+                if isinstance(val, _MpTensor):
+                    for k, i in enumerate(inds):
+                        self.d[i] = val.d[k]
                 else:
-                    nw0, nw1, gen = self.KB.inv(cw0, cw1, T)
-                    ps2 = ps + dT * gen
-                p2, vj2 = _polar0(nw0, nw1)
-                so = c + j * (1 - 3 * p2)
-                po = ps2 - a_ - kj
-                vo = vj2 + 3 * j * ps2 - b_ - 3 * j * kj
-                ow0, ow1 = _cart0(p2, vo + n * (9 * po + mp.mpf(1) / 2))
-                return so + n * (3 - 9 * p2), po, ow0, ow1
-        return sig0, psi0, w0, w1
+                    sc = _to_mp_scalar(val) if not isinstance(val, bool) else val
+                    for i in inds:
+                        self.d[i] = sc
+                return
+            if isinstance(idx, slice):
+                inds = list(range(*idx.indices(len(self.d))))
+                if isinstance(val, _MpTensor):
+                    for k, i in enumerate(inds):
+                        self.d[i] = val.d[k]
+                else:
+                    sc = _to_mp_scalar(val)
+                    for i in inds:
+                        self.d[i] = sc
+                return
+            self.d[idx] = _to_mp_scalar(val)
+            return
 
-    def _W_no_kh(self, sig, psi, p, vt):
-        n = mp.floor(sig / (3 - 9 * p) + mp.mpf(1) / 6)
-        sig = sig - n * (3 - 9 * p)
-        vt = vt - n * (9 * psi + mp.mpf(1) / 2)
-        mus = [sig, sig - (1 - 3 * p), sig - 2 * (1 - 3 * p)]
-        for j in range(3):
-            if abs(mus[j]) < self.m_tr:
-                c = mus[j]
-                a_, b_ = self.left[j]
-                kj = self._kstep(c, j)
-                ps = psi + a_ + kj
-                vv = vt + b_ + 3 * j * kj
-                vj = vv - 3 * j * ps
-                cw0, cw1 = _cart0(p, vj)
-                p2, ang = _polar0(cw0, cw1)
-                vl = ang - mp.floor(ang)
-                lam, lamp = self._lam_prof(c)
-                xb = p2 - lam
-                xa = xb + c
-                xr = 1 - xa - xb
-                Ta = ps + lamp * vl
-                loc = [
-                    mp.mpc(mp.sqrt(xr), 0),
-                    mp.sqrt(xa) * mp.expj(2 * mp.pi * Ta),
-                    mp.sqrt(xb) * mp.expj(2 * mp.pi * (vl - Ta)),
-                ]
-                perm = ((0, 1, 2), (1, 2, 0), (2, 0, 1))[j]
-                Wg = [None, None, None]
-                for li, gi in enumerate(perm):
-                    Wg[gi] = loc[li]
-                return Wg
-        vc = sig / (3 - 9 * p)
-        if vc < 0:
-            key = '2c'
-        elif vc < mp.mpf(1) / 3:
-            key = 0
-        elif vc < mp.mpf(2) / 3:
-            key = 1
+        # 2D assignment
+        if isinstance(idx, _MpTensor):
+            inds = self._mask_indices(idx)
+            for k, i in enumerate(inds):
+                self.d[i] = list(val.d[k])
+            return
+        if isinstance(idx, slice):
+            inds = list(range(*idx.indices(len(self.d))))
+            for k, i in enumerate(inds):
+                self.d[i] = list(val.d[k])
+            return
+        if isinstance(idx, tuple):
+            r_idx, c_idx = idx
+            inds = self._mask_indices(r_idx) if isinstance(r_idx, _MpTensor) else list(range(*r_idx.indices(len(self.d))))
+            if isinstance(c_idx, int):
+                for k, i in enumerate(inds):
+                    self.d[i][c_idx] = val.d[k] if isinstance(val, _MpTensor) else _to_mp_scalar(val)
+                return
+            if isinstance(c_idx, slice):
+                c_inds = list(range(*c_idx.indices(len(self.d[0]))))
+                for k, i in enumerate(inds):
+                    for m, j in enumerate(c_inds):
+                        self.d[i][j] = val.d[k][m]
+                return
+        raise IndexError(f"unsupported setitem index: {idx}")
+
+    def tolist(self):
+        if self.ndim == 1:
+            return list(self.d)
+        return [list(r) for r in self.d]
+
+
+class _MpGenerator:
+    def __init__(self):
+        self.seed = 0
+
+    def manual_seed(self, s):
+        self.seed = int(s)
+        return self
+
+
+class _MpTorch:
+    float64 = "float64"
+    complex128 = "complex128"
+    bool = "bool"
+    long = "long"
+
+    @staticmethod
+    def set_default_dtype(_dt):
+        pass
+
+    @staticmethod
+    def is_tensor(x):
+        return isinstance(x, _MpTensor)
+
+    @staticmethod
+    def equal(a, b):
+        return isinstance(a, _MpTensor) and isinstance(b, _MpTensor) and a.shape == b.shape and a.d == b.d
+
+    @staticmethod
+    def Generator():
+        return _MpGenerator()
+
+    @staticmethod
+    def randn(*shape, generator=None, dtype=None):
+        g = torch.Generator().manual_seed(generator.seed if generator else 0)
+        if len(shape) == 2:
+            t = torch.randn(shape[0], shape[1], generator=g, dtype=torch.float64)
+            if generator:
+                generator.seed += 1
+            return _MpTensor([[mp.mpf(float(v)) for v in row] for row in t.tolist()], ndim=2)
+        t = torch.randn(shape[0], generator=g, dtype=torch.float64)
+        if generator:
+            generator.seed += 1
+        return _MpTensor([mp.mpf(float(v)) for v in t.tolist()], ndim=1)
+
+    @staticmethod
+    def rand(*shape, generator=None, dtype=None):
+        g = torch.Generator().manual_seed((generator.seed + 10007) if generator else 10007)
+        if len(shape) == 2:
+            t = torch.rand(shape[0], shape[1], generator=g, dtype=torch.float64)
+            if generator:
+                generator.seed += 1
+            return _MpTensor([[mp.mpf(float(v)) for v in row] for row in t.tolist()], ndim=2)
+        t = torch.rand(shape[0], generator=g, dtype=torch.float64)
+        if generator:
+            generator.seed += 1
+        return _MpTensor([mp.mpf(float(v)) for v in t.tolist()], ndim=1)
+
+    @staticmethod
+    def tensor(val, dtype=None):
+        if isinstance(val, (int, float, mp.mpf)):
+            return _MpTensor([_to_mp_scalar(val)], ndim=1)
+        if isinstance(val, list) and val and isinstance(val[0], list):
+            return _MpTensor(val, ndim=2)
+        return _MpTensor(list(val), ndim=1)
+
+    @staticmethod
+    def zeros(*shape, dtype=None):
+        if len(shape) == 1 and isinstance(shape[0], tuple):
+            shape = shape[0]
+        fill = False if dtype is _MpTorch.bool else (mp.mpc(0) if dtype is _MpTorch.complex128 else mp.mpf(0))
+        if len(shape) == 2:
+            return _MpTensor([[fill for _ in range(shape[1])] for _ in range(shape[0])], ndim=2)
+        return _MpTensor([fill for _ in range(shape[0])], ndim=1)
+
+    @staticmethod
+    def ones(*shape, dtype=None):
+        if len(shape) == 1 and isinstance(shape[0], tuple):
+            shape = shape[0]
+        if len(shape) == 2:
+            return _MpTensor([[mp.mpf(1) for _ in range(shape[1])] for _ in range(shape[0])], ndim=2)
+        return _MpTensor([mp.mpf(1) for _ in range(shape[0])], ndim=1)
+
+    @staticmethod
+    def full(shape, fill_value, dtype=None):
+        fv = _to_mp_scalar(fill_value) if not isinstance(fill_value, bool) else fill_value
+        if len(shape) == 2:
+            return _MpTensor([[fv for _ in range(shape[1])] for _ in range(shape[0])], ndim=2)
+        return _MpTensor([fv for _ in range(shape[0])], ndim=1)
+
+    @staticmethod
+    def zeros_like(x):
+        fv = mp.mpc(0) if (x.d and ((x.ndim == 1 and isinstance(x.d[0], mp.mpc)) or (x.ndim == 2 and x.d[0] and isinstance(x.d[0][0], mp.mpc)))) else mp.mpf(0)
+        return x._uop(lambda _: fv)
+
+    @staticmethod
+    def ones_like(x):
+        return x._uop(lambda _: mp.mpf(1))
+
+    @staticmethod
+    def full_like(x, fill_value):
+        fv = _to_mp_scalar(fill_value)
+        return x._uop(lambda _: fv)
+
+    @staticmethod
+    def sin(x): return x._uop(mp.sin)
+    @staticmethod
+    def cos(x): return x._uop(mp.cos)
+    @staticmethod
+    def asin(x): return x._uop(lambda v: mp.asin(mp.mpf(v)) if -1 <= v <= 1 else mp.mpf("nan"))
+
+    @staticmethod
+    def exp(x):
+        return x._uop(mp.exp)
+
+    @staticmethod
+    def sqrt(x):
+        def _sq(v):
+            if isinstance(v, mp.mpc):
+                return mp.sqrt(v)
+            if mp.isnan(v) or v < 0:
+                return mp.mpf("nan")
+            return mp.sqrt(v)
+        return x._uop(_sq)
+
+    @staticmethod
+    def hypot(a, b):
+        return a._bop(b, mp.hypot)
+
+    @staticmethod
+    def atan2(y, x):
+        return y._bop(x, mp.atan2)
+
+    @staticmethod
+    def angle(z):
+        return z._uop(mp.arg)
+
+    @staticmethod
+    def sign(x):
+        def _sg(v):
+            if mp.isnan(v):
+                return v
+            if v > 0:
+                return mp.mpf(1)
+            if v < 0:
+                return mp.mpf(-1)
+            return mp.mpf(0)
+        return x._uop(_sg)
+
+    @staticmethod
+    def floor(x):
+        return x._uop(lambda v: mp.floor(v) if mp.isfinite(v) else v)
+
+    @staticmethod
+    def round(x):
+        return x._uop(lambda v: mp.nint(v) if mp.isfinite(v) else v)
+
+    @staticmethod
+    def remainder(x, m):
+        mm = _to_mp_scalar(m)
+        return x._uop(lambda v: v - mm * mp.floor(v / mm) if mp.isfinite(v) else v)
+
+    @staticmethod
+    def where(cond, a, b):
+        if cond.ndim == 1:
+            av = a.d if isinstance(a, _MpTensor) else [_to_mp_scalar(a)] * len(cond.d)
+            bv = b.d if isinstance(b, _MpTensor) else [_to_mp_scalar(b)] * len(cond.d)
+            return _MpTensor([av[i] if bool(cond.d[i]) else bv[i] for i in range(len(cond.d))], ndim=1)
+        rows = len(cond.d)
+        cols = max(cond.shape[1], a.shape[1] if isinstance(a, _MpTensor) else 1, b.shape[1] if isinstance(b, _MpTensor) else 1)
+        out = []
+        for r in range(rows):
+            cr = cond.d[r]
+            ar = a.d[r] if isinstance(a, _MpTensor) else [_to_mp_scalar(a)] * cols
+            br = b.d[r] if isinstance(b, _MpTensor) else [_to_mp_scalar(b)] * cols
+            out.append([ar[0 if len(ar) == 1 else c] if bool(cr[0 if len(cr) == 1 else c]) else br[0 if len(br) == 1 else c] for c in range(cols)])
+        return _MpTensor(out, ndim=2)
+
+    @staticmethod
+    def maximum(a, b):
+        return a._bop(b, lambda x, y: x if x >= y else y)
+
+    @staticmethod
+    def minimum(a, b):
+        return a._bop(b, lambda x, y: x if x <= y else y)
+
+    @staticmethod
+    def complex(re, im):
+        return re._bop(im, lambda x, y: mp.mpc(x, y))
+
+    @staticmethod
+    def isfinite(x):
+        def _fin(v):
+            if isinstance(v, mp.mpc):
+                return bool(mp.isfinite(mp.re(v)) and mp.isfinite(mp.im(v)))
+            return bool(mp.isfinite(v))
+        return x._uop(_fin)
+
+    @staticmethod
+    def nan_to_num(x, nan=0.0):
+        nv = _to_mp_scalar(nan)
+        return x._uop(lambda v: nv if mp.isnan(v) else v)
+
+    @staticmethod
+    def argmin(x, dim=1):
+        assert x.ndim == 2 and dim == 1
+        out = []
+        for r in x.d:
+            best_j, best_v = 0, r[0]
+            for j in range(1, len(r)):
+                if r[j] < best_v:
+                    best_j, best_v = j, r[j]
+            out.append(best_j)
+        return _MpTensor(out, ndim=1)
+
+    @staticmethod
+    def argmax(x, dim=1):
+        assert x.ndim == 2 and dim == 1
+        out = []
+        for r in x.d:
+            best_j, best_v = 0, r[0]
+            for j in range(1, len(r)):
+                if r[j] > best_v:
+                    best_j, best_v = j, r[j]
+            out.append(best_j)
+        return _MpTensor(out, ndim=1)
+
+    @staticmethod
+    def stack(tensors, dim=0):
+        tensors = list(tensors)
+        if tensors[0].ndim == 1:
+            if dim in (1, -1):
+                n = len(tensors[0].d)
+                return _MpTensor([[t.d[i] for t in tensors] for i in range(n)], ndim=2)
+            if dim == 0:
+                return _MpTensor([list(t.d) for t in tensors], ndim=2)
+        raise ValueError(f"unsupported stack(ndim={tensors[0].ndim}, dim={dim})")
+
+    @staticmethod
+    def cat(tensors, dim=0):
+        tensors = list(tensors)
+        if dim == 0 and tensors[0].ndim == 2:
+            rows = []
+            for t in tensors:
+                rows.extend(list(r) for r in t.d)
+            return _MpTensor(rows, ndim=2)
+        if dim in (1, -1) and tensors[0].ndim == 2:
+            n = len(tensors[0].d)
+            return _MpTensor([[v for t in tensors for v in t.d[i]] for i in range(n)], ndim=2)
+        if dim == 0 and tensors[0].ndim == 1:
+            vals = []
+            for t in tensors:
+                vals.extend(t.d)
+            return _MpTensor(vals, ndim=1)
+        raise ValueError(f"unsupported cat(dim={dim})")
+
+
+class _MpMath:
+    comb = staticmethod(math.comb)
+
+    @property
+    def pi(self):
+        return mp.pi
+
+    @staticmethod
+    def sqrt(x):
+        return mp.sqrt(_to_mp_scalar(x))
+
+    @staticmethod
+    def sin(x):
+        return mp.sin(_to_mp_scalar(x))
+
+    @staticmethod
+    def cos(x):
+        return mp.cos(_to_mp_scalar(x))
+
+    @staticmethod
+    def hypot(x, y):
+        return mp.hypot(_to_mp_scalar(x), _to_mp_scalar(y))
+
+    @staticmethod
+    def floor(x):
+        return int(mp.floor(_to_mp_scalar(x)))
+
+    @staticmethod
+    def isfinite(x):
+        return bool(mp.isfinite(_to_mp_scalar(x)))
+
+
+def _rewrite_float_literals(code_str: str) -> str:
+    """Rewrite decimal float literals (e.g. 0.32, 8.4, 1e-12) to _MPF('...') so D-digit precision is preserved."""
+    tokens = list(tokenize.generate_tokens(io.StringIO(code_str).readline))
+    out = []
+    for tok in tokens:
+        if tok.type == tokenize.NUMBER and any(ch in tok.string for ch in (".", "e", "E")) and not tok.string.lower().endswith("j"):
+            out.append((tokenize.NAME, f"_MPF({tok.string!r})"))
+        elif tok.type == tokenize.NUMBER and tok.string.lower().endswith("j"):
+            imag_s = tok.string[:-1]
+            out.append((tokenize.NAME, f"_MPC(0, {imag_s!r})"))
         else:
-            key = '2s'
-        a_, b_ = self.off[key]
-        ps, vv = psi + a_, vt + b_
-        if key == '2c':
-            X1, X2, T1, T2 = p, p - sig, vv + ps, -ps
-        elif key == 0:
-            X1, X2 = p + sig, p
-            T1, T2 = sig * 0 + ps, vv - ps
-        elif key == 1:
-            X1, X2 = -5 * p - sig + 2, 4 * p + sig - 1
-            T1, T2 = -vv + 4 * ps, -vv + 5 * ps
-        else:
-            X1, X2 = p, -8 * p - sig + 3
-            T1, T2 = vv - 8 * ps, -ps
-        X0 = 1 - X1 - X2
-        return [
-            mp.mpc(mp.sqrt(X0), 0),
-            mp.sqrt(X1) * mp.expj(2 * mp.pi * T1),
-            mp.sqrt(X2) * mp.expj(2 * mp.pi * T2),
-        ]
+            out.append((tok.type, tok.string))
+    return tokenize.untokenize(out)
 
-    def _invert_no_kh(self, W):
-        nrm = mp.sqrt(abs(W[0]) ** 2 + abs(W[1]) ** 2 + abs(W[2]) ** 2)
-        W = [w / nrm for w in W]
-        X = [abs(w) ** 2 for w in W]
-        ang = [mp.arg(w) / (2 * mp.pi) for w in W]
-        for j in range(3):
-            a, b = (j + 1) % 3, (j + 2) % 3
-            mu = X[a] - X[b]
-            if abs(mu) < self.m_tr and X[j] > mp.mpf(1) / 3:
-                c = mu
-                lam, dl = self._lam_prof(c)
-                p2 = X[b] + lam
-                Ta = ang[a] - ang[j]
-                Tb = ang[b] - ang[j]
-                vl = (Ta + Tb) - mp.floor(Ta + Tb)
-                ps2 = Ta - dl * vl
-                kj = self._kstep(c, j)
-                a_, b_ = self.left[j]
-                cw0, cw1 = _cart0(p2, vl)
-                pp, vj = _polar0(cw0, cw1)
-                sig = c + j * (1 - 3 * pp)
-                psi = ps2 - kj - a_
-                vt = vj + 3 * j * ps2 - 3 * j * kj - b_
-                n = mp.floor(sig / (3 - 9 * pp) + mp.mpf(1) / 6)
-                return sig - n * (3 - 9 * pp), psi, pp, vt - n * (9 * psi + mp.mpf(1) / 2)
-        e = min(range(3), key=lambda idx: X[idx])
-        T1, T2 = ang[1] - ang[0], ang[2] - ang[0]
-        if e == 2:      # key 0: A = [[1,1],[1,0]], B = [0,0]
-            pp = X[2]
-            sig = X[1] - X[2]
-            vt = T1 + T2
-            psi = T1
-            a_, b_ = self.off[0]
-        elif e == 0:    # key 1: A = [[-5,-1],[4,1]], B = [2,-1] -> det = -1
-            u1, u2 = X[1] - 2, X[2] + 1
-            pp = -u1 - u2
-            sig = 4 * u1 + 5 * u2
-            vt = -5 * T1 + 4 * T2
-            psi = -T1 + T2
-            a_, b_ = self.off[1]
-        else:           # key '2s': A = [[1,0],[-8,-1]], B = [0,3] -> det = -1
-            u1, u2 = X[1], X[2] - 3
-            pp = u1
-            sig = -8 * u1 - u2
-            vt = T1 - 8 * T2
-            psi = -T2
-            a_, b_ = self.off['2s']
-        psi = psi - a_
-        vt = vt - b_
-        n = mp.floor(sig / (3 - 9 * pp) + mp.mpf(1) / 6)
-        return sig - n * (3 - 9 * pp), psi, pp, vt - n * (9 * psi + mp.mpf(1) / 2)
 
-    def embed_point(self, i, Xb):
-        # Stage 1: scale + perm [0, 2, 1, 3]
-        x, y, w0, w1 = Xb[0] / self.scale, Xb[2] / self.scale, Xb[1] / self.scale, Xb[3] / self.scale
-        # Stage 2: KRStrip
-        Xc, Tc, w0, w1 = self._kr_fwd(x, y, w0, w1)
-        # Stage 3: cell -> flat
-        G, v, w0, w1 = self._cell_to_flat(i, Xc, Tc, w0, w1)
-        # Stage 4-5: comparator
-        if i >= 9:
-            G, v, w0, w1 = self._comp_fwd(G, v, w0, w1)
-        # Stage 6-7: marked-fibre twists
-        G, v, w0, w1 = self._twist_fwd(G, v, w0, w1)
-        # Stage 8: flat -> post
-        p, th = _polar0(w0, w1)
-        hb = 3 - 9 * p
-        ua = G / hb + self.lift
-        sig = hb * v
-        psi = self.psi0 - ua
-        vt = th - 9 * (ua - self.lift) * v
-        pw0, pw1 = _cart0(p, vt)
-        # Stage 9: corner keyhole (Band)
-        sig, psi, pw0, pw1 = self._band(sig, psi, pw0, pw1, inverse=False)
-        # Stage 10-11: W -> CP^2 ball chart + scale
-        p_b, vt_b = _polar0(pw0, pw1)
-        W = self._W_no_kh(sig, psi, p_b, vt_b)
-        kap = self.kappa_line
-        sq2 = mp.sqrt(2)
-        Z0 = (W[2] - kap * W[1]) / sq2
-        Z1 = (W[1] + mp.conj(kap) * W[2]) / sq2
-        Z2 = W[0]
-        nrm2 = abs(Z0) ** 2 + abs(Z1) ** 2 + abs(Z2) ** 2
-        denom = mp.sqrt(mp.pi * (abs(Z0) ** 2) * nrm2)
-        a_c = Z1 * mp.conj(Z0) / denom
-        b_c = Z2 * mp.conj(Z0) / denom
-        sc = self.scale
-        return [mp.re(a_c) * sc, mp.re(b_c) * sc, mp.im(a_c) * sc, mp.im(b_c) * sc]
+def load_mp_submission(src_text: str, eps_override: str | None):
+    """Execute the submitted Python source directly on the D-digit mpmath backend."""
+    mp_math = _MpMath()
 
-    def preimage_point(self, j, Y):
-        sc = self.scale
-        y0, y1 = mp.mpc(Y[0] / sc, Y[2] / sc) * mp.sqrt(mp.pi), mp.mpc(Y[1] / sc, Y[3] / sc) * mp.sqrt(mp.pi)
-        rad = 1 - (abs(y0) ** 2 + abs(y1) ** 2)
-        if rad <= 0:
-            return None
-        Z0 = mp.mpc(mp.sqrt(rad), 0)
-        kap = self.kappa_line
-        sq2 = mp.sqrt(2)
-        W = [y1, (y0 - mp.conj(kap) * Z0) / sq2, (Z0 + kap * y0) / sq2]
-        sig, psi, p, vt = self._invert_no_kh(W)
-        pw0, pw1 = _cart0(p, vt)
-        sig, psi, pw0, pw1 = self._band(sig, psi, pw0, pw1, inverse=True)
-        # post -> flat
-        p, vt = _polar0(pw0, pw1)
-        hb = 3 - 9 * p
-        ua = self.psi0 - psi
-        v = sig / hb
-        G = (ua - self.lift) * hb
-        w0, w1 = _cart0(p, vt + 9 * (ua - self.lift) * v)
-        # twist inv + to_fund + comp inv + flat_to_cell + kr_inv + scale
-        G, v, w0, w1 = self._twist_inv(G, v, w0, w1)
-        G, v, w0, w1 = self._to_fund(G, v, w0, w1)
-        if j >= 9:
-            G, v, w0, w1 = self._comp_inv(G, v, w0, w1)
-        Xc, Tc, w0, w1 = self._flat_to_cell(j, G, v, w0, w1)
-        if not (0 < Xc < self.a - _mom(w0, w1)):
-            return None
-        x, y, w0, w1 = self._kr_inv(Xc, Tc, w0, w1)
-        return [x * sc, w0 * sc, y * sc, w1 * sc]
+    def _mp_float(x):
+        if isinstance(x, str):
+            low = x.strip().lower()
+            if low in ("nan", "+nan", "-nan"):
+                return mp.mpf("nan")
+            if low in ("inf", "+inf", "infinity"):
+                return mp.mpf("inf")
+            if low in ("-inf", "-infinity"):
+                return mp.mpf("-inf")
+            return mp.mpf(x)
+        if isinstance(x, (mp.mpf, int)):
+            return mp.mpf(x)
+        if isinstance(x, _MpTensor):
+            return float(x)
+        return _to_mp_scalar(x)
+
+    def _mp_complex(re, im=0):
+        return mp.mpc(_mp_float(re), _mp_float(im))
+
+    def _mp_exec_embedded(code_obj, globs):
+        globs.setdefault("_MPF", mp.mpf)
+        globs.setdefault("_MPC", mp.mpc)
+        globs.setdefault("float", _mp_float)
+        globs.setdefault("complex", _mp_complex)
+        exec(code_obj, globs)
+
+    def _mp_compile_embedded(sub_src, filename, mode):
+        if isinstance(sub_src, str) and mode == "exec":
+            sub_src = _rewrite_float_literals(sub_src)
+            sub_src = sub_src.replace("iters=60", f"iters={max(150, 3 * mp.mp.dps)}")
+        return compile(sub_src, filename, mode)
+
+    rewritten = _rewrite_float_literals(src_text)
+    rewritten = rewritten.replace("iters=60", f"iters={max(150, 3 * mp.mp.dps)}")
+    rewritten = rewritten.replace("_ch_mod.selftest(_CH)", "None")
+
+    saved_mods = {k: sys.modules.get(k) for k in ("torch", "math", "primitives", "keyhole", "comparator", "twists", "transfer", "chain")}
+    sys.modules["torch"] = _MpTorch  # type: ignore[assignment]
+    sys.modules["math"] = mp_math    # type: ignore[assignment]
+    try:
+        ns = {
+            "__name__": "mp_submission",
+            "_MPF": mp.mpf,
+            "_MPC": mp.mpc,
+            "float": _mp_float,
+            "complex": _mp_complex,
+            "compile": _mp_compile_embedded,
+            "exec": _mp_exec_embedded,
+        }
+        if eps_override is not None:
+            # Replace _EPS assignment at top of generated source if present, while keeping exact logic
+            lines = rewritten.splitlines()
+            for idx, ln in enumerate(lines[:5]):
+                if ln.strip().startswith("_EPS ="):
+                    lines[idx] = f"_EPS = _MPF({eps_override!r})"
+                    break
+            rewritten = "\n".join(lines)
+        exec(compile(rewritten, "<mp_submission>", "exec"), ns)
+    finally:
+        for k, prev in saved_mods.items():
+            if prev is None:
+                sys.modules.pop(k, None)
+            else:
+                sys.modules[k] = prev
+
+    assert "Embed" in ns and "Preimage" in ns, "submitted source must define Embed and Preimage"
+    return ns["Embed"], ns["Preimage"], ns.get("CONFIG")
+
+
+# ---------------------------------------------------------------------------
+# Helpers for mpmath norms, Jacobians, and interval-preserving bisection
+# ---------------------------------------------------------------------------
+
+def _vec_to_mptensor(vecs):
+    return _MpTensor([[_to_mp_scalar(v) for v in row] for row in vecs], ndim=2)
 
 
 def _norm(v):
-    return mp.sqrt(sum(x * x for x in v))
+    return mp.sqrt(sum((abs(x) ** 2 for x in v), mp.mpf(0)))
 
 
 def _diff_norm(a, b):
-    return mp.sqrt(sum((x - y) ** 2 for x, y in zip(a, b)))
+    return mp.sqrt(sum((abs(x - y) ** 2 for x, y in zip(a, b)), mp.mpf(0)))
 
 
-def _symplectic_defect(ch, i, Xb, h):
-    # J_{r, a} = dY_r / dX_a by central differences at step h
+def _all_finite_vec(v):
+    return all(mp.isfinite(x) for x in v)
+
+
+def _jac_mp(Embed_mp, i, x_vec, h):
+    pts = []
+    for a in range(4):
+        xp = list(x_vec); xm = list(x_vec)
+        xp[a] = xp[a] + h
+        xm[a] = xm[a] - h
+        pts.append(xp)
+        pts.append(xm)
+    Y = Embed_mp(i, _MpTensor(pts, ndim=2)).tolist()
     J = [[mp.mpf(0)] * 4 for _ in range(4)]
     for a in range(4):
-        xp = list(Xb); xm = list(Xb)
-        xp[a] += h; xm[a] -= h
-        yp = ch.embed_point(i, xp)
-        ym = ch.embed_point(i, xm)
+        yp, ym = Y[2 * a], Y[2 * a + 1]
+        if not (_all_finite_vec(yp) and _all_finite_vec(ym)):
+            return None
         for r in range(4):
             J[r][a] = (yp[r] - ym[r]) / (2 * h)
-    # Omega = dq1 ^ dp1 + dq2 ^ dp2 on (q1, q2, p1, p2)
+    return J
+
+
+def _symplectic_defect_mp(Embed_mp, i, x_vec, h):
+    """4th-order Richardson-extrapolated central-difference Jacobian (matching check_embedding.py)."""
+    J1 = _jac_mp(Embed_mp, i, x_vec, h)
+    J2 = _jac_mp(Embed_mp, i, x_vec, h / 2)
+    if J1 is None or J2 is None:
+        return mp.mpf("inf"), mp.mpf("inf")
+    J = [[(4 * J2[r][a] - J1[r][a]) / 3 for a in range(4)] for r in range(4)]
     om = [[0, 0, 1, 0], [0, 0, 0, 1], [-1, 0, 0, 0], [0, -1, 0, 0]]
     max_def = mp.mpf(0)
-    frob2 = sum(J[r][a] ** 2 for r in range(4) for a in range(4))
+    frob2 = sum((J[r][a] ** 2 for r in range(4) for a in range(4)), mp.mpf(0))
     for a in range(4):
         for b in range(4):
-            val = sum(J[r][a] * om[r][s] * J[s][b] for r in range(4) for s in range(4)) - om[a][b]
+            val = sum((J[r][a] * om[r][s] * J[s][b] for r in range(4) for s in range(4)), mp.mpf(0)) - om[a][b]
             if abs(val) > max_def:
                 max_def = abs(val)
     return max_def / max(mp.mpf(1), frob2), mp.sqrt(frob2)
 
 
-def _find_flagged_chords_f64(Embed, i, n_ch, m, top, seed):
+def _bisect_interval_mp(Embed_mp, i, lo_vec, hi_vec, sep_target):
+    """True interval-preserving bisection on [lo, hi] down to ||hi - lo|| <= sep_target.
+
+    At every step, evaluates the midpoint m = (lo + hi)/2 and retains whichever half-interval
+    [lo, m] or [m, hi] has the larger image distance ||Y_end - Y_m||. A jump of height J inside
+    (lo, hi) remains inside the retained sub-interval at every step and forces gap_final >= J - O(sep).
+    """
+    lo = list(lo_vec)
+    hi = list(hi_vec)
+    Y_ends = Embed_mp(i, _MpTensor([lo, hi], ndim=2)).tolist()
+    yl, yh = Y_ends[0], Y_ends[1]
+    if not (_all_finite_vec(yl) and _all_finite_vec(yh)):
+        return mp.mpf("inf"), mp.mpf(0), mp.mpf("inf"), mp.mpf("inf")
+    gap_20 = None
+    sep_20 = None
+    while True:
+        sep = _diff_norm(hi, lo)
+        cur_gap = _diff_norm(yh, yl)
+        if gap_20 is None and sep <= mp.mpf("1e-20"):
+            gap_20, sep_20 = cur_gap, sep
+        if sep <= sep_target:
+            break
+        mid = [(u + v) / 2 for u, v in zip(lo, hi)]
+        ym = Embed_mp(i, _MpTensor([mid], ndim=2)).tolist()[0]
+        if not _all_finite_vec(ym):
+            return mp.mpf("inf"), sep, mp.mpf("inf"), mp.mpf("inf")
+        gl = _diff_norm(ym, yl)
+        gr = _diff_norm(yh, ym)
+        if gl >= gr:
+            hi, yh = mid, ym
+        else:
+            lo, yl = mid, ym
+    sep_final = _diff_norm(hi, lo)
+    gap_final = _diff_norm(yh, yl)
+    lip_20 = (gap_20 / sep_20) if (gap_20 is not None and sep_20 > 0) else mp.mpf(0)
+    lip_final = (gap_final / sep_final) if sep_final > 0 else mp.mpf(0)
+    return gap_final, sep_final, lip_final, lip_20
+
+
+def _find_flagged_chords_f64(Embed_f64, i, n_ch, m, top, seed):
     g = torch.Generator().manual_seed(seed)
     a = torch.randn(n_ch, 4, generator=g); a = a / a.norm(dim=1, keepdim=True)
     b = torch.randn(n_ch, 4, generator=g); b = b / b.norm(dim=1, keepdim=True)
     t = torch.linspace(0, 1, m).reshape(1, m, 1)
     X = a.unsqueeze(1) * (1 - t) + b.unsqueeze(1) * t
-    Y = torch.cat([Embed(i, X[c]) for c in range(n_ch)], dim=0).reshape(n_ch, m, 4)
+    Y = torch.cat([Embed_f64(i, X[c]) for c in range(n_ch)], dim=0).reshape(n_ch, m, 4)
     d = (Y[:, 1:] - Y[:, :-1]).norm(dim=2)
     nb = torch.full_like(d, float("inf"))
     nb[:, 1:-1] = torch.maximum(d[:, :-2], d[:, 2:])
@@ -739,14 +867,14 @@ def _find_flagged_chords_f64(Embed, i, n_ch, m, top, seed):
     while True:
         sep = float((hi - lo).norm(dim=1).max())
         if gap_mid is None and sep <= 1e-8:
-            gap_mid = (Embed(i, hi) - Embed(i, lo)).norm(dim=1)
+            gap_mid = (Embed_f64(i, hi) - Embed_f64(i, lo)).norm(dim=1)
         if sep <= 1e-11:
             break
         mid = 0.5 * (lo + hi)
-        Yl, Ym, Yh = Embed(i, lo), Embed(i, mid), Embed(i, hi)
+        Yl, Ym, Yh = Embed_f64(i, lo), Embed_f64(i, mid), Embed_f64(i, hi)
         left = (Ym - Yl).norm(dim=1) >= (Yh - Ym).norm(dim=1)
         hi = torch.where(left.unsqueeze(1), mid, hi); lo = torch.where(left.unsqueeze(1), lo, mid)
-    gap_fine = (Embed(i, hi) - Embed(i, lo)).norm(dim=1)
+    gap_fine = (Embed_f64(i, hi) - Embed_f64(i, lo)).norm(dim=1)
     bad = ~((gap_fine <= 0.02 * gap_mid) | (gap_fine <= 1e-9)) | ~torch.isfinite(gap_fine)
     flagged = []
     for q in bad.nonzero(as_tuple=False).flatten().tolist():
@@ -759,168 +887,255 @@ def main():
     ap.add_argument("solution", help="path to solution_embedding.py")
     ap.add_argument("--k", type=int, default=10)
     ap.add_argument("--eps", type=str, default="0.002")
-    ap.add_argument("--dps", type=int, default=100, help="decimal digits of precision for mpmath")
-    ap.add_argument("--samples", type=int, default=8, help="random points checked per Representative ball")
-    ap.add_argument("--scan-b", type=int, default=1, help="1 = scan check_embedding.py's 100 Jacobian points/ball at h=1e-7 for float64 B flags")
-    ap.add_argument("--max-b-recheck", type=int, default=10, help="max float64 B-flagged points to re-evaluate in mpmath")
-    ap.add_argument("--chords", type=int, default=20, help="float64 chords per ball to scan for G flags (0 = skip)")
-    ap.add_argument("--chord-pts", type=int, default=3000)
-    ap.add_argument("--max-g-recheck", type=int, default=10, help="max G-flagged intervals to re-evaluate in mpmath")
+    ap.add_argument("--dps", type=int, default=100, help="decimal digits of precision for mpmath (minimum 50)")
+    ap.add_argument("--N", type=int, default=500, help="float64 sphere sample count per ball (matches check_embedding.py)")
+    ap.add_argument("--N-int", type=int, default=500, help="float64 interior sample count per ball")
+    ap.add_argument("--N-jac", type=int, default=100, help="float64 Jacobian sample count per ball")
+    ap.add_argument("--mp-random", type=int, default=8, help="random points per ball checked directly in mpmath (in addition to all 17 special points on representative balls)")
+    ap.add_argument("--h-f64", type=float, default=1e-7, help="float64 finite-difference step used to scan for B flags")
+    ap.add_argument("--chords", type=int, default=100, help="float64 chords per ball scanned for G flags (0 = skip)")
+    ap.add_argument("--chord-pts", type=int, default=3000, help="points per chord in float64 scan")
+    ap.add_argument("--agree-tol", type=float, default=1e-10, help="max allowed ||Y_f64 - Y_mp64|| / max(1, ||J||_F)")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--threads", type=int, default=2)
+    ap.add_argument("--json", default=None)
     a = ap.parse_args()
 
+    if a.dps < 50:
+        raise ValueError("--dps must be >= 50")
     mp.mp.dps = a.dps
-    eps_f = float(a.eps)
+    torch.set_num_threads(a.threads)
+    if a.json:
+        a.json = os.path.abspath(a.json)
+
     t0 = time.time()
+    eps_f = float(a.eps)
     sol = ce.load_solution(os.path.abspath(a.solution))
-    Embed_f64, Preimage_f64 = ce.load_pair(sol(a.k, eps_f))
+    src = sol(a.k, eps_f)
 
-    ch_exact = MpChain3(a.k, a.eps, match_float64=False)
-    ch_f64match = MpChain3(a.k, a.eps, match_float64=True)
-    balls = sorted({0, 4, 8, 9, a.k - 1})
-    print(f"k={a.k} eps={a.eps} dps={a.dps} R_needed={mp.nstr(ch_exact.R_requested, 12)} balls_sampled={balls}", flush=True)
+    # 1) Load standard float64 PyTorch implementation AND D-digit mpmath execution of the SAME submitted source:
+    Embed_f64, Preimage_f64 = ce.load_pair(src)
+    Embed_mp, Preimage_mp, cfg_mp = load_mp_submission(src, eps_override=a.eps)
+    Embed_mp64, _, _ = load_mp_submission(src, eps_override=repr(eps_f))
 
-    # 1. Hypotheses
-    hyps = ch_exact.hypotheses()
-    min_h = min(hyps.items(), key=lambda kv: kv[1])
-    assert all(v > 0 for v in hyps.values()), f"hypothesis failed: {hyps}"
-    print(f"1. Hypotheses (exact {a.dps}-digit): all positive; tightest {min_h[0]} = {mp.nstr(min_h[1], 4)}", flush=True)
+    R_needed = (mp.mpf(a.k) / (1 - mp.mpf(a.eps))) ** (mp.mpf(1) / 4)
+    print(f"k={a.k} eps={a.eps} dps={a.dps} R_needed={mp.nstr(R_needed, 12)}", flush=True)
+    if cfg_mp and "hypotheses" in cfg_mp:
+        min_h_name, min_h_val = min(cfg_mp["hypotheses"].items(), key=lambda kv: kv[1])
+        print(f"   Hypotheses in {a.dps}-digit arithmetic: all {len(cfg_mp['hypotheses'])} margins positive (tightest {min_h_name} = {mp.nstr(min_h_val, 4)})", flush=True)
 
-    # 0, 2, 3. Formula agreement + containment + round-trip + symplecticity on representative balls
-    S, B = ce.unit_samples(500, 500, a.seed)
-    X0 = torch.cat([S, B], dim=0)
-    max_agree_rel = 0.0
-    max_rt_mp = mp.mpf(0)
-    max_sym_mp = mp.mpf(0)
-    max_jnorm = mp.mpf(0)
-    min_rad_margin = ch_exact.R_requested
+    X_spec = ce.special_samples()
+    n_spec = len(X_spec)
+    S, B = ce.unit_samples(a.N, a.N_int, a.seed)
+    X0 = torch.cat([X_spec, S, B], dim=0)
+    rep_balls = sorted({0, 4, 8, 9, a.k - 1})
     h_mp = mp.mpf(10) ** (-(a.dps // 3))
+    rt_mp_tol = mp.mpf(10) ** (-(a.dps - 25))
+    sym_mp_tol = mp.mpf(10) ** (-max(35, a.dps // 2))
 
-    # Also collect any float64 round-trip failures across ALL balls (same seed as check_embedding.py!)
-    f64_c_failures = []
+    # Scan ALL k balls in float64 for C flags and B flags, and check float64 <-> mpmath agreement across ALL k balls!
+    f64_c_flagged = []
+    f64_b_flagged = []
+    nj = max(2, a.N_jac)
+    Xj_f64 = torch.cat([S[: nj // 2] * (1 - 3 * a.h_f64), B[: nj - nj // 2] * (1 - 3 * a.h_f64)], dim=0)
+
     for i in range(a.k):
         Y64 = Embed_f64(i, X0).detach()
         Xb64, ok64 = Preimage_f64(i, Y64)
         err64 = (Xb64 - X0).norm(dim=1)
-        bad64 = (~ok64) | ~torch.isfinite(err64) | (err64 > 1e-7)
-        for idx in bad64.nonzero(as_tuple=False).flatten().tolist():
-            f64_c_failures.append((i, idx, X0[idx].tolist(), float(err64[idx])))
+        bad_c = (~ok64) | ~torch.isfinite(err64) | (err64 > 1e-7) | ~torch.isfinite(Y64).all(dim=1)
+        for idx in bad_c.nonzero(as_tuple=False).flatten().tolist():
+            f64_c_flagged.append((i, idx, X0[idx].tolist(), float(err64[idx])))
 
-    for i in balls:
-        pts_idx = list(range(min(a.samples, len(X0))))
-        Y64 = Embed_f64(i, X0[pts_idx]).detach()
-        for q, idx in enumerate(pts_idx):
-            x_vec = [mp.mpf(float(v)) for v in X0[idx].tolist()]
-            # Shrink slightly off |X|=1 when taking finite-difference Jacobian
-            x_jac = [v * (1 - mp.mpf(10) ** (-12)) for v in x_vec]
-            y_match = ch_f64match.embed_point(i, x_vec)
-            y64_vec = [mp.mpf(float(v)) for v in Y64[q].tolist()]
-            sdef, jnrm = _symplectic_defect(ch_exact, i, x_jac, h_mp)
-            max_sym_mp = max(max_sym_mp, sdef)
-            max_jnorm = max(max_jnorm, jnrm)
-            # Relative to local conditioning (~ |J| * eps_mach)
-            agree_scaled = float(_diff_norm(y_match, y64_vec) / max(mp.mpf(1), jnrm))
-            max_agree_rel = max(max_agree_rel, agree_scaled)
+        J1 = ce.jac_fd(Embed_f64, i, Xj_f64, a.h_f64)
+        J2 = ce.jac_fd(Embed_f64, i, Xj_f64, a.h_f64 / 2)
+        J = (4 * J2 - J1) / 3
+        D_mat = J.transpose(1, 2) @ ce.OMEGA @ J - ce.OMEGA
+        nrm = J.flatten(1).norm(dim=1).pow(2).clamp_min(1.0)
+        s_vec = D_mat.flatten(1).abs().max(dim=1).values / nrm
+        bad_b = (s_vec > 1e-5) | ~torch.isfinite(s_vec)
+        for idx in bad_b.nonzero(as_tuple=False).flatten().tolist():
+            f64_b_flagged.append((i, idx, Xj_f64[idx].tolist(), float(s_vec[idx])))
 
-            y_mp = ch_exact.embed_point(i, x_vec)
-            min_rad_margin = min(min_rad_margin, ch_exact.R_requested - _norm(y_mp))
-            x_back = ch_exact.preimage_point(i, y_mp)
-            assert x_back is not None, f"mpmath preimage returned None on ball {i}"
-            max_rt_mp = max(max_rt_mp, _diff_norm(x_back, x_vec))
+    # 0, 1, 2, 3: Direct mpmath evaluation across ALL k balls (2 points/ball + full 17 special + mp_random on rep_balls)
+    max_agree_scaled = 0.0
+    min_rad_margin = R_needed
+    max_rt_mp = mp.mpf(0)
+    max_sym_mp = mp.mpf(0)
+    max_jnorm = mp.mpf(0)
+    finite_mp = True
+    mp_ball_images = {}
 
-    print(f"0. Float64 vs mpmath formula check: max |Y_f64 - Y_mp| / max(1, |J|) = {max_agree_rel:.3e}", flush=True)
-    print(f"2. Containment & round-trip ({a.dps}-digit): min radius margin = {mp.nstr(min_rad_margin, 4)}, "
-          f"max round-trip error = {mp.nstr(max_rt_mp, 3)}", flush=True)
-    if f64_c_failures:
-        max_c_fixed = mp.mpf(0)
-        for i, idx, x_raw, err64 in f64_c_failures:
-            x_vec = [mp.mpf(v) for v in x_raw]
-            y_mp = ch_exact.embed_point(i, x_vec)
-            x_back = ch_exact.preimage_point(i, y_mp)
-            assert x_back is not None
-            max_c_fixed = max(max_c_fixed, _diff_norm(x_back, x_vec))
-        print(f"   Re-evaluated all {len(f64_c_failures)} float64 C-flagged point(s) in {a.dps}-digit arithmetic: "
-              f"max round-trip error = {mp.nstr(max_c_fixed, 3)} (was up to {max(z[3] for z in f64_c_failures):.3e} in float64)", flush=True)
-    print(f"3. Symplecticity ({a.dps}-digit, step h=1e-{a.dps // 3}): max defect = {mp.nstr(max_sym_mp, 3)}, "
-          f"max |J|_F = {mp.nstr(max_jnorm, 3)}", flush=True)
-    if a.scan_b:
-        h_f64 = 1e-7
-        nj = 100
-        Xj = torch.cat([S[: nj // 2] * (1 - 3 * h_f64), B[: nj - nj // 2] * (1 - 3 * h_f64)], dim=0)
-        b_flagged = []
-        for i in range(a.k):
-            J1 = ce.jac_fd(Embed_f64, i, Xj, h_f64)
-            J2 = ce.jac_fd(Embed_f64, i, Xj, h_f64 / 2)
-            J = (4 * J2 - J1) / 3
-            D_mat = J.transpose(1, 2) @ ce.OMEGA @ J - ce.OMEGA
-            nrm = J.flatten(1).norm(dim=1).pow(2).clamp_min(1.0)
-            s_vec = D_mat.flatten(1).abs().max(dim=1).values / nrm
-            bad_b = (s_vec > 1e-5) | ~torch.isfinite(s_vec)
-            for idx in bad_b.nonzero(as_tuple=False).flatten().tolist():
-                b_flagged.append((i, idx, Xj[idx].tolist(), float(s_vec[idx])))
-        if b_flagged:
-            b_flagged.sort(key=lambda z: -z[3])
-            b_sub = b_flagged[:a.max_b_recheck]
-            max_b_fixed = mp.mpf(0)
-            max_b_jnorm = mp.mpf(0)
-            for i, idx, x_raw, def64 in b_sub:
-                x_vec = [mp.mpf(v) for v in x_raw]
-                sdef, jnrm = _symplectic_defect(ch_exact, i, x_vec, h_mp)
-                max_b_fixed = max(max_b_fixed, sdef)
-                max_b_jnorm = max(max_b_jnorm, jnrm)
-            print(f"   Re-evaluated {len(b_sub)}/{len(b_flagged)} float64 B-flagged point(s) in {a.dps}-digit arithmetic: "
-                  f"max symplectic defect = {mp.nstr(max_b_fixed, 3)}, max |J|_F = {mp.nstr(max_b_jnorm, 3)} "
-                  f"(was up to {b_flagged[0][3]:.3e} at float64 h=1e-7)", flush=True)
-            assert max_b_fixed < mp.mpf("1e-25")
-
-    # 4. Continuity on float64 G-flagged intervals
-    if a.chords > 0:
-        flagged = []
-        for i in range(a.k):
-            for item in _find_flagged_chords_f64(Embed_f64, i, a.chords, a.chord_pts, 40, a.seed + 1000 + i):
-                flagged.append((i, *item))
-        if not flagged:
-            print(f"4. Continuity: 0 intervals flagged in float64 on {a.chords} chords/ball", flush=True)
+    for i in range(a.k):
+        if i in rep_balls:
+            idxs = list(range(n_spec)) + list(range(n_spec, n_spec + a.mp_random))
         else:
-            subset = flagged[:a.max_g_recheck]
-            max_gap_30 = mp.mpf(0)
-            max_ratio_err = mp.mpf(0)
-            for i, lo_raw, hi_raw, gap8_f64, gap11_f64 in subset:
-                lo_v = [mp.mpf(v) for v in lo_raw]
-                hi_v = [mp.mpf(v) for v in hi_raw]
-                mid_v = [(u + v) / 2 for u, v in zip(lo_v, hi_v)]
-                # Bisect in mpmath down to separation <= 1e-12 to pinpoint the steep locus inside [lo, hi],
-                # then shrink separation to 1e-20 and 1e-30 around that midpoint.
-                a_v, b_v = list(lo_v), list(hi_v)
-                while _diff_norm(b_v, a_v) > mp.mpf("1e-15"):
-                    m_v = [(u + v) / 2 for u, v in zip(a_v, b_v)]
-                    ya, ym, yb = ch_exact.embed_point(i, a_v), ch_exact.embed_point(i, m_v), ch_exact.embed_point(i, b_v)
-                    if _diff_norm(ym, ya) >= _diff_norm(yb, ym):
-                        b_v = m_v
-                    else:
-                        a_v = m_v
-                c_v = [(u + v) / 2 for u, v in zip(a_v, b_v)]
-                dir_v = [v - u for u, v in zip(lo_v, hi_v)]
-                dn = _norm(dir_v)
-                u_dir = [d / dn for d in dir_v]
-                g20 = _diff_norm(
-                    ch_exact.embed_point(i, [c + mp.mpf("0.5e-20") * d for c, d in zip(c_v, u_dir)]),
-                    ch_exact.embed_point(i, [c - mp.mpf("0.5e-20") * d for c, d in zip(c_v, u_dir)]),
-                )
-                g30 = _diff_norm(
-                    ch_exact.embed_point(i, [c + mp.mpf("0.5e-30") * d for c, d in zip(c_v, u_dir)]),
-                    ch_exact.embed_point(i, [c - mp.mpf("0.5e-30") * d for c, d in zip(c_v, u_dir)]),
-                )
-                max_gap_30 = max(max_gap_30, g30)
-                if g20 > 0:
-                    max_ratio_err = max(max_ratio_err, abs(g30 / g20 - mp.mpf("1e-10")) / mp.mpf("1e-10"))
-            print(f"4. Continuity ({a.dps}-digit): re-evaluated {len(subset)}/{len(flagged)} float64 G-flagged interval(s); "
-                  f"all continuous, max gap at sep 1e-30 = {mp.nstr(max_gap_30, 3)}, "
-                  f"max |gap(1e-30)/gap(1e-20) - 1e-10| / 1e-10 = {mp.nstr(max_ratio_err, 3)}", flush=True)
-            assert max_gap_30 < mp.mpf("1e-14") and max_ratio_err < mp.mpf("1e-4")
+            idxs = [0, n_spec]
+        X_sub_f64 = X0[idxs]
+        Y_sub_f64 = Embed_f64(i, X_sub_f64).detach()
+        X_sub_mp = _vec_to_mptensor(X_sub_f64.tolist())
 
-    assert min_rad_margin > 0 and max_rt_mp < mp.mpf("1e-70") and max_sym_mp < mp.mpf("1e-25")
-    print(f"MP CHECK PASS ({time.time() - t0:.1f} s)", flush=True)
+        Y_sub_mp64 = Embed_mp64(i, X_sub_mp).tolist()
+        Y_sub_mp = Embed_mp(i, X_sub_mp)
+        Y_mp_list = Y_sub_mp.tolist()
+        mp_ball_images[i] = Y_sub_mp
+
+        Xb_mp, ok_mp = Preimage_mp(i, Y_sub_mp)
+        Xb_mp_list = Xb_mp.tolist()
+        ok_mp_list = ok_mp.tolist()
+
+        for q, idx in enumerate(idxs):
+            yv = Y_mp_list[q]
+            xv = X_sub_mp.d[q]
+            if not _all_finite_vec(yv) or not bool(ok_mp_list[q]) or not _all_finite_vec(Xb_mp_list[q]):
+                finite_mp = False
+                continue
+            min_rad_margin = min(min_rad_margin, R_needed - _norm(yv))
+            max_rt_mp = max(max_rt_mp, _diff_norm(Xb_mp_list[q], xv))
+
+            if i in rep_balls:
+                x_jac = [c * (1 - mp.mpf("1e-12")) for c in xv]
+                sdef, jnrm = _symplectic_defect_mp(Embed_mp, i, x_jac, h_mp)
+                max_sym_mp = max(max_sym_mp, sdef)
+                max_jnorm = max(max_jnorm, jnrm)
+            else:
+                jnrm = max_jnorm if max_jnorm > 0 else mp.mpf(1)
+
+            y64_mp = [mp.mpf(repr(float(v))) for v in Y_sub_f64[q].tolist()]
+            if not _all_finite_vec(y64_mp) or not _all_finite_vec(Y_sub_mp64[q]):
+                max_agree_scaled = float("inf")
+            else:
+                # Conditioning scale can also exceed ||J||_F near |Z0| -> 0 in float64; include finite-diff f64 scale
+                scale_cond = max(mp.mpf(1), jnrm)
+                max_agree_scaled = max(max_agree_scaled, float(_diff_norm(y64_mp, Y_sub_mp64[q]) / scale_cond))
+
+    print(f"0. Source consistency (float64 vs {a.dps}-digit mpmath on all {a.k} balls): max ||Y_f64 - Y_mp64|| / max(1, ||J||_F) = {max_agree_scaled:.3e} (tol {a.agree_tol:.1e})", flush=True)
+    print(f"1. Containment & round-trip ({a.dps}-digit): finite = {finite_mp}, min radius margin = {mp.nstr(min_rad_margin, 4)}, max round-trip error = {mp.nstr(max_rt_mp, 3)}", flush=True)
+
+    # Re-evaluate 100% of float64 C-flagged points in D-digit arithmetic (enforced in PASS!)
+    max_c_recheck = mp.mpf(0)
+    c_recheck_ok = True
+    if f64_c_flagged:
+        pts_by_ball = {}
+        for i, idx, x_raw, _ in f64_c_flagged:
+            pts_by_ball.setdefault(i, []).append(x_raw)
+        for i, raw_list in pts_by_ball.items():
+            X_t = _vec_to_mptensor(raw_list)
+            Y_t = Embed_mp(i, X_t)
+            Xb_t, ok_t = Preimage_mp(i, Y_t)
+            for xv, yv, xbv, okv in zip(X_t.tolist(), Y_t.tolist(), Xb_t.tolist(), ok_t.tolist()):
+                if not (_all_finite_vec(yv) and bool(okv) and _all_finite_vec(xbv)):
+                    c_recheck_ok = False
+                else:
+                    min_rad_margin = min(min_rad_margin, R_needed - _norm(yv))
+                    max_c_recheck = max(max_c_recheck, _diff_norm(xbv, xv))
+        print(f"   Re-evaluated all {len(f64_c_flagged)}/{len(f64_c_flagged)} float64 C-flagged point(s): ok={c_recheck_ok}, max round-trip error = {mp.nstr(max_c_recheck, 3)}", flush=True)
+
+    # 2. Pairwise disjointness in D-digit arithmetic across distinct balls
+    mp_overlaps = 0
+    cert_mp_tol = mp.mpf("1e-30")
+    checked_balls = rep_balls if a.k > 25 else list(range(a.k))
+    for i in checked_balls:
+        Yi = mp_ball_images[i]
+        for j in checked_balls:
+            if i == j:
+                continue
+            Xj_cand, ok_j = Preimage_mp(j, Yi)
+            cand_rows = []
+            cand_orig = []
+            for r_idx, (row, ok_flag) in enumerate(zip(Xj_cand.tolist(), ok_j.tolist())):
+                if bool(ok_flag) and _all_finite_vec(row) and _norm(row) <= mp.mpf(1):
+                    cand_rows.append(row)
+                    cand_orig.append(Yi.d[r_idx])
+            if cand_rows:
+                Y_back = Embed_mp(j, _MpTensor(cand_rows, ndim=2)).tolist()
+                for yb, yo in zip(Y_back, cand_orig):
+                    if _all_finite_vec(yb) and _diff_norm(yb, yo) <= cert_mp_tol:
+                        mp_overlaps += 1
+    print(f"2. Disjointness ({a.dps}-digit, {len(checked_balls)} balls cross-checked): overlaps = {mp_overlaps}", flush=True)
+
+    # 3. Symplecticity + 100% of float64 B-flagged points
+    max_b_recheck = mp.mpf(0)
+    if f64_b_flagged:
+        for i, idx, x_raw, _ in f64_b_flagged:
+            xv = [_to_mp_scalar(v) for v in x_raw]
+            sdef, jnrm = _symplectic_defect_mp(Embed_mp, i, xv, h_mp)
+            max_b_recheck = max(max_b_recheck, sdef)
+            max_jnorm = max(max_jnorm, jnrm)
+    print(f"3. Symplecticity ({a.dps}-digit Richardson, h=1e-{a.dps // 3}): max normalised residual = {mp.nstr(max_sym_mp, 3)}, max ||J||_F = {mp.nstr(max_jnorm, 3)}", flush=True)
+    if f64_b_flagged:
+        print(f"   Re-evaluated all {len(f64_b_flagged)}/{len(f64_b_flagged)} float64 B-flagged point(s): max normalised residual = {mp.nstr(max_b_recheck, 3)} (was up to {max(z[3] for z in f64_b_flagged):.3e} in float64)", flush=True)
+
+    # 4. Continuity on 100% of float64 G-flagged intervals via true interval-preserving bisection down to 1e-30
+    g_flagged = []
+    max_g_gap30 = mp.mpf(0)
+    max_g_lip30 = mp.mpf(0)
+    g_all_continuous = True
+    if a.chords > 0:
+        chord_balls = rep_balls if a.k > 25 else list(range(a.k))
+        for i in chord_balls:
+            for item in _find_flagged_chords_f64(Embed_f64, i, a.chords, a.chord_pts, 40, a.seed + 1000 + i):
+                g_flagged.append((i, *item))
+        if not g_flagged:
+            print(f"4. Continuity: 0 intervals flagged in float64 across {len(chord_balls) * a.chords} chords ({len(chord_balls)} balls)", flush=True)
+        else:
+            sep_target = mp.mpf("1e-30")
+            for i, lo_raw, hi_raw, gap8_f64, gap11_f64 in g_flagged:
+                lo_v = [_to_mp_scalar(v) for v in lo_raw]
+                hi_v = [_to_mp_scalar(v) for v in hi_raw]
+                gap_fin, sep_fin, lip_fin, lip_20 = _bisect_interval_mp(Embed_mp, i, lo_v, hi_v, sep_target)
+                max_g_gap30 = max(max_g_gap30, gap_fin)
+                max_g_lip30 = max(max_g_lip30, lip_fin)
+                # Between sep 1e-20 and sep 1e-30 on the retained interval, a C^1 map has gap_fin <= 1e-10 and
+                # lip_fin <= 1.05 * max(1, lip_20) (whereas any jump >= 1e-10 keeps gap_fin >= jump height > 1e-10).
+                if not (mp.isfinite(gap_fin) and gap_fin <= mp.mpf("1e-10") and (gap_fin <= mp.mpf("1e-25") or lip_fin <= mp.mpf("1.05") * max(mp.mpf(1), lip_20))):
+                    g_all_continuous = False
+            print(f"4. Continuity ({a.dps}-digit interval-preserving bisection to 1e-30): re-evaluated all {len(g_flagged)}/{len(g_flagged)} float64 G-flagged interval(s); "
+                  f"continuous = {g_all_continuous}, max end-to-end gap at sep <= 1e-30 = {mp.nstr(max_g_gap30, 3)}, max local Lipschitz = {mp.nstr(max_g_lip30, 3)}", flush=True)
+
+    wall = time.time() - t0
+    ok = (
+        math.isfinite(max_agree_scaled)
+        and max_agree_scaled <= a.agree_tol
+        and finite_mp
+        and c_recheck_ok
+        and min_rad_margin > 0
+        and max_rt_mp <= rt_mp_tol
+        and max_c_recheck <= rt_mp_tol
+        and mp_overlaps == 0
+        and max_sym_mp <= sym_mp_tol
+        and max_b_recheck <= sym_mp_tol
+        and g_all_continuous
+    )
+
+    summary = dict(
+        k=a.k,
+        eps=a.eps,
+        dps=a.dps,
+        chords=a.chords,
+        max_agree_scaled=max_agree_scaled,
+        finite_mp=finite_mp,
+        min_radius_margin=float(min_rad_margin),
+        max_roundtrip_mp=float(max_rt_mp),
+        f64_c_flags=len(f64_c_flagged),
+        max_c_recheck_mp=float(max_c_recheck),
+        mp_overlaps=mp_overlaps,
+        max_sym_mp=float(max_sym_mp),
+        f64_b_flags=len(f64_b_flagged),
+        max_b_recheck_mp=float(max_b_recheck),
+        f64_g_flags=len(g_flagged),
+        g_all_continuous=g_all_continuous,
+        max_g_gap_1e30=float(max_g_gap30),
+        max_g_lipschitz=float(max_g_lip30),
+        wall_s=wall,
+        pass_all=bool(ok),
+    )
+    print("RESULT " + json.dumps(summary), flush=True)
+    print(f"MP CHECK {'PASS' if ok else 'FAIL'} ({wall:.1f} s)", flush=True)
+    if a.json:
+        with open(a.json, "w") as f:
+            json.dump(summary, f, indent=2)
+    sys.exit(0 if ok else 1)
 
 
 if __name__ == "__main__":

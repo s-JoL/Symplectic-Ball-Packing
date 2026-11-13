@@ -32,4 +32,5 @@ build() {  # build <paper dir> <documents...>
 build p1 supplement main
 build p2 supplement main
 build p3 main
+build p4 main
 exit $status
