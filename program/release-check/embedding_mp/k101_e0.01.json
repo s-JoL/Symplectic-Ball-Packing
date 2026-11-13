@@ -17,6 +17,6 @@
   "g_all_continuous": true,
   "max_g_gap_1e30": 5.923432567868726e-16,
   "max_g_lipschitz": 752611972737800.4,
-  "wall_s": 244.93206596374512,
+  "wall_s": 203.90326714515686,
   "pass_all": true
 }

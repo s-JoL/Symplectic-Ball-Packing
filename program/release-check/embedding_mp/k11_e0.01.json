@@ -10,13 +10,13 @@
   "f64_c_flags": 0,
   "max_c_recheck_mp": 0.0,
   "mp_overlaps": 0,
-  "max_sym_mp": 4.505505602604153e-69,
+  "max_sym_mp": 1.966279473645068e-62,
   "f64_b_flags": 0,
   "max_b_recheck_mp": 0.0,
   "f64_g_flags": 4,
   "g_all_continuous": true,
   "max_g_gap_1e30": 5.797721850791568e-20,
   "max_g_lipschitz": 112794171272.21516,
-  "wall_s": 170.32929277420044,
+  "wall_s": 121.40515089035034,
   "pass_all": true
 }

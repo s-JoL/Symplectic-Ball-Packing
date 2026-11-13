@@ -5,10 +5,12 @@
 The Lean~4 development \cite{LeanRepo,Lean4} uses toolchain \texttt{v4.34.1}, Mathlib \cite{Mathlib2020} at the same
 tag, and the unmodified library accompanying \cite{OpenAI2026}, which contributes only lemmas and generic
 differential-geometric operators (exterior derivative, chart differential); the Hamiltonian and algorithms are defined
-in the development, and none of that library's packing constructions or existence results is used. In
-\texttt{verification/}, \texttt{Problem.lean} defines the problem from Mathlib alone, \texttt{Algorithm.lean} exposes
-the construction and \texttt{Statement.lean} states its correctness; the files for the algorithms are described
-in~\cite{SongHD}. Theorems there have no namespace; other names are relative to \texttt{SymplecticPacking}.
+in the development, and none of that library's packing constructions or existence results is used. In \texttt{verification/}, \texttt{Problem.lean} defines the problem from Mathlib alone, \texttt{Algorithm.lean} exposes
+the construction, \texttt{Statement.lean} states its correctness, and \texttt{RK4Convergence.lean} formalises
+Corollary~\ref{cor:rk4-containment} and quantitative trajectory certificates; the files for the algorithms are described
+in~\cite{SongHD}. The public Lean statements for Corollary~\ref{cor:rk4-containment} assert the existence of
+$\delta_0,N_0$; the displayed quantitative choices occur as witnesses inside their proofs.
+Theorems there have no namespace; other names are relative to \texttt{SymplecticPacking}.
 
 \begin{table}[!htbp]
 \centering
@@ -21,6 +23,7 @@ Statement & Lean \\
 Theorem~\ref{thm:intro-4d} & \texttt{four\_dim\_theorem}, \texttt{four\_dim\_data}, with \texttt{General.epochRadiusQ}, \texttt{General.epochHamiltonianQ}; \texttt{main\_time\_support}, \texttt{main\_support\_radius}, \texttt{flow\_images\_disjoint} \\
 Proposition~\ref{thm:intro-stability} & \texttt{four\_dim\_stability} \\
 Corollary~\ref{thm:main-epoch} & \texttt{epoch\_packing} ($k\ge9$); closed-ball form \texttt{epoch\_theorem\_ten} ($k\ge10$), \texttt{epoch\_theorem} ($k\ge9$) \\
+Corollary~\ref{cor:rk4-containment} & \texttt{epoch\_rk4\_convergence}, \texttt{epoch\_exact\_rk4\_convergence} (\texttt{RK4Convergence.lean}) \\
 Definitions~\ref{def:intro-spec}, \ref{def:intro-admissible} & \texttt{Problem.PackingSpec}, \texttt{Problem.Admissible} \\
 level L1 & \texttt{\#check\_explicit General.packingHamiltonian} (a metaprogram) \\
 embeddings & \texttt{Branch2.embeddingsEq\_spec} (linear datum) \\

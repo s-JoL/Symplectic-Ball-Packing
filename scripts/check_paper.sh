@@ -1,5 +1,5 @@
 #!/bin/bash
-# Compile the three papers with tectonic. Paper I and Paper II have a main text and a supplement
+# Compile all four papers with tectonic. Paper I and Paper II have a main text and a supplement
 # that cross-reference each other via xr-hyper, so each is compiled twice in alternation.
 # Fails on LaTeX errors, undefined or multiply defined references and citations, unstable
 # references and overfull boxes.
@@ -29,6 +29,7 @@ build() {  # build <paper dir> <documents...>
     [ "$overfull" = "0" ] || { grep '^Overfull' "$log" | head -20; status=1; }
   done
 }
+build overview main
 build p1 supplement main
 build p2 supplement main
 build p3 main

@@ -1,0 +1,41 @@
+\subsection{Parameter hypotheses and their uses}\label{sec:hypotheses}
+
+The labels used in the parameter verification below have the following mathematical meaning. For either keyhole,
+its positive parameters satisfy $0<W_1<W_2\le1/6$, $0<\rho_1<1$ and the exact relations
+\eqref{eq:K123}; its budgets $\delta_{\mathrm{rel}},\delta_{\mathrm{small}}$ are those of
+Theorem~\ref{thm:kh-bounds}. Subscript $B$ denotes the corner keyhole.
+
+\begin{description}[leftmargin=4em,labelwidth=3.5em]
+\item[(H0)] $k\in\Z$, $k\ge10$, $0<\eps_c\le1/100$ (the parameter regime).
+\item[(H1)] $0<\lambda_2<\lambda_a<1$ and $0<\mu<1$ (the comparator schedules).
+\item[(H2)] $0<\rho_b<a$, equivalently $r_+>1$, where $\rho_b=R_s^{-2}$ and $a=r_+^2\rho_b$
+(the enlarged source domain).
+\item[(H3)--(H5)] $K_C$ has input radius $r_a=\sqrt{a/\pi}$ and satisfies the positive-parameter conditions and
+\eqref{eq:K123} (Theorem~\ref{thm:kh-bounds} for the comparator).
+\item[(H6)--(H7)] The two schedule inequalities displayed in Theorem~\ref{thm:comparator} hold for every
+$u\in[0,1]$ (stack containment).
+\item[(H8)] $\pi d^2\le T(1-\mu-\lambda_2/2)$ and
+$\pi d^2+\lambda_2T/2+\mu T\le O(-w_G)$ (the remaining comparator branches).
+\item[(H9)] $c_s\pi r_h^2+\frac32\lambda_2g\le g$. This is an additional implementation guard, also verified
+below; the proof of Theorem~\ref{thm:comparator} uses (H6)--(H8) directly.
+\item[(H9b)] $3-9a>\delta$, where $\delta=w_2/4$ (separation of the group windows from the marked-fibre spirals).
+\item[(H10)] The constants and integer shifts are those of Construction~\ref{cons:twists}; its four $v$-windows
+are pairwise disjoint, and its two $u$-lobes are disjoint and miss $1/3$ and $1$ as specified in
+Proposition~\ref{prop:twists}(ii) (marked-fibre routing).
+\item[(H11)] $a\le h_K<1/3$, $D=1-3h_K$, and
+$h_K>\max_{G\in[-w_G,G_{\max}]}(O(G)-\mu\operatorname{slack}(G))$
+(the common post-chart domain in \eqref{eq:p2-hK}).
+\item[(H12)] $K_B$ has input radius $r_B=\sqrt{h_K/\pi}$ and satisfies the positive-parameter conditions and
+\eqref{eq:K123} (the corner keyhole).
+\item[(H13)] $\max(\pi d_B^2,\delta_{\mathrm{rel},B},\delta_{\mathrm{small},B})\le\delta_{\mathrm{kh}}$
+(post-chart fibre containment).
+\item[(H14)] $0<d_2<m$ and $\eta_1=\frac23-(2\delta_{\mathrm{kh}}+S_{\max})/D>0$, where
+$S_{\max}=\max_{|c|\le m}\sqrt{c^2+q(c)^2}$ (positive simplex coordinates).
+\item[(H15)] $m\le3\eta_1D$ (separation in the simplex transfer).
+\item[Split] $2m<D-3\delta_{\mathrm{kh}}$ (disjoint post-chart bands before and after the corner keyhole).
+\end{description}
+
+Thus ``(H0)--(H15)'' groups the parameter conditions; the split inequality is included whenever all transfer
+hypotheses are invoked. The program checks these conditions by margin guards, with tolerances for rounded versions
+of exact identities such as (K1). The guards' count and floating-point tolerances are implementation details,
+not additional mathematical hypotheses.

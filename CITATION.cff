@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 title: "Explicit Hamiltonian ball packings in every dimension"
-version: "1.1.0"
+version: "1.2.0"
 date-released: "2026-11-13"
 license: Apache-2.0
 repository-code: "https://github.com/s-JoL/Symplectic-Ball-Packing"
@@ -10,18 +10,19 @@ authors:
     given-names: Liang
     email: sl12160010@gmail.com
 abstract: >-
-  For every k ≥ 10 and ε in (0,1), we define one explicit smooth compactly supported Hamiltonian on
-  R × R^4 whose time-one map carries the k closed unit balls centred at (3i−3,0,0,0) into the
-  ball of radius (k/(1−ε/4))^{1/4}, with an explicit stability margin. The same construction
-  realises every ball packing allowed by the volume and two-ball inequalities in dimension
-  2n ≥ 6, and every packing with Σc_i² < C² and 3c_i < C in dimension four, proving Biran's
-  full-packing theorem for k ≥ 9 equal balls without J-holomorphic curves or Seiberg–Witten theory.
-  Includes four papers (equal balls in the four-ball, general capacities and higher dimensions
-  with a uniform finite-output algorithm, elementary packings and their obstructions, and
-  closed-form C^4 equal-ball embeddings), supplements, a Lean 4 formalisation of the main packing,
-  stability and algorithm theorems of Papers I–II, and two PyTorch programs (an elementary-flow
-  generator for Epoch's ODE interface and a modular closed-form C^4 embedding evaluator for all
-  k ≥ 10 and ε in (0,1) with arbitrary-precision verification).
+  Uniformly for every integer k ≥ 10 (including all non-square values) and every ε in (0,1), we
+  define one explicit smooth compactly supported Hamiltonian on R × R^4 whose time-one map carries
+  the k closed unit balls centred at (3i−3,0,0,0) into the ball of radius (k/(1−ε/4))^{1/4}, with
+  an explicit stability margin and formally verified perturbed fixed-step RK4 target containment,
+  without J-holomorphic curves or Seiberg–Witten theory. The same construction realises every ball
+  packing allowed by the volume and two-ball inequalities in dimension 2n ≥ 6, and every packing
+  with Σc_i² < C² and 3c_i < C in dimension four, proving Biran's full-packing theorem for k ≥ 9
+  equal balls. Includes four papers (equal balls in the four-ball, general capacities and higher
+  dimensions with a uniform finite-output algorithm, elementary packings and their obstructions,
+  and closed-form C^4 equal-ball embeddings with exact-real inverse certificates and stagewise
+  Liouville generators), supplements, a Lean 4 formalisation, and two accompanying Python programs
+  (an elementary-flow generator in Epoch's RK4 format and a modular closed-form C^4 embedding
+  evaluator with 100-digit mpmath verification).
 keywords:
   - symplectic ball packing
   - Hamiltonian dynamics

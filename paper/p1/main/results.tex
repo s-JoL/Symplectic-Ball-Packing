@@ -89,6 +89,46 @@ $\rho\sqrt k=\sqrt{1-\eps/2}>\frac34$ of the linear comparison datum. The compan
 corollary for all $k\ge9$ and $\eps\in(0,1)$, with the scalar comparison datum outside this range, and uses it as the
 input of its finite-output algorithm.
 
+For $H\colon\R\times\R^4\to\R$, $t\in\R$ and $h>0$, write $\mathrm{RK4}(H,t,h,y)=y+\frac h6(k_1+2k_2+2k_3+k_4)$ for
+one classical fourth-order Runge--Kutta step of $X_H$, where $k_1=X_H(t,y)$, $k_2=X_H(t+\frac h2,y+\frac h2k_1)$,
+$k_3=X_H(t+\frac h2,y+\frac h2k_2)$, and $k_4=X_H(t+h,y+hk_3)$. The radial margin $R'-R>0$ between
+Corollary~\ref{thm:main-epoch} and Theorem~\ref{thm:intro-4d} yields uniform eventual containment for perturbed
+fixed-step RK4 applied directly to $H_{k,\eps}$.
+
+\begin{maincorollary}[Uniform perturbed fixed-step RK4 containment]\label{cor:rk4-containment}
+Let $k\ge10$ be an integer and $\eps\in(0,1)$, and put $H=H_{k,\eps}$, $R_Q=(k/(1-\eps/4))^{1/4}$,
+$R=(k/(1-\eps/2))^{1/4}$, and $g=R-R_Q>0$. There exist an integer $N_0\ge1$ and a real $\delta_0>0$ such that for every
+integer $N\ge N_0$, every $1\le i\le k$, every source point $x\in B(s_i,\pi)$, and every sequence
+$y_0,y_1,\dots,y_N\in\R^4$ satisfying
+\[
+ |y_0-x|\le\delta_0 \qquad\text{and}\qquad
+ \bigl|y_{m+1}-\mathrm{RK4}\bigl(H,\tfrac mN,\tfrac1N,y_m\bigr)\bigr|\le\frac{\delta_0}{N}
+ \quad(0\le m<N),
+\]
+the terminal iterate satisfies $|y_N|\le R$, with $k/R^4=1-\eps/2>1-\eps$. Explicitly, for any $K,C\ge0$ such that
+$|X_H(t,x)-X_H(s,x)|\le K|t-s|$, $|X_H(t,x)-X_H(t,y)|\le K|x-y|$, and $|X_H(t,y)|\le C$ for all $s,t\in[0,1]$ and
+$x,y\in\R^4$, one may take $M=K+KC$ and
+\[
+ \delta_0 = \frac{g}{4e^K},\qquad N_0 = \left\lceil\frac{4Me^K}{g}\right\rceil + 1.
+\]
+\leanmark{epoch\_rk4\_convergence, epoch\_exact\_rk4\_convergence}
+\end{maincorollary}
+
+\begin{proof}
+Since $H\in C^\infty(\R\times\R^4)$ has compact spatial support uniformly in $t$, finite global bounds $K,C\ge0$ exist
+on $[0,1]\times\R^4$. Each sub-stage $k_j$ ($j=2,3,4$) evaluates $X_H$ within temporal distance $\frac1N$ and spatial
+distance $\frac CN$ of $(\frac mN,y_m)$, so $|\frac16(k_1+2k_2+2k_3+k_4)-X_H(\frac mN,y_m)|\le\frac{5M}{6N}\le\frac MN$.
+Combined with the per-step state perturbation $\le\delta_0/N$, the effective step velocity $v_m=N(y_{m+1}-y_m)$ is
+within $\delta_0+M/N$ of $X_H(\frac mN,y_m)$, and the discrete Gr\"onwall grid estimate along the exact integral curve
+$\gamma$ from $x$ ($|\gamma(1)|\le R_Q$ by Theorem~\ref{thm:intro-4d}) gives
+$|y_N-\gamma(1)|\le(|y_0-x|+\delta_0+2M/N)e^K\le 2\delta_0e^K+\frac{2Me^K}{N}\le\frac g2+\frac g2=g$, whence
+$|y_N|\le R_Q+g=R$.
+\end{proof}
+
+Here $K$ and $C$ are obtained from compactness and are not numerically instantiated, so the proof does not provide
+executable step or precision budgets. It establishes target containment; certification of an implemented
+\texttt{float64} Hamiltonian and of the grader's nearby-pair numerical symplecticity check requires additional bounds.
+
 \subsection{Explicitness}\label{sec:intro-explicitness}
 
 \begin{definition}[Definite description]\label{def:intro-the}

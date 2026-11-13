@@ -5,9 +5,10 @@ decide, from a few short files, *what* has been proved; Lean checks *that* it ha
 by elaborating the full dependency closure.
 
 Theorem letters below (A–G) are those of version 1.0.1, which the Lean docstrings keep;
-[REVIEW.md](../REVIEW.md#lean-names-and-the-papers) maps them to Papers I and II of version 1.1
-(Paper I: Theorem A and Proposition B; Paper II: the general theorem, the corollaries and the algorithm).
-The Lean development is unchanged since 1.0.1.
+[REVIEW.md](../REVIEW.md#lean-names-and-the-papers) maps them to Papers I and II of version 1.2.0
+(Paper I: Theorem A, Proposition B, Corollary C, and Corollary D; Paper II: the general theorem, the corollaries and the algorithm).
+All Lean library and statement files of 1.0.1 are unchanged; version 1.2.0 adds `RK4Convergence.lean`
+(perturbed fixed-step RK4 containment and Picard–Lindelöf trajectory certificates).
 
 ## What is proved
 
@@ -72,6 +73,9 @@ use transparency settings.
    each stated for the exact terms of `Algorithm.lean`.
 4. `Computability.lean`, `EpochComputability.lean` — the algorithm. `Computability.lean` also
    shows, by `rfl`, how an output code decodes to `β_B · P`.
+5. `RK4Convergence.lean` — classical 4-stage RK4 (`rk4Step`, `rk4Iter`), perturbed fixed-step RK4
+   convergence (`epoch_rk4_convergence`, `epoch_exact_rk4_convergence`) for `epochHamiltonianQ`,
+   and Picard–Lindelöf trajectory certificates (`picard_lindelof_curve_unique`, `picard_lindelof_epoch_certificate`).
 
 `PackingSpec n k C c s H` requires: `H` is jointly `C^∞`; one compact set contains the
 support of `H(t,·)` for all `t`; every source point has a global integral curve; and *every*
@@ -80,7 +84,7 @@ quantifies over all solutions, so the statement does not depend on a chosen solu
 
 The computability theorems use, besides `Problem.lean`, the notion of a *name*: a stream
 `q : ℕ → ℚ` names `x` if `|q n − x| ≤ 2⁻ⁿ` for all `n` (`Effective.Names`). Rational inputs
-are constant names. The capacity stream lists the target at index `0` and `cᵢ` at index `i`
+are constant names. The capacity stream lists the target at index `0` and `cᵢ` at index `i + 1` (for `0 ≤ i < k`)
 (entries beyond `k` repeat the target).
 
 ## Cases of the construction
@@ -194,7 +198,7 @@ bash scripts/verify.sh      # builds this project from source, then every check
 
 `verify.sh` runs the source and paper-tag checks, builds the library and the verification
 entry, including all axiom, explicitness, uniformity and independence gates, runs the checker
-regression tests in `test/`, and compiles the three papers. Every stage is fatal. The
+regression tests in `test/`, and compiles all four papers. Every stage is fatal. The
 regression suites are Lake targets, so they run alongside independent build jobs and
 reuse their checked artifacts until a source or dependency changes. The verification script
 also re-elaborates the three main statement/algorithm entries, the paper-tag and independence
@@ -210,8 +214,8 @@ configuration, and all cache-part checksums before restoring project artifacts. 
 uses the toolchain's native `leantar` format. It excludes Mathlib, generated C setup files,
 executables, local logs, and repository history; see [`cache/README.md`](../cache/README.md).
 
-The Lean sources, the bundled cache and its source digest are those of 1.0.1; version 1.1 changed
-only the papers and documentation.
+All 1.0.1 Lean library and statement sources are unchanged; version 1.2.0 adds
+`verification/RK4Convergence.lean` and updates the bundled cache and its source digest accordingly.
 A later source change, including a Lean comment change, invalidates the raw source digest;
 use a source build or regenerate the cache instead of reusing an earlier receipt.
 
@@ -235,7 +239,7 @@ sources by elaboration. Mathlib's official dependency cache is used in both rout
 independent project-source workflow is `.github/workflows/full-build.yml`.
 
 **Continuous integration.** `.github/workflows/verify.yml` runs source checks, all Lean and
-audit targets, all checker regressions, and the three papers. It restores the bundled project
+audit targets, all checker regressions, and all four papers. It restores the bundled project
 cache when its source digest matches; otherwise it builds from source, and uploads PDFs and
 verification logs as workflow artifacts. Fresh kernel replay and uncached full builds run in the
 dedicated `.github/workflows/kernel-replay.yml` and `.github/workflows/full-build.yml` workflows

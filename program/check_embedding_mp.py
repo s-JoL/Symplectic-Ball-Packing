@@ -6,20 +6,26 @@ modules to exact D-digit mpmath numbers), cross-checks it against standard float
 and exits with status 1 if any check fails.
 
 Checks performed (all enforced in the final PASS gate):
-  0. Float64 / mpmath consistency: verifies on deterministic special points and random samples across all k
-     balls that float64 PyTorch execution of the submitted source agrees with D-digit mpmath execution at the
-     float64 parameter value within local Jacobian conditioning (||Y_f64 - Y_mp64|| <= agree_tol * max(1, ||J||_F)).
-  1. Containment (A) & round-trip (C): checks all 17*k deterministic special points (centres, +-e_a axis
-     points, zero-fibre and zero-base diagonals), random samples on all balls, and 100% of points flagged by C
-     in float64.
-  2. Pairwise disjointness (D): verifies in D-digit arithmetic that images of distinct balls do not overlap.
+  0. Float64 / mpmath consistency: verifies across all k balls (all 17 special points + mp_random samples on
+     representative balls {0, 4, 8, 9, k-1}, and centre + 1 random point on every other ball) that float64 PyTorch
+     execution of the submitted source agrees with D-digit mpmath execution at the float64 parameter value within
+     Jacobian conditioning (||Y_f64 - Y_mp64|| <= agree_tol * max(1, ||J||_F)). For non-representative
+     balls at k > 25, this uses the running maximum representative-ball Jacobian norm, not a pointwise local norm.
+     The CLI first constructs a float64 submission and therefore requires float64-admissible parameters even
+     when --eps is supplied as an arbitrary-precision decimal string.
+  1. Containment (A) & round-trip (C): checks the mpmath points above on all k balls (all 17*k special points when
+     k <= 25 or --full-balls is set; 17 special + mp_random on {0, 4, 8, 9, k-1} plus centre + 1 random on every
+     other ball when k > 25) AND 100% of points flagged by C across all k balls in the float64 scan.
+  2. Pairwise disjointness (D): verifies in D-digit arithmetic that images of distinct checked balls do not overlap
+     (all k balls for k <= 25 or --full-balls; representative balls {0, 4, 8, 9, k-1} for k > 25).
   3. Symplecticity (B): checks the normalised symplectic residual ||J^T Omega J - Omega||_max / max(1, ||J||_F^2)
-     by central differences at step h = 10^{-(D // 3)} on deterministic/random samples and 100% of points
-     flagged by B in float64.
-  4. Continuity (G) via interval-preserving bisection: scans random chords in float64 (matching check_embedding.py)
-     and re-evaluates 100% of flagged intervals in D-digit arithmetic by keeping the larger-gap half-interval at
-     every bisection step all the way down to separation 10^-30 (never switching to a midpoint perturbation that
-     could step to one side of a jump).
+     by central differences at step h = 10^{-(D // 3)} on representative samples AND 100% of points across all k
+     balls flagged by B in the float64 scan.
+  4. Continuity (G) via interval-preserving bisection: scans random chords in float64 (all k balls for k <= 25 or
+     --full-balls; representative balls {0, 4, 8, 9, k-1} for k > 25) and re-evaluates 100% of flagged intervals in
+     D-digit arithmetic by keeping the larger-gap half-interval at every bisection step down to separation 10^-30
+     (avoiding midpoint re-centring; this is a targeted numerical diagnostic rather than a formal proof, which is
+     supplied by Paper IV).
 
 Usage:
     python check_embedding_mp.py solution_embedding.py --k 10 --eps 0.002 --dps 100 --chords 100
@@ -28,6 +34,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import ast
 import io
 import json
 import math
@@ -556,11 +563,11 @@ class _MpTorch:
 
     @staticmethod
     def maximum(a, b):
-        return a._bop(b, lambda x, y: x if x >= y else y)
+        return a._bop(b, lambda x, y: x if mp.isnan(x) else (y if mp.isnan(y) else (x if x >= y else y)))
 
     @staticmethod
     def minimum(a, b):
-        return a._bop(b, lambda x, y: x if x <= y else y)
+        return a._bop(b, lambda x, y: x if mp.isnan(x) else (y if mp.isnan(y) else (x if x <= y else y)))
 
     @staticmethod
     def complex(re, im):
@@ -665,24 +672,71 @@ class _MpMath:
         return bool(mp.isfinite(_to_mp_scalar(x)))
 
 
-def _rewrite_float_literals(code_str: str) -> str:
-    """Rewrite decimal float literals (e.g. 0.32, 8.4, 1e-12) to _MPF('...') so D-digit precision is preserved."""
-    tokens = list(tokenize.generate_tokens(io.StringIO(code_str).readline))
-    out = []
-    for tok in tokens:
-        if tok.type == tokenize.NUMBER and any(ch in tok.string for ch in (".", "e", "E")) and not tok.string.lower().endswith("j"):
-            out.append((tokenize.NAME, f"_MPF({tok.string!r})"))
-        elif tok.type == tokenize.NUMBER and tok.string.lower().endswith("j"):
-            imag_s = tok.string[:-1]
-            out.append((tokenize.NAME, f"_MPC(0, {imag_s!r})"))
-        else:
-            out.append((tok.type, tok.string))
-    return tokenize.untokenize(out)
+def _transform_mp_source(code_str: str, target_iters: int, skip_selftest: bool = True) -> tuple[str, int, int]:
+    """AST-based source transformer:
+      1. Converts all float/imaginary numeric constants to exact `_MPF('<raw>')` / `_MPC(0, '<raw>')` calls;
+      2. Raises `def newton_bracket(..., iters=60)` default iteration count to `target_iters`;
+      3. Replaces runtime `_ch_mod.selftest(...)` calls with `{"skipped_in_mp_load": True}`.
+    Returns `(transformed_code, n_iters_rewritten, n_selftests_skipped)`.
+    """
+    # Extract exact raw float tokens by (lineno, col_offset) before AST parsing so decimal text is preserved verbatim
+    raw_floats: dict[tuple[int, int], str] = {}
+    for tok in tokenize.generate_tokens(io.StringIO(code_str).readline):
+        if tok.type == tokenize.NUMBER and (any(ch in tok.string for ch in (".", "e", "E")) or tok.string.lower().endswith("j")):
+            raw_floats[tok.start] = tok.string
+
+    iters_hits = 0
+    selftest_hits = 0
+
+    class _MpTransformer(ast.NodeTransformer):
+        def visit_FunctionDef(self, node: ast.FunctionDef):
+            nonlocal iters_hits
+            self.generic_visit(node)
+            if node.name == "newton_bracket" and node.args.defaults:
+                n_args = len(node.args.args)
+                n_defs = len(node.args.defaults)
+                for d_i, arg in enumerate(node.args.args[n_args - n_defs :]):
+                    if arg.arg == "iters":
+                        node.args.defaults[d_i] = ast.Constant(value=int(target_iters))
+                        iters_hits += 1
+            return node
+
+        def visit_Call(self, node: ast.Call):
+            nonlocal selftest_hits
+            if (
+                skip_selftest
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "selftest"
+            ):
+                selftest_hits += 1
+                return ast.Dict(keys=[ast.Constant(value="skipped_in_mp_load")], values=[ast.Constant(value=True)])
+            return self.generic_visit(node)
+
+        def visit_Constant(self, node: ast.Constant):
+            pos = (getattr(node, "lineno", -1), getattr(node, "col_offset", -1))
+            if isinstance(node.value, float):
+                raw = raw_floats.get(pos, repr(node.value))
+                return ast.Call(func=ast.Name(id="_MPF", ctx=ast.Load()), args=[ast.Constant(value=raw)], keywords=[])
+            if isinstance(node.value, complex):
+                raw = raw_floats.get(pos, repr(node.value.imag) + "j")
+                imag_s = raw[:-1] if raw.lower().endswith("j") else repr(node.value.imag)
+                return ast.Call(
+                    func=ast.Name(id="_MPC", ctx=ast.Load()),
+                    args=[ast.Constant(value=0), ast.Constant(value=imag_s)],
+                    keywords=[],
+                )
+            return node
+
+    tree = ast.parse(code_str)
+    new_tree = ast.fix_missing_locations(_MpTransformer().visit(tree))
+    return ast.unparse(new_tree), iters_hits, selftest_hits
 
 
 def load_mp_submission(src_text: str, eps_override: str | None):
     """Execute the submitted Python source directly on the D-digit mpmath backend."""
     mp_math = _MpMath()
+    target_iters = max(180, 3 * mp.mp.dps)
+    stats = {"iters_rewritten": 0, "selftests_skipped": 0}
 
     def _mp_float(x):
         if isinstance(x, str):
@@ -697,7 +751,9 @@ def load_mp_submission(src_text: str, eps_override: str | None):
         if isinstance(x, (mp.mpf, int)):
             return mp.mpf(x)
         if isinstance(x, _MpTensor):
-            return float(x)
+            if x.ndim == 1 and len(x.d) == 1:
+                return _to_mp_scalar(x.d[0])
+            raise TypeError("only single-element _MpTensor converts to scalar")
         return _to_mp_scalar(x)
 
     def _mp_complex(re, im=0):
@@ -712,13 +768,14 @@ def load_mp_submission(src_text: str, eps_override: str | None):
 
     def _mp_compile_embedded(sub_src, filename, mode):
         if isinstance(sub_src, str) and mode == "exec":
-            sub_src = _rewrite_float_literals(sub_src)
-            sub_src = sub_src.replace("iters=60", f"iters={max(150, 3 * mp.mp.dps)}")
+            sub_src, n_it, n_st = _transform_mp_source(sub_src, target_iters=target_iters, skip_selftest=True)
+            stats["iters_rewritten"] += n_it
+            stats["selftests_skipped"] += n_st
         return compile(sub_src, filename, mode)
 
-    rewritten = _rewrite_float_literals(src_text)
-    rewritten = rewritten.replace("iters=60", f"iters={max(150, 3 * mp.mp.dps)}")
-    rewritten = rewritten.replace("_ch_mod.selftest(_CH)", "None")
+    rewritten, n_it0, n_st0 = _transform_mp_source(src_text, target_iters=target_iters, skip_selftest=True)
+    stats["iters_rewritten"] += n_it0
+    stats["selftests_skipped"] += n_st0
 
     saved_mods = {k: sys.modules.get(k) for k in ("torch", "math", "primitives", "keyhole", "comparator", "twists", "transfer", "chain")}
     sys.modules["torch"] = _MpTorch  # type: ignore[assignment]
@@ -734,9 +791,8 @@ def load_mp_submission(src_text: str, eps_override: str | None):
             "exec": _mp_exec_embedded,
         }
         if eps_override is not None:
-            # Replace _EPS assignment at top of generated source if present, while keeping exact logic
             lines = rewritten.splitlines()
-            for idx, ln in enumerate(lines[:5]):
+            for idx, ln in enumerate(lines[:8]):
                 if ln.strip().startswith("_EPS ="):
                     lines[idx] = f"_EPS = _MPF({eps_override!r})"
                     break
@@ -750,7 +806,10 @@ def load_mp_submission(src_text: str, eps_override: str | None):
                 sys.modules[k] = prev
 
     assert "Embed" in ns and "Preimage" in ns, "submitted source must define Embed and Preimage"
-    return ns["Embed"], ns["Preimage"], ns.get("CONFIG")
+    cfg = ns.get("CONFIG")
+    if isinstance(cfg, dict):
+        cfg = dict(cfg, _mp_loader_stats=dict(stats, target_iters=target_iters))
+    return ns["Embed"], ns["Preimage"], cfg
 
 
 # ---------------------------------------------------------------------------
@@ -896,6 +955,7 @@ def main():
     ap.add_argument("--chords", type=int, default=100, help="float64 chords per ball scanned for G flags (0 = skip)")
     ap.add_argument("--chord-pts", type=int, default=3000, help="points per chord in float64 scan")
     ap.add_argument("--agree-tol", type=float, default=1e-10, help="max allowed ||Y_f64 - Y_mp64|| / max(1, ||J||_F)")
+    ap.add_argument("--full-balls", action="store_true", help="evaluate all 17 special + mp_random points, disjointness, and chords on all k balls even when k > 25")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--threads", type=int, default=2)
     ap.add_argument("--json", default=None)
@@ -928,10 +988,13 @@ def main():
     n_spec = len(X_spec)
     S, B = ce.unit_samples(a.N, a.N_int, a.seed)
     X0 = torch.cat([X_spec, S, B], dim=0)
-    rep_balls = sorted({0, 4, 8, 9, a.k - 1})
+    rep_balls = list(range(a.k)) if (a.k <= 25 or a.full_balls) else sorted({0, 4, 8, 9, a.k - 1})
     h_mp = mp.mpf(10) ** (-(a.dps // 3))
     rt_mp_tol = mp.mpf(10) ** (-(a.dps - 25))
     sym_mp_tol = mp.mpf(10) ** (-max(35, a.dps // 2))
+    if cfg_mp and "_mp_loader_stats" in cfg_mp:
+        st_info = cfg_mp["_mp_loader_stats"]
+        print(f"   AST MP loader: target_iters={st_info['target_iters']} (rewrote {st_info['iters_rewritten']} newton_bracket def(s), skipped {st_info['selftests_skipped']} selftest call(s))", flush=True)
 
     # Scan ALL k balls in float64 for C flags and B flags, and check float64 <-> mpmath agreement across ALL k balls!
     f64_c_flagged = []
@@ -1005,7 +1068,7 @@ def main():
             if not _all_finite_vec(y64_mp) or not _all_finite_vec(Y_sub_mp64[q]):
                 max_agree_scaled = float("inf")
             else:
-                # Conditioning scale can also exceed ||J||_F near |Z0| -> 0 in float64; include finite-diff f64 scale
+                # Representative points use their local mp norm; other balls use the running representative maximum.
                 scale_cond = max(mp.mpf(1), jnrm)
                 max_agree_scaled = max(max_agree_scaled, float(_diff_norm(y64_mp, Y_sub_mp64[q]) / scale_cond))
 
@@ -1034,7 +1097,7 @@ def main():
     # 2. Pairwise disjointness in D-digit arithmetic across distinct balls
     mp_overlaps = 0
     cert_mp_tol = mp.mpf("1e-30")
-    checked_balls = rep_balls if a.k > 25 else list(range(a.k))
+    checked_balls = rep_balls
     for i in checked_balls:
         Yi = mp_ball_images[i]
         for j in checked_balls:
@@ -1072,7 +1135,7 @@ def main():
     max_g_lip30 = mp.mpf(0)
     g_all_continuous = True
     if a.chords > 0:
-        chord_balls = rep_balls if a.k > 25 else list(range(a.k))
+        chord_balls = rep_balls
         for i in chord_balls:
             for item in _find_flagged_chords_f64(Embed_f64, i, a.chords, a.chord_pts, 40, a.seed + 1000 + i):
                 g_flagged.append((i, *item))

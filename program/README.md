@@ -1,31 +1,41 @@
 # Programs
 
-Two self-contained single-file generators inspired by the
+Two self-contained single-file Python generators inspired by the
 [Epoch AI symplectic ball-packing problem](https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing):
-`solution(k, ε)` returns Python source code. They take complementary computational routes.
+`solution(k, ε)` returns Python source code.
 
-| | [`solution_epoch.py`](solution_epoch.py) | [`solution_embedding.py`](solution_embedding.py) (built from [`embedding_src/`](embedding_src/)) |
+| | [`solution_epoch.py`](solution_epoch.py) | [`solution_embedding.py`](solution_embedding.py) (from [`embedding_src/`](embedding_src/)) |
 |---|---|---|
-| Returns | a Hamiltonian `Hamiltonian(Q, P, t)` (PyTorch, float64), Epoch's ODE format | the k embeddings directly: `Embed(i, X)`, `Preimage(j, Y)`, `STAGES(i)`, `CONFIG` |
-| Exact-real parameter range | — | every integer k ≥ 10 and every real ε ∈ (0, 1) (proved in [Paper IV](../paper/p4/main.pdf)) |
-| Float64 operating range | every 10 ≤ k ≤ 10⁵ with ε ≥ `eps_min(k)` | checks analytic margins `(H0)–(H15)` in float64 (accepts down to ε ≈ 10⁻¹⁵; round-trip `< 10⁻⁷` for ε ≳ 10⁻⁶ and moderate k) |
-| Runtime & RK4 budget | within Epoch's budget: fixed-step float64 RK4, ≤ 0.13 s per Hamiltonian call on 3000–20 000 points | not an ODE Hamiltonian: evaluates closed-form maps directly, no flow integration |
-| Smoothness | C^∞ near trajectories for k > 10 (exterior branch rays); piecewise C² across one window seam for k = 10; finite-order at time junctions | C⁴ symplectic embeddings on B⁰(r₊), r₊ > 1 |
-| Mathematical & numerical basis | elementary layouts of [Paper III](../paper/p3/main.pdf); correctness checked numerically (RK4 at N and 2N), not proved | complete exact-real proof in [Paper IV](../paper/p4/main.pdf), plus float64 (`check_embedding.py`) and 100-digit (`check_embedding_mp.py`) checks |
+| Returns | `Hamiltonian(Q, P, t)` (PyTorch, `float64`), Epoch's ODE format | the k embeddings directly: `Embed(i, X)`, `Preimage(j, Y)`, `STAGES(i)`, `CONFIG` |
+| Exact-real parameter range | — | every integer k ≥ 10 and every real ε ∈ (0, 1) ([Paper IV, §§2–7](../paper/p4/main.pdf)) |
+| `float64` operating range | every 10 ≤ k ≤ 10⁵ with ε ≥ `eps_min(k)` | tests implementation margin guards grouped as `(H0)–(H15)` and `split`, down to ε ≈ 10⁻¹⁵; this is a parameter check. Accurate `float64` round-trip is documented for moderate k (≲ 200) and ε ≳ 10⁻⁴ (use `mpmath` outside) |
+| ODE / grading regime | passes the documented sampled RK4 containment tests (`≤ 0.13 s/call`); global regularity differs from the smooth Hamiltonian required by the published problem | not an ODE Hamiltonian: evaluates closed-form maps and exact-real inverse certificates directly, no flow integration |
+| Regularity | C^∞ near trajectories for k > 10 (exterior branch rays); piecewise C² across one window seam for k = 10 | C⁴ symplectic embeddings on B⁰(r₊), r₊ > 1 |
+| Mathematical & numerical basis | elementary layouts of [Paper III](../paper/p3/main.pdf); checked numerically (RK4 at N and 2N), not proved | exact-real proof in [Paper IV, Theorem 1.1](../paper/p4/main.pdf); `float64` (`check_embedding.py`) + 100-digit (`check_embedding_mp.py`) |
 | Checker | [`check_epoch.py`](check_epoch.py) | [`check_embedding.py`](check_embedding.py), [`check_embedding_mp.py`](check_embedding_mp.py) |
 
-**Relation to the Epoch problem as posed.** Epoch asks for a single algorithm that, for every k ≥ 10 and ε ∈ (0, 1),
-outputs a globally smooth `Hamiltonian(Q, P, t)` integrable within fixed runtime limits. Papers I–II solve the
-mathematical and computability parts (with Lean 4 proofs), whereas their smooth non-toric flow is too stiff for
-fixed-step float64 RK4 integration. Here `solution_epoch.py` keeps the fast RK4 Hamiltonian interface over the
-elementary `(k, ε)` regime (with the smoothness caveats below), while `solution_embedding.py` covers all `(k, ε)` in
-exact arithmetic by evaluating the symplectic packing maps directly without ODEs.
+**Relation to the Epoch problem as posed.** Papers I–II solve the mathematical construction and computability parts of
+Epoch's problem for all k ≥ 10 and ε ∈ (0, 1) with globally `C^∞` Hamiltonians, and Lean 4 also proves uniform eventual
+target containment for perturbed fixed-step RK4 (`epoch_rk4_convergence` in
+[`verification/RK4Convergence.lean`](../verification/RK4Convergence.lean)). Producing a single submission that meets
+Epoch's published `float64` interface, global smoothness requirement, and runtime limits across all `(k, ε)` remains a
+separate implementation objective (see [`EPOCH.md`](../EPOCH.md)). Accordingly:
+- `solution_epoch.py` passes the documented sampled fixed-step `float64` RK4 and per-call timing checks in its
+  elementary `(k, ε)` regime. Paper III proves density gaps for specified elementary classes; `eps_min(k)` is the
+  threshold for the implementation’s chosen layouts, including practical numerical margins;
+- `solution_embedding.py` evaluates Paper IV's closed-form `C⁴` symplectic embeddings and non-membership-certifying left
+  inverses directly without ODE integration for every `k ≥ 10` and `ε ∈ (0, 1)`.
 
-The generators and float64 checkers need only Python and PyTorch (`pip install torch`), with no runtime numpy
-dependency; [`check_embedding_mp.py`](check_embedding_mp.py) additionally uses `mpmath` (`pip install mpmath`). Neither
-program is part of the Lean 4 formalisation.
+*(Note on experimental work: an unfinished prototype exploring a multi-stage global Hamiltonian lift of `Chain3` is
+archived outside `program/` in [`../experiments/hamiltonian_lift/`](../experiments/hamiltonian_lift/README.md) with a
+minimal reproducer and honest failure logs for its collar branch-sheet jump; it is included in the archive solely as
+experimental research material and is not part of the certified deliverables.)*
 
-## 1. `solution_epoch.py`: Epoch's interface, restricted ε
+The generators and `float64` checkers need only Python ≥ 3.11 and PyTorch (`pip install torch`), with no runtime `numpy`
+dependency; [`check_embedding_mp.py`](check_embedding_mp.py) additionally uses `mpmath` (`pip install mpmath`). None of
+the Python programs is formalised in Lean 4.
+
+## 1. `solution_epoch.py`: Epoch's ODE interface, restricted ε
 
 `solution(k, epsilon)` returns the source of a module defining `Hamiltonian(Q, P, t)` whose time-1 flow moves the k
 closed unit balls centred at `(3i − 3, 0, 0, 0)` into a ball `B(R)` about the origin with `k / R⁴ > 1 − ε`.
@@ -81,8 +91,8 @@ Results ([`release-check/`](release-check); CPU, float64, numpy blocked):
   construction keeps the ball trajectories away from those rays. In the k = 10 family one segment is piecewise C² in
   space across a moving surface that intersects the ball images (the seam between the round cap and straight side of a
   stadium-shaped window, where third derivatives are bounded with a finite jump), and time junctions have finite
-  smoothness order. Thus the returned function satisfies the RK4 trajectory and runtime checks, but is not globally
-  C^∞ on ℝ⁴ × [0, 1].
+  smoothness order. Thus the returned function passes the documented sampled RK4 containment and runtime tests, while its
+  global regularity on ℝ⁴ × [0, 1] differs from the globally smooth Hamiltonian required by the published problem.
 - **Pointwise N vs. 2N phase differences in k = 10.** Six final windows are invariant under a circle action, along whose
   orbits RK4 accumulates phase differences (up to 2.5 at ε = 0.1 on dense sphere samples, > 99.99 % tangential to the
   window, changing radius by ≤ 4.6·10⁻⁴ and converging faster than fourth order upon further halving).
@@ -101,7 +111,7 @@ with zero dead classes:
 - [`embedding_src/comparator.py`](embedding_src/comparator.py) — non-iterative parameter tuple `PiStar` and 4D keyhole comparator `Comparator3` (`Paper IV, §4 & §7.1`).
 - [`embedding_src/twists.py`](embedding_src/twists.py) — deck-equivariant C⁴ toric twists `SpiralShear` routing the three marked fibres into the free corridor (`Paper IV, §5`).
 - [`embedding_src/transfer.py`](embedding_src/transfer.py) — post-chart corner keyhole `Band`, simplex gluing `W`, rotated ball chart, and cancellation-free left inverse (`Paper IV, §6`).
-- [`embedding_src/chain.py`](embedding_src/chain.py) — composite chain `Chain3`, grid-free analytic margin checks `(H0)–(H15)`, stage table, and deterministic special-point self-test (`Paper IV, §7.2–8`).
+- [`embedding_src/chain.py`](embedding_src/chain.py) — composite chain `Chain3`, grid-free analytic margin checks `(H0)–(H15)`, stage table, and deterministic special-point self-test (`Paper IV, §7.2`).
 
 [`build_embedding.py`](build_embedding.py) packs these six modules deterministically into the standalone single-file
 generator [`solution_embedding.py`](solution_embedding.py); `scripts/verify.sh` runs `python3 program/build_embedding.py --check`
@@ -110,40 +120,60 @@ to guarantee byte-for-byte agreement.
 ### Mathematical theorem vs. float64 evaluation
 
 [**Paper IV**](../paper/p4/main.pdf) (*Closed-form symplectic packings of the four-ball by equal balls*) proves in full
-(Theorem 1.1) that over exact real numbers, for **every** integer k ≥ 10 and **every** real ε ∈ (0, 1), there is
-`r₊ > 1` such that `f₀, …, f_{k−1}` are C⁴ symplectic embeddings of `B⁰(r₊)` into `B⁰(R)`, `R = (k/(1 − ε))^{1/4}`,
-with pairwise disjoint images, and `Preimage(i, ·)` is an exact left inverse on `fᵢ(B⁰(r₊))`.
+(Theorem 1.1 & Lemma 7.4) that over exact real numbers, for **every** integer k ≥ 10 and **every** real ε ∈ (0, 1),
+there is `r₊ > 1` such that `f₀, …, f_{k−1}` are C⁴ symplectic embeddings of `B⁰(r₊)` into `B⁰(R)`,
+`R = (k/(1 − ε))^{1/4}`, with pairwise disjoint images, and `Preimage(j, ·)` is an exact left inverse on `f_j(B⁰(r₊))`
+that certifies non-membership whenever `Y ∉ f_j(B(1))`.
 
 In IEEE-754 **float64**, two numerical effects apply and are explicitly separated:
-1. **Parameter underflow guard:** `solution(k, eps)` evaluates all 42 analytic margins `(H0)–(H15)` on the float64
-   parameters and raises `ValueError` if rounding zeroes a strict margin (for example `solution(10, 1e-16)`, where
-   `1.0 - 1e-16 == 1.0` in float64 makes `η = 0` and `a − ρ_b = 0`; `solution(10, 1e-15)` succeeds).
-2. **Conditioning and local Lipschitz scale:** gaps of width `O(ε_c / √k)` sit next to coordinates of order `1`, so
-   local Lipschitz constants reach `10⁸–10¹⁵` and condition numbers reach `10⁷–3·10⁹` (for instance, at `k = 10,
-   ε = 0.002` the centre `X = 0` of ball 9 maps to `|Z₀| ≈ 6.2·10⁻⁵`, amplifying 53-bit `1 − |y|²` rounding in
-   `unchart` to a float64 round-trip residual of `4.86·10⁻⁷`, which drops to `4.66·10⁻⁹³` in 100-digit arithmetic).
-   Every sector and band moment in `transfer.py` is recovered from non-negative coordinates without `1 − X₁ − X₂`
-   cancellation, so ball centres, axis boundary points `±e_a`, and zero-fibre points never produce `NaN`.
+1. **Parameter underflow guard:** Rounding can erase strict parameter margins. The constructor evaluates all 42 named
+   implementation guards on the rounded `float64` parameters and rejects inputs (`ValueError`) whenever a required strict
+   inequality is lost (for example at tiny `ε ≲ 10⁻¹⁶`, whereas `solution(10, 1e-15)` succeeds).
+2. **Conditioning and local Lipschitz scale:** because `ε_c = min(ε, 0.01)`, gaps of width `O(ε_c / √k)` sit next to
+   coordinates of order `1`, so local Lipschitz constants reach `10⁸–10¹⁶` and condition numbers grow with `k` and
+   `1 / ε_c`. In IEEE-754 `float64`:
+   - for `k = 10` and `ε ≥ 0.01`, `check_embedding.py` passes all checks A–G outright;
+   - for moderate `k` (`10 ≤ k ≲ 200`) and `10⁻⁴ ≤ ε < 0.01` (or `ε > 0.01` at `k ≥ 11`, which shares `ε_c = 0.01`),
+     fixed-step `float64` finite differences (B) or chord bisections at `10⁻¹¹` (G) can hit 53-bit resolution limits
+     (e.g. at `k = 10, ε = 0.002` the centre `X = 0` of ball 9 maps to `|Z₀| ≈ 6.2·10⁻⁵`, giving a `float64` round-trip
+     error of `4.86·10⁻⁷` that drops to `4.66·10⁻⁹³` in 100-digit arithmetic);
+   - for very large `k` (`k ≳ 10³`) or tiny `ε` (`ε ≲ 10⁻⁶`), 53-bit `float64` conditioning saturates on wild-stack
+     cells, so multi-precision evaluation (`check_embedding_mp.py`, e.g. `--dps 100`) is required for accurate round-trip
+     and Jacobian evaluation. Every sector and band moment in `transfer.py` is recovered from non-negative coordinates
+     without `1 − X₁ − X₂` cancellation.
+
+The `mpmath` checker first constructs and cross-checks a `float64` submission. Its CLI therefore requires
+`float64`-admissible parameters (typically `ε ≳ 10⁻¹⁵`); accepting a decimal string does not remove this entry
+restriction. Positivity of analytic parameter margins at this scale does not establish accurate `float64` inverses.
 
 ### Checkers and verification logs
 
-1. **[`check_embedding.py`](check_embedding.py)** (float64; exits with code `1` on any failure): tests **17 deterministic
-   special points per ball** (ball centre `0`, `±e₁..±e₄`, and 8 zero-fibre/zero-base unit diagonals) plus random sphere
-   and interior samples for (A) containment `|Y| < R`, (B) **normalised** symplectic residual
-   `max |JᵀΩJ − Ω| / max(1, ‖J‖_F²)` via Richardson-extrapolated central differences at `h` and `h/2` (note: normalised
-   by `max(1, ‖J‖_F²)` because `‖J‖_F` is large), (C) round-trip `‖Preimage(i, Embed(i, X)) − X‖ ≤ rt_tol`,
+1. **[`check_embedding.py`](check_embedding.py)** (`float64`; exits with code `1` on any failure, with explicit
+   non-finiteness gates on outputs, preimages, and finite-difference Jacobians): tests **17 deterministic special points
+   per ball** (ball centre `0`, `±e₁..±e₄`, and 8 zero-fibre/zero-base unit diagonals) plus random sphere and interior
+   samples for (A) containment `|Y| < R`, (B) **normalised** symplectic residual `max |JᵀΩJ − Ω| / max(1, ‖J‖_F²)` via
+   Richardson central differences at `h` and `h/2`, (C) round-trip `‖Preimage(i, Embed(i, X)) − X‖ ≤ rt_tol`,
    (D) pairwise disjointness, (E) Monte Carlo volume coverage `1 − ε`, (F) wall time, and (G) chord-bisection continuity
    down to separation `10⁻¹¹`.
 2. **[`check_embedding_mp.py`](check_embedding_mp.py)** (arbitrary-precision `mpmath`, default `D = 100` digits; exits
-   with code `1` on any failure): **executes the submitted Python source directly on a D-digit `mpmath` tensor backend**
-   (not an uncoupled model). Every run enforces in its final `PASS` gate:
-   - **0. Source consistency:** `‖Y_f64 − Y_mp64‖ / max(1, ‖J‖_F) ≤ 10⁻¹⁰` across all `k` balls;
-   - **1–3. Containment, round-trip (`≤ 10⁻⁸⁰`), disjointness, and Richardson symplecticity (`≤ 10⁻⁵⁰`)** on all
-     special points, random samples, and **100 %** of points flagged by B or C in float64;
-   - **4. Interval-preserving continuity bisection:** on **100 %** of chord intervals flagged by G in float64, retains
-     the larger-gap half-interval at every bisection step all the way down to separation `10⁻³⁰` (never switching to a
-     midpoint perturbation that could step to one side of a jump) and requires end-to-end image gap `≤ 10⁻¹⁰` with
-     linear shrinkage.
+   with code `1` on any failure): **transforms the submitted Python source via Python's `ast` module and executes it
+   directly on a D-digit `mpmath` tensor backend** (converting all float literals to exact `mpf` strings, raising
+   `newton_bracket` default iterations from `60` to `max(180, 3D)`, and skipping redundant load-time float64 self-tests;
+   note that `randn`/`rand` inside the lightweight `_MpTorch` shim draw initial test coordinates in `float64` before
+   converting to `mpf`). Every run enforces in its final `PASS` gate:
+   - **0. Source consistency:** `‖Y_f64 − Y_mp64‖ / max(1, ‖J‖_F) ≤ 10⁻¹⁰` across all `k` balls. For non-representative
+     balls at `k > 25`, the denominator uses the running maximum Jacobian norm from representative balls, rather than
+     a pointwise local norm;
+   - **1–3. Containment, round-trip (`≤ 10⁻⁷⁵`), disjointness, and Richardson symplecticity (`h = 10⁻³³` at `D = 100`,
+     `≤ 10⁻⁵⁰`):** for `k ≤ 25` (or with `--full-balls`), evaluates all `17 × k` special points + `mp_random` points,
+     all `k × (k − 1)` disjointness pairs, and chords on all `k` balls; for `k > 25` without `--full-balls`, evaluates
+     full special + random sets, disjointness, and chords on representative balls `{0, 4, 8, 9, k − 1}` plus centre + 1
+     random point on every other ball, **together with 100 % of points across all `k` balls flagged by B or C in the
+     `float64` scan**;
+   - **4. Interval-preserving continuity diagnostic:** on **100 %** of chord intervals flagged by G in the `float64`
+     chord scan above, retains the larger-gap half-interval at every bisection step down to separation `10⁻³⁰`
+     (avoiding midpoint re-centring; this is a targeted numerical diagnostic rather than a formal proof, which is given
+     in Paper IV) and requires end-to-end image gap `≤ 10⁻¹⁰` with linear shrinkage.
 
 ```sh
 python check_embedding.py solution_embedding.py --k 10 --eps 0.1 --h 1e-7
@@ -164,12 +194,12 @@ Float64 results ([`release-check/embedding/`](release-check/embedding); `--h 1e-
 | 50 | 0.01 | 1.26e-05 | 0 / 0 | 0.98977 ± 0.00022 | 0 | 2.3e-02 | 409 / 2.0e+12 | pass | G (409), B |
 | 101 | 0.01 | 6.76e-06 | 0 / 0 | 0.99006 ± 0.00022 | 2 | 8.6e-02 | 938 / 6.0e+12 | pass | G (938), B, C |
 
-Reproducible 100-digit `check_embedding_mp.py` logs ([`release-check/embedding_mp/`](release-check/embedding_mp)):
+Reproducible 100-digit `check_embedding_mp.py` logs ([`release-check/embedding_mp/`](release-check/embedding_mp); AST loader `target_iters = 300`, `h = 10⁻³³`):
 
-| k | ε | chords/ball | f64 vs mp64 consistency | 17×k special + random round-trip | re-checked f64 C flags | re-checked f64 B flags (h = 10⁻³³) | re-checked f64 G flags (sep ≤ 10⁻³⁰) | MP result |
+| k | ε | chords / ball scope | f64 vs mp64 consistency | MP round-trip | re-checked f64 C flags | MP symp. & re-checked f64 B (`h = 10⁻³³`) | re-checked f64 G flags (sep ≤ 10⁻³⁰) | MP result |
 |---|---|---|---|---|---|---|---|---|
-| 10 | 0.1 | 100 | 1.7e-15 | ≤ 4.4e-88 | 0 flags | 0 flags (max 6.5e-71) | 0 flags | `PASS` |
-| 10 | 0.002 | 100 | 1.9e-15 | ≤ 4.5e-88 | 1/1 → 4.7e-93 | 0 flags (max 1.4e-61) | 2/2 → gap ≤ 9.7e-20 | `PASS` |
-| 10 | 0.0001 | 5 | 9.2e-15 | ≤ 1.4e-87 | 5/5 → ≤ 8.4e-90 | 1/1 → 3.1e-75 | 21/21 → gap ≤ 1.1e-14 | `PASS` |
-| 11 | 0.01 | 100 | 2.1e-15 | ≤ 2.2e-88 | 0 flags | 0 flags (max 4.5e-69) | 4/4 → gap ≤ 5.8e-20 | `PASS` |
-| 101 | 0.01 | 10 (rep.) | 9.4e-15 | ≤ 4.4e-88 | 3/3 → ≤ 1.3e-92 | 1/1 → 2.7e-75 | 11/11 → gap ≤ 5.9e-16 | `PASS` |
+| 10 | 0.1 | 100 × all 10 balls | 1.73e-15 | ≤ 8.79e-88 | 0 flags | max 3.81e-62 (0 flags) | 0 flags | `PASS` |
+| 10 | 0.002 | 100 × all 10 balls | 1.88e-15 | ≤ 8.92e-88 | 1/1 → 4.66e-93 | max 2.73e-63 (0 flags) | 2/2 → gap ≤ 9.66e-20 | `PASS` |
+| 10 | 0.0001 | 5 × all 10 balls | 9.21e-15 | ≤ 1.38e-87 | 5/5 → ≤ 8.36e-90 | max 2.52e-63 (1/1 → 3.08e-75) | 21/21 → gap ≤ 1.07e-14 | `PASS` |
+| 11 | 0.01 | 100 × all 11 balls | 2.06e-15 | ≤ 2.20e-88 | 0 flags | max 1.97e-62 (0 flags) | 4/4 → gap ≤ 5.80e-20 | `PASS` |
+| 101 | 0.01 | 10 × 5 rep. balls (B/C all 101) | 9.38e-15 | ≤ 4.39e-88 | 3/3 → ≤ 1.30e-92 | max 1.18e-62 (1/1 → 2.66e-75) | 11/11 → gap ≤ 5.92e-16 | `PASS` |

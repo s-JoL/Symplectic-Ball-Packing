@@ -11,6 +11,8 @@ text. The supplement appendix “Formal statements that differ in form from the 
 the restrictions. Unqualified tags are **references only**, without a full-coverage claim.
 Coverage is an editorial comparison for human review; the kernel checks the Lean types,
 not equivalence to the prose. Visible main-result markers also state full coverage.
+Main theorems marked only with `\leanmark{…}` are mapped in [REVIEW.md](../REVIEW.md),
+rather than enumerated by this tag index.
 
 | Document | Statement | Coverage | Source | Lean declarations |
 |---|---|---|---|---|
@@ -35,7 +37,7 @@ not equivalence to the prose. Visible main-result markers also state full covera
 | I main | lemma (The cap integral) `lem:mech-toric-volume` | Reference only; scope not classified | `paper/p1/main/mechanism.tex:32` | `OAI.PackingSufficiencySupport.integral_simplex_tent`, `OAI.PackingSufficiencySupport.integral_tent` |
 | I main | definition (Packing specification) `def:intro-spec` | Full statement verified | `paper/p1/main/results.tex:6` | `SymplecticPacking.Problem.PackingSpec` |
 | I main | definition (Admissible data) `def:intro-admissible` | Full statement verified | `paper/p1/main/results.tex:23` | `SymplecticPacking.Problem.Admissible` |
-| I main | definition (Definite description) `def:intro-the` | Reference only; scope not classified | `paper/p1/main/results.tex:95` | `SymplecticPacking.Explicit.the` |
+| I main | definition (Definite description) `def:intro-the` | Reference only; scope not classified | `paper/p1/main/results.tex:135` | `SymplecticPacking.Explicit.the` |
 | I supplement | lemma (The slopes of the tent) `lem:fcp-AB` | Reference only; scope not classified | `paper/p1/supp/comparator.tex:91` | `SymplecticPacking.Params.inv_A_add_inv_B`, `SymplecticPacking.Params.cs_mul_A`, `SymplecticPacking.Params.cs_mul_B`, `SymplecticPacking.Params.three_s_a` |
 | I supplement | definition (Inner smoothing parameter) `def:fcp-eq` | Reference only; scope not classified | `paper/p1/supp/comparator.tex:112` | `SymplecticPacking.Params.eq_`, `SymplecticPacking.Params.eq_pos`, `SymplecticPacking.Params.eq_le_h` |
 | I supplement | lemma (Margin) `lem:fcp-margin` | Reference only; scope not classified | `paper/p1/supp/comparator.tex:122` | `SymplecticPacking.Params.margin_one`, `SymplecticPacking.Params.K_sub_F_ge` |

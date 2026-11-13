@@ -1,0 +1,7 @@
+=== 1. Former plateau/collar switch reproducer (k=11, eps=0.05, t=0.6, ball 9) ===
+  e=-1.0e-10: H = -83.2921633895
+  e=+1.0e-10: H = -83.2921633673
+
+=== 2. Remaining unresolved ray-bisection sheet jump (k=12, eps=0.001, t=0.85, ball 11) ===
+  e=-1.0e-10: H = -10.3776616129
+  e=+1.0e-10: H = 7.4615951668

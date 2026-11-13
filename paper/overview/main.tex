@@ -1,0 +1,229 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1.05in]{geometry}
+\setlength{\emergencystretch}{1.2em}
+\usepackage{booktabs,array}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={Explicit Hamiltonian ball packings: overview and reader's guide},
+  pdfauthor={Liang Song},
+  pdfsubject={Reader's guide to the four-paper release on explicit symplectic ball packings},
+  pdfkeywords={symplectic ball packing, Hamiltonian dynamics, Lean 4, closed-form symplectic maps},
+  pdflang={en-US}
+}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Bo}{B^{\circ}}
+\newcommand{\EB}{\mathbb{B}}
+
+\title[Explicit Hamiltonian ball packings: overview]{Explicit Hamiltonian ball packings:\\ overview and reader's guide}
+\author{Liang Song}
+\email{sl12160010@gmail.com}
+\thanks{Version 1.2.0; reader's guide to Papers~I--IV in \url{https://github.com/s-JoL/Symplectic-Ball-Packing}
+(all versions: \href{https://doi.org/10.5281/zenodo.23756575}{doi:10.5281/zenodo.23756575}).}
+\date{}
+
+\begin{document}
+\begin{abstract}
+One explicit smooth compactly supported Hamiltonian packs the prescribed closed unit balls arbitrarily densely into
+the four-ball for every $k\ge10$ and every positive volume deficit. A linear rearrangement identity and a
+$\Z/3$-equivariant return from the Fermat cubic make the construction uniform, including all non-square $k$.
+The series also gives a new constructive proof of Biran's $k\ge9$ theorem, general-capacity and higher-dimensional
+packings, a halting algorithm with finite polynomial-cutoff output, elementary density barriers, and ODE-free $C^4$
+packing maps. This guide locates the main statements, proof ideas and reproduction methods, distinguishing the
+Lean-verified Hamiltonian theorems from the direct-map proofs and numerical implementations.
+\end{abstract}
+\maketitle
+
+\section{Results and reading route}\label{sec:division}
+
+Uniformly for every integer $k\ge10$---including all non-square values $k=10,11,12,\dots$---and every volume deficit
+$\eps\in(0,1)$, this project constructs an explicit smooth compactly supported Hamiltonian on $\R\times\R^4$ whose
+time-one flow carries $k$ disjoint closed unit balls into the four-ball of occupied volume fraction $1-\eps/4$, extends
+the construction to $k=9$, unequal capacities, higher dimensions, and a halting finite-output algorithm, analyses the
+sharp limits of elementary toric/window packings, and constructs ODE-free closed-form $C^4$ packing embeddings with
+exact-real inverse certificates. Each of the four papers has a distinct scope:
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}L{0.06\textwidth}L{0.58\textwidth}L{0.29\textwidth}@{}}
+\toprule
+ & Reading route & Proof / reproduction \\
+\midrule
+I & Equal balls in $B^4$: start with Theorem~A, then the linear comparison identity in \S4 and Hamiltonian assembly.
+Robustness and RK4 containment are Proposition~B and Corollary~D. & \texttt{paper/p1}, supplement; Lean~4 \\
+II & General capacities, Biran's $k\ge9$ theorem, and higher dimensions: Theorem~1; finite-output algorithm:
+Theorems~5.2--5.3. & \texttt{paper/p2}, supplement; Lean~4 \\
+III & Elementary toric/window constructions and their sharp, class-specific density barriers. & \texttt{paper/p3};
+\texttt{solution\_epoch.py} \\
+IV & ODE-free $C^4$ maps and inverse certificates: Theorem~1.1, \S\S2--7. Radial-collar generator: \S8. &
+\texttt{paper/p4}; \texttt{solution\_embedding.py} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Biran~\cite{Biran1997} proved existence of arbitrarily dense equal-ball packings of $B^4$ for every $k\ge9$; classical
+explicit full packings include the square-number constructions of Traynor and Schlenk~\cite{Traynor1995,Schlenk2005},
+alongside folding, wrapping, tunnelling, singular-curve/polarisation, and almost-toric constructions. Papers~I, II, and
+IV build on the twisted disc-bundle framework introduced in dimensions $2n\ge6$ by OpenAI~\cite{OpenAI2026}, introducing
+new four-dimensional ingredients that avoid $J$-holomorphic curves, Seiberg--Witten theory, and contraction fixed
+points.
+
+\section{Principal statements and regularity}\label{sec:statements}
+
+Write $B(c)=\{\pi|z|^2\le c\}\subset\R^{2n}$ and $\Bo(c)=\{\pi|z|^2<c\}$, so $B(s,\pi)$ is the closed Euclidean unit ball
+centred at $s$. Regularity is kept distinct across the papers: Papers~I--II construct globally $C^\infty$ compactly
+supported Hamiltonians on $\R\times\R^{2n}$, whereas Paper~IV constructs ODE-free $C^4$ symplectic embeddings on an open
+ball $\EB^{\circ}(r_+)$ ($r_+>1$).
+
+\smallskip\noindent\textbf{Paper~I ($k\ge10$ equal balls and RK4 containment).}
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item \emph{Theorem~A (\texttt{four\_dim\_theorem}).} For every integer $k\ge10$ and $\eps\in(0,1)$, with
+$R_Q=(k/(1-\eps/4))^{1/4}$ and $s_i=(3i-3,0,0,0)$ ($1\le i\le k$), the explicit Hamiltonian $H_{k,\eps}\in
+C^\infty_c(\R\times\R^4)$ has a global flow whose time-one map carries the $k$ closed unit balls $B(s_i,\pi)$ onto
+pairwise disjoint subsets of $\Bo(\pi R_Q^2)$, occupying the volume fraction $k/R_Q^4=1-\eps/4$. Two four-dimensional
+ideas drive the short proof: for $K(p)=(3\sqrt k-9)p$ linear, the profile defect $K-P$ on $[0,t_0/3]$ is an affine
+multiple of the generally asymmetric tent on $[0,h]$, $h=t_0/3$, with vertex $a=t_0/\sqrt k$ and equal endpoint
+values $h$. Its reciprocal slopes sum to one, so its increasing rearrangement is the identity; and $\Z/3$-equivariance
+$Z_0\mapsto e^{2\pi i/3}Z_0$ of the Fermat-cubic return keeps the balls off the line at infinity $\{Z_0=0\}$ without
+$C^0$ Moser estimates.
+\item \emph{Proposition~B and Corollary~D (\texttt{four\_dim\_stability}, \texttt{epoch\_rk4\_convergence}).} Put
+$R=(k/(1-\eps/2))^{1/4}$ and $g=R-R_Q>0$. For any space-time Lipschitz and supremum bounds $K,C\ge0$ of $X_{H_{k,\eps}}$
+on $[0,1]\times\R^4$, set $M=K+KC$, $\delta_0=g/(4e^K)>0$, and $N_0=\lceil 4Me^K/g\rceil+1$. Then for every $N\ge N_0$,
+every $x\in B(s_i,\pi)$, and every $N$-step sequence $(y_m)_{m=0}^N$ with $|y_0-x|\le\delta_0$ and per-step state
+perturbation $|y_{m+1}-\mathrm{RK4}(H_{k,\eps},m/N,1/N,y_m)|\le\delta_0/N$, one has $|y_N|\le R$ ($k/R^4=1-\eps/2>1-\eps$).
+Here $K$ and $C$ come from smoothness and compact support and are not numerically instantiated, so Corollary~D gives no
+executable step or precision budget and does not certify a \texttt{float64} program or nearby-pair symplecticity test.
+\end{enumerate}
+
+\smallskip\noindent\textbf{Paper~II (General capacities, higher dimensions, and finite-output algorithm).}
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item \emph{Theorem~1 and Corollaries~2--5 (\texttt{main\_theorem}, \texttt{neighbourhood\_criterion},
+\texttt{equal\_balls}, \texttt{epoch\_theorem}).} One named $C^\infty_c(\R\times\R^{2n})$ Hamiltonian realises every
+packing with $\sum_ic_i^2<C^2$ and $3c_i<C$ in $\R^4$ (via a closed-form scalar mollifier comparator, giving Biran's
+full-packing theorem for all $k\ge9$ equal balls without $J$-holomorphic curves or Seiberg--Witten theory) and every
+packing with $\sum_ic_i^n<C^n$ and $c_i+c_j<C$ in $\R^{2n}$, $n\ge3$ (making every step of~\cite{OpenAI2026} explicit,
+with a finite rational contraction iterate and separate small-ball and one-large-ball returns).
+\item \emph{Theorems~5.2--5.3 (\texttt{original\_name\_algorithm}, \texttt{epoch\_name\_algorithm}).} One uniform
+halting oracle machine, given rational approximations to admissible data (or, for the Epoch problem, $k\ge9$ and a name
+for $\eps\in(0,1)$), outputs a rational polynomial $P$ and cutoff radius $B$ whose smooth compactly supported
+Hamiltonian $\beta_B\cdot P$ satisfies the packing specification at density $1-\eps/2$.
+\end{enumerate}
+
+\smallskip\noindent\textbf{Paper~III (Elementary constructions and density barriers).}
+Constructs explicit toric and window embeddings packing $n(n+1)$ balls into $B(n+\frac12)$, every $k$ at density at
+least $1-1/\sqrt k$, and ten balls at density $360/361$ ($A=\frac{19}{6}$). It then proves three sharp obstructions in
+its elementary configuration class: unimodular lattice triangles leave a positive density gap for every non-square $k$;
+$1$-periodically balanced profiles satisfy the Newton barrier $A^2\ge k+\alpha^2$, where
+$\alpha=\operatorname{dist}(A,\Z)$; and for $k=10$, any configuration with eight or more full-height columns satisfies
+$A\ge\frac{19}{6}$.
+
+\smallskip\noindent\textbf{Paper~IV (ODE-free closed-form $C^4$ embeddings and inverse certificates).}
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item \emph{Theorem~1.1 and Lemma~7.4.} For every $k\ge10$ and $\eps\in(0,1)$, explicit 11-stage compositions $f_0,\dots,
+f_{k-1}\colon\EB^{\circ}(r_+)\to\EB^{\circ}(R_{\mathrm{req}})$ ($r_+>1$, $R_{\mathrm{req}}=(k/(1-\eps))^{1/4}$) built
+from elementary charts, generating-function keyholes (solved by scalar 1D monotone roots), $C^4$ deck-equivariant toric
+twists, and a cancellation-free moment-simplex transfer are $C^4$, injective, symplectic, and pairwise disjoint, and
+$\mathrm{Preimage}(j,Y)$ is an exact left inverse certifying non-membership whenever $Y\notin f_j(\EB(1))$. All
+parameter hypotheses, grouped as $\mathrm{(H0)}$--$\mathrm{(H15)}$ and the band-separation condition, hold analytically
+for all $k\ge10$ and $\eps\in(0,1)$.
+\item \emph{Proposition~8.1.} Gives a normalised Liouville primitive $S_i$ on $\EB^{\circ}(r_+)$ and the
+radial--Alexander generator $G_t^{(i)}(y)=-(\dot v/v^3)(2(S_i(w)-S_i(a_i))+\omega_0(a_i,w))$, and exact/quantitative
+ODE trajectory certificates ($\phi_H^t(s_i+u)=\gamma_t^{(i)}(u)$ on $[0,1]$ iff $\partial_t\gamma_t^{(i)}(u)=
+X_H(t,\gamma_t^{(i)}(u))$ on $[0,1]$, with Gr\"onwall endpoint bound $\delta e^L$; in Lean,
+\texttt{picard\_\allowbreak lindelof\_\allowbreak curve\_\allowbreak unique} uses Lipschitzness alone while
+\texttt{picard\_\allowbreak lindelof\_\allowbreak epoch\_\allowbreak certificate} assumes $H\in C^\infty$).
+The formula describes the radial collar stage. A global Hamiltonian lift of these maps is unfinished; the abstract
+Lean ODE lemmas do not certify such a lift.
+\end{enumerate}
+
+\section{Logical dependencies across the series}\label{sec:dependencies}
+
+\begin{itemize}[leftmargin=1.8em]
+\item \textbf{Papers~I and~II (coupled formalised core):} Paper~I is self-contained for $k\ge10$ equal balls in
+dimension four; Paper~II quotes the shared four-dimensional handle and cubic-return lemmas from Paper~I
+(\texttt{p2/p1refs.tex}) and supplies the general comparator, higher-dimensional models, and finite-output algorithm. In
+Lean~4, one library \texttt{SymplecticPacking/} serves both papers: Paper~I's $H_{k,\eps}$ is the specialisation of
+Paper~II's \texttt{General.packingHamiltonian} via \texttt{four\_dim\_data}, and \texttt{verification/RK4Convergence.lean}
+imports \texttt{Statement.lean} without modifying any of the 525 Lean source files in \texttt{SymplecticPacking/}.
+\item \textbf{Paper~III (independent elementary analysis):} Mathematically independent of Papers~I, II, and~IV; explains
+which $(k,\eps)$ regimes admit gentle toric/window flows and motivates \texttt{program/solution\_epoch.py}.
+\item \textbf{Paper~IV (independent closed-form direct maps):} Mathematically self-contained and proved directly in
+real-analytic/generating-function charts without invoking Theorem~A of Paper~I or any ODE flow; provides the exact-real
+proof for \texttt{program/solution\_embedding.py}.
+\item \textbf{Independence from $J$-holomorphic curves:} Every constructive theorem in Papers~I, II, III, and~IV is
+proved from explicit maps, differential forms, and elementary analysis alone; only the necessity direction of Paper~II,
+Corollary~2 invokes Gromov's classical two-ball obstruction. The audit in
+\texttt{verification/Audit/Independence.lean} checks a stated exclusion list of named dependencies across the full Lean proof-term closure.
+\end{itemize}
+
+\section{Verification layers and accompanying programs}\label{sec:verification}
+
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=1.8em]
+\item \textbf{Lean~4 kernel and fresh replay (Papers~I--II and \texttt{RK4Convergence.lean}):}
+In \texttt{verification/\allowbreak Problem.lean}, phase space, $\omega_0$, $X_H$, admissibility, and
+\texttt{PackingSpec} are defined from Mathlib alone, quantifying over \emph{every} integral curve from \emph{every}
+point of \emph{every} source ball. All main theorems in \texttt{Statement.lean}, \texttt{Computability.lean},
+\texttt{Epoch\allowbreak Computability.lean}, and \texttt{RK4\allowbreak Convergence.lean} pass
+\texttt{\#assert\_\allowbreak publication\_\allowbreak axioms} (\texttt{propext}, \texttt{Classical.choice}, and
+\texttt{Quot.sound} only; no \texttt{sorryAx} or \texttt{native\_decide}) and are re-checked from scratch in a fresh
+kernel process (\texttt{scripts/\allowbreak check\_\allowbreak kernel.sh}).
+\item \textbf{Syntactic explicitness and uniformity metaprograms:} \texttt{\#check\_\allowbreak explicit} audits the
+non-proof definition closure of \texttt{packingHamiltonian} and \texttt{epochHamiltonianQ};
+\texttt{\#check\_\allowbreak constructive} checks that the halting oracle machines contain no classical branching.
+\item \textbf{Human-readable proofs and cross-review (Papers~I--IV):} Statements in Papers~I--II carry source tags
+indexed in \texttt{verification/\allowbreak PAPER-INDEX.md}; Papers~III--IV are standalone mathematical proofs reviewed
+across multiple independent models.
+\item \textbf{Programs and Epoch problem mapping (\texttt{program/} and \texttt{EPOCH.md}):} Two official Python
+generators accompany the papers as numerical corroboration (neither is formalised in Lean):
+\texttt{solution\_\allowbreak epoch.py} passes documented sampled fixed-step \texttt{float64} RK4 and per-call timing
+checks in an elementary $(k,\eps)$ regime (with exterior branch rays and, for $k=10$, a piecewise $C^2$ window seam), and
+\texttt{solution\_\allowbreak embedding.py} evaluates Paper~IV's closed-form $C^4$ maps and exact-real inverses for all
+$k\ge10$, $\eps\in(0,1)$, checked in \texttt{float64} (\texttt{check\_\allowbreak embedding.py}) and AST-transformed
+100-digit \texttt{mpmath} (\texttt{check\_\allowbreak embedding\_\allowbreak mp.py}). An unfinished prototype exploring
+a multi-stage global Hamiltonian lift of Paper~IV's chain is archived separately in
+\texttt{experiments/\allowbreak hamiltonian\_\allowbreak lift/} with known collar sheet-jump reproducers and is not part
+of the certified deliverables. See \texttt{REVIEW.md} for the formal audit guide and \texttt{EPOCH.md} for an
+item-by-item comparison with Epoch AI's problem specification~\cite{Epoch}.
+\end{enumerate}
+
+\section*{Authorship and the role of AI}
+
+The manuscripts, mathematical proofs, Lean~4 formalisation and accompanying programs of this release were generated by
+AI models, including GPT-6.1 Sol (OpenAI), Claude Opus~5.5 (Anthropic), Gemini~4 Carbon (Google) and other models.
+Liang Song chose the problem, designed and directed the research environment, organised cross-model review and takes
+sole responsibility for the release.
+
+Trustworthiness rests on explicit verification layers: the main theorems of Papers~I--II (including the finite-output
+algorithm and perturbed fixed-step RK4 target containment) are checked in Lean~4 against an independent specification
+importing only Mathlib, using only the three standard axioms and re-verified by fresh kernel replay; Papers~III--IV give
+human-readable proofs supported by multi-model cross-review and numerical checks; and program outputs serve only as
+numerical corroboration.
+
+\begin{thebibliography}{OAI26}
+\bibitem[Bir97]{Biran1997}
+P.~Biran, \emph{Symplectic packing in dimension $4$}, Geom.\ Funct.\ Anal.\ \textbf{7} (1997), no.~3, 420--437.
+
+\bibitem[Epo26]{Epoch}
+Epoch AI, \emph{FrontierMath Open Problems: Symplectic Ball Packing}, 2026,
+\url{https://epoch.ai/frontiermath/open-problems/symplectic-ball-packing}.
+
+\bibitem[OAI26]{OpenAI2026}
+OpenAI, \emph{Symplectic ball packings in higher dimensions}, preprint, 2026,
+\url{https://github.com/openai/math}.
+
+\bibitem[Sch05]{Schlenk2005}
+F.~Schlenk, \emph{Embedding problems in symplectic geometry}, De Gruyter Expositions in Mathematics, vol.~40, 2005.
+
+\bibitem[Tra95]{Traynor1995}
+L.~Traynor, \emph{Symplectic packing constructions}, J.\ Differential Geom.\ \textbf{42} (1995), no.~2, 411--429.
+\end{thebibliography}
+
+\end{document}

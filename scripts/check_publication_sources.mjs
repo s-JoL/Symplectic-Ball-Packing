@@ -69,7 +69,8 @@ for (const dir of ['SymplecticPacking', 'verification', 'test', 'vendor/OAI']) {
   }
 }
 for (const path of ['verification/README.md', 'verification/Problem.lean', 'verification/Statement.lean',
-  'verification/Algorithm.lean', 'verification/Computability.lean', 'verification/EpochComputability.lean', 'scripts/verify.sh']) {
+  'verification/Algorithm.lean', 'verification/Computability.lean', 'verification/EpochComputability.lean',
+  'verification/RK4Convergence.lean', 'verification/Kernel.lean', 'scripts/verify.sh']) {
   if (!existsSync(join(root, path))) reject(`missing required artifact: ${path}`);
 }
 const entry = leanCode(readFileSync(join(root, 'verification/Statement.lean'), 'utf8'));

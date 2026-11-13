@@ -24,14 +24,14 @@ $\mathrm{left}_2=\mathrm{off}_1$, and $\kappa=e^{-2\pi i/12}=e^{-i\pi/6}$.
 Reduce $(\sigma,\psi,p,\vartheta)$ by $\tau_v^{-n}$ ($n=\lfloor v_c+\frac16\rfloor$) into the fundamental strip
 $v_c\in[-\frac16,\frac56)$, and put $c_j=\sigma-j(1-3p)$ for $j\in\{0,1,2\}$. Under the split inequality
 $2m<D-3\delta_{\mathrm{kh}}$ ($0.64<0.70$), for any $p_2<h_K+\delta_{\mathrm{kh}}$ we have $1-3p_2>D-3\delta_{\mathrm{kh}}>2m$,
-so the three bands $\{|c_j|<m\}$ ($j=0,1,2$) are pairwise disjoint both before and after the corner keyhole!
+so the three bands $\{|c_j|<m\}$ ($j=0,1,2$) are pairwise disjoint both before and after the corner keyhole.
 
 \begin{enumerate}[label=(\arabic*)]
 \item \emph{Corner keyhole $\mathcal B$ (\texttt{Band}).} Outside $\bigcup_{j=0}^2\{|c_j|<m\}$, $\mathcal B=\mathrm{id}$.
 On $\{|c_j|<m\}$, put $\tau_B(c)=1-S_4((|c|-d_2)/(m-d_2))$, $k_j(c)=\kappa_j S_4((c+m)/(2m))$, $\psi_1=\psi+a_j+k_j(c)$,
 $v_j=\vartheta+b_j+3jk_j(c)-3j\psi_1$ ($(a_j,b_j)=\mathrm{left}_j$), apply $(w_2,g_B)=K_B^{\tau_B(c)}(\sqrt{p/\pi}e^{2\pi iv_j})$,
 set $\psi_2=\psi_1-\tau_B'(c)g_B$, $p_2=\pi|w_2|^2$, $v_{j,2}=\arg(w_2)/(2\pi)$, recover
-$\sigma_{\mathrm{out}}=c+j(1-3p_2)$ (preserving $c_j$!), $\psi_{\mathrm{out}}=\psi_2-a_j-k_j(c)$,
+$\sigma_{\mathrm{out}}=c+j(1-3p_2)$ (preserving $c_j$), $\psi_{\mathrm{out}}=\psi_2-a_j-k_j(c)$,
 $\vartheta_{\mathrm{out}}=v_{j,2}+3j\psi_2-b_j-3jk_j(c)$, and restore $\tau_v^n$.
 \item \emph{Simplex gluing $\mathcal W$.} On the output of $\mathcal B$ (reduced to $v_c\in[-\frac16,\frac56)$):
  \begin{itemize}
@@ -47,7 +47,7 @@ $\vartheta_{\mathrm{out}}=v_{j,2}+3j\psi_2-b_j-3jk_j(c)$, and restore $\tau_v^n$
  \item On band $j\in\{0,1,2\}$ ($|c|<m$, $c=c_j$), put $q(c)=\sigma_0(1-S_4(|c|/d_2))$, $S(c)=\sqrt{c^2+q(c)^2}$,
  $\lambda_+(c)=\frac12(S(c)+c)\ge0$, $\lambda_-(c)=\frac12(S(c)-c)\ge0$ (evaluated without cancellation via
  $q(c)^2/(2(S(c)+|c|))$), $\lambda(c)=\frac12(c-S(c))=-\lambda_-(c)$, $v_\ell=\operatorname{frac}(\vartheta+b_j+3jk_j(c)-3j(\psi+a_j+k_j(c)))\in(0,1)$
- (since $|c|\le d_2\implies\tau_B(c)=1\implies v_\ell\notin\{0,1\}$ on band interiors where $\lambda'\ne0,1$!),
+ (since $|c|\le d_2\implies\tau_B(c)=1\implies v_\ell\notin\{0,1\}$ on band interiors where $\lambda'\ne0,1$),
  $x_a=p+\lambda_+(c)$, $x_b=p+\lambda_-(c)$, $x_r=1-x_a-x_b$, $T_a=\psi+a_j+k_j(c)+\lambda'(c)v_\ell$, and permute
  $(\sqrt{x_r},\sqrt{x_a}e^{2\pi iT_a},\sqrt{x_b}e^{2\pi i(v_\ell-T_a)})$ by the cyclic shift $(j,j+1,j+2)\bmod3$.
  \end{itemize}
@@ -67,7 +67,7 @@ $X_0,X_1,X_2\ge0$ with $X_0+X_1+X_2=1$, and only the coordinate not carrying an 
 matches polar coordinates $w_{\mathrm{post}}=\sqrt{p/\pi}e^{2\pi i\vartheta}$ smoothly). On band $j$, for $|c|\le d_2$
 we have $\tau_B(c)=1$, so $p_2>x_{0,B}>0$ and $v_\ell\in(\theta_{0,B},1-\theta_{0,B})$ avoids the branch cut $\{0,1\}$;
 for $d_2\le|c|<m$, $q(c)\equiv0$, so $S(c)=|c|$ ($\lambda'(c)=0$ for $c\ge d_2$, $\lambda'(c)=1$ for $c\le-d_2$), making
-$e^{2\pi iT_a}$ and $e^{2\pi i(v_\ell-T_a)}$ independent of the integer lift of $v_\ell$ and smooth across $p_2=0$! Across
+$e^{2\pi iT_a}$ and $e^{2\pi i(v_\ell-T_a)}$ independent of the integer lift of $v_\ell$ and smooth across $p_2=0$. Across
 all six seams $c_j=\pm m$ (where $\tau_B=0$, $k_j(-m)=0$, $k_j(+m)=\kappa_j$) and across the fundamental cut
 $v_c=-\frac16\leftrightarrow\frac56$ (via $\mathrm{off}_{2c}-\mathrm{off}_{2s}=(0,-\frac14)$ and $\tau_v$), the
 rank-one projector $ZZ^*\in\R^9$ matches identically to order $C^7$ and is invariant under $\tau_u,\tau_v$.
@@ -77,7 +77,7 @@ $(0,0)$, $(0,\frac12)$, $(\frac12,-\frac16)$.
 \item \emph{Symplectic embedding and cancellation-free inverse.} On $\mathcal U_{\mathrm{post}}\setminus\operatorname{deck}\{\mathcal M_1,\mathcal M_2,\mathcal M_3\}$,
 $K_{\mathrm{post}}=\chi_\kappa\circ\mathcal W\circ\mathcal B$ takes values in $\Bo(1)$, satisfies
 $K_{\mathrm{post}}^*\omega_0=d\sigma\wedge d\psi+dw_{\mathrm{post},x}\wedge dw_{\mathrm{post},y}$, and identifies two
-points if and only if they lie in the same $(\tau_u,\tau_v)$-orbit. Its left inverse (\texttt{transfer.py}) recovers
+points if and only if they lie in the same $(\tau_u,\tau_v)$-orbit. The inverse algorithm in \S\ref{sec:proof-end} recovers
 every sector moment directly from the non-negative coordinate $p=X_2,X_0,X_1$ (never by $1-X_a-X_b$) and every band
 moment from $p_2=X_b-\lambda_-(c)$ ($c\ge0$) or $X_a-\lambda_+(c)$ ($c<0$).
 \end{enumerate}
@@ -119,14 +119,20 @@ $(T_1,T_2)=(\tilde\vartheta,\tilde\psi)A_s^{-1}$ gives $\sum_{l=1}^2 dX_l\wedge 
 on band $j$, $dx_a\wedge dT_a+dx_b\wedge d(v_\ell-T_a)=dc\wedge d\psi_2+dp_2\wedge dv_\ell
 =d\sigma_{\mathrm{out}}\wedge d\psi_{\mathrm{out}}+dp_2\wedge d\vartheta_{\mathrm{out}}$, and $\mathcal B$ is symplectic
 by Proposition~\ref{prop:ks-symp}. Pulling back $\omega_0$ by $\chi_\kappa$ gives $\omega_{\mathrm{FS}}$, whose pullback
-by $W$ is $\sum_{l=1}^2dX_l\wedge dT_l$. Finally, the three band image sets $\mathcal R_j=\{|X_{j+1}-X_{j+2}|<m,\ X_j>\frac13\}$
-are pairwise disjoint: on $\mathcal R_0$, if $X_1=p_2+\lambda_+(c)>\frac13$, then since $p_2<\frac13-\frac7{30}D$ and
-$\max_{|t|\le d_2}\lambda_+(t)=0.20D<\frac7{30}D$, we must have $c>d_2$, so $S(c)=c$, $\lambda_-(c)=0$, and
-$X_0-X_2=1-3p_2-c>\frac7{10}D-0.32D=0.38D>m$; symmetrically $X_0-X_1>0.38D>m$ whenever $X_2>\frac13$. Outside
-$\mathcal R_0\cup\mathcal R_1\cup\mathcal R_2$, $\operatorname{argmin}(X_0,X_1,X_2)$ uniquely identifies sector $0$
-($X_2$ minimal), sector $1$ ($X_0$ minimal), or sector $2s$/$2c$ ($X_1=p$ minimal: on $2c$, $X_2\ge p+m>p$ and
-$X_0-X_1=1-3p+\sigma\ge\frac12(1-3p)>0$; since $2c$ is the $\tau_v^{-1}$-image of $v_c'\in[\frac56,1)$ where $2s$'s
-formula produces the identical $W$, $2s$'s inverse followed by \texttt{reduce} recovers $(v_c,\psi,p,\vartheta)$ exactly).
+by $W$ is $\sum_{l=1}^2dX_l\wedge dT_l$. Finally, consider the three band tests $\mathcal R_j=\{|X_{j+1}-X_{j+2}|<m,\ X_j>\frac13\}$
+(indices modulo $3$). Although the sets $\mathcal R_j$ overlap abstractly on the simplex $\Delta^2$, every actual image
+point of $\mathcal W\circ\mathcal B(\mathcal U_{\mathrm{post}})$ satisfies $p_2<h_K+\delta_{\mathrm{kh}}=\frac13-\frac13(D-3\delta_{\mathrm{kh}})<\frac13-\frac7{30}D$,
+and on this image each band $j$ satisfies $\mathcal R_j$ exclusively while no sector point satisfies any $\mathcal R_l$:
+on band $0$, $X_0=x_r>\frac13$ and $|X_1-X_2|=|c|<m$ put the point in $\mathcal R_0$; if also $X_1=p_2+\lambda_+(c)>\frac13$,
+then since $\max_{|t|\le d_2}\lambda_+(t)=0.20D<\frac7{30}D$ we must have $c>d_2$, so $S(c)=c$, $\lambda_-(c)=0$, and
+$X_0-X_2=1-3p_2-c>\frac7{10}D-0.32D=0.38D>m$ (excluding $\mathcal R_1$); symmetrically $X_0-X_1>0.38D>m$ whenever $X_2>\frac13$
+(excluding $\mathcal R_2$). Conversely, on sector $0$ ($0\le v_c<\frac13$, $\sigma\ge m$, $1-3p-\sigma\ge m$, $p<h_K<\frac13$),
+$X_1-X_2=\sigma\ge m$ excludes $\mathcal R_0$, $X_0-X_2=1-3p-\sigma\ge m$ excludes $\mathcal R_1$, and $X_2=p<\frac13$
+excludes $\mathcal R_2$; sectors $1$, $2s$, and $2c$ are analogous. Outside the band images, $\operatorname{argmin}(X_0,X_1,X_2)$
+uniquely identifies sector $0$ ($X_2=p$ minimal), sector $1$ ($X_0=p$ minimal), or sector $2s$/$2c$ ($X_1=p$ minimal:
+on $2c$, $X_2\ge p+m>p$ and $X_0-X_1=1-3p+\sigma\ge\frac12(1-3p)>0$; since $2c$ is the $\tau_v^{-1}$-image of
+$v_c'\in[\frac56,1)$ where $2s$'s formula produces the identical $W$, $2s$'s inverse followed by \texttt{reduce} recovers
+$(v_c,\psi,p,\vartheta)$).
 \end{proof}
 
 % =====================================================================================================
@@ -152,9 +158,13 @@ by the same `keyhole\_star` formulas with $\rho_1$-factor $0.7$.
 \end{enumerate}
 \end{definition}
 
+\input{hypotheses}
+
 \begin{lemma}[Grid-free analytic bounds for (H6) and (H7)]\label{lem:h67}
 With $(\lambda_a,\lambda_2,\mu,f)=(\frac9{10},\frac3{10},\frac12,\frac14)$, suppose $\delta_{\mathrm{rel}}=fT=\frac14T$
-and $\delta_{\mathrm{small}}\le0.04T$. Then (H6) and (H7) hold on all of $[0,1]$ with margin $>0.012T$.
+and $\delta_{\mathrm{small}}\le0.04T$. Then (H6) holds on all of $[0,1]$ with margin $\ge\min(0.05T-\delta_{\mathrm{small}},0.0128T)\ge0.01T$
+(and $>0.0128T$ whenever $\delta_{\mathrm{small}}\le0.037T$, as for $\Pi^*$ below where $\delta_{\mathrm{small}}<0.007T$),
+and (H7) holds on all of $[0,1]$ with margin $\ge0.10T$.
 \end{lemma}
 
 \begin{proof}
@@ -181,10 +191,14 @@ $s/(s-3)\le\sqrt{10}/(\sqrt{10}-3)=10+3\sqrt{10}<19.49$, and
  \frac{T}{a} = \frac{\frac12\eta/(s-3)}{t_0/s} = \frac{\eta}{2t_0}\,\frac{s}{s-3}
  < \frac{0.005013}{1.9948}\cdot 19.49 < 0.049.
 \]
+The parameter ranges (H0)--(H1) hold by definition and the fixed values
+$(\lambda_a,\lambda_2,\mu)=(9/10,3/10,1/2)$. The radius identities, integer shifts, and $D=1-3h_K$ are exact
+definitional identities; positivity of the remaining keyhole parameters follows from their displayed formulas.
+
 \emph{(H2) and $r_+>1$:} Since $0<m_s\le\frac18\eta$ and $\eta<0.01$, $(1-m_s)^2>1-2m_s\ge1-\frac14\eta$, while
 $(1-\frac12\eta)/(1-\eta)=1+\frac{\eta}{2(1-\eta)}>1+\frac12\eta$. Thus
 $r_+^2=(1-m_s)^2(1-\frac12\eta)/(1-\eta)>(1-\frac14\eta)(1+\frac12\eta)=1+\frac14\eta(1-\frac12\eta)>1$, which is
-equivalent to $\rho_b=\rho_{\mathrm{ball}}/(1-m_s)^2<a$.
+equivalent to $\rho_b=R_s^{-2}=(1-\eta)/(\sqrt k(1-m_s)^2)<a$.
 
 \emph{(H3)--(H5) for $K_C$:} Since $\pi(r_a+d)(r_a+8.4d)>\pi r_a^2=a$, $\beta<\frac14(T/a)<0.0123$. Also
 $\pi d^2=\frac14T/(1+\upsilon)^2<0.205T$, so $(d/r_a)^2<0.205(0.049)<0.0101$ ($d/r_a<0.101$). By definition, (K1) and
@@ -202,7 +216,7 @@ Lemma~\ref{lem:h67} then gives (H6) and (H7).
 \emph{(H8), (H9), (H9b):} $\pi d^2<0.205T<0.35T=T(1-\mu-\frac12\lambda_2)$, and
 $s(\pi d^2+0.65T)<0.855sT=0.4275\eta\frac{s}{s-3}<0.042<1-0.45\eta=sO(-w_G)$, giving (H8). For (H9),
 $c_s\pi r_h^2<c_s\pi(0.024d)^2<6\cdot10^{-4}c_s(0.205T)<2\cdot10^{-4}g$, so $c_s\pi r_h^2+1.5\lambda_2g<(0.45+0.001)g<g$.
-For (H9b), $a<1/\sqrt{10}\implies 3-9a>3(1-9/\sqrt{10})>0.1539$, while $\delta=\frac14w_2=\frac{9}{80}\eta<0.0006<0.1539$.
+For (H9b), $a<1/\sqrt{10}\implies 3-9a>3-9/\sqrt{10}=3(1-3/\sqrt{10})>0.1539$, while $\delta=\frac14w_2=\frac{9}{80}\eta<0.0006<0.1539$.
 (H10) is a check of fixed rational constants ($0.045+0.045<0.10$, $0.045+0.14<0.25$, $2\cdot0.12<\frac14$,
 $\frac16-0.12-0.02>0.02>0$).
 
@@ -210,19 +224,126 @@ $\frac16-0.12-0.02>0.02>0$).
 is piecewise affine on $[-w_G,0]\cup[0,G_{\max}]$, its maximum is bounded by $\max\bigl(O(-w_G)-\mu T(1-\lambda_a),O(0)-\mu T,O(G_{\max})-\mu T\bigr)$;
 note $O(0)<O(G_{\max})=h$ when $G_{\max}>0$ ($O(-w_G)$ otherwise), and subtracting $\frac12\mu T(1-\lambda_a)>0$ in $h_K$
 ensures strict inequality $h_K>O(G)-\mu\operatorname{slack}(G)$ everywhere on $[-w_G,G_{\max}]$.
-Finally, $h_K\ge a>\frac{0.997}{s}$ while $\delta_{\mathrm{kh}}=0.1D$: since $D=1-3h_K\le 1-3a<1$ and even as $s\to\infty$,
-$h_K\ge\max(a,\frac13-\frac13(\frac12\eta+\frac32\mu T))>\frac13-0.01>0.32$, we always have $h_K>0.31$ (for $k=10$,
-$a>0.315$; for $k\ge11$, $O(-w_G)$ or $h=\frac13t_0>0.332$ gives $h_K>0.315$!). Thus $\delta_{\mathrm{kh}}/h_K<0.10/0.315<0.32$
-and $\beta_B<0.8(\delta_{\mathrm{kh}}/h_K)/(1)<0.003$ (since $D\le\frac12\eta+\frac32\mu T<0.015\implies\delta_{\mathrm{kh}}<0.0015$).
-Exactly as for $K_C$, $K_B$ satisfies (K1)--(K3) with $\rho_{1,B}\pi(d_B+r_B)^2+\frac12X_{w,B}=0.8\pi(d_B-r_{h,B})^2$,
+Finally, since $s\ge\sqrt{10}$ and $\eta<0.005013$, we have $\frac32\mu T=\frac{9\eta}{8(3s-9)}<0.00388$, so
+$D\le\frac12\eta+\frac32\mu T<0.0064$, $\delta_{\mathrm{kh}}=0.10D<6.4\cdot10^{-4}$, and
+$h_K=\frac13(1-D)\ge h-\frac12\mu T>\frac{0.9974}{3}-0.0013>0.331>0.315$. Retaining the denominator of Definition~\ref{def:pistar}(3),
+$\beta_B=0.8\delta_{\mathrm{kh}}/\bigl(\pi(r_B+d_B)(r_B+8.4d_B)\bigr)<0.8\delta_{\mathrm{kh}}/h_K<0.8(6.4\cdot10^{-4})/0.331<0.0016<0.003$.
+Exactly as for $K_C$, $K_B$ satisfies (K1)--(K3) with $\rho_{1,B}\pi(d_B+r_B)^2+\frac12X_{w,B}=(0.7+0.1)\pi(d_B-r_{h,B})^2=0.8\pi(d_B-r_{h,B})^2$,
 $\delta_{\mathrm{rel},B}=0.8\delta_{\mathrm{kh}}$, $\pi d_B^2=0.8\delta_{\mathrm{kh}}/1.05^2<\delta_{\mathrm{kh}}$, and
-$\delta_{\mathrm{small},B}<0.01\delta_{\mathrm{kh}}$, proving (H12)--(H13). On $[-m,m]$, for $|c|\le d_2$ we have
+$\delta_{\mathrm{small},B}<0.01\delta_{\mathrm{kh}}$ (since $4\pi^2(1/8.4)(0.68)^2(0.0016)<0.004<0.01$), proving (H12)--(H13). On $[-m,m]$, for $|c|\le d_2$ we have
 $S(c)\le\sqrt{d_2^2+\sigma_0^2}=0.20\sqrt2\,D<0.283D<0.32D=m$, and for $d_2\le|c|\le m$, $S(c)=|c|\le m$; thus
 $S_{\max}=0.32D$, $\eta_1=\frac23-(0.20+0.32)=\frac{11}{75}>0.1466>0$, $3\eta_1=\frac{11}{25}=0.44\ge0.32=m/D$ (H14--H15),
 and $2m/D+3\delta_{\mathrm{kh}}/D=0.64+0.30=0.94<1$ (`split`).
 \end{proof}
 
-\subsection{Completion of the proof of Theorem~\ref{thm:main}}\label{sec:proof-end}
+\subsection{Exact left inverse, non-membership certification, and proof of Theorem~\ref{thm:main}}\label{sec:proof-end}
+
+\input{inverse}
+
+\begin{lemma}[Forward-reconstruction soundness of $\mathrm{Preimage}$]\label{lem:preimage-sound}
+For any $Y\in\R^4$ and any $0\le j<k$:
+\begin{enumerate}[label=(\roman*)]
+\item If $Y=f_j(X)$ with $X\in\EB^{\circ}(r_+)$, then $\mathrm{Preimage}(j,Y)=(X,\mathrm{true})$.
+\item Conversely, if $\mathrm{Preimage}(j,Y)=(X,\mathrm{true})$ with $|X|<r_+$ (in particular if $|X|\le1$), then
+$Y=f_j(X)$; hence $\mathrm{Preimage}(j,Y)$ returns $|X|\le1$ and $\mathrm{ok}=\mathrm{true}$ \emph{if and only if}
+$Y\in f_j(\EB(1))$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The first step rejects $|Y|>R_s$. Otherwise it constructs $W\in S^5$ with rotated coordinate
+$Z_0=\sqrt{1-|Y|^2/R_s^2}$. When $|Y|<R_s$, the point $y=Y/(\sqrt\pi R_s)\in\Bo(1)$ therefore satisfies
+$\chi_\kappa([Z(W)])=y$; when $|Y|=R_s$, the point lies on $L_\kappa$.
+
+(i) Suppose $Y=f_j(X)$ with $X\in\EB^{\circ}(r_+)$. By Theorem~\ref{thm:transfer}(iii), $\mathcal B^{-1}\circ(\chi_\kappa\circ\mathcal W)^{-1}(y)$
+lies in the $(\tau_u,\tau_v)$-orbit of $\Pi_{\mathrm{post}}(\Psi(y_{\mathrm{fl}}))$, where
+$y_{\mathrm{fl}}=(F^{(j)}\circ C_j\circ\mathrm{KR}\circ S_{\mathrm{in}})(X)$ satisfies $J(p)<G<K(p)$ by
+\eqref{eq:group-G-bound} and \eqref{eq:stack-upper}. Applying $\Psi^{-1}\circ\Pi_{\mathrm{post}}^{-1}$ gives a point in the
+$\langle T_u,T_v\rangle$-orbit of $y_{\mathrm{fl}}$. The $T_u$-reduction brings $G$ into the unique representative
+$J(p)\le G'<K(p)$, which therefore equals $T_v^m(y_{\mathrm{fl}})=(G,v+m,w)$ for some $m\in\Z$. Next, $(F^{(j)})^{-1}$
+commutes with $T_v$ (shifting only $v$ by $+m$), so $(F^{(j)})^{-1}(G,v+m,w)=(G_0,v_0+m,w_0)$ where
+$(G_0,v_0,w_0)=C_j(\mathrm{KR}(S_{\mathrm{in}}(X)))$ has $T_{\mathrm{cell}}\in(0,1)$. In the cell step, for
+$j<9$ we have $9(v_0+m)-(j-4)=T_{\mathrm{cell}}+9m$, whose reduction modulo $9$ into $[0,9)$ recovers $T_{\mathrm{cell}}\in(0,1)$
+uniquely; for $j\ge9$ we have $(v_0+m)-\frac12=T_{\mathrm{cell}}+m$, whose reduction modulo $1$ into $[0,1)$ recovers
+$T_{\mathrm{cell}}\in(0,1)$ uniquely. Thus the cell inverse recovers the original tuple $\mathrm{KR}(S_{\mathrm{in}}(X))\in\mathcal C_a$,
+and $S_{\mathrm{in}}^{-1}\circ\mathrm{KR}^{-1}$ returns $(X,\mathrm{true})$.
+
+(ii) Suppose conversely that $\mathrm{Preimage}(j,Y)=(X,\mathrm{true})$ with $|X|<r_+$.
+The ball-chart step gives $|Y|\le R_s$ and a projective point $[W]$; the boundary case will be excluded at the end.
+We prove reconstruction in the order of the inverse algorithm, without assuming that $[W]$ belongs to a forward image.
+
+\emph{Comparator reconstruction.} The cell test and bijectivity of $\mathrm{KR}$ imply that forward evaluation
+from $X$ recovers precisely the accepted cell tuple. The explicit formulas for $C_j^{-1}$ and $C_j$ then recover
+the flat point up to an integer $T_v$ translate. For $j\ge9$ the only possible loss of information before that
+cell test is the truncation $\max(x_2-c(G),0)$ in $F_2^{-1}$. If $c(G)>0$, then $G>-w_2$ and $\tau(G)=1$.
+Since the accepted fibre has $p<a$, Theorem~\ref{thm:kh-bounds}(ii) puts its image under $KS_1$ strictly outside
+the closed hole $\{\pi|w_1|^2\le x_0\}$ and the slit $|\theta_1|\le\theta_0$.
+A truncated inverse point has $w_1=0$, so its preimage under the global bijection $KS_1$ cannot have $p<a$.
+The same argument excludes a slit point. Hence neither information loss can occur on an accepted branch;
+$F_1$ and $F_2$ really cancel their inverses there. When $c(G)=0$ there is no truncation.
+The twists are global bijections preserving $p$ and commuting with the deck transformations. Restoring the
+explicit $T_u$ and $T_v$ translates therefore identifies the recovered post point $x=\mathcal B_-(z)$ with the
+post-chart image of the forward cell/comparator/twist chain, modulo $(\tau_u,\tau_v)$. In particular
+\begin{equation}\label{eq:inverse-source-post}
+ p(x)<h_K.
+\end{equation}
+This uses only the stages before the transfer, not soundness of the transfer inverse.
+
+\emph{Conditional inverse of the corner band.} We claim that
+\[
+ \mathcal B_-(z)=x,\quad p(x)<h_K
+ \quad\Longrightarrow\quad \mathcal B(x)=z,\quad p(z)<h_K+\delta_{\mathrm{kh}}.
+\]
+If no band was active, both procedures are the identity. Otherwise take the last band $l$ written by
+$\mathcal B_-$. Its $c_l$ is preserved by the keyhole. At the returned source point put $L=1-3p(x)>D$.
+Since $|c_l|<m=8D/25$, we have $|c_l|/(3L)<8/75<1/6$. Thus the source reduction uses exactly the same integer
+translate as the inverse procedure: the reduced coordinate is $c_l+lL$, with $l=0,1,2$.
+Also $L>D>2m$ makes this the unique active source band. The global planar keyhole and its inverse now cancel,
+as do their conjugate drifts; restoring the deck translate gives $\mathcal B(x)=z$.
+The full-disc nesting estimate of Theorem~\ref{thm:kh-bounds}(i), with (H13), yields the second conclusion.
+Consequently the point produced by the simplex inverse satisfies
+\begin{equation}\label{eq:inverse-post-bound}
+ p_2=p(z)<h_K+\delta_{\mathrm{kh}}=\frac13-\frac7{30}D,
+ \qquad L_2=1-3p_2>\frac7{10}D>2m.
+\end{equation}
+
+\emph{Simplex band branches and their truncation.} Suppose the simplex inverse selected $\mathcal R_l$.
+It sets $c=X_a-X_b\in(-m,m)$ and $\sigma=c+lL_2$ before reduction. Since
+$|c|/(3L_2)<16/105<1/6$, this is already in the prescribed fundamental strip and belongs to band $l$ alone.
+For $d_2\le|c|<m$, $q(c)=0$; the smaller of $\lambda_+(c),\lambda_-(c)$ is zero, so the recovered raw moment
+is a non-negative simplex coordinate and is not truncated. For $|c|<d_2$, $\tau_B(c)=1$.
+If the raw moment had been negative and truncated to zero, $z$ would have fibre $w_2=0$, contrary to
+Theorem~\ref{thm:kh-bounds}(ii) for the source point in \eqref{eq:inverse-source-post}.
+The same hole and slit clearance validates its polar phase. Thus the recovered moment equals the raw one, and
+\[
+ p_2+\lambda_+(c)=X_a,\qquad p_2+\lambda_-(c)=X_b,\qquad
+ 1-2p_2-\lambda_+(c)-\lambda_-(c)=X_l.
+\]
+The inverse formulas for $\psi_2$ and $\vartheta$ likewise recover the two relative phases of $W$.
+This proves reconstruction for the selected branch even if several $\mathcal R_j$ tests initially succeeded;
+no disjointness assumption on the whole simplex has been used. On an accepted input the reconstructed point
+is in the forward transfer domain, where Theorem~\ref{thm:transfer}(iii) gives exclusivity.
+
+\emph{Simplex sector branches.} If no $\mathcal R_j$ succeeded, the inverse takes $p_2=\min_j X_j$.
+The affine moment inverses in the algorithm place $\sigma$ in the corresponding sector interval, possibly as the
+deck-equivalent $2c$ representative. Suppose this recovered post point lay in a band, with
+$d=|c_l|<m$. In these sector formulas the two smaller simplex coordinates are $p_2$ and $p_2+d$, so the remaining
+coordinate is
+\[
+ 1-2p_2-d>\frac13+\left(\frac7{15}-\frac8{25}\right)D
+ =\frac13+\frac{11}{75}D>\frac13.
+\]
+The corresponding $\mathcal R_l$ would have succeeded, a contradiction. Hence the point is in the forward sector
+domain. The $\mathrm{GL}_2(\Z)$ angle inverse and affine moment formulas recover $[W]$ there.
+The $2s/2c$ cut is covered by the deck identity in the proof of Theorem~\ref{thm:transfer}; at $|c|=m$ the sector
+and band formulas match, and at $|c|=d_2$ one has $q=0$. A minimal-moment tie would put the point on an excluded
+band, so it cannot occur on an accepted sector input satisfying \eqref{eq:inverse-post-bound}.
+
+We have proved that the forward transfer from the accepted source reconstructs the original projective point $[W]$.
+If $|Y|=R_s$, its rotated representative has $Z_0=0$, contradicting forward line avoidance in
+Theorem~\ref{thm:transfer}(ii). Thus $|Y|<R_s$, where the ball chart and its inverse are genuine two-sided inverses.
+Undoing the scale gives $f_j(X)=Y$, as required.
+\end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
 Fix $k\ge10$ and $\eps\in(0,1)$. Since $\eps_c=\min(\eps,\frac1{100})\le\eps$, $R_c\le R_{\mathrm{req}}$, and
@@ -245,14 +366,7 @@ into $\Bo(1)$. Hence $\tilde f_i=K_{\mathrm{post}}\circ\Pi_{\mathrm{post}}\circ\
 are $C^4$ symplectic embeddings on $\Bo(a)$ with pairwise disjoint images in $\Bo(1)$.
 \item Finally, $S_{\mathrm{out}}(y_1,y_2,y_3,y_4)=\sqrt\pi R_s(y_1,y_2,y_3,y_4)$ maps $\Bo(1)$ onto $\EB^{\circ}(R_s)\subset\EB^{\circ}(R_{\mathrm{req}})$
 with conformal factor $\pi R_s^2$, cancelling Stage~1's $(\pi R_s^2)^{-1}$ so that $f_i^*\omega_0=\omega_0$.
-\item For $Y\in\R^4$, $\mathrm{Preimage}(j,Y)$ checks $|Y|<R_s$ (via $1-\pi|Y/(\sqrt\pi R_s)|^2>0$ in `unchart`), applies
-$\mathrm{to\_fund}\circ\Psi^{-1}\circ\Pi_{\mathrm{post}}^{-1}\circ\mathcal B^{-1}\circ(\chi_\kappa\circ\mathcal W)^{-1}$
-to obtain the unique fundamental representative $y_{\mathrm{fl}}\in\mathcal F_{\mathrm{fl}}$, applies
-$(F^{(j)})^{-1}$ and $C_j^{-1}$ to obtain $(X_{\mathrm{cell}},T_{\mathrm{cell}},w)$, tests membership in $\mathcal C_a$
-($p<a$, $0<X_{\mathrm{cell}}<a-p$, $0<T_{\mathrm{cell}}<1$), and applies $S_{\mathrm{in}}^{-1}\circ\mathrm{KR}^{-1}$.
-When $Y=f_i(X)$ with $X\in\EB^{\circ}(r_+)$, deck invariance of $K_{\mathrm{post}}\circ\Pi_{\mathrm{post}}$ and
-Theorem~\ref{thm:comparator}(ii) guarantee that $\mathrm{to\_fund}$ recovers the exact point $(F^{(i)}\circ C_i\circ\mathrm{KR}\circ S_{\mathrm{in}})(X)\in\mathcal F_{\mathrm{fl}}$,
-giving $\mathrm{Preimage}(i,f_i(X))=(X,\mathrm{true})$ and disjointness for $j\ne i$.\qedhere
+\item Part~(iii) follows immediately from Lemma~\ref{lem:preimage-sound}.\qedhere
 \end{enumerate}
 \end{proof}
 
@@ -267,11 +381,136 @@ $O(1)$ coordinates, local Lipschitz constants reach $10^8$--$10^{15}$ for small 
 evaluation via \texttt{program/check\_embedding\_mp.py} verifies the submitted Python source directly to $100+$ digits.
 \end{remark}
 
+% =====================================================================================================
+\section{Explicit Liouville generators, trajectory certificates, and conditioning}\label{sec:hamiltonian}
+
+Beyond direct map evaluation, a normalised Liouville primitive gives an explicit Hamiltonian-generator formula on
+the radial--Alexander collar stage and pairs naturally with ODE trajectory certificates. Write
+$\lambda_0=\frac12(q_1\,dp_1-p_1\,dq_1+q_2\,dp_2-p_2\,dq_2)$, so $d\lambda_0=\omega_0$ and
+$\lambda_0(X)[V]=\frac12\omega_0(X,V)$.
+We use $J_0=\left(\begin{smallmatrix}0&I_2\\-I_2&0\end{smallmatrix}\right)$ in the coordinate order $(q_1,q_2,p_1,p_2)$,
+so $X_H=J_0\nabla H$ and $\iota_{X_H}\omega_0=dH$.
+
+\begin{proposition}[Liouville generator of radial--Alexander dilation and ODE trajectory certificates]\label{prop:liouville-cert}
+Let $k\ge10$, $\eps\in(0,1)$, and $f_0,\dots,f_{k-1}\colon\EB^{\circ}(r_+)\to\EB^{\circ}(R_s)$ be the $C^4$ symplectic
+embeddings of Theorem~\ref{thm:main}, with $s_i=(3i,0,0,0)$ ($0\le i<k$).
+\begin{enumerate}[label=(\roman*)]
+\item \emph{(Exact primitive and disjoint radial--Alexander collars.)} Put $\alpha_i=f_i^*\lambda_0-\lambda_0$ and
+\[
+ S_i(u)=\int_0^1\alpha_i(tu)[u]\,dt.
+\]
+This is the unique $C^4$ primitive with $S_i(0)=0$ and $dS_i=\alpha_i$. The stage formulas below give local
+potentials for this primitive; the projective stages require phase lifts with fixed basepoint values and compatible
+additive constants. For any basepoints $a_i\in\EB^{\circ}(\frac12)$, any smooth clock
+$v\colon[t_0,1]\to(0,1]$, and any radii $1<r_1(v)<r_2(v)$ with $(1-v)a_i+v\EB(r_2(v))\subset\EB^{\circ}(r_+)$, the
+radial--Alexander dilations $\gamma_{v(t)}^{(i)}(u)=v(t)^{-1}f_i((1-v(t))a_i+v(t)u)$ map the $k$ closed collars $\EB(r_2(v(t)))$
+onto pairwise disjoint compact sets, with pairwise disjoint open images of their interiors. On open neighbourhoods of
+$\gamma_{v(t)}^{(i)}(\EB(r_1(v(t))))$ they satisfy
+$\iota_{\partial_t\gamma_{v(t)}^{(i)}}\omega_0=dG_t^{(i)}$ with exact generator
+\[
+ G_t^{(i)}(y) = -\frac{\dot v(t)}{v(t)^3}\Bigl(2\bigl(S_i(w)-S_i(a_i)\bigr)+\omega_0(a_i,w)\Bigr),\qquad
+ w = f_i^{-1}\bigl(v(t)y\bigr).
+\]
+\item \emph{(Trajectory certificate by ODE uniqueness.)} Let $H\in C^2(\R\times\R^4)$ have uniformly compact spatial
+support, and let $\gamma_t^{(i)}(u)$ ($t\in[0,1]$, $u\in\EB(1)$) be $C^1$ curves with $\gamma_0^{(i)}(u)=s_i+u$. Then
+\[
+ \phi_H^t(s_i+u)=\gamma_t^{(i)}(u)\qquad\text{for every }t\in[0,1]
+\]
+if and only if
+\begin{equation}\label{eq:picard-id}
+ \partial_t\gamma_t^{(i)}(u)=J_0\nabla_yH\bigl(t,\gamma_t^{(i)}(u)\bigr)
+ \qquad\text{for every }t\in[0,1].
+\end{equation}
+In particular, if $\gamma_1^{(i)}(u)=f_i(u)$, the differential identity \eqref{eq:picard-id} certifies
+$\phi_H^1(s_i+u)=f_i(u)$. More generally, if $X_H(t,\cdot)$ is $L$-Lipschitz on $\R^4$ for $t\in[0,1]$ and
+$|\partial_t\gamma_t^{(i)}(u)-X_H(t,\gamma_t^{(i)}(u))|\le\delta$ for all $t\in[0,1]$, then
+$|\phi_H^1(s_i+u)-\gamma_1^{(i)}(u)|\le\delta e^L$; thus a strict target margin $R_{\mathrm{req}}-R_s>0$ absorbs any
+rigorously bounded uniform velocity residual $\delta\le(R_{\mathrm{req}}-R_s)e^{-L}$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) Since $d\alpha_i=f_i^*\omega_0-\omega_0=0$, the radial Poincar\'e formula gives $dS_i=\alpha_i$ and $S_i(0)=0$.
+The coefficients of $\alpha_i$ are $C^3$, so this identity gives $S_i\in C^4$; connectedness gives uniqueness.
+For local stage computations use $\lambda_V=\frac12(w_x\,dw_y-w_y\,dw_x)=p\,d\theta$, the cell form
+$X\,dT+\lambda_V$, the flat form $G\,dv+\lambda_V$, and the post form $\sigma\,d\psi+\lambda_V$.
+For example the strip primitive relative to these forms is
+$X(T-\frac12)+pC-\frac12xy$, with $C$ as in \eqref{eq:kr}; the term $-xy/2$ accounts for the source
+symmetric radial form. A planar keyhole has potential
+$P_{KS}=\tau(M(X)-XM'(X))(\Psi(\psi)-\psi)-\frac12d(w_y'-w_y)$,
+where the scalar $d>0$ is the keyhole's eccentricity parameter.
+Its four-dimensional suspension adds the conjugate-drift term $-G\tau'(G)g_\tau$; the $F_2$ potential is
+$(c(G)-Gc'(G))\vartheta$ relative to the mixed flat form. The twist potentials are bump-integral expressions,
+and the simplex and ball charts give piecewise action-angle potentials with a projective phase correction.
+These local potentials are composed by pullback, including the input/output conformal scale factors. Their additive
+constants are fixed by the global primitive $S_i$, rather than by independent principal-argument choices.
+Line avoidance (Theorem~\ref{thm:transfer}(ii)) permits local lifts of the projective phase; a lift is unique only after
+its value at a basepoint is fixed. No global branch-selection evaluator is asserted here. Disjointness
+of $\gamma_v^{(i)}(\EB(r_2(v)))$ follows immediately from Theorem~\ref{thm:main}(ii) by dividing by $v>0$.
+Along $\gamma_v^{(i)}(u)=v^{-1}f_i(w)$, with $w=(1-v)a_i+vu$, differentiation gives
+\[
+ \partial_v\gamma_v^{(i)}(u)
+ = -v^{-2}f_i(w) + v^{-1}Df_i(w)(u-a_i)
+ = -v^{-2}\bigl(f_i(w)+Df_i(w)(a_i-w)\bigr).
+\]
+For any tangent vector $\delta y=v^{-1}Df_i(w)\delta w$ ($w=f_i^{-1}(vy)$), symplecticity $f_i^*\omega_0=\omega_0$ and
+$2\,dS_i(w)[\delta w]=\omega_0(f_i(w),Df_i(w)\delta w)-\omega_0(w,\delta w)$ give
+\begin{align*}
+ \omega_0\bigl(\partial_v\gamma_v^{(i)}(u),\delta y\bigr)
+ &= -v^{-3}\omega_0\bigl(f_i(w),Df_i(w)\delta w\bigr) - v^{-3}\omega_0(a_i-w,\delta w)\\
+ &= -v^{-3}\bigl(2\,dS_i(w)[\delta w]+\omega_0(a_i,\delta w)\bigr)
+  = d\Bigl[-v^{-3}\bigl(2S_i(w)+\omega_0(a_i,w)\bigr)\Bigr](\delta y),
+\end{align*}
+whence $\iota_{\dot v\partial_v\gamma_v^{(i)}}\omega_0=dG_t^{(i)}$.
+
+(ii) Since $H\in C^2(\R\times\R^4)$ has uniformly compact spatial support, $X_H=J_0\nabla_yH\in C^1(\R\times\R^4,\R^4)$
+is globally Lipschitz in $y$ on $[0,1]\times\R^4$ and vanishes outside a compact ball, so its global flow $\phi_H^t$
+exists uniquely. By definition $\partial_t\phi_H^t(x)=X_H(t,\phi_H^t(x))$ with $\phi_H^0(x)=x$, giving the forward
+implication, and Picard--Lindel\"of uniqueness gives the converse; the quantitative $\delta e^L$ bound follows from
+Gr\"onwall's inequality on $\eta(t)=\phi_H^t(s_i+u)-\gamma_t^{(i)}(u)$ ($\eta(0)=0$, $|\dot\eta|\le\delta+L|\eta|$).
+(The abstract uniqueness and quantitative certificate statements are also formalised in Lean~4 as
+\texttt{picard\_lindelof\_curve\_unique} and, for $C^\infty$ Hamiltonians, \texttt{picard\_lindelof\_epoch\_certificate}
+in \texttt{verification/RK4Convergence.lean}.)
+\end{proof}
+
+\begin{remark}[Scope of global Hamiltonian lifts]\label{rem:lift-scope}
+Let $\gamma_t^{(i)}$ be a multi-stage symplectic isotopy on source collars connecting $s_i+u$ at $t=0$ to
+$\gamma_{v(t)}^{(i)}(u)$ at $t=t_0$ (via rigid translation, polar $\mathrm{Sp}(4)$ paths to $Df_i(a_i)$, and the local
+Alexander germ $\rho^{-1}(f_i(a_i+\rho(u-a_i))-f_i(a_i))$ as $\rho\downarrow0$). Whenever the collar images are pairwise
+disjoint at every time and each collar uses a consistently normalised single-valued primitive of its exact symplectic
+generator, multiplying by a plateau cutoff equal to $1$ on $\EB(r_1)$ and summing over $i$ produces a globally $C^3$
+compactly supported Hamiltonian generating $\gamma_t^{(i)}$. Proving analytic all-$(k,\eps)$ clearance bounds for the
+initial translation/germ collars and single-valued sheet selection in collars near $|Z_0|\to0$ is left to future work
+(an experimental prototype and minimal sheet-jump diagnostics are archived outside \texttt{program/} in
+\texttt{experiments/hamiltonian\_lift/}). Note that Paper~I already constructs a globally $C^\infty$ compactly supported
+packing Hamiltonian for all $k\ge10$ and $\eps\in(0,1)$, verified in Lean~4.
+\end{remark}
+
+\begin{remark}[Numerical conditioning, fixed-step RK4, and variational growth]\label{rem:saddle-stiffness}
+Along sampled non-toric trajectories (such as $k=11$, $\eps=0.05$), the frozen spatial Jacobian
+$D_yX_H(t,y)=J_0\nabla_y^2H(t,y)\in\mathfrak{sp}(4,\R)$ exhibits large symmetric eigenvalue pairs $\lambda,-\lambda$
+(together with complex conjugates) across narrow keyhole and corner-rounding transitions. These sampled spectra provide
+local conditioning diagnostics: positive real parts in a frozen Jacobian do not by themselves establish a positive
+Lyapunov exponent along the time-dependent trajectory, because error amplification is governed by the time-ordered
+variational equation $\dot\Phi(t)=D_yX_H(t,\gamma(t))\Phi(t)\in\mathrm{Sp}(4,\R)$, and these diagnostics do not establish
+an impossibility result for fixed-precision ODE verification. On the positive side, Paper~I, Corollary~D
+(\texttt{epoch\_rk4\_convergence} in \texttt{verification/RK4Convergence.lean}) proves that for every $k\ge10$ and
+$\eps\in(0,1)$, sufficiently fine fixed-step RK4 sends every source point into the target ball under controlled initial
+and per-step state perturbations. Determining the sharp growth rate as $\eps\downarrow0$ (for fixed non-square $k\ge10$)
+of the minimal variational amplification $\sup_{t\in[0,1]}\|D\phi_H^t\|$ over all smooth compactly supported packing
+Hamiltonians $H$ is an interesting open problem.
+\end{remark}
+
 \section*{Authorship and the role of AI}
 
-Liang Song is the sole author and is responsible for the manuscript and its release. The mathematics, the code and the
-text were produced by AI systems, including GPT-6.1 Sol (OpenAI), Claude Opus 5.5 (Anthropic), Gemini (Google) and
-other models, working in a research environment designed and directed by Liang Song, who chose the problem, assembled
-the context, designed the verification pipeline and made the editorial decisions. The theorems of this paper are not
-part of the Lean~4 formalisation of Papers~I--II; numerical and arbitrary-precision checks are documented in
-\texttt{program/README.md}.
+The manuscripts, mathematical proofs, Lean~4 formalisation and accompanying programs of this release were generated by
+AI models, including GPT-6.1 Sol (OpenAI), Claude Opus~5.5 (Anthropic), Gemini~4 Carbon (Google) and other models.
+Liang Song chose the problem, designed and directed the research environment, organised cross-model review and takes
+sole responsibility for the manuscript and its release.
+
+Trustworthiness rests on explicit verification layers: the main theorems of Papers~I--II (along with the abstract
+trajectory-certificate lemmas of \texttt{verification/RK4Convergence.lean}) are checked in Lean~4 against an
+independent specification importing only Mathlib, using only the three standard axioms and re-verified by fresh kernel
+replay; Paper~III and this paper give human-readable proofs supported by multi-model cross-review and numerical checks
+(\texttt{float64} and 100-digit \texttt{mpmath} evaluation documented in \texttt{program/README.md}); and program
+outputs serve only as numerical corroboration.

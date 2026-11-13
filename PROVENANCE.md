@@ -1,31 +1,58 @@
 # Publication and provenance
 
+## Version 1.2.0
+
+Liang Song, version **1.2.0**, 13 November 2026. Version 1.2.0 extends the four-paper layout introduced at Git tag
+`v1.1.0` (`dc469737bd9a17df9002eec2338ed734877509d3`) with the 4-page series overview (`paper/overview`), formal
+perturbed fixed-step RK4 containment and quantitative trajectory-certificate theorems (`verification/RK4Convergence.lean`,
+Paper I Corollary D), an expanded Paper IV (`paper/p4`) with a self-contained inverse-certificate proof and
+radial–Alexander generator analysis (§8), strengthened checks for the existing closed-form `C⁴` embedding evaluator
+and AST-transformed `mpmath` checker (`program/embedding_src/`, `program/solution_embedding.py`, `program/check_embedding_mp.py`), the
+Epoch problem guide (`EPOCH.md`), a reproducible numerical verification receipt
+(`program/release-check/NUMERICAL-VERIFICATION.json`), and a separately labelled experimental archive
+(`experiments/hamiltonian_lift/`, excluded from `program/` and certified deliverables). The
+all-version DOI [10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575) resolves to the latest deposited
+version; the version DOI of 1.2.0 is assigned by Zenodo on deposit. The record keeps the series title
+*Explicit Hamiltonian ball packings in every dimension*, the title of version 1.0.1; the four papers carry their own
+titles.
+
+1. **Papers I and II (`paper/p1`, `paper/p2`):** The single paper of 1.0.1 was split in 1.1.0 into **Paper I**
+   (shortest complete route to the equal-ball theorem in the four-ball for all `k ≥ 10` and `ε ∈ (0, 1)`, robustness,
+   Epoch data, plus in 1.2.0 Corollary D on uniform perturbed fixed-step RK4 containment with explicit `δ₀` and `N₀`)
+   and **Paper II** (general capacities in dimension four and all higher dimensions, Siegel–Yao criterion, Biran's
+   `k ≥ 9`, unequal-ball cone, full Epoch data, and the uniform terminating rational polynomial-cutoff algorithm). No
+   theorem or proof of 1.0.1 is removed.
+2. **Papers III and IV (`paper/p3`, `paper/p4`) and `program/`:** **Paper III** (*Elementary packings of the four-ball
+   and their limits*) proves toric/window constructions and three density obstructions. **Paper IV** (*Closed-form
+   symplectic packings of the four-ball by equal balls*) proves the ODE-free `C⁴` symplectic embedding chain, exact-real
+   non-membership `Preimage` certificates (including Lemma 7.4), universal parameter validity `(H0)–(H15)` for all
+   `k ≥ 10` and `ε ∈ (0, 1)`, and a radial–Alexander generator formula in terms of a normalised primitive with abstract
+   ODE trajectory certificates (Proposition 8.1). The global lift of these direct maps remains unfinished.
+   **`program/`** contains two accompanying Python implementations: `solution_epoch.py`
+   (fast PyTorch Hamiltonians in Epoch's ODE format over Paper III's elementary `(k, ε)` regime) and
+   `solution_embedding.py` (built deterministically from `program/embedding_src/`, with `check_embedding.py` and
+   100-digit `mpmath` `check_embedding_mp.py`).
+3. **Lean 4 formalisation (`SymplecticPacking/`, `verification/`):** **All 525 Lean source files in `SymplecticPacking/`,
+   `Problem.lean`, `Statement.lean`, `Computability.lean`, and `EpochComputability.lean` are byte-identical to 1.0.1 and
+   1.1.0.** Version 1.2.0 adds `verification/RK4Convergence.lean` (`epoch_rk4_convergence`,
+   `epoch_exact_rk4_convergence`, `picard_lindelof_curve_unique`, `picard_lindelof_epoch_certificate`), updates the
+   audit entry points (`verification/Kernel.lean`, `verification/Audit/Independence.lean`), repacks the optional project
+   cache (723 compiled modules with corresponding current sources), and re-runs a fresh kernel replay of the full imported declaration closure of
+   `verification.Kernel`.
+4. **Bibliography corrections:** Traynor, *Symplectic packing constructions*, J. Differential Geom. **42** (1995),
+   411–429 (corrected in 1.1.0); Opshtein, *Symplectic packings in dimension 4 and singular curves*, J. Symplectic Geom. **13** (2015),
+   305–342 (unified across Papers I–III in 1.2.0).
+
 ## Version 1.1.0
 
-Liang Song, version **1.1.0**, 13 November 2026. Version 1.1.0 reorganises the work into four papers and adds
-two accompanying Python programs. The all-version DOI
-[10.5281/zenodo.23756575](https://doi.org/10.5281/zenodo.23756575) resolves to the latest version; the version DOI of
-1.1.0 is assigned by Zenodo on deposit. The record keeps the series title *Explicit Hamiltonian ball packings in every
-dimension*, the title of version 1.0.1; the four papers carry their own titles.
-
-1. The single paper of 1.0.1 is split and shortened. **Paper I** (`paper/p1`) gives the shortest complete
-   route to the equal-ball theorem in the four-ball (Theorem A, robustness, the Epoch data for k ≥ 10).
-   **Paper II** (`paper/p2`) contains the general theorem for all admissible data in every dimension, the
-   corollaries (Siegel–Yao criterion, Biran's k ≥ 9, a cone of unequal balls, full Epoch data) and the
-   finite-output algorithm. No theorem or proof of 1.0.1 is removed.
-2. **Paper III** (`paper/p3`), *Elementary packings of the four-ball and their limits*, and **Paper IV** (`paper/p4`),
-   *Closed-form symplectic packings of the four-ball by equal balls*, are new; neither is formalised in Lean.
-   **`program/`** is new: `solution_epoch.py` provides a fast numerical implementation for the Epoch ODE interface
-   built from Paper III's constructions over a covered range of `(k, ε)`, and `solution_embedding.py` (built
-   deterministically from modular sources in `program/embedding_src/`) evaluates the closed-form C⁴ packing embeddings
-   and cancellation-free inverses proved in Paper IV, accompanied by float64 and 100-digit `mpmath` checkers.
-3. Corrected citation: Traynor, *Symplectic packing constructions*, J. Differential Geom. **42**
-   (1995), 411–429 (1.0.1 cited a duplicate record).
-4. The reference scripts added to `main` after 1.0.1 (`examples/packing.py`, `examples/k10.py`,
-   `verification/Executable.lean`) are superseded by `program/` and remain in the Git history.
-5. **Lean sources, statements and proofs are byte-identical to 1.0.1**, as are the Lake package
-   version and the optional project cache. The paper-tag index is regenerated from the new paper sources
-   and names the same 1240 declarations.
+Liang Song, version **1.1.0**, 13 November 2026 (Git tag `v1.1.0`, commit
+[`dc469737bd9a17df9002eec2338ed734877509d3`](https://github.com/s-JoL/Symplectic-Ball-Packing/tree/v1.1.0)). Split the
+1.0.1 manuscript into Papers I and II, added Papers III and IV (§§1–7), and included both accompanying programs:
+`program/solution_epoch.py` (superseding `examples/packing.py`, `examples/k10.py`, and `verification/Executable.lean`)
+and `program/solution_embedding.py`, its modular sources `program/embedding_src/`, deterministic builder and direct
+`mpmath` source checker. The shared Lean library and principal theorem/algorithm sources remained unchanged from
+1.0.1. Version 1.2.0 revises and extends these existing deliverables; it does not first introduce Paper IV or the
+direct embedding program.
 
 ## Version 1.0.1
 
@@ -58,15 +85,15 @@ No Lean definition, theorem statement or proof changed. Release packaging runs t
 Lean build, axiom/explicitness/independence audits, regression tests, paper builds,
 and a fresh kernel replay bound to the current proof sources and compiled objects.
 
-### Checking the 1.0.1 release
+### Checking a release archive
 
-The matching GitHub and Zenodo downloads contain `main.pdf`, `supplement.pdf`,
-`symplectic-ball-packing-1.0.1.zip`, `verification.json`, `PUBLICATION-PROVENANCE.json`,
-and `SHA256SUMS`. The ZIP contains the history-free public sources and PDFs,
-`RELEASE-VERIFICATION.json`, `KERNEL-REPLAY.json` and `MANIFEST.sha256`.
-It excludes Git history and optional binary proof caches.
+The matching GitHub and Zenodo downloads contain the PDFs, `symplectic-ball-packing-<version>.zip`,
+`verification.json`, `PUBLICATION-PROVENANCE.json` (on archived releases), and `SHA256SUMS`. The ZIP contains the
+history-free public sources and PDFs, `RELEASE-VERIFICATION.json`, `KERNEL-REPLAY.json` and `MANIFEST.sha256`
+(and in 1.2.0, `program/release-check/NUMERICAL-VERIFICATION.json` plus the separately labelled
+`experiments/hamiltonian_lift/` research archive). It excludes Git history and optional binary proof caches.
 
-After downloading the six deposited files into one directory, run:
+After downloading the deposited files into one directory, run:
 
 ```sh
 shasum -a 256 -c SHA256SUMS

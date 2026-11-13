@@ -1,6 +1,7 @@
 import verification.Statement
 import verification.Computability
 import verification.EpochComputability
+import verification.RK4Convergence
 
 /-!
 # The packing theorems use no packing existence theorem
@@ -108,6 +109,8 @@ elab "#assert_construction_independence" : command => do
     ``flow_is_integral_curve, ``flow_symplectic_diffeomorphism, ``flow_images_disjoint,
     ``equal_balls, ``unequal_cone, ``original_name_algorithm, ``epoch_name_algorithm,
     ``epoch_name_algorithm_packing, ``epoch_packing, ``flow_neighbourhood_embedding,
+    ``picard_lindelof_curve_unique, ``picard_lindelof_epoch_certificate,
+    ``epoch_rk4_convergence, ``epoch_exact_rk4_convergence,
     ``SymplecticPacking.General.symplectic_neighbourhood_sufficient]
   match findDependencies env roots (fun n => isExistenceDecl false n || isCurveInput env n) with
   | some p => throwError m!"construction reaches a packing-existence or curve input via {p}"

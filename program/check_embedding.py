@@ -187,8 +187,8 @@ def main():
     )
     log(f"A containment: R_origin = {R_max:.6f}, margin {R_need - R_max:.3e}, finite = {finite}")
     log(f"C round trip: failed {rt_bad} / {k * X0.shape[0]} (special: {spec_rt_bad} / {k * n_spec}, non-finite preimages: {inv_nonfinite}), largest error among passing {rt_max:.3e}")
-    # B (normalised residual ||J^T Omega J - Omega||_max / max(1, ||J||_F^2))
-    sym_max, fd_max = 0.0, 0.0
+    # B (normalised residual ||J^T Omega J - Omega||_max / max(1, ||J||_F^2), with explicit NaN/Inf gate)
+    sym_max, fd_max, jac_nonfinite = 0.0, 0.0, 0
     nj = max(2, a.N_jac)
     for i in range(k):
         Xj = torch.cat([S[: nj // 2] * (1 - 3 * a.h), B[: nj - nj // 2] * (1 - 3 * a.h)], dim=0)
@@ -196,10 +196,26 @@ def main():
         J = (4 * J2 - J1) / 3
         D = J.transpose(1, 2) @ OMEGA @ J - OMEGA
         nrm = J.flatten(1).norm(dim=1).pow(2).clamp_min(1.0)
-        sym_max = max(sym_max, float((D.flatten(1).abs().max(dim=1).values / nrm).max()))
-        fd_max = max(fd_max, float(((J2 - J1).flatten(1).abs().max(dim=1).values / nrm.sqrt()).max()))
-    res.update(sym_defect=sym_max, fd_resolution=fd_max)
-    log(f"B symplecticity (normalised by max(1, ||J||_F^2)): largest residual {sym_max:.3e} (step diff / ||J||_F: {fd_max:.3e})")
+        s_vec = D.flatten(1).abs().max(dim=1).values / nrm
+        f_vec = (J2 - J1).flatten(1).abs().max(dim=1).values / nrm.sqrt()
+        row_fin = (
+            torch.isfinite(J1).all(dim=(1, 2))
+            & torch.isfinite(J2).all(dim=(1, 2))
+            & torch.isfinite(D).all(dim=(1, 2))
+            & torch.isfinite(nrm)
+            & torch.isfinite(s_vec)
+            & torch.isfinite(f_vec)
+        )
+        jac_nonfinite += int((~row_fin).sum())
+        if row_fin.any():
+            sym_max = max(sym_max, float(s_vec[row_fin].max()))
+            fd_max = max(fd_max, float(f_vec[row_fin].max()))
+        else:
+            sym_max, fd_max = float("inf"), float("inf")
+    if jac_nonfinite > 0:
+        sym_max = float("inf")
+    res.update(sym_defect=sym_max, fd_resolution=fd_max, jac_nonfinite=jac_nonfinite)
+    log(f"B symplecticity (normalised by max(1, ||J||_F^2)): largest residual {sym_max:.3e} (step diff / ||J||_F: {fd_max:.3e}, non-finite rows: {jac_nonfinite})")
     # G
     g_bad, g_gap, g_lip, g_coarse = 0, 0.0, 0.0, 0.0
     if a.chords > 0:
@@ -234,7 +250,9 @@ def main():
         g_bad == 0
         and finite
         and inv_nonfinite == 0
+        and jac_nonfinite == 0
         and R_max < R_need
+        and math.isfinite(sym_max)
         and sym_max <= a.sym_tol
         and rt_bad == 0
         and overlaps == 0

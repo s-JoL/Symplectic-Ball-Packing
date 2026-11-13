@@ -1,5 +1,6 @@
 k=10 eps=0.0001 dps=100 R_needed=1.7783238698
    Hypotheses in 100-digit arithmetic: all 42 margins positive (tightest H3-H5 K_C (K1) (W1+W2)(1+beta-rho1)=beta = 1.0e-12)
+   AST MP loader: target_iters=300 (rewrote 1 newton_bracket def(s), skipped 1 selftest call(s))
 0. Source consistency (float64 vs 100-digit mpmath on all 10 balls): max ||Y_f64 - Y_mp64|| / max(1, ||J||_F) = 9.214e-15 (tol 1.0e-10)
 1. Containment & round-trip (100-digit): finite = True, min radius margin = 3.557e-6, max round-trip error = 1.38e-87
    Re-evaluated all 5/5 float64 C-flagged point(s): ok=True, max round-trip error = 8.36e-90
@@ -7,5 +8,5 @@ k=10 eps=0.0001 dps=100 R_needed=1.7783238698
 3. Symplecticity (100-digit Richardson, h=1e-33): max normalised residual = 2.52e-63, max ||J||_F = 1.08e+12
    Re-evaluated all 1/1 float64 B-flagged point(s): max normalised residual = 3.08e-75 (was up to 2.695e-05 in float64)
 4. Continuity (100-digit interval-preserving bisection to 1e-30): re-evaluated all 21/21 float64 G-flagged interval(s); continuous = True, max end-to-end gap at sep <= 1e-30 = 1.07e-14, max local Lipschitz = 1.27e+16
-RESULT {"k": 10, "eps": "0.0001", "dps": 100, "chords": 5, "max_agree_scaled": 9.21352506013324e-15, "finite_mp": true, "min_radius_margin": 3.556659117955218e-06, "max_roundtrip_mp": 1.3837710188687813e-87, "f64_c_flags": 5, "max_c_recheck_mp": 8.355085409884941e-90, "mp_overlaps": 0, "max_sym_mp": 2.5210194361949984e-63, "f64_b_flags": 1, "max_b_recheck_mp": 3.0798176242931204e-75, "f64_g_flags": 21, "g_all_continuous": true, "max_g_gap_1e30": 1.0677317503330563e-14, "max_g_lipschitz": 1.2720153450254844e+16, "wall_s": 256.46575808525085, "pass_all": true}
-MP CHECK PASS (256.5 s)
+RESULT {"k": 10, "eps": "0.0001", "dps": 100, "chords": 5, "max_agree_scaled": 9.21352506013324e-15, "finite_mp": true, "min_radius_margin": 3.556659117955218e-06, "max_roundtrip_mp": 1.3837710188765822e-87, "f64_c_flags": 5, "max_c_recheck_mp": 8.355085409884941e-90, "mp_overlaps": 0, "max_sym_mp": 2.5210194361949984e-63, "f64_b_flags": 1, "max_b_recheck_mp": 3.0798176242931204e-75, "f64_g_flags": 21, "g_all_continuous": true, "max_g_gap_1e30": 1.0677317503330563e-14, "max_g_lipschitz": 1.2720153450254844e+16, "wall_s": 236.57633805274963, "pass_all": true}
+MP CHECK PASS (236.6 s)

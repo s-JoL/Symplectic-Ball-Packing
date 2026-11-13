@@ -46,6 +46,12 @@ def artifact_digest() -> str:
     return h.hexdigest()
 
 
+def trace_has_source(trace: Path) -> bool:
+    """Exclude stale artifacts for deleted modules while retaining vendored OAI modules."""
+    rel = trace.relative_to(ROOT / ".lake/build/lib/lean").with_suffix(".lean")
+    return any((directory / rel).is_file() for directory in (ROOT, ROOT / "vendor"))
+
+
 def leantar() -> str:
     lean = subprocess.check_output(["elan", "which", "lean"], cwd=ROOT, text=True).strip()
     tool = Path(lean).with_name("leantar" + (".exe" if os.name == "nt" else ""))
@@ -58,7 +64,11 @@ def pack() -> None:
     # Run all source/Lean/audit/regression gates before exporting the artifacts.
     subprocess.run(["bash", "scripts/verify.sh", "--lean"], cwd=ROOT, check=True)
     key = source_digest()
-    traces = sorted((ROOT / ".lake/build/lib/lean").rglob("*.trace"))
+    all_traces = sorted((ROOT / ".lake/build/lib/lean").rglob("*.trace"))
+    traces = [trace for trace in all_traces if trace_has_source(trace)]
+    for trace in all_traces:
+        if not trace_has_source(trace):
+            print(f"Skipping orphan cache artifact: {trace.relative_to(ROOT / '.lake/build/lib/lean')}", flush=True)
     if not traces:
         raise RuntimeError("no compiled project modules; run the verification first")
     tool = leantar()

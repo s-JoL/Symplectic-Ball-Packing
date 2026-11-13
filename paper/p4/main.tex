@@ -11,22 +11,26 @@
 \title[Closed-form symplectic packings of the four-ball]{Closed-form symplectic packings of the four-ball\\ by equal balls}
 \author{Liang Song}
 \email{sl12160010@gmail.com}
-\thanks{Version 1.1; companion to \cite{SongP1,SongP2,SongP3} in \url{https://github.com/s-JoL/Symplectic-Ball-Packing}.}
+\thanks{Version 1.2.0; companion to \cite{SongP1,SongP2,SongP3} in \url{https://github.com/s-JoL/Symplectic-Ball-Packing}
+(all versions: \href{https://doi.org/10.5281/zenodo.23756575}{doi:10.5281/zenodo.23756575}).}
 \date{}
 
 \begin{document}
 \begin{abstract}
 For every integer $k\ge10$ and every $\eps\in(0,1)$ we construct explicit $C^4$ symplectic embeddings
 $f_0,\dots,f_{k-1}\colon\EB^{\circ}(r_+)\to\EB^{\circ}(R)$ in $\R^4$, where $r_+>1$ and $R=(k/(1-\eps))^{1/4}$, whose
-images are pairwise disjoint, together with an explicit left inverse on the target ball. Unlike the Hamiltonian flow
-construction of Paper~I, no ordinary differential equation is integrated anywhere: each $f_i$ is a finite composition
-of elementary closed-form maps together with scalar roots of strictly monotone one-variable equations (one Kepler
-equation in the inverse strip map and generating-function angle/radial equations in two planar keyholes). The geometry
-adapts the degree-$9$ disc-bundle mechanism of Paper~I---linear comparison slope $3\sqrt k-9$ and three marked fibres
-mapped to the line at infinity of $\CP^2$---into direct Darboux charts, generating-function keyholes with explicit
-full-disc nesting and slit bounds, $C^4$ deck-equivariant toric twists, and a piecewise closed-form transfer across the
-three edges of the moment simplex of $\CP^2$. All parameter inequalities hold analytically for every $k\ge10$ and
-$\eps\in(0,1)$. This paper provides the complete mathematical proof for \texttt{program/solution\_embedding.py}.
+images are pairwise disjoint, together with an explicit non-membership-certifying left inverse on the target ball.
+Unlike the Hamiltonian flow construction of Paper~I, no ordinary differential equation is integrated anywhere: each
+$f_i$ is a finite composition of elementary closed-form maps together with scalar roots of strictly monotone
+one-variable equations (one Kepler equation in the inverse strip map and generating-function angle/radial equations in
+two planar keyholes). The geometry adapts the degree-$9$ disc-bundle mechanism of Paper~I---linear comparison slope
+$3\sqrt k-9$ and three marked fibres mapped to the line at infinity of $\CP^2$---into direct Darboux charts,
+generating-function keyholes with explicit full-disc nesting and slit bounds, $C^4$ deck-equivariant toric twists, and a
+piecewise closed-form transfer across the three edges of the moment simplex of $\CP^2$. All parameter inequalities hold
+analytically for every $k\ge10$ and $\eps\in(0,1)$. A normalised Liouville primitive gives an explicit generator
+formula for the radial--Alexander collar stage, together with abstract quantitative ODE trajectory certificates.
+Sections~1--7 prove the exact-real algorithm implemented by \texttt{program/solution\_embedding.py}. Finite-precision
+evaluation is checked numerically; a global Hamiltonian lift of these direct maps remains unfinished.
 \end{abstract}
 \maketitle
 

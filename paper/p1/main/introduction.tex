@@ -42,14 +42,16 @@ the single paper~\cite{SongAll}.
 
 \emph{The Epoch problem.} Epoch AI \cite{Epoch} asked for an algorithm that, on input $k\ge10$ and $\eps\in(0,1)$,
 outputs an explicit smooth Hamiltonian on $\R^4$ whose time-one map sends the closed unit balls centred at
-$(3i-3,0,0,0)$ into a closed ball $B^4(R)$ about the origin with $k/R^4>1-\eps$. Theorem~\ref{thm:intro-4d} and
-Proposition~\ref{thm:intro-stability} answer the mathematical part of this construction problem; the algorithm with
-finite output is in~\cite{SongHD}. Epoch also asks for a PyTorch implementation that a numerical verifier integrates within fixed time limits; the
-construction here is designed for proof, not for fast integration. Two accompanying programs in the repository address
-numerical evaluation: one in Epoch's Hamiltonian interface, built from the elementary constructions of the third paper
-of the release (``Elementary packings of the four-ball and their limits'') over a covered range of $(k,\eps)$, and one
-evaluating closed-form $C^4$ packing embeddings directly for every $k\ge10$ and $\eps\in(0,1)$ (proved in the fourth
-paper of the release, ``Closed-form symplectic packings of the four-ball by equal balls'').
+$(3i-3,0,0,0)$ into a closed ball $B^4(R)$ about the origin with $k/R^4>1-\eps$. Theorem~\ref{thm:intro-4d},
+Proposition~\ref{thm:intro-stability} and Corollary~\ref{cor:rk4-containment} answer the mathematical part of this
+construction problem and prove eventual containment for fixed-step RK4; the algorithm with finite output is
+in~\cite{SongHD}. Epoch also asks for a PyTorch implementation meeting published \texttt{float64} interface and runtime
+limits, which remains a separate implementation objective. Two accompanying programs in \texttt{program/} explore
+complementary computational routes: one in Epoch's Hamiltonian interface built from the elementary constructions of the
+third paper of the release (``Elementary packings of the four-ball and their limits'') over a covered range of
+$(k,\eps)$, and one evaluating closed-form $C^4$ packing embeddings and exact-real inverse certificates directly for
+every $k\ge10$ and $\eps\in(0,1)$ (proved in the fourth paper of the release, ``Closed-form symplectic packings of the
+four-ball by equal balls'').
 
 \subsection{What was known}\label{sec:intro-prior}
 
@@ -61,22 +63,25 @@ of McDuff, Li--Liu and Li--Li \cite{McDuff1991,McDuff1998,LiLiu2001,LiLi2002} re
 packing problem to inequalities indexed by exceptional classes. Packing stability was extended by Biran \cite{Biran1999}, Buse, Hind and Opshtein
 \cite{BuseHind2011,BuseHind2013,BuseHindOpshtein2016} and Edtmair \cite{Edtmair2025}, and fails for some open domains
 \cite{CristofaroGardinerHind2023}. These proofs use $J$-holomorphic curves and, through Taubes' theorem and inflation,
-Seiberg--Witten theory; they show that embeddings exist but do not produce a Hamiltonian moving given balls. Explicit
-packings were known in special cases, and explicit full packings by $k\ge10$ equal balls only for square $k$: Traynor's full packings by $d^2$ equal balls \cite{Traynor1995}, folding,
-wrapping and the cases $k\le9$ \cite{SchlenkHand,SchlenkBook,Schlenk2018}, tunnelling \cite{Wieck2009}, singular
-curves and polarisations \cite{Opshtein2011,Opshtein2013}, and almost toric methods
-\cite{Symington2003,CasalsVianna2020}. The OpenAI preprint \cite{OpenAI2026} proved the packing criterion conjectured by
-Siegel and Yao \cite{SiegelYao2025} in dimensions $2n\ge6$; in dimension four the two inequalities are not a criterion. We use its twisted disc-bundle mechanism (whose comparison and surface lemmas allow fibres $\C^m$, $m\ge1$) and the
-deformation-to-the-normal-cone scheme of its return. Dimension four needs a different model and new arguments: the
-Fermat cubic disc bundle, the linear comparison identity, which replaces the fixed point by a closed formula, and the
-symmetry argument that brings the model back to the ball.
+Seiberg--Witten theory; they show that embeddings exist but do not produce a Hamiltonian moving given balls.
+Classical explicit full packings include the square-number constructions of Traynor \cite{Traynor1995} and Schlenk
+\cite{SchlenkHand,SchlenkBook,Schlenk2018}; other constructive approaches include folding \cite{SchlenkFolding},
+tunnelling \cite{Wieck2009}, constructions from singular symplectic curves and polarisations \cite{Opshtein2011,Opshtein2013},
+and almost toric methods \cite{Symington2003,CasalsVianna2020}. To our knowledge, the present work gives the first
+uniform explicit construction of a smooth compactly supported Hamiltonian moving the prescribed source balls to
+arbitrarily dense packings for every non-square $k\ge10$, within one family valid for all $k\ge10$ and every positive
+volume deficit. The construction and its finite-output algorithm~\cite{SongHD} do not invoke $J$-holomorphic curves,
+Seiberg--Witten theory, or prior packing-existence theorems. The OpenAI preprint \cite{OpenAI2026} proved the packing
+criterion conjectured by Siegel and Yao \cite{SiegelYao2025} in dimensions $2n\ge6$; in dimension four the two
+inequalities are not a criterion. We use its twisted disc-bundle mechanism (whose comparison and surface lemmas allow
+fibres $\C^m$, $m\ge1$) and the deformation-to-the-normal-cone scheme of its return. Dimension four needs a different
+model and new arguments: the Fermat cubic disc bundle, the linear comparison identity, which replaces the fixed point by
+a closed formula, and the symmetry argument that brings the model back to the ball.
 
-The proof here uses explicit maps, forms and flows only, and none of the existence results above. It gives explicit
-full packings of $B^4$, i.e.\ packings of every density below $1$, by $k\ge10$ equal balls without $J$-holomorphic curves or Seiberg--Witten theory. The
-companion paper~\cite{SongHD} adds the scalar comparison datum, which covers $k=9$ and unequal capacities, and so
+The companion paper~\cite{SongHD} adds the scalar comparison datum, which covers $k=9$ and unequal capacities, and so
 proves in the same way Biran's theorem \cite{Biran1997} that $B^4$ admits full packings by $k$ equal balls for every
-$k\ge9$; the earlier proofs \cite{Biran1997,Biran1999,BuseHind2013,BuseHindOpshtein2016} use these tools, directly or
-through the results they cite.
+$k\ge9$; the earlier proofs \cite{Biran1997,Biran1999,BuseHind2013,BuseHindOpshtein2016} use $J$-holomorphic curves and
+Seiberg--Witten theory, directly or through the results they cite.
 
 \subsection{The key ideas}\label{sec:intro-mechanism}
 
@@ -92,38 +97,65 @@ if, for $P=A-\sum_i(a_i-p)_+$ and some gap $\gamma>0$,
 \]
 (Section~\ref{sec:mech}). In \cite{OpenAI2026} the function $K$ is the fixed point of a contraction built from
 increasing rearrangements, and the planar maps realising the rearrangements and the relative Moser isotopies are
-obtained from existence statements. Two ideas make the four-dimensional construction
-explicit.
+obtained from existence statements. Two new four-dimensional ingredients make the entire construction explicit and free
+of iterative fixed points.
 
-\emph{The linear comparison identity} (\S\ref{sec:cmp-linear}). For $k\ge10$ equal balls of capacity $a=t_0/\sqrt k$,
-with the bundle cut at fibre moment $h=t_0/3$, the function $K-P$ with $K$ linear of slope $3\sqrt k-9$ is, up to the constant $-g$, a
-multiple of a tent $\Lambda$ with $\Lambda(0)=\Lambda(h)=h$. Because the tent reaches the same height at both ends, each
-sublevel interval $\{\Lambda\le b\}$ has length exactly $b$, so the increasing rearrangement of $\Lambda$ is the identity
-and the comparison inequality reduces to the constant gap $g=3(1-t_0)$. One explicit planar map realises the
-rearrangement at a cost of at most $g/32$. No fixed point is needed.
+\emph{1.\ The linear comparison identity} (\S\ref{sec:cmp-linear}). For $k\ge10$ equal balls of capacity $a=t_0/\sqrt k$,
+with the bundle cut at fibre moment $h=t_0/3$, the function $K-P$ with $K(p)=(3\sqrt k-9)p$ linear is, up to the
+constant $-g$, a positive multiple of the generally asymmetric tent with vertex at $p=a$ and endpoint values
+$\Lambda(0)=\Lambda(h)=h$: its slopes are $-A=-h/a$ and $B=h/(h-a)$. Since $1/A+1/B=1$,
+each sublevel set $\{\Lambda\le b\}$ ($0\le b\le h$) has Lebesgue
+measure exactly $b$, so the increasing rearrangement of $\Lambda$ on $[0,h]$ is the identity function and the comparison
+inequality reduces algebraically to the constant gap $g=3(1-t_0)>0$. One explicit planar area-preserving isotopy realises
+the rearrangement up to radial smoothing at a cost of at most $g/32$, leaving gap $\frac{31}{32}g$ with no contraction
+fixed point.
 
-\emph{The return to the ball} (\S\ref{sec:mdl-return}). The disc bundle is written by theta functions on the cover
-$\R^2\times\C$ of the Fermat torus and carried into $\CP^2$ by explicit injection, transport and Moser flows. The ball is
-$\CP^2$ minus the line $\{Z_0=0\}$, so the images must avoid this line. All the return maps commute with the cube-root
-symmetry $Z_0\mapsto e^{2\pi i/3}Z_0$. A point mapped into the line is fixed by the symmetry, hence comes from a point
-with $Z_0=0$, and the handle construction keeps the balls away from such points. Avoidance thus follows from symmetry, not from an estimate.
+\emph{2.\ The Fermat cubic disc bundle and $\Z/3$-symmetric return} (\S\ref{sec:mdl-cub}, \S\ref{sec:mdl-return}). The
+degree-$9$ normal disc bundle of the Fermat cubic $Z_0^3+Z_1^3+Z_2^3=0$ is written explicitly by theta functions on the
+universal cover $\R^2\times\C$ of the Fermat torus and carried into $\CP^2$ by explicit normal-bundle injection,
+deformation-to-the-normal-cone transport, and K\"ahler Moser flows. Since $\Bo(1)$ is $\CP^2$ minus the line
+$L_\infty=\{Z_0=0\}$, the ball images must avoid $L_\infty$. Every map of the return commutes with the order-$3$
+projective symmetry $[Z_0:Z_1:Z_2]\mapsto[e^{2\pi i/3}Z_0:Z_1:Z_2]$, whose fixed locus is $L_\infty$ together with
+$[1:0:0]$. A point mapped into $L_\infty$ is therefore fixed by the $\Z/3$-action on the model, hence comes from one of
+the three marked fibres $\{Z_0=0\}\cap E$, and the handle placement routes all $k$ balls into the complement of those
+three fibres. Avoidance of $L_\infty$ thus follows exact-algebraically from $\Z/3$ equivariance rather than from a $C^0$
+Moser bound.
 
-\subsection{Organisation}\label{sec:intro-organisation}
+\subsection{Five-step route and verification guarantees}\label{sec:intro-organisation}
 
-Section~\ref{sec:results} states the packing specification, the robustness estimate and the form of
-Theorem~\ref{thm:intro-4d} for the Epoch data. After the dilation by $1/\sqrt C$ the construction has five steps.
-(1)~\emph{Model:} the cubic disc bundle on the cover of the Fermat torus, cut at fibre moment $p\le h$
-(\S\ref{sec:mech}, \S\ref{sec:mdl-cub}).
-(2)~\emph{Comparison:} the linear $K$ and an explicit fibre isotopy $q_t$ with gap $\frac{31}{32}g$
-(Section~\ref{sec:cmp}).
-(3)~\emph{Handle:} the twist and three explicit Moser flows place the balls in disjoint layers over an annulus
-(Section~\ref{sec:hdl}).
-(4)~\emph{Return:} explicit flows carry the model into $\Bo(1)$ (Section~\ref{sec:mdl}); Table~\ref{tab:mdl-margins}
-lists the margins passed from step to step.
-(5)~\emph{Motion:} one isotopy from the given balls to the embeddings, disjoint at all times, and the Hamiltonian
-generating it (Section~\ref{sec:ham}).
-Section~\ref{sec:ver} describes the Lean~4 formalisation. The supplement contains the complete proofs of the
-statements proved here only in outline; numbers with the prefix S, as in \Ssec{sec:pll}, refer to it.
+Section~\ref{sec:results} states the packing specification, the vector-field robustness estimate, the Epoch data, and
+uniform target containment for perturbed fixed-step RK4. After rescaling by $1/\sqrt C$, the proof of
+Theorem~\ref{thm:intro-4d} proceeds in five self-contained steps:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \emph{Model} (\S\ref{sec:mech}, \S\ref{sec:mdl-cub}): construct the explicit symplectic model of the degree-$9$
+cubic disc bundle on $\R^2\times\C$, cut at fibre moment $p\le h=t_0/3$, with three $\Z/3$-fixed marked points on the
+Fermat torus.
+\item \emph{Comparison} (Section~\ref{sec:cmp}): apply the linear comparison identity $K(p)=(3\sqrt k-9)p$ and construct
+an explicit compactly supported fibre isotopy $q_t$ on $\Bo(h)$ achieving comparison gap $\frac{31}{32}g$.
+\item \emph{Handle} (Section~\ref{sec:hdl}): twist the disc bundle over a base annulus avoiding the three marked fibres
+and compose three explicit Moser flows to embed the $k$ balls into disjoint horizontal layers of the model.
+\item \emph{Return} (Section~\ref{sec:mdl}): transport the model symplectically into $\CP^2\setminus L_\infty\cong\Bo(1)$
+via $\Z/3$-equivariant normal-cone and K\"ahler Moser flows; Table~\ref{tab:mdl-margins} tracks the explicit quantitative
+margins passed from step to step.
+\item \emph{Motion} (Section~\ref{sec:ham}): connect the standard source balls $B(s_i,\pi)$ to the resulting symplectic
+embeddings in $\Bo(\pi R^2)$ by a single compactly supported $C^\infty$ Alexander--polar Hamiltonian isotopy whose $k$
+collars remain pairwise disjoint for all $t\in[0,1]$.
+\end{enumerate}
+
+\emph{What guarantees each part.} Every step above is given both as a human-readable mathematical proof (outlined in
+Sections~\ref{sec:mech}--\ref{sec:ham} with full analytic details in the supplement, prefixed by~S as in
+\Ssec{sec:pll}) and as a machine-checked proof in Lean~4 (Section~\ref{sec:ver}). In \texttt{verification/Problem.lean},
+written from Mathlib alone, $\Pack$ requires global $C^\infty$ smoothness, uniform compact spatial support, existence of
+global trajectories, and target containment for \emph{every} integral curve starting in \emph{every} source ball; Lean
+checks Theorem~\ref{thm:intro-4d}, Proposition~\ref{thm:intro-stability}, and Corollaries~\ref{thm:main-epoch}--\ref{cor:rk4-containment}
+for the named Hamiltonian $H_{k,\eps}$ using only the three standard axioms (\texttt{propext},
+\texttt{Classical.choice}, \texttt{Quot.sound}), re-verified from scratch by fresh kernel replay, while metaprogram
+audits check syntactic explicitness and independence from prior packing-existence or $J$-holomorphic curve theorems. The
+companion Paper~II~\cite{SongHD} extends the formalised proof to $k=9$, unequal capacities, dimensions $2n\ge6$, and a
+halting rational polynomial-cutoff algorithm; Paper~III proves elementary toric/window constructions and density
+obstructions (human-readable proofs plus exact rational checks); Paper~IV proves ODE-free closed-form $C^4$ packing maps
+and exact-real inverse certificates (human-readable proofs corroborated by \texttt{float64} and 100-digit
+\texttt{mpmath} checks, which are not used inside any proof).
 
 \emph{Conventions.}\label{sec:intro-conventions} The dilation $z\mapsto\lambda z$ multiplies $\omega_0$ and
 capacities by $\lambda^2$. In fibre coordinates $w_j$ the moments are $p_j=\pi|w_j|^2$ and the angles

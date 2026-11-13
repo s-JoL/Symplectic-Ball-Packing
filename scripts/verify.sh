@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Full check of the repository: source hygiene, paper-to-Lean tags, Lean build with axiom and
-# explicitness gates, regression tests and the three papers. Every stage is fatal. Node.js is
+# explicitness gates, regression tests and all four papers. Every stage is fatal. Node.js is
 # needed in every mode (source checks); Elan for the Lean stages, Tectonic for the papers.
 #   bash scripts/verify.sh            # everything
 #   bash scripts/verify.sh --lean     # Lean only
@@ -19,6 +19,8 @@ node scripts/paper_tags.mjs --self-test > "$log/paper-tags-selftest.log"
 node scripts/check_publication_sources.mjs --self-test > "$log/sources-selftest.log"
 node scripts/check_publication_sources.mjs | tee "$log/sources.log"
 python3 program/build_embedding.py --check
+python3 experiments/hamiltonian_lift/build_hamiltonian.py --check
+python3 scripts/verify_numerical_receipt.py --check
 
 if [[ $mode != --paper ]]; then
   echo '== paper-to-Lean tags'
@@ -36,9 +38,9 @@ if [[ $mode != --paper ]]; then
 set -euo pipefail
 log=$1
 for entry in verification/Statement.lean verification/Computability.lean \
-  verification/EpochComputability.lean verification/Audit/Independence.lean \
-  verification/Audit/PaperTags.lean test/ExplicitTest.lean \
-  test/DependencyAuditTest.lean test/AxiomCheckTest.lean; do
+  verification/EpochComputability.lean verification/RK4Convergence.lean \
+  verification/Audit/Independence.lean verification/Audit/PaperTags.lean \
+  test/ExplicitTest.lean test/DependencyAuditTest.lean test/AxiomCheckTest.lean; do
   name=${entry//\//-}
   lean -j1 -DautoImplicit=false -DrelaxedAutoImplicit=false -Dpp.unicode.fun=true \
     "$entry" > "$log/recheck-$name.log" 2>&1 || {

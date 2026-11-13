@@ -1,6 +1,6 @@
 # Optional Lean proof cache
 
-The bundled cache is **32.2 MiB for 722 modules**. `lean/manifest.json` describes a cache of this project's compiled Lean modules, compressed
+The bundled cache is **32.2 MiB for 723 modules**. `lean/manifest.json` describes a cache of this project's compiled Lean modules, compressed
 with the pinned toolchain's `leantar` (the format used by Mathlib). Parts are capped at 40 MiB
 for ordinary Git hosting. The manifest records the toolchain, proof-source digest, module
 count, total size, and SHA-256 checksums. No Git LFS or extra compression program is required.

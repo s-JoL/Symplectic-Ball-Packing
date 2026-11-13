@@ -1,0 +1,80 @@
+\paragraph{The exact-real inverse algorithm.}\label{alg:preimage}
+We now define $\mathrm{Preimage}(i,Y)$ mathematically, including its conventions away from the forward image.
+Failure is denoted by $\bot$ (or by $\mathrm{ok}=\mathrm{false}$). Only operations on the selected branch are
+evaluated; an undefined real operation returns $\bot$. Write $\operatorname{frac}(t)=t-\lfloor t\rfloor$,
+$\operatorname{cart}(p,\theta)=\sqrt{p/\pi}\,e^{2\pi i\theta}$ for $p\ge0$, and set $\arg0=0$ when a polar angle
+at the origin is needed. All scalar inverse equations use their unique roots from Sections~\ref{sec:kr}--\ref{sec:keyhole}.
+
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=2em]
+\item \emph{Undo the ball chart.} If $|Y|>R_s$, return $\bot$. Otherwise put
+$y=Y/(\sqrt\pi R_s)$ and $\zeta=\sqrt\pi(y_1+iy_3,y_2+iy_4)$, and form
+$Z=(\sqrt{1-|\zeta|^2},\zeta_1,\zeta_2)\in S^5$. Undo the unitary rotation of
+Section~\ref{sec:transfer-def} to obtain $W$. Set $X_j=|W_j|^2$ and $t_j=\arg W_j/(2\pi)$.
+
+\item \emph{Undo the simplex chart.} Test
+$\mathcal R_j=\{|X_{j+1}-X_{j+2}|<m,\ X_j>1/3\}$ for $j=0,1,2$ (indices modulo $3$).
+If more than one test succeeds, use the largest $j$, matching the last-write convention of the implementation.
+On this branch let $a=j+1$, $b=j+2$, $c=X_a-X_b$, and
+\[
+ p_2=\max\!\left(0,\begin{cases}X_b-\lambda_-(c),&c\ge0,\\X_a-\lambda_+(c),&c<0.\end{cases}\right).
+\]
+Put $A=t_a-t_j$, $B=t_b-t_j$, $v_\ell=\operatorname{frac}(A+B)$,
+$\psi_2=A-\lambda'(c)v_\ell$, and, with $(a_j,b_j)=\mathrm{left}_j$,
+\[
+ \sigma=c+j(1-3p_2),\quad \psi=\psi_2-k_j(c)-a_j,\quad
+ \vartheta=v_\ell+3j\psi_2-3jk_j(c)-b_j.
+\]
+If no $\mathcal R_j$ succeeds, choose the least index attaining $\min(X_0,X_1,X_2)$.
+With $T_1=t_1-t_0$, $T_2=t_2-t_0$, the inverse sector coordinates before the offsets are
+\[
+\begin{array}{c|cccc}
+\text{minimal index}&p_2&\sigma&\widetilde\psi&\widetilde\vartheta\\\hline
+2&X_2&X_1-X_2&T_1&T_1+T_2\\
+0&X_0&1+X_2-4X_0&-T_1+T_2&-5T_1+4T_2\\
+1&X_1&3-X_2-8X_1&-T_2&T_1-8T_2
+\end{array}
+\]
+Subtract $\mathrm{off}_0$, $\mathrm{off}_1$, or $\mathrm{off}_{2s}$ respectively from
+$(\widetilde\psi,\widetilde\vartheta)$. In both cases reduce by $\tau_v^{-n}$ with
+$n=\lfloor\sigma/(3-9p_2)+1/6\rfloor$, and set
+$z=(\sigma,\psi,\operatorname{cart}(p_2,\vartheta))$ using the reduced coordinates.
+
+\item \emph{Undo the corner keyhole and post chart.} Define the branchwise inverse $\mathcal B_-$ by the same
+reduction and band tests $|c_j|<m$ as $\mathcal B$. In each active band replace $K_B^{\tau_B}$ by its global inverse
+and replace the conjugate drift $-\tau_B'g_B$ by $+\tau_B'g_B$; preserve $c_j$, restore the deck translate, and keep
+the last active band if several tests succeed. Outside all bands use the identity. Put $x=\mathcal B_-(z)$.
+For $x=(\sigma,\psi,\operatorname{cart}(p,\vartheta))$, set
+\[
+ u_a=-\tfrac16-\psi,\quad v=\frac{\sigma}{P(p)},\quad G=(u_a-1)P(p),\quad
+ w=\operatorname{cart}(p,\vartheta+9(u_a-1)v).
+\]
+Undo $\Phi_g$ and $\Psi_S$, then apply $T_u^{-n}$ with
+$n=\lfloor(G-J(p))/P(p)\rfloor$. This subtracts $nP(p)$ from $G$ and rotates $w$ by $e^{-2\pi i9nv}$.
+
+\item \emph{Undo the comparator and cell map.} For $i<9$ the comparator is the identity. For $i\ge9$ undo $F_2$
+first: where $c(G)>0$, for the input fibre $w_2=\operatorname{cart}(x_2,\theta_2)$, set
+\[
+ w_1=\operatorname{cart}(\max(x_2-c(G),0),\theta_2),\qquad
+ v_1=v_2+c'(G)\bigl(\theta_2-\tfrac12\sgn\theta_2\bigr),
+\]
+using the principal angle in $(-1/2,1/2]$; where $c(G)=0$ use the identity. Then undo $F_1$ by the global inverse
+keyhole and its opposite conjugate drift. Denote the resulting flat point by $(G_0,v_0,w_0)$, with $p_0=\pi|w_0|^2$.
+For $i<9$ set
+\[
+ T_c=9v_0-(i-4)-9\left\lfloor\frac{9v_0-(i-4)}9\right\rfloor,\quad
+ X_c=(G_0-J(p_0))/9,\quad w_c=w_0e^{2\pi i sT_c/3}.
+\]
+For $i\ge9$ set
+\[
+ T_c=\operatorname{frac}(v_0-\tfrac12),\quad X_c=G_0-J(p_0)-i(a-p_0),\quad
+ w_c=w_0e^{2\pi i(3s-i)T_c}.
+\]
+
+\item \emph{Accept or reject.} Require $p_0<a$, $0<X_c<a-p_0$, and $0<T_c<1$; otherwise return $\bot$.
+Apply the unique inverse $\mathrm{KR}^{-1}$ on $\mathcal C_a$, undo $S_{\mathrm{in}}$, and return $(X,\mathrm{true})$.
+The test for membership in the closed unit-ball image is then $|X|\le1$.
+\end{enumerate}
+
+This is an exact-real algorithm for the stage formulas, with explicit failure conventions. Fixed iteration counts,
+floating-point guards and their error bounds are separate from this definition. Code names such as
+\texttt{to\_fund}, \texttt{flat\_to\_cell} and \texttt{invert} implement its reductions and branch rules.
